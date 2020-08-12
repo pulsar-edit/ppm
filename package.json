@@ -1,14 +1,14 @@
 {
-  "name": "atom-package-manager",
-  "description": "Atom package manager",
+  "name": "@atom-ide-community/atom-package-manager",
+  "description": "Community build of the Atom package manager",
   "version": "2.5.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atom/apm.git"
+    "url": "https://github.com/atom-ide-community/apm.git"
   },
   "bugs": {
-    "url": "https://github.com/atom/apm/issues"
+    "url": "https://github.com/atom-ide-community/apm/issues"
   },
   "main": "./lib/apm.js",
   "bin": {
