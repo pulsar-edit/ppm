@@ -7,7 +7,9 @@ notifications:
     on_failure: change
 
 node_js:
-  - "10.20.1"
+  - "10"
+  - "12"
+  - "14"
 
 before_install: npm install -g npm
 
