@@ -29,7 +29,7 @@
     "first-mate": "^7.4.1",
     "fs-plus": "2.x",
     "git-utils": "^5.6.2",
-    "hosted-git-info": "^2.8.8",
+    "hosted-git-info": "^3.0.5",
     "keytar": "^4.13.0",
     "mv": "2.1.1",
     "ncp": "~0.5.1",
