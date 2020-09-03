@@ -40,7 +40,7 @@
     "request": "^2.87.0",
     "rimraf": "^3.0.2",
     "season": "^6.0.2",
-    "semver": "^5.1.0",
+    "semver": "^7.3.2",
     "tar": "^2.2.1",
     "temp": "^0.9.1",
     "underscore-plus": "1.x",
