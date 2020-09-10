@@ -3,6 +3,7 @@ fs = require './fs'
 path = require 'path'
 npm = require 'npm'
 semver = require 'semver'
+asarPath = null
 
 module.exports =
   getHomeDirectory: ->
@@ -49,6 +50,15 @@ module.exports =
         unless fs.existsSync(appLocation)
           appLocation = '/usr/share/atom/resources/app.asar'
         process.nextTick -> callback(appLocation)
+      when 'win32'
+        if (asarPath is null)
+          glob = require 'glob'
+          pattern = "/Users/#{process.env.USERNAME}/AppData/Local/atom/app-+([0-9]).+([0-9]).+([0-9])/resources/app.asar"
+          asarPaths = glob.sync(pattern, null) # [] | a sorted array of locations with the newest version being last
+          asarPath = asarPaths[asarPaths.length - 1]
+        return process.nextTick -> callback(asarPath)
+      else
+        return process.nextTick -> callback('')
 
   getReposDirectory: ->
     process.env.ATOM_REPOS_HOME ? path.join(@getHomeDirectory(), 'github')

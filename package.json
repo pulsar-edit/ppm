@@ -34,6 +34,7 @@
     "first-mate": "^7.4.1",
     "fs-plus": "3.x",
     "git-utils": "^5.6.2",
+    "glob": "^7.1.6",
     "hosted-git-info": "^3.0.5",
     "keytar": "^6.0.1",
     "mv": "2.1.1",
