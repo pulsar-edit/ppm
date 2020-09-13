@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-var cp = require('child_process')
-var fs = require('fs')
-var path = require('path')
+const cp = require('child_process')
+const fs = require('fs')
+const path = require('path')
 
-var script = path.join(__dirname, 'postinstall')
+let script = path.join(__dirname, 'postinstall')
 if (process.platform === 'win32') {
   script += '.cmd'
 } else {
@@ -18,6 +18,6 @@ fs.chmodSync(script, 0o755)
 fs.chmodSync(path.join(__dirname, '..', 'bin', 'apm'), 0o755)
 fs.chmodSync(path.join(__dirname, '..', 'bin', 'npm'), 0o755)
 
-var child = cp.spawn(script, [], { stdio: ['pipe', 'pipe', 'pipe'], shell: true })
+const child = cp.spawn(script, [], { stdio: ['pipe', 'pipe', 'pipe'], shell: true })
 child.stderr.pipe(process.stderr)
 child.stdout.pipe(process.stdout)
