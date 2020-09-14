@@ -10,7 +10,7 @@ for /f "delims=" %%i in ('.\bin\node.exe -p "process.version + ' ' + process.arc
 echo ^>^> Rebuilding apm dependencies with bundled Node !bundledVersion!
 
 # parallel node-gyp
-set JOBS=16
+setx JOBS 16
 
 call .\bin\npm.cmd rebuild
 
