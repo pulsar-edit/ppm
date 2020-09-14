@@ -1,29 +1,29 @@
-var fs = require('fs');
-var mv = require('mv');
-var zlib = require('zlib');
-var path = require('path');
+const fs = require('fs');
+const mv = require('mv');
+const zlib = require('zlib');
+const path = require('path');
 
-var tar = require('tar');
-var temp = require('temp');
+const tar = require('tar');
+const temp = require('temp');
 
-var request = require('request');
-var getInstallNodeVersion = require('./bundled-node-version')
+const request = require('request');
+const getInstallNodeVersion = require('./bundled-node-version')
 
 temp.track();
 
-var identifyArch = function() {
+const identifyArch = function() {
   switch (process.arch) {
     case "ia32":  return "x86";
-    case "arm":   return "armv" + process.config.variables.arm_version + "l";
+    case "arm":   return `armv${process.config.variables.arm_version}l`;
     default:      return process.arch;
   }
 };
 
-var downloadFileToLocation = function(url, filename, callback) {
-  var stream = fs.createWriteStream(filename);
+const downloadFileToLocation = function(url, filename, callback) {
+  const stream = fs.createWriteStream(filename);
   stream.on('end', callback);
   stream.on('error', callback);
-  var requestStream = request.get(url)
+  const requestStream = request.get(url)
   requestStream.on('response', function(response) {
     if (response.statusCode == 404) {
       console.error('download not found:', url);
@@ -33,16 +33,16 @@ var downloadFileToLocation = function(url, filename, callback) {
   });
 };
 
-var downloadTarballAndExtract = function(url, location, callback) {
-  var tempPath = temp.mkdirSync('apm-node-');
-  var stream = tar.extract({
+const downloadTarballAndExtract = function(url, location, callback) {
+  const tempPath = temp.mkdirSync('apm-node-');
+  const stream = tar.extract({
     cwd: tempPath
   });
   stream.on('end', function() {
     callback.call(this, tempPath);
   });
   stream.on('error', callback);
-  var requestStream = request.get(url)
+  const requestStream = request.get(url)
   requestStream.on('response', function(response) {
     if (response.statusCode == 404) {
       console.error('download not found:', url);
@@ -52,10 +52,10 @@ var downloadTarballAndExtract = function(url, location, callback) {
   });
 };
 
-var copyNodeBinToLocation = function(callback, version, targetFilename, fromDirectory) {
-  var arch = identifyArch();
-  var subDir = "node-" + version + "-" + process.platform + "-" + arch;
-  var downloadedNodePath = path.join(fromDirectory, subDir, 'bin', 'node');
+const copyNodeBinToLocation = function(callback, version, targetFilename, fromDirectory) {
+  const arch = identifyArch();
+  const subDir = `node-${version}-${process.platform}-${arch}`;
+  const downloadedNodePath = path.join(fromDirectory, subDir, 'bin', 'node');
   return mv(downloadedNodePath, targetFilename, {mkdirp: true}, function(err) {
     if (err) {
       callback(err);
@@ -67,16 +67,16 @@ var copyNodeBinToLocation = function(callback, version, targetFilename, fromDire
   });
 };
 
-var downloadNode = function(version, done) {
-  var arch = identifyArch();
-  var filename = path.join(__dirname, '..', 'bin', process.platform === 'win32' ? 'node.exe' : 'node');
+const downloadNode = function(version, done) {
+  const arch = identifyArch();
+  const filename = path.join(__dirname, '..', 'bin', process.platform === 'win32' ? 'node.exe' : 'node');
 
-  var downloadFile = function() {
+  const downloadFile = function() {
     if (process.platform === 'win32') {
-      downloadFileToLocation("https://nodejs.org/dist/" + version + "/win-" + arch + "/node.exe", filename, done);
+      downloadFileToLocation(`https://nodejs.org/dist/${version}/win-${arch}/node.exe`, filename, done);
     } else {
-      var next = copyNodeBinToLocation.bind(this, done, version, filename);
-      downloadTarballAndExtract("https://nodejs.org/dist/" + version + "/node-" + version + "-" + process.platform + "-" + arch + ".tar.gz", filename, next);
+      const next = copyNodeBinToLocation.bind(this, done, version, filename);
+      downloadTarballAndExtract(`https://nodejs.org/dist/${version}/node-${version}-${process.platform}-${arch}.tar.gz`, filename, next);
     }
   }
 
@@ -95,7 +95,7 @@ var downloadNode = function(version, done) {
   }
 };
 
-var versionToInstall = fs.readFileSync(path.resolve(__dirname, '..', 'BUNDLED_NODE_VERSION'), 'utf8').trim()
+const versionToInstall = fs.readFileSync(path.resolve(__dirname, '..', 'BUNDLED_NODE_VERSION'), 'utf8').trim()
 downloadNode(versionToInstall, function(error) {
   if (error != null) {
     console.error('Failed to download node', error);
