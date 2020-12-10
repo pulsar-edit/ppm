@@ -29,12 +29,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install Node
-        uses: aminya/setup-node@x86
+        uses: actions/setup-node@v2-beta
         with:
           node-version: ${{ matrix.node_version }}
-          node-arch: ${{ matrix.node_arch }}
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          architecture: ${{ matrix.node_arch }}
 
       - name: Install npm
         run: npm install -g npm
