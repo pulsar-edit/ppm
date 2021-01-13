@@ -13,12 +13,3 @@ echo ^>^> Rebuilding apm dependencies with bundled Node !bundledVersion!
 setx JOBS 16
 
 call .\bin\npm.cmd rebuild
-
-if defined NO_APM_DEDUPE (
-    echo.
-    echo ^>^> Deduplication disabled
-) else (
-    echo.
-    echo ^>^> Deduping apm dependencies
-    call .\bin\npm.cmd dedupe
-)
