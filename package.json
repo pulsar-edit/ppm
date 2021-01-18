@@ -12,7 +12,7 @@
   },
   "main": "./lib/apm.js",
   "bin": {
-    "apm": "./bin/apm"
+    "apm": "bin/apm"
   },
   "scripts": {
     "check-version": "node script/check-version.js",
