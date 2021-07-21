@@ -1,4 +1,4 @@
-var child_process = require('child_process')
+const child_process = require('child_process')
 
 module.exports = function(filename, callback) {
   child_process.exec(filename + ' -v', function(error, stdout) {
@@ -7,13 +7,13 @@ module.exports = function(filename, callback) {
       return;
     }
 
-    var version = null;
+    let version = null;
     if (stdout != null) {
       version = stdout.toString().trim();
     }
 
     child_process.exec(filename + " -p 'process.arch'", function(error, stdout) {
-      var arch = null;
+      let arch = null;
       if (stdout != null) {
         arch = stdout.toString().trim();
       }

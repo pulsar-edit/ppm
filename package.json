@@ -1,14 +1,14 @@
 {
-  "name": "atom-package-manager",
-  "description": "Atom package manager",
-  "version": "2.6.5",
+  "name": "@atom-ide-community/atom-package-manager",
+  "description": "Community build of the Atom package manager",
+  "version": "2.6.1-atomic.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atom/apm.git"
+    "url": "https://github.com/atom-ide-community/apm.git"
   },
   "bugs": {
-    "url": "https://github.com/atom/apm/issues"
+    "url": "https://github.com/atom-ide-community/apm/issues"
   },
   "main": "./lib/apm.js",
   "bin": {
@@ -59,7 +59,7 @@
     "coffeelint": "<2.0",
     "express": "^4.17.1",
     "jasmine-focused": ">=1.0.7 <2.0",
-    "shx": "^0.3.3",
-    "node-gyp": "^5.1.1"
+    "node-gyp": "^5.1.1",
+    "shx": "^0.3.3"
   }
 }
