@@ -28,7 +28,7 @@
     "prepare": "npm run build",
     "postinstall": "node script/postinstall.js",
     "get.fixtures": "node ./script/get-fixtures.js && shx cp -r ./spec/fixtures/r.tmbundle-patch/Snippets/ ./spec/fixtures/r.tmbundle/",
-    "test": "npm run check-version && npm run lint && npm run get.fixtures && jasmine-focused --captureExceptions --coffee spec/init-spec.coffee"
+    "test": "npm run check-version && npm run get.fixtures && jasmine-focused --captureExceptions --coffee spec/init-spec.coffee"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",
