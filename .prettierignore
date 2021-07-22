@@ -1,0 +1,9 @@
+node_modules
+pnpm-lock.yaml
+package-lock.json
+CHANGELOG.md
+dist/
+lib/
+stats.html
+templates/
+spec/fixtures/r.tmbundle/

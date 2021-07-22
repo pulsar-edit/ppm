@@ -63,6 +63,8 @@
     "jasmine-focused": ">=1.0.7 <2.0",
     "node-downloader-helper": "^1.0.18",
     "node-gyp": "^5.1.1",
+    "prettier-config-atomic": "^2.0.5",
     "shx": "^0.3.3"
-  }
+  },
+  "prettier": "prettier-config-atomic"
 }
