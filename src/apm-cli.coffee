@@ -26,35 +26,34 @@ setupTempDirectory = ->
 
 setupTempDirectory()
 
-# TODO make loading lazy
-ciClass = require './ci'
-cleanClass = require './clean'
-configClass = require './config'
-dedupClass  = require './dedupe'
-developClass  = require './develop'
-disableClass  = require './disable'
-docsClass  = require './docs'
-enableClass  = require './enable'
-featuredClass  = require './featured'
-initClass  = require './init'
-installClass  = require './install'
-linksClass  = require './links'
-linkClass  = require './link'
-listClass  = require './list'
-loginClass  = require './login'
-publishClass  = require './publish'
-rebuildClass  = require './rebuild'
-rebuildModuleCacheClass  = require './rebuild-module-cache'
-searchClass  = require './search'
-starClass  = require './star'
-starsClass  = require './stars'
-testClass  = require './test'
-uninstallClass  = require './uninstall'
-unlinkClass  = require './unlink'
-unpublishClass  = require './unpublish'
-unstarClass  = require './unstar'
-upgradeClass  = require './upgrade'
-viewClass  = require './view'
+ciClass = -> require './ci'
+cleanClass = -> require './clean'
+configClass = -> require './config'
+dedupClass  = -> require './dedupe'
+developClass  = -> require './develop'
+disableClass  = -> require './disable'
+docsClass  = -> require './docs'
+enableClass  = -> require './enable'
+featuredClass  = -> require './featured'
+initClass  = -> require './init'
+installClass  = -> require './install'
+linksClass  = -> require './links'
+linkClass  = -> require './link'
+listClass  = -> require './list'
+loginClass  = -> require './login'
+publishClass  = -> require './publish'
+rebuildClass  = -> require './rebuild'
+rebuildModuleCacheClass  = -> require './rebuild-module-cache'
+searchClass  = -> require './search'
+starClass  = -> require './star'
+starsClass  = -> require './stars'
+testClass  = -> require './test'
+uninstallClass  = -> require './uninstall'
+unlinkClass  = -> require './unlink'
+unpublishClass  = -> require './unpublish'
+unstarClass  = -> require './unstar'
+upgradeClass  = -> require './upgrade'
+viewClass  = -> require './view'
 
 commands = {
   'ci': ciClass,
@@ -241,19 +240,19 @@ module.exports =
     if args.version
       printVersions(args, options.callback)
     else if args.help
-      if Command = commands[options.command]
+      if Command = commands[options.command]?()
         showHelp(new Command().parseOptions?(options.command))
       else
         showHelp(options)
       options.callback()
     else if command
       if command is 'help'
-        if Command = commands[options.commandArgs]
+        if Command = commands[options.commandArgs]?()
           showHelp(new Command().parseOptions?(options.commandArgs))
         else
           showHelp(options)
         options.callback()
-      else if Command = commands[command]
+      else if Command = commands[command]?()
         new Command().run(options)
       else
         options.callback("Unrecognized command: #{command}")
