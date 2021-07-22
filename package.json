@@ -15,17 +15,20 @@
     "apm": "bin/apm"
   },
   "scripts": {
+    "format": "prettier --write .",
+    "test.format": "prettier . --check",
+    "lint": "coffeelint src spec && eslint . --fix",
+    "test.lint": "eslint .",
     "check-version": "node script/check-version.js",
     "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean:lib": "shx rm -rf lib && shx mkdir -p lib",
     "clean": "npm run clean:lib && npm run clean:bin",
-    "lint": "coffeelint src spec",
     "coffee": "coffee --compile --output lib src",
     "build": "npm run clean:lib && npm run coffee",
     "prepare": "npm run build",
     "postinstall": "node script/postinstall.js",
     "get.fixtures": "node ./script/get-fixtures.js && shx cp -r ./spec/fixtures/r.tmbundle-patch/Snippets/ ./spec/fixtures/r.tmbundle/",
-    "test": "npm run check-version && npm run lint && npm run get.fixtures && jasmine-focused --captureExceptions --coffee spec/init-spec.coffee"
+    "test": "npm run check-version && npm run get.fixtures && jasmine-focused --captureExceptions --coffee spec/init-spec.coffee"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",
@@ -58,11 +61,14 @@
   "devDependencies": {
     "coffee-script": "^1.12.7",
     "coffeelint": "<2.0",
+    "eslint-config-atomic": "^1.16.2",
     "express": "^4.17.1",
     "gitly": "^2.1.2",
     "jasmine-focused": ">=1.0.7 <2.0",
     "node-downloader-helper": "^1.0.18",
     "node-gyp": "^5.1.1",
+    "prettier-config-atomic": "^2.0.5",
     "shx": "^0.3.3"
-  }
+  },
+  "prettier": "prettier-config-atomic"
 }
