@@ -1,0 +1,65 @@
+{
+  "name": "@atom-ide-community/atom-package-manager",
+  "description": "Community build of the Atom package manager",
+  "version": "2.6.1-atomic.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atom-ide-community/apm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atom-ide-community/apm/issues"
+  },
+  "main": "./lib/apm.js",
+  "bin": {
+    "apm": "bin/apm"
+  },
+  "scripts": {
+    "check-version": "node script/check-version.js",
+    "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
+    "clean:lib": "shx rm -rf lib && shx mkdir -p lib",
+    "clean": "npm run clean:lib && npm run clean:bin",
+    "lint": "coffeelint src spec",
+    "coffee": "coffee --compile --output lib src",
+    "build": "npm run clean:lib && npm run coffee",
+    "prepare": "npm run build",
+    "postinstall": "node script/postinstall.js",
+    "test": "npm run check-version && npm run lint && jasmine-focused --captureExceptions --coffee spec"
+  },
+  "dependencies": {
+    "@atom/plist": "0.4.4",
+    "asar-require": "0.3.0",
+    "async": "^3.2.0",
+    "colors": "~1.4.0",
+    "first-mate": "^7.4.3",
+    "fs-plus": "3.x",
+    "git-utils": "^5.7.2",
+    "glob": "^7.1.6",
+    "hosted-git-info": "^3.0.7",
+    "keytar": "^7.7.0",
+    "mv": "2.1.1",
+    "ncp": "~2.0.0",
+    "npm": "^6.14.9",
+    "open": "7.3.0",
+    "q": "~1.5.1",
+    "read": "~1.0.7",
+    "request": "^2.88.2",
+    "rimraf": "^3.0.2",
+    "season": "^6.0.2",
+    "semver": "^7.3.4",
+    "tar": "^6.0.5",
+    "temp": "^0.9.4",
+    "underscore-plus": "1.x",
+    "wordwrap": "1.0.0",
+    "wrench": "~1.5.1",
+    "yargs": "^3.32.0"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.12.7",
+    "coffeelint": "<2.0",
+    "express": "^4.17.1",
+    "jasmine-focused": ">=1.0.7 <2.0",
+    "node-gyp": "^5.1.1",
+    "shx": "^0.3.3"
+  }
+}
