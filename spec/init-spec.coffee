@@ -103,6 +103,7 @@ describe "apm init", ->
           prefix: 'att'
         }
         expect(CSON.readFileSync(path.join(packagePath, 'settings', 'fake-package.cson'))['.source.r']['editor']).toEqual {
+          decreaseIndentPattern: '^\\s*\\}'
           foldEndPattern: '(^\\s*\\)|^\\s*\\})'
           commentStart: '# '
         }

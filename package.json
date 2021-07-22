@@ -24,7 +24,8 @@
     "build": "npm run clean:lib && npm run coffee",
     "prepare": "npm run build",
     "postinstall": "node script/postinstall.js",
-    "test": "npm run check-version && npm run lint && jasmine-focused --captureExceptions --coffee spec"
+    "get.fixtures": "node ./script/get-fixtures.js && shx cp -r ./spec/fixtures/r.tmbundle-patch/Snippets/ ./spec/fixtures/r.tmbundle/",
+    "test": "npm run check-version && npm run lint && npm run get.fixtures && jasmine-focused --captureExceptions --coffee spec/init-spec.coffee"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",
@@ -58,7 +59,9 @@
     "coffee-script": "^1.12.7",
     "coffeelint": "<2.0",
     "express": "^4.17.1",
+    "gitly": "^2.1.2",
     "jasmine-focused": ">=1.0.7 <2.0",
+    "node-downloader-helper": "^1.0.18",
     "node-gyp": "^5.1.1",
     "shx": "^0.3.3"
   }
