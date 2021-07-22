@@ -1,11 +1,23 @@
-/node_modules/
-/bin/node*
-/lib/
+# OS metadata
 .DS_Store
-npm-debug.log
-*~
-*.pyc
+Thumbs.db
 
+# Node
+node_modules
+npm-debug.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Build directories
+*.pyc
+/bin/node*
+dist
+stats.html
+native-module/build
+lib
+
+# Downloaded spec
 spec/fixtures/node-v10.20.1.tar.gz
 spec/fixtures/node.lib
 spec/fixtures/node_x64.lib
