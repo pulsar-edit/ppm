@@ -69,8 +69,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # - name: Format ✨
-      #   run: npm run test.format
+      - name: Format ✨
+        run: npm run test.format
 
       - name: Lint ✨
         run: npm run test.lint
