@@ -11,8 +11,6 @@ fs = require './fs'
 
 module.exports =
 class Clean extends Command
-  @commandNames: ['clean', 'prune']
-
   constructor: ->
     super()
     @atomNpmPath = require.resolve('npm/bin/npm-cli')

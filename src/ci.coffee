@@ -9,8 +9,6 @@ Command = require './command'
 
 module.exports =
 class Ci extends Command
-  @commandNames: ['ci']
-
   constructor: ->
     super()
     @atomDirectory = config.getAtomDirectory()

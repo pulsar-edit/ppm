@@ -18,8 +18,6 @@ git = require './git'
 
 module.exports =
 class Upgrade extends Command
-  @commandNames: ['upgrade', 'outdated', 'update']
-
   constructor: ->
     super()
     @atomDirectory = config.getAtomDirectory()

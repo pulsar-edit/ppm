@@ -14,8 +14,6 @@ request = require './request'
 
 module.exports =
 class Develop extends Command
-  @commandNames: ['dev', 'develop']
-
   constructor: ->
     super()
     @atomDirectory = config.getAtomDirectory()

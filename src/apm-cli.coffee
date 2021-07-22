@@ -26,41 +26,84 @@ setupTempDirectory = ->
 
 setupTempDirectory()
 
-commandClasses = [
-  require './ci'
-  require './clean'
-  require './config'
-  require './dedupe'
-  require './develop'
-  require './disable'
-  require './docs'
-  require './enable'
-  require './featured'
-  require './init'
-  require './install'
-  require './links'
-  require './link'
-  require './list'
-  require './login'
-  require './publish'
-  require './rebuild'
-  require './rebuild-module-cache'
-  require './search'
-  require './star'
-  require './stars'
-  require './test'
-  require './uninstall'
-  require './unlink'
-  require './unpublish'
-  require './unstar'
-  require './upgrade'
-  require './view'
-]
+# TODO make loading lazy
+ciClass = require './ci'
+cleanClass = require './clean'
+configClass = require './config'
+dedupClass  = require './dedupe'
+developClass  = require './develop'
+disableClass  = require './disable'
+docsClass  = require './docs'
+enableClass  = require './enable'
+featuredClass  = require './featured'
+initClass  = require './init'
+installClass  = require './install'
+linksClass  = require './links'
+linkClass  = require './link'
+listClass  = require './list'
+loginClass  = require './login'
+publishClass  = require './publish'
+rebuildClass  = require './rebuild'
+rebuildModuleCacheClass  = require './rebuild-module-cache'
+searchClass  = require './search'
+starClass  = require './star'
+starsClass  = require './stars'
+testClass  = require './test'
+uninstallClass  = require './uninstall'
+unlinkClass  = require './unlink'
+unpublishClass  = require './unpublish'
+unstarClass  = require './unstar'
+upgradeClass  = require './upgrade'
+viewClass  = require './view'
 
-commands = {}
-for commandClass in commandClasses
-  for name in commandClass.commandNames ? []
-    commands[name] = commandClass
+commands = {
+  'ci': ciClass,
+  'clean': cleanClass,
+  'prune': cleanClass,
+  'config': configClass,
+  'dedupe': dedupClass,
+  'dev': developClass,
+  'develop': developClass,
+  'disable': disableClass,
+  'docs': docsClass,
+  'home': docsClass,
+  'open': docsClass,
+  'enable': enableClass
+  'featured': featuredClass
+  'init': initClass,
+  'install': installClass,
+  'i': installClass,
+  'link': linkClass,
+  'ln': linkClass
+  'linked': linksClass,
+  'links': linksClass,
+  'lns': linksClass,
+  'list': listClass,
+  'ls': listClass,
+  'login': loginClass,
+  'publish': publishClass,
+  'rebuild-module-cache': rebuildModuleCacheClass,
+  'rebuild': rebuildClass,
+  'search': searchClass,
+  'star': starClass,
+  'stars': starsClass,
+  'starred': starsClass
+  'test': testClass
+  'deinstall': uninstallClass,
+  'delete': uninstallClass,
+  'erase': uninstallClass,
+  'remove': uninstallClass,
+  'rm': uninstallClass,
+  'uninstall': uninstallClass,
+  'unlink': unlinkClass,
+  'unpublish': unpublishClass,
+  'unstar': unstarClass,
+  'upgrade': upgradeClass,
+  'outdated': upgradeClass,
+  'update': upgradeClass,
+  'view': viewClass,
+  'show': viewClass,
+}
 
 parseOptions = (args=[]) ->
   options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()))

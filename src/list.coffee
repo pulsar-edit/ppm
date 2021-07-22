@@ -12,8 +12,6 @@ tree = require './tree'
 
 module.exports =
 class List extends Command
-  @commandNames: ['list', 'ls']
-
   constructor: ->
     super()
     @userPackagesDirectory = path.join(config.getAtomDirectory(), 'packages')

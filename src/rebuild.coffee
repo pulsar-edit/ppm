@@ -10,8 +10,6 @@ Install = require './install'
 
 module.exports =
 class Rebuild extends Command
-  @commandNames: ['rebuild']
-
   constructor: ->
     super()
     @atomDirectory = config.getAtomDirectory()

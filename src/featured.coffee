@@ -8,8 +8,6 @@ tree = require './tree'
 
 module.exports =
 class Featured extends Command
-  @commandNames: ['featured']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

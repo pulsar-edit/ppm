@@ -10,8 +10,6 @@ fs = require './fs'
 
 module.exports =
 class Dedupe extends Command
-  @commandNames: ['dedupe']
-
   constructor: ->
     super()
     @atomDirectory = config.getAtomDirectory()

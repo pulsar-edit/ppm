@@ -8,8 +8,6 @@ Command = require './command'
 
 module.exports =
 class Enable extends Command
-  @commandNames: ['enable']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
