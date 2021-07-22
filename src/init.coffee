@@ -7,8 +7,6 @@ fs = require './fs'
 
 module.exports =
 class Init extends Command
-  @commandNames: ['init']
-
   supportedSyntaxes: ['coffeescript', 'javascript']
 
   parseOptions: (argv) ->

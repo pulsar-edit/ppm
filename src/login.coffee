@@ -16,8 +16,6 @@ class Login extends Command
       else
         callback(null, token)
 
-  @commandNames: ['login']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 

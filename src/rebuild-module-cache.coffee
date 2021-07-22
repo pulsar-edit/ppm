@@ -7,8 +7,6 @@ fs = require './fs'
 
 module.exports =
 class RebuildModuleCache extends Command
-  @commandNames: ['rebuild-module-cache']
-
   constructor: ->
     super()
     @atomPackagesDirectory = path.join(config.getAtomDirectory(), 'packages')

@@ -9,8 +9,6 @@ fs = require './fs'
 
 module.exports =
 class Link extends Command
-  @commandNames: ['link', 'ln']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

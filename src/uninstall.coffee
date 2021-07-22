@@ -12,8 +12,6 @@ request = require './request'
 
 module.exports =
 class Uninstall extends Command
-  @commandNames: ['deinstall', 'delete', 'erase', 'remove', 'rm', 'uninstall']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

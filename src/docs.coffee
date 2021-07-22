@@ -6,8 +6,6 @@ config = require './apm'
 
 module.exports =
 class Docs extends View
-  @commandNames: ['docs', 'home', 'open']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

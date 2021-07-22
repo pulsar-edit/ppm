@@ -19,8 +19,6 @@ request = require './request'
 
 module.exports =
 class Install extends Command
-  @commandNames: ['install', 'i']
-
   constructor: ->
     super()
     @atomDirectory = config.getAtomDirectory()

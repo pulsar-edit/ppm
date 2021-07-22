@@ -14,8 +14,6 @@ request = require './request'
 
 module.exports =
 class Star extends Command
-  @commandNames: ['star']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

@@ -10,8 +10,6 @@ tree = require './tree'
 
 module.exports =
 class Stars extends Command
-  @commandNames: ['stars', 'starred']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

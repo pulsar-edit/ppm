@@ -9,8 +9,6 @@ fs = require './fs'
 
 module.exports =
 class Unlink extends Command
-  @commandNames: ['unlink']
-
   constructor: ->
     super()
     @devPackagesPath = path.join(config.getAtomDirectory(), 'dev', 'packages')

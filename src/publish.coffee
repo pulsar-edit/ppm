@@ -14,8 +14,6 @@ request = require './request'
 
 module.exports =
 class Publish extends Command
-  @commandNames: ['publish']
-
   constructor: ->
     super()
     @userConfigPath = config.getUserConfigPath()

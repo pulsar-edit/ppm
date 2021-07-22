@@ -8,8 +8,6 @@ request = require './request'
 
 module.exports =
 class Unstar extends Command
-  @commandNames: ['unstar']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

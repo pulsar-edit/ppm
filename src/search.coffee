@@ -9,8 +9,6 @@ tree = require './tree'
 
 module.exports =
 class Search extends Command
-  @commandNames: ['search']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """

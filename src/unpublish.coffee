@@ -11,8 +11,6 @@ request = require './request'
 
 module.exports =
 class Unpublish extends Command
-  @commandNames: ['unpublish']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 

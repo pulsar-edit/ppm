@@ -6,8 +6,6 @@ Command = require './command'
 
 module.exports =
 class Config extends Command
-  @commandNames: ['config']
-
   constructor: ->
     super()
     atomDirectory = apm.getAtomDirectory()

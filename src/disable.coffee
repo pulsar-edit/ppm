@@ -9,8 +9,6 @@ List = require './list'
 
 module.exports =
 class Disable extends Command
-  @commandNames: ['disable']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
