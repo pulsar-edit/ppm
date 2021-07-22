@@ -15,11 +15,14 @@
     "apm": "bin/apm"
   },
   "scripts": {
+    "format": "prettier --write .",
+    "test.format": "prettier . --check",
+    "lint": "coffeelint src spec && eslint . --fix",
+    "test.lint": "eslint .",
     "check-version": "node script/check-version.js",
     "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean:lib": "shx rm -rf lib && shx mkdir -p lib",
     "clean": "npm run clean:lib && npm run clean:bin",
-    "lint": "coffeelint src spec",
     "coffee": "coffee --compile --output lib src",
     "build": "npm run clean:lib && npm run coffee",
     "prepare": "npm run build",
@@ -58,6 +61,7 @@
   "devDependencies": {
     "coffee-script": "^1.12.7",
     "coffeelint": "<2.0",
+    "eslint-config-atomic": "^1.16.2",
     "express": "^4.17.1",
     "gitly": "^2.1.2",
     "jasmine-focused": ">=1.0.7 <2.0",
