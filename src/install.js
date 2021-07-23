@@ -419,7 +419,7 @@ Run apm -v after installing Git to see what version has been detected.\
     options = _.extend({}, options, { installGlobally: false })
     const commands = []
     const object = this.getPackageDependencies()
-    for (let name in object) {
+    for (const name in object) {
       const version = object[name]
       ;((name, version) => {
         return commands.push((next) => {
@@ -462,7 +462,7 @@ Run apm -v after installing Git to see what version has been detected.\
       // normalized repo-local package path entry in the `dependencies` section of
       // `package.json`.  Versioned `packageDependencies` are always returned.
       const filteredPackages = {}
-      for (let packageName in packageDependencies) {
+      for (const packageName in packageDependencies) {
         const packageSpec = packageDependencies[packageName]
         const dependencyPath = this.getRepoLocalPackagePath(dependencies[packageName])
         const packageDependencyPath = this.getRepoLocalPackagePath(packageSpec)
@@ -593,7 +593,7 @@ Run apm -v after installing Git to see what version has been detected.\
 
     let latestVersion = null
     const object = pack.versions != null ? pack.versions : {}
-    for (let version in object) {
+    for (const version in object) {
       const metadata = object[version]
       if (!semver.valid(version)) {
         continue

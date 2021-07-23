@@ -55,7 +55,7 @@ available updates.\
 
   getInstalledPackages(options) {
     let packages = []
-    for (let name of fs.list(this.atomPackagesDirectory)) {
+    for (const name of fs.list(this.atomPackagesDirectory)) {
       var pack
       if ((pack = this.getIntalledPackage(name))) {
         packages.push(pack)
@@ -162,7 +162,7 @@ available updates.\
       git.addGitToEnv(process.env)
       return this.spawn(command, args, { cwd: repoPath }, function (code, stderr = "", stdout = "") {
         if (code !== 0) {
-          return callback(new Error("Exit code: " + code + " - " + stderr))
+          return callback(new Error(`Exit code: ${code} - ${stderr}`))
         }
         const repo = Git.open(repoPath)
         const sha = repo.getReferenceTarget(repo.getUpstreamBranch("refs/heads/master"))
@@ -210,7 +210,7 @@ available updates.\
   installUpdates(updates, callback) {
     const installCommands = []
     const { verbose } = this
-    for (let { pack, latestVersion } of updates) {
+    for (const { pack, latestVersion } of updates) {
       ;((pack, latestVersion) =>
         installCommands.push(function (callback) {
           let commandArgs
@@ -268,7 +268,7 @@ available updates.\
         })
         console.log(JSON.stringify(packagesWithLatestVersionOrSha))
       } else {
-        console.log("Package Updates Available".cyan + ` (${updates.length})`)
+        console.log(`${"Package Updates Available".cyan} (${updates.length})`)
         tree(updates, function ({ pack, latestVersion, sha }) {
           let { name, apmInstallSource, version } = pack
           name = name.yellow

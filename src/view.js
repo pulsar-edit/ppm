@@ -51,7 +51,7 @@ View information about a package/theme in the atom.io registry.\
 
       let latestVersion = null
       const object = pack.versions != null ? pack.versions : {}
-      for (let version in object) {
+      for (const version in object) {
         const metadata = object[version]
         if (!semver.valid(version)) {
           continue

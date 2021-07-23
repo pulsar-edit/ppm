@@ -58,7 +58,7 @@ This command is experimental.\
       dedupeArgs.push("--quiet")
     }
 
-    for (let packageName of options.argv._) {
+    for (const packageName of options.argv._) {
       dedupeArgs.push(packageName)
     }
 

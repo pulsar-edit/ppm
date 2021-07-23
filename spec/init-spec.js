@@ -113,13 +113,13 @@ describe("apm init", function () {
           "https://github.com/somebody/fake-package"
         )
         expect(
-          CSON.readFileSync(path.join(packagePath, "snippets", "fake-package.cson"))[".source.rd.tm"]["Attach"]
+          CSON.readFileSync(path.join(packagePath, "snippets", "fake-package.cson"))[".source.rd.tm"].Attach
         ).toEqual({
           body: "attach($1) *outlet",
           prefix: "att",
         })
         return expect(
-          CSON.readFileSync(path.join(packagePath, "settings", "fake-package.cson"))[".source.r"]["editor"]
+          CSON.readFileSync(path.join(packagePath, "settings", "fake-package.cson"))[".source.r"].editor
         ).toEqual({
           decreaseIndentPattern: "^\\s*\\}",
           foldEndPattern: "(^\\s*\\)|^\\s*\\})",

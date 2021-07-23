@@ -24,7 +24,7 @@ export default class TextMateTheme {
       settings = []
     }
 
-    for (let setting of settings) {
+    for (const setting of settings) {
       const { scope, name } = setting.settings
       if (scope || name) {
         continue
@@ -60,9 +60,9 @@ The theme being converted must contain a settings array with all of the followin
 
   getStylesheet() {
     const lines = ['@import "syntax-variables";', ""]
-    for (let { selector, properties } of this.getRulesets()) {
+    for (const { selector, properties } of this.getRulesets()) {
       lines.push(`${selector} {`)
-      for (let name in properties) {
+      for (const name in properties) {
         const value = properties[name]
         lines.push(`  ${name}: ${value};`)
       }
@@ -81,7 +81,7 @@ The theme being converted must contain a settings array with all of the followin
 
   buildSyntaxVariables(settings) {
     this.syntaxVariables = SyntaxVariablesTemplate
-    for (let key in settings) {
+    for (const key in settings) {
       const value = settings[key]
       const replaceRegex = new RegExp(`\\{\\{${key}\\}\\}`, "g")
       this.syntaxVariables = this.syntaxVariables.replace(replaceRegex, this.translateColor(value))
@@ -168,7 +168,7 @@ atom-text-editor.is-focused .line.cursor-line`,
   buildScopeSelectorRulesets(scopeSelectorSettings) {
     return (() => {
       const result = []
-      for (let { name, scope, settings } of scopeSelectorSettings) {
+      for (const { name, scope, settings } of scopeSelectorSettings) {
         if (!scope) {
           continue
         }
@@ -205,7 +205,7 @@ atom-text-editor.is-focused .line.cursor-line`,
     }
 
     if (foreground) {
-      properties["color"] = this.translateColor(foreground)
+      properties.color = this.translateColor(foreground)
     }
     if (background) {
       properties["background-color"] = this.translateColor(background)
