@@ -10,7 +10,7 @@ import CSON from "season"
 import yargs from "yargs"
 import _ from "underscore-plus"
 import Command from "./command"
-import config from "./apm"
+import * as config from "./apm"
 import fs from "./fs"
 
 export default class Clean extends Command {

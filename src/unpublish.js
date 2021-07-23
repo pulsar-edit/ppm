@@ -12,7 +12,7 @@ import yargs from "yargs"
 
 import * as auth from "./auth"
 import Command from "./command"
-import config from "./apm"
+import * as config from "./apm"
 import fs from "./fs"
 import request from "./request"
 

@@ -11,7 +11,7 @@ import CSON from "season"
 import yargs from "yargs"
 import Command from "./command"
 import fs from "./fs"
-import config from "./apm"
+import * as config from "./apm"
 import tree from "./tree"
 import { getRepository } from "./packages"
 

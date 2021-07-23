@@ -7,7 +7,7 @@
  */
 import async from "async"
 import yargs from "yargs"
-import config from "./apm"
+import * as config from "./apm"
 import Command from "./command"
 import Login from "./login"
 import request from "./request"

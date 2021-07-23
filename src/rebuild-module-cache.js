@@ -8,7 +8,7 @@ import path from "path"
 import async from "async"
 import yargs from "yargs"
 import Command from "./command"
-import config from "./apm"
+import * as config from "./apm"
 import fs from "./fs"
 
 export default class RebuildModuleCache extends Command {

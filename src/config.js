@@ -6,7 +6,7 @@
 import path from "path"
 import _ from "underscore-plus"
 import yargs from "yargs"
-import apm from "./apm"
+import * as apm from "./apm"
 import Command from "./command"
 
 export default class Config extends Command {

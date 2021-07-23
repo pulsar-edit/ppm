@@ -17,7 +17,7 @@ import wordwrap from "wordwrap"
 // Enable "require" scripts in asar archives
 import "asar-require"
 
-import config from "./apm"
+import * as config from "./apm"
 import fs from "./fs"
 import * as git from "./git"
 

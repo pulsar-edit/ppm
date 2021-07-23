@@ -9,7 +9,7 @@ import _ from "underscore-plus"
 import path from "path"
 import CSON from "season"
 import yargs from "yargs"
-import config from "./apm"
+import * as config from "./apm"
 import Command from "./command"
 
 export default class Enable extends Command {

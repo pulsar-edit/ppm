@@ -7,7 +7,7 @@
 import _ from "underscore-plus"
 import yargs from "yargs"
 import Command from "./command"
-import config from "./apm"
+import * as config from "./apm"
 import Install from "./install"
 import Login from "./login"
 import request from "./request"

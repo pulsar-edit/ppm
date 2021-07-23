@@ -7,7 +7,7 @@
 import path from "path"
 import _ from "underscore-plus"
 import yargs from "yargs"
-import config from "./apm"
+import * as config from "./apm"
 import Command from "./command"
 import fs from "./fs"
 import Install from "./install"

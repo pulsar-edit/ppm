@@ -11,7 +11,7 @@ import { spawn } from "child_process"
 import path from "path"
 import _ from "underscore-plus"
 import npm from "npm"
-import config from "./apm"
+import * as config from "./apm"
 import fs from "./fs"
 
 const addPortableGitToEnv = function (env) {

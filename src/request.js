@@ -7,7 +7,7 @@
  */
 import npm from "npm"
 import request from "request"
-import config from "./apm"
+import * as config from "./apm"
 
 const loadNpm = function (callback) {
   const npmOptions = {

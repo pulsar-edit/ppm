@@ -10,7 +10,7 @@ import child_process from "child_process"
 import path from "path"
 import _ from "underscore-plus"
 import semver from "semver"
-import config from "./apm"
+import * as config from "./apm"
 import git from "./git"
 
 export default class Command {

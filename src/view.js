@@ -10,7 +10,7 @@ import _ from "underscore-plus"
 import yargs from "yargs"
 import semver from "semver"
 import Command from "./command"
-import config from "./apm"
+import * as config from "./apm"
 import request from "./request"
 import tree from "./tree"
 
