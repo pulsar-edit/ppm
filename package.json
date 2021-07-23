@@ -27,7 +27,7 @@
     "copy": "shx cp -r src lib",
     "build": "npm run clean.lib && npm run copy && npm run babel",
     "prepare": "npm run build",
-    "postinstall": "node ./script/download-node.js && node script/postinstall.js",
+    "postinstall": "node ./script/download-node.js && shx chmod +x ./bin/npm && shx chmod +x ./bin/apm",
     "get.fixtures": "node ./script/get-fixtures.js && shx cp -r ./spec/fixtures/r.tmbundle-patch/Snippets/ ./spec/fixtures/r.tmbundle/",
     "test": "npm run check-version && npm run build.test && jasmine-focused --captureExceptions dist-spec",
     "build.test": "npm run get.fixtures && shx rm -rf dist-spec && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec"
