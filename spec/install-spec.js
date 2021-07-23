@@ -19,7 +19,6 @@ describe("apm install", function () {
 
   beforeEach(function () {
     spyOnToken()
-    spyOnConsole()
 
     atomHome = temp.mkdirSync("apm-home-dir-")
     process.env.ATOM_HOME = atomHome
@@ -119,6 +118,9 @@ describe("apm install", function () {
     describe("when an invalid URL is specified", () =>
       it("logs an error and exits", function () {
         const callback = jasmine.createSpy("callback")
+
+        spyOnConsole()
+
         apm.run(["install", "not-a-module"], callback)
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
@@ -390,6 +392,9 @@ describe("apm install", function () {
         CSON.writeFileSync(path.join(resourcePath, "package.json"), { packageDependencies: { "test-module": "1.0" } })
 
         const callback = jasmine.createSpy("callback")
+
+        spyOnConsole()
+
         apm.run(["install", "test-module"], callback)
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
@@ -561,6 +566,8 @@ describe("apm install", function () {
         const gitRepo = path.join(__dirname, "fixtures", "test-git-repo.git")
         cloneUrl = `file://${gitRepo}`
 
+        spyOnConsole(false)
+
         apm.run(["install", cloneUrl, "--json"], callback)
 
         waitsFor(10000, () => callback.callCount === 1)
@@ -586,6 +593,9 @@ describe("apm install", function () {
     describe("when installing a registred package and --json is specified", function () {
       beforeEach(function () {
         const callback = jasmine.createSpy("callback")
+
+        spyOnConsole(false)
+
         apm.run(["install", "test-module", "test-module2", "--json"], callback)
 
         return waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
