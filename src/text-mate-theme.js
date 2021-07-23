@@ -193,13 +193,13 @@ atom-text-editor.is-focused .line.cursor-line`,
 
     if (fontStyle) {
       const fontStyles = fontStyle.split(/\s+/)
-      if (_.contains(fontStyles, "bold")) {
+      if (fontStyles.includes("bold")) {
         properties["font-weight"] = "bold"
       }
-      if (_.contains(fontStyles, "italic")) {
+      if (fontStyles.includes("italic")) {
         properties["font-style"] = "italic"
       }
-      if (_.contains(fontStyles, "underline")) {
+      if (fontStyles.includes("underline")) {
         properties["text-decoration"] = "underline"
       }
     }
