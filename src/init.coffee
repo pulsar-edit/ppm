@@ -5,10 +5,10 @@ yargs = require 'yargs'
 Command = require './command'
 fs = require './fs'
 
+supportedSyntaxes = ['coffeescript', 'javascript']
+
 module.exports =
 class Init extends Command
-  supportedSyntaxes: ['coffeescript', 'javascript']
-
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
@@ -46,9 +46,9 @@ class Init extends Command
         @convertPackage(options.argv.convert, options.argv.package, callback)
       else
         packagePath = path.resolve(options.argv.package)
-        syntax = options.argv.syntax or @supportedSyntaxes[0]
-        if syntax not in @supportedSyntaxes
-          return callback("You must specify one of #{@supportedSyntaxes.join(', ')} after the --syntax argument")
+        syntax = options.argv.syntax or supportedSyntaxes[0]
+        if syntax not in supportedSyntaxes
+          return callback("You must specify one of #{supportedSyntaxes.join(', ')} after the --syntax argument")
         templatePath = @getTemplatePath(options.argv, "package-#{syntax}")
         @generateFromTemplate(packagePath, templatePath)
         callback()
