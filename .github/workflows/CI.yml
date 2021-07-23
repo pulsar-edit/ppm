@@ -41,7 +41,7 @@ jobs:
             D:\.pnpm-store
             ./bin/node
             ./bin/node.exe
-          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('BUNDLED_NODE_VERSION') }}"
+          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
 
       - name: Install Node
         uses: actions/setup-node@v2
@@ -74,7 +74,9 @@ jobs:
         uses: wagoid/commitlint-github-action@v2
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install --ignore-scripts # native modules are not used here
+          npm run prepare
 
       - name: Format ✨
         run: npm run test.format
