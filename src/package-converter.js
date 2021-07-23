@@ -16,7 +16,7 @@ import { ScopeSelector } from "first-mate"
 import tar from "tar"
 import temp from "temp"
 import fs from "./fs"
-import request from "./request"
+import * as request from "./request"
 
 // Convert a TextMate bundle to an Atom package
 export default class PackageConverter {

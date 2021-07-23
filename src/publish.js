@@ -15,7 +15,7 @@ import * as config from "./apm"
 import Command from "./command"
 import Login from "./login"
 import * as Packages from "./packages"
-import request from "./request"
+import * as request from "./request"
 
 export default class Publish extends Command {
   constructor() {

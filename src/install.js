@@ -20,7 +20,7 @@ import * as config from "./apm"
 import Command from "./command"
 import fs from "./fs"
 import RebuildModuleCache from "./rebuild-module-cache"
-import request from "./request"
+import * as request from "./request"
 import { isDeprecatedPackage } from "./deprecated-packages"
 
 export default class Install extends Command {

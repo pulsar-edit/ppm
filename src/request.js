@@ -39,52 +39,50 @@ const configureRequest = (requestOptions, callback) =>
     return callback()
   })
 
-export default {
-  get(requestOptions, callback) {
-    return configureRequest(requestOptions, function () {
-      let retryCount = requestOptions.retries != null ? requestOptions.retries : 0
-      let requestsMade = 0
-      var tryRequest = function () {
-        requestsMade++
-        return request.get(requestOptions, function (error, response, body) {
-          if (retryCount > 0 && ["ETIMEDOUT", "ECONNRESET"].includes(error?.code)) {
-            retryCount--
-            return tryRequest()
-          } else {
-            if (error?.message && requestsMade > 1) {
-              error.message += ` (${requestsMade} attempts)`
-            }
-
-            return callback(error, response, body)
+export function get(requestOptions, callback) {
+  return configureRequest(requestOptions, function () {
+    let retryCount = requestOptions.retries != null ? requestOptions.retries : 0
+    let requestsMade = 0
+    var tryRequest = function () {
+      requestsMade++
+      return request.get(requestOptions, function (error, response, body) {
+        if (retryCount > 0 && ["ETIMEDOUT", "ECONNRESET"].includes(error?.code)) {
+          retryCount--
+          return tryRequest()
+        } else {
+          if (error?.message && requestsMade > 1) {
+            error.message += ` (${requestsMade} attempts)`
           }
-        })
-      }
-      return tryRequest()
-    })
-  },
 
-  del(requestOptions, callback) {
-    return configureRequest(requestOptions, () => request.del(requestOptions, callback))
-  },
-
-  post(requestOptions, callback) {
-    return configureRequest(requestOptions, () => request.post(requestOptions, callback))
-  },
-
-  createReadStream(requestOptions, callback) {
-    return configureRequest(requestOptions, () => callback(request.get(requestOptions)))
-  },
-
-  getErrorMessage(response, body) {
-    if (response?.statusCode === 503) {
-      return "atom.io is temporarily unavailable, please try again later."
-    } else {
-      let left
-      return (left = body?.message != null ? body?.message : body?.error) != null ? left : body
+          return callback(error, response, body)
+        }
+      })
     }
-  },
+    return tryRequest()
+  })
+}
 
-  debug(debug) {
-    return (request.debug = debug)
-  },
+export function del(requestOptions, callback) {
+  return configureRequest(requestOptions, () => request.del(requestOptions, callback))
+}
+
+export function post(requestOptions, callback) {
+  return configureRequest(requestOptions, () => request.post(requestOptions, callback))
+}
+
+export function createReadStream(requestOptions, callback) {
+  return configureRequest(requestOptions, () => callback(request.get(requestOptions)))
+}
+
+export function getErrorMessage(response, body) {
+  if (response?.statusCode === 503) {
+    return "atom.io is temporarily unavailable, please try again later."
+  } else {
+    let left
+    return (left = body?.message != null ? body?.message : body?.error) != null ? left : body
+  }
+}
+
+export function debug(debug) {
+  return (request.debug = debug)
 }

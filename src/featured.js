@@ -9,7 +9,7 @@ import _ from "underscore-plus"
 import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
-import request from "./request"
+import * as request from "./request"
 import { tree } from "./tree"
 
 export default class Featured extends Command {

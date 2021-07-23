@@ -15,7 +15,7 @@ import Command from "./command"
 import fs from "./fs"
 import Login from "./login"
 import * as Packages from "./packages"
-import request from "./request"
+import * as request from "./request"
 
 export default class Star extends Command {
   parseOptions(argv) {

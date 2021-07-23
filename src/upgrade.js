@@ -17,7 +17,7 @@ import * as config from "./apm"
 import fs from "./fs"
 import Install from "./install"
 import * as Packages from "./packages"
-import request from "./request"
+import * as request from "./request"
 import { tree } from "./tree"
 import * as git from "./git"
 

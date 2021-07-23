@@ -7,7 +7,7 @@
 import path from "path"
 import url from "url"
 import fs from "./fs"
-import request from "./request"
+import * as request from "./request"
 import TextMateTheme from "./text-mate-theme"
 
 // Convert a TextMate theme to an Atom theme

@@ -10,7 +10,7 @@ import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
 import Login from "./login"
-import request from "./request"
+import * as request from "./request"
 
 export default class Unstar extends Command {
   parseOptions(argv) {

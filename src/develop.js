@@ -16,7 +16,7 @@ import Command from "./command"
 import Install from "./install"
 import * as git from "./git"
 import Link from "./link"
-import request from "./request"
+import * as request from "./request"
 
 export default class Develop extends Command {
   constructor() {
