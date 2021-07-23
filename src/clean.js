@@ -4,14 +4,9 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import path from "path"
-import async from "async"
-import CSON from "season"
 import yargs from "yargs"
 import _ from "underscore-plus"
 import Command from "./command"
-import * as config from "./apm"
-import fs from "./fs"
 
 export default class Clean extends Command {
   constructor() {

@@ -10,7 +10,6 @@ import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
 import fs from "./fs"
-import Install from "./install"
 
 export default class Rebuild extends Command {
   constructor() {
