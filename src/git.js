@@ -29,7 +29,7 @@ const addPortableGitToEnv = function (env) {
     return
   }
 
-  for (let child of Array.from(children)) {
+  for (const child of Array.from(children)) {
     if (child.indexOf("PortableGit_") === 0) {
       const cmdPath = path.join(githubPath, child, "cmd")
       const binPath = path.join(githubPath, child, "bin")

@@ -39,7 +39,7 @@ List all of the symlinked atom packages in ~/.atom/packages and
 
   getSymlinks(directoryPath) {
     const symlinks = []
-    for (let directory of fs.list(directoryPath)) {
+    for (const directory of fs.list(directoryPath)) {
       const symlinkPath = path.join(directoryPath, directory)
       if (fs.isSymbolicLinkSync(symlinkPath)) {
         symlinks.push(symlinkPath)

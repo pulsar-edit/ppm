@@ -70,7 +70,7 @@ List all the installed packages and also the packages bundled with Atom.\
     if (options.argv.bare) {
       return (() => {
         const result = []
-        for (let pack of packages) {
+        for (const pack of packages) {
           let packageLine = pack.name
           if (pack.version != null && options.argv.versions) {
             packageLine += `@${pack.version}`
@@ -121,7 +121,7 @@ List all the installed packages and also the packages bundled with Atom.\
 
   listPackages(directoryPath, options) {
     const packages = []
-    for (let child of fs.list(directoryPath)) {
+    for (const child of fs.list(directoryPath)) {
       var manifestPath
       if (!fs.isDirectorySync(path.join(directoryPath, child))) {
         continue
@@ -202,7 +202,7 @@ List all the installed packages and also the packages bundled with Atom.\
       }
       let packages = (() => {
         const result = []
-        for (let packageName in _atomPackages) {
+        for (const packageName in _atomPackages) {
           ;({ metadata } = _atomPackages[packageName])
           result.push(metadata)
         }

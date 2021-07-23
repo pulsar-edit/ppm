@@ -93,7 +93,7 @@ export default class PackageConverter {
   convertSettings(settings) {
     if (settings.shellVariables) {
       const shellVariables = {}
-      for (let { name, value } of settings.shellVariables) {
+      for (const { name, value } of settings.shellVariables) {
         shellVariables[name] = value
       }
       settings.shellVariables = shellVariables
@@ -150,11 +150,11 @@ export default class PackageConverter {
 
     return (() => {
       const result = []
-      for (let child of fs.readdirSync(directoryPath)) {
+      for (const child of fs.readdirSync(directoryPath)) {
         const childPath = path.join(directoryPath, child)
 
         // Invalid characters taken from http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
-        let convertedFileName = child.replace(/[|?*<>:"\\\/]+/g, "-")
+        let convertedFileName = child.replace(/["*/:<>?\\|]+/g, "-")
         if (child === convertedFileName) {
           continue
         }
@@ -185,7 +185,7 @@ export default class PackageConverter {
 
     const snippetsBySelector = {}
     const destination = path.join(this.destinationPath, "snippets")
-    for (let child of fs.readdirSync(sourceSnippets)) {
+    for (const child of fs.readdirSync(sourceSnippets)) {
       var left, selector
       const snippet = (left = this.readFileSync(path.join(sourceSnippets, child))) != null ? left : {}
       let { scope, name, content, tabTrigger } = snippet
@@ -194,11 +194,11 @@ export default class PackageConverter {
       }
 
       // Replace things like '${TM_C_POINTER: *}' with ' *'
-      content = content.replace(/\$\{TM_[A-Z_]+:([^}]+)}/g, "$1")
+      content = content.replace(/\${TM_[A-Z_]+:([^}]+)}/g, "$1")
 
       // Replace things like '${1:${TM_FILENAME/(\\w+)*/(?1:$1:NSObject)/}}'
       // with '$1'
-      content = content.replace(/\$\{(\d)+:\s*\$\{TM_[^}]+\s*\}\s*\}/g, "$$1")
+      content = content.replace(/\${(\d)+:\s*\${TM_[^}]+\s*}\s*}/g, "$$1")
 
       // Unescape escaped dollar signs $
       content = content.replace(/\\\$/g, "$")
@@ -241,7 +241,7 @@ export default class PackageConverter {
 
     const preferencesBySelector = {}
     const destination = path.join(this.destinationPath, "settings")
-    for (let child of fs.readdirSync(sourcePreferences)) {
+    for (const child of fs.readdirSync(sourcePreferences)) {
       var left, properties
       const { scope, settings } = (left = this.readFileSync(path.join(sourcePreferences, child))) != null ? left : {}
       if (!scope || !settings) {
@@ -256,7 +256,7 @@ export default class PackageConverter {
           e.message = `In file ${e.fileName} at ${JSON.stringify(scope)}: ${e.message}`
           throw e
         }
-        for (let key in properties) {
+        for (const key in properties) {
           const value = properties[key]
           if (preferencesBySelector[selector] == null) {
             preferencesBySelector[selector] = {}
@@ -284,7 +284,7 @@ export default class PackageConverter {
     }
 
     const destination = path.join(this.destinationPath, "grammars")
-    for (let child of fs.readdirSync(sourceSyntaxes)) {
+    for (const child of fs.readdirSync(sourceSyntaxes)) {
       const childPath = path.join(sourceSyntaxes, child)
       if (fs.isFileSync(childPath)) {
         this.convertFile(childPath, destination)

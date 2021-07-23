@@ -143,7 +143,7 @@ on the option selected.\
 
     return (() => {
       const result = []
-      for (let childPath of fs.listRecursive(templatePath)) {
+      for (const childPath of fs.listRecursive(templatePath)) {
         const templateChildPath = path.resolve(templatePath, childPath)
         let relativePath = templateChildPath.replace(templatePath, "")
         relativePath = relativePath.replace(/^\//, "")
@@ -176,7 +176,7 @@ on the option selected.\
   }
 
   replacePackageNamePlaceholders(string, packageName) {
-    const placeholderRegex = /__(?:(package-name)|([pP]ackageName)|(package_name))__/g
+    const placeholderRegex = /__(?:(package-name)|([Pp]ackageName)|(package_name))__/g
     return (string = string.replace(placeholderRegex, (match, dash, camel, underscore) => {
       if (dash) {
         return this.dasherize(packageName)
@@ -209,7 +209,7 @@ on the option selected.\
     string = string[0].toLowerCase() + string.slice(1)
     return string.replace(/([A-Z])|(_)/g, function (m, letter, underscore) {
       if (letter) {
-        return "-" + letter.toLowerCase()
+        return `-${letter.toLowerCase()}`
       } else {
         return "-"
       }
@@ -224,7 +224,7 @@ on the option selected.\
     string = string[0].toLowerCase() + string.slice(1)
     return string.replace(/([A-Z])|(-)/g, function (m, letter, dash) {
       if (letter) {
-        return "_" + letter.toLowerCase()
+        return `_${letter.toLowerCase()}`
       } else {
         return "_"
       }

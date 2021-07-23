@@ -65,7 +65,7 @@ Run \`apm stars\` to see all your starred packages.\
   getInstalledPackageNames() {
     const installedPackages = []
     const userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
-    for (let child of fs.list(userPackagesDirectory)) {
+    for (const child of fs.list(userPackagesDirectory)) {
       var manifestPath
       if (!fs.isDirectorySync(path.join(userPackagesDirectory, child))) {
         continue

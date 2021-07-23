@@ -135,7 +135,7 @@ export function isWin32() {
 }
 
 export function x86ProgramFilesDirectory() {
-  return process.env["ProgramFiles(x86)"] || process.env["ProgramFiles"]
+  return process.env["ProgramFiles(x86)"] || process.env.ProgramFiles
 }
 
 export function getInstalledVisualStudioFlag() {
