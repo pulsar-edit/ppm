@@ -22,10 +22,7 @@ Performant Atom Package Manager
 
 The strategy I suggest is to:
 
-- decaffeinate each file using https://decaffeinate-project.org/
-- replace the old dependencies of the resulting code with modern replacements
-- replace npm things with pnpm
-
-https://github.com/atom-community/apm/tree/master/src
-
-In the end, we can think about publishing on the `npm` registry or using Github packages
+- [x] decaffeinate each file using https://decaffeinate-project.org/
+- [ ] replace the old dependencies of the resulting code with modern replacements
+- [ ] replace npm things with pnpm
+- [ ] In the end, we can think about publishing on the `npm` registry or using Github packages
