@@ -10,7 +10,7 @@ import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
 import request from "./request"
-import tree from "./tree"
+import { tree } from "./tree"
 import { isDeprecatedPackage } from "./deprecated-packages"
 
 export default class Search extends Command {

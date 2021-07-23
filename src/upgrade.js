@@ -18,7 +18,7 @@ import fs from "./fs"
 import Install from "./install"
 import * as Packages from "./packages"
 import request from "./request"
-import tree from "./tree"
+import { tree } from "./tree"
 import * as git from "./git"
 
 export default class Upgrade extends Command {

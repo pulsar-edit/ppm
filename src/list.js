@@ -12,7 +12,7 @@ import yargs from "yargs"
 import Command from "./command"
 import fs from "./fs"
 import * as config from "./apm"
-import tree from "./tree"
+import { tree } from "./tree"
 import { getRepository } from "./packages"
 
 export default class List extends Command {

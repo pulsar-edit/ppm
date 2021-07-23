@@ -7,7 +7,7 @@
  */
 import _ from "underscore-plus"
 
-export default function (items, options = {}, callback) {
+export function tree(items, options = {}, callback) {
   if (_.isFunction(options)) {
     callback = options
     options = {}

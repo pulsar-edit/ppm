@@ -8,7 +8,7 @@ import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
-import tree from "./tree"
+import { tree } from "./tree"
 
 export default class Links extends Command {
   constructor() {

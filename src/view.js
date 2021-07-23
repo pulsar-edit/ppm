@@ -12,7 +12,7 @@ import semver from "semver"
 import Command from "./command"
 import * as config from "./apm"
 import request from "./request"
-import tree from "./tree"
+import { tree } from "./tree"
 
 export default class View extends Command {
   parseOptions(argv) {

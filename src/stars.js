@@ -11,7 +11,7 @@ import * as config from "./apm"
 import Install from "./install"
 import Login from "./login"
 import request from "./request"
-import tree from "./tree"
+import { tree } from "./tree"
 
 export default class Stars extends Command {
   parseOptions(argv) {
