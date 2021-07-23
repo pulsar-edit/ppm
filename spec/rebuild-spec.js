@@ -18,7 +18,7 @@ describe("apm rebuild", function () {
 
   beforeEach(function () {
     spyOnToken()
-    silenceOutput()
+    spyOnConsole()
 
     const app = express()
     app.get("/node/v10.20.1/node-v10.20.1.tar.gz", (request, response) =>

@@ -14,7 +14,7 @@ describe("apm test", function () {
   let [specPath] = Array.from([])
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     const currentDir = temp.mkdirSync("apm-init-")

@@ -54,7 +54,7 @@ describe("apm list", function () {
   let [resourcePath, atomHome] = Array.from([])
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     resourcePath = temp.mkdirSync("apm-resource-path-")

@@ -14,7 +14,7 @@ describe("apm init", function () {
   let [packagePath, themePath, languagePath] = Array.from([])
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     const currentDir = temp.mkdirSync("apm-init-")

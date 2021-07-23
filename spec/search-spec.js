@@ -12,7 +12,7 @@ describe("apm search", function () {
   let server = null
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     const app = express()

@@ -8,7 +8,7 @@ const apm = require("../lib/apm-cli")
 describe("command help", function () {
   beforeEach(function () {
     spyOnToken()
-    return silenceOutput()
+    return spyOnConsole()
   })
 
   describe("apm help publish", () =>
