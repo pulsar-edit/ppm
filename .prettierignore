@@ -4,6 +4,7 @@ package-lock.json
 CHANGELOG.md
 dist/
 lib/
+dist-spec/
 stats.html
 templates/
 spec/fixtures/r.tmbundle/
