@@ -1,15 +1,10 @@
 {
-  "name": "@atom-ide-community/atom-package-manager",
-  "description": "Community build of the Atom package manager",
-  "version": "2.6.1-atomic.1.0",
+  "name": "papm",
+  "description": "Performant Atom Package Manager",
+  "version": "0.0.0",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/atom-ide-community/apm.git"
-  },
-  "bugs": {
-    "url": "https://github.com/atom-ide-community/apm/issues"
-  },
+  "author": "Amin Yahyaabadi",
+  "repository": "https://github.com/atom-community/papm",
   "main": "./lib/apm.js",
   "bin": {
     "apm": "bin/apm"
