@@ -281,7 +281,7 @@ export default {
       callbackCalled = true
       if (error != null) {
         let message
-        if (_.isString(error)) {
+        if (typeof error === "string") {
           message = error
         } else {
           message = error.message != null ? error.message : error
