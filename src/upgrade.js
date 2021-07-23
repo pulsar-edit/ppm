@@ -193,7 +193,7 @@ available updates.\
         return callback(error)
       }
 
-      updates = _.filter(updates, (update) => update.latestVersion != null || update.sha != null)
+      updates = updates.filter((update) => update.latestVersion != null || update.sha != null)
       updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name))
 
       return callback(null, updates)
