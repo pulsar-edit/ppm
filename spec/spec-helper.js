@@ -5,7 +5,7 @@
  */
 const auth = require("../lib/auth")
 
-global.silenceOutput = function (callThrough = false) {
+global.spyOnConsole = function (callThrough = true) {
   spyOn(console, "log")
   spyOn(console, "error")
   spyOn(process.stdout, "write")

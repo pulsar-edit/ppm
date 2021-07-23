@@ -15,7 +15,7 @@ describe("apm unpublish", function () {
   let [server, unpublishPackageCallback, unpublishVersionCallback] = Array.from([])
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     unpublishPackageCallback = jasmine.createSpy("unpublishPackageCallback")

@@ -15,7 +15,7 @@ describe("apm stars", function () {
   let [atomHome, server] = Array.from([])
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     const app = express()

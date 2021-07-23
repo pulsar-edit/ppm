@@ -25,7 +25,7 @@ const createPackage = function (packageName, includeDev = false) {
 
 describe("apm uninstall", function () {
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
     return (process.env.ATOM_API_URL = "http://localhost:5432")
   })

@@ -16,7 +16,7 @@ describe("apm clean", function () {
   let [moduleDirectory, server] = Array.from([])
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     const app = express()

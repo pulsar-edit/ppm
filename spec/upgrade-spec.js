@@ -24,7 +24,7 @@ describe("apm upgrade", function () {
 
   beforeEach(function () {
     spyOnToken()
-    silenceOutput()
+    spyOnConsole()
 
     atomHome = temp.mkdirSync("apm-home-dir-")
     process.env.ATOM_HOME = atomHome

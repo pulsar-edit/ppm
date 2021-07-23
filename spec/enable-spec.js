@@ -12,7 +12,7 @@ const apm = require("../lib/apm-cli")
 
 describe("apm enable", function () {
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     return spyOnToken()
   })
 

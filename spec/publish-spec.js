@@ -16,7 +16,7 @@ describe("apm publish", function () {
 
   beforeEach(function () {
     spyOnToken()
-    silenceOutput()
+    spyOnConsole()
 
     const app = express()
     server = http.createServer(app)

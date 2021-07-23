@@ -10,7 +10,7 @@ const apm = require("../lib/apm-cli")
 
 describe("apm command line interface", function () {
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     return spyOnToken()
   })
 

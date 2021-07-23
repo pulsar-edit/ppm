@@ -13,7 +13,7 @@ describe("apm develop", function () {
   let [repoPath, linkedRepoPath] = Array.from([])
 
   beforeEach(function () {
-    silenceOutput()
+    spyOnConsole()
     spyOnToken()
 
     const atomHome = temp.mkdirSync("apm-home-dir-")
