@@ -2,10 +2,8 @@
 
 Performant Atom Package Manager
 
-![Build Status (Github Actions)](https://github.com/atom-community/papm/workflows/CI/badge.svg)
+![Github Actions](https://github.com/atom-community/papm/workflows/CI/badge.svg)
 [![Dependency Status](https://david-dm.org/atom-community/papm.svg)](https://david-dm.org/atom-community/papm)
-[![apm](https://img.shields.io/apm/dm/papm.svg)](https://github.com/atom-community/papm)
-[![apm](https://img.shields.io/apm/v/papm.svg)](https://github.com/atom-community/papm)
 
 # Roadmap
 
@@ -22,7 +20,8 @@ Performant Atom Package Manager
 
 The strategy I suggest is to:
 
-- [x] decaffeinate each file using https://decaffeinate-project.org/
+- [x] decaffeinate each file
+- [x] improve build process
 - [ ] replace the old dependencies of the resulting code with modern replacements
 - [ ] replace npm things with pnpm
 - [ ] In the end, we can think about publishing on the `npm` registry or using Github packages
