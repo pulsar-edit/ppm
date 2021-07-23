@@ -18,6 +18,7 @@ dist
 stats.html
 native-module/build
 lib
+dist-spec
 
 # Downloaded spec
 spec/fixtures/node-v10.20.1.tar.gz
