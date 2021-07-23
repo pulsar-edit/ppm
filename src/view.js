@@ -99,7 +99,7 @@ View information about a package/theme in the atom.io registry.\
         return this.getLatestCompatibleVersion(body, options, function (version) {
           const { name, readme, downloads, stargazers_count } = body
           const metadata = body.versions?.[version] != null ? body.versions?.[version] : { name }
-          const pack = _.extend({}, metadata, { readme, downloads, stargazers_count })
+          const pack = { ...metadata, readme, downloads, stargazers_count }
           return callback(null, pack)
         })
       } else {

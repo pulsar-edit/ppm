@@ -48,7 +48,7 @@ All the modules will be rebuilt if no module names are specified.\
 
     fs.makeTreeSync(this.atomDirectory)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
     return this.fork(this.atomNpmPath, rebuildArgs, { env }, callback)

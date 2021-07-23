@@ -38,7 +38,7 @@ Usage: apm config set <key> <value>
     let configArgs = ["--globalconfig", apm.getGlobalConfigPath(), "--userconfig", apm.getUserConfigPath(), "config"]
     configArgs = configArgs.concat(options.argv._)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: apm.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: apm.getRustupHomeDirPath() }
     const configOptions = { env }
 
     return this.fork(this.atomNpmPath, configArgs, configOptions, function (code, stderr = "", stdout = "") {

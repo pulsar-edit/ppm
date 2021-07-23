@@ -51,9 +51,12 @@ atom.io registry.\
         return callback(error)
       } else if (response.statusCode === 200) {
         let packages = body.filter((pack) => pack?.releases?.latest != null)
-        packages = packages.map(({ readme, metadata, downloads, stargazers_count }) =>
-          _.extend({}, metadata, { readme, downloads, stargazers_count })
-        )
+        packages = packages.map(({ readme, metadata, downloads, stargazers_count }) => ({
+          ...metadata,
+          readme,
+          downloads,
+          stargazers_count,
+        }))
         packages = _.sortBy(packages, "name")
         return callback(null, packages)
       } else {
