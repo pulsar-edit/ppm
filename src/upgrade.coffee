@@ -14,7 +14,7 @@ Install = require './install'
 Packages = require './packages'
 request = require './request'
 tree = require './tree'
-git = require './git'
+import * as git from './git'
 
 module.exports =
 class Upgrade extends Command

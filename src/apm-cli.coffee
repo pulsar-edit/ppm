@@ -12,7 +12,7 @@ require 'asar-require'
 
 config = require './apm'
 fs = require './fs'
-git = require './git'
+import * as git from './git'
 
 setupTempDirectory = ->
   temp = require 'temp'
