@@ -4,7 +4,7 @@ Q = require 'q'
 read = require 'read'
 open = require 'open'
 
-auth = require './auth'
+import * as auth from './auth'
 Command = require './command'
 
 module.exports =

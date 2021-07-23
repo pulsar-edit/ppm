@@ -4,7 +4,7 @@ async = require 'async'
 CSON = require 'season'
 yargs = require 'yargs'
 
-auth = require './auth'
+import * as auth from './auth'
 Command = require './command'
 config = require './apm'
 fs = require './fs'
