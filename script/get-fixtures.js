@@ -11,8 +11,8 @@ const links = [
   "https://github.com/atom-community/apm/raw/master/spec/fixtures/node-v10.20.1.tar.gz",
   "https://github.com/atom-community/apm/raw/master/spec/fixtures/node.lib",
   "https://github.com/atom-community/apm/raw/master/spec/fixtures/node_x64.lib",
-  "https://github.com/atom-community/apm/blob/master/spec/fixtures/node-v10.20.1-headers.tar.gz",
-  "https://github.com/atom-community/apm/blob/master/spec/fixtures/repo.git",
+  "https://github.com/atom-community/apm/raw/master/spec/fixtures/node-v10.20.1-headers.tar.gz",
+  "https://github.com/atom-community/apm/raw/master/spec/fixtures/repo.git",
 ]
 
 const repos = ["https://github.com/textmate/r.tmbundle"]
