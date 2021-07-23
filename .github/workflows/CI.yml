@@ -74,7 +74,9 @@ jobs:
         uses: wagoid/commitlint-github-action@v2
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install --ignore-scripts # native modules are not used here
+          npm run prepare
 
       - name: Format ✨
         run: npm run test.format
