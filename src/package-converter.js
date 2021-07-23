@@ -262,7 +262,7 @@ export default class PackageConverter {
             preferencesBySelector[selector] = {}
           }
           if (preferencesBySelector[selector][key] != null) {
-            preferencesBySelector[selector][key] = _.extend(value, preferencesBySelector[selector][key])
+            preferencesBySelector[selector][key] = { ...value, ...preferencesBySelector[selector][key] }
           } else {
             preferencesBySelector[selector][key] = value
           }
