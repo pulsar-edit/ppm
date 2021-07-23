@@ -34,7 +34,7 @@ atom.io registry.\
   }
 
   getFeaturedPackagesByType(atomVersion, packageType, callback) {
-    if (_.isFunction(atomVersion)) {
+    if (typeof atomVersion === "function") {
       ;[callback, atomVersion] = Array.from([atomVersion, null])
     }
 

@@ -8,7 +8,7 @@
 import _ from "underscore-plus"
 
 export function tree(items, options = {}, callback) {
-  if (_.isFunction(options)) {
+  if (typeof options === "function") {
     callback = options
     options = {}
   }
