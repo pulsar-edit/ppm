@@ -39,7 +39,9 @@ jobs:
             ~/npm-cache
             ~/.pnpm-store
             D:\.pnpm-store
-          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}"
+            ./bin/node
+            ./bin/node.exe
+          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('BUNDLED_NODE_VERSION') }}"
 
       - name: Install Node
         uses: actions/setup-node@v2
@@ -47,11 +49,13 @@ jobs:
           node-version: ${{ matrix.node_version }}
           architecture: ${{ matrix.node_arch }}
 
-      - name: Install npm
-        run: npm install -g npm
-
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm install
+
+      - name: Build
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: npm run prepare
 
       - name: Run tests
         run: ./bin/npm test
