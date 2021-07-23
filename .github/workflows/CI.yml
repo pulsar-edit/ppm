@@ -51,6 +51,7 @@ jobs:
         run: npm install -g npm
 
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm install
 
       - name: Run tests
