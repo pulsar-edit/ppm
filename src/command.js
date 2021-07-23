@@ -11,7 +11,7 @@ import path from "path"
 import _ from "underscore-plus"
 import semver from "semver"
 import * as config from "./apm"
-import git from "./git"
+import * as git from "./git"
 
 export default class Command {
   constructor() {

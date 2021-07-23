@@ -14,7 +14,7 @@ import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
 import Install from "./install"
-import git from "./git"
+import * as git from "./git"
 import Link from "./link"
 import request from "./request"
 

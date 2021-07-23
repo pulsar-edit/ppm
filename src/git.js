@@ -68,9 +68,7 @@ const addGitBashToEnv = function (env) {
   }
 }
 
-const defaultExport = {}
-
-defaultExport.addGitToEnv = function (env) {
+export function addGitToEnv(env) {
   if (process.platform !== "win32") {
     return
   }
@@ -78,7 +76,7 @@ defaultExport.addGitToEnv = function (env) {
   return addGitBashToEnv(env)
 }
 
-defaultExport.getGitVersion = function (callback) {
+export function getGitVersion(callback) {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath(),
@@ -86,7 +84,7 @@ defaultExport.getGitVersion = function (callback) {
   return npm.load(npmOptions, function () {
     let left
     const git = (left = npm.config.get("git")) != null ? left : "git"
-    defaultExport.addGitToEnv(process.env)
+    addGitToEnv(process.env)
     const spawned = spawn(git, ["--version"])
     const outputChunks = []
     spawned.stderr.on("data", (chunk) => outputChunks.push(chunk))
@@ -103,4 +101,3 @@ defaultExport.getGitVersion = function (callback) {
     })
   })
 }
-export default defaultExport
