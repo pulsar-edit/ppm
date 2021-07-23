@@ -15,7 +15,7 @@ Command = require './command'
 fs = require './fs'
 RebuildModuleCache = require './rebuild-module-cache'
 request = require './request'
-{isDeprecatedPackage} = require './deprecated-packages'
+import {isDeprecatedPackage} from './deprecated-packages'
 
 module.exports =
 class Install extends Command

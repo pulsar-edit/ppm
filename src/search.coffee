@@ -5,7 +5,7 @@ Command = require './command'
 config = require './apm'
 request = require './request'
 tree = require './tree'
-{isDeprecatedPackage} = require './deprecated-packages'
+import {isDeprecatedPackage} from './deprecated-packages'
 
 module.exports =
 class Search extends Command
