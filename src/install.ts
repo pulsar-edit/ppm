@@ -147,7 +147,7 @@ package names to install with optional versions using the
         }
 
         let error = `${stdout}\n${stderr}`
-        if (error.indexOf("code ENOGIT") !== -1) {
+        if (error.includes("code ENOGIT")) {
           error = this.getGitErrorMessage(pack)
         }
         return callback(error)
