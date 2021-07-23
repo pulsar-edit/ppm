@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "coffeescript": "^2",
-    "coffeelint": "<2.0",
+    "coffeelint": "^2.1",
     "eslint-config-atomic": "^1.16.2",
     "express": "^4.17.1",
     "gitly": "^2.1.2",

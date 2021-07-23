@@ -1,4 +1,4 @@
 {
   "extends": "eslint-config-atomic",
-  "ignorePatterns": ["dist/", "node_modules/", "stats.html", "**/*.coffee"]
+  "ignorePatterns": ["dist/", "node_modules/", "stats.html", "**/*.coffee", "lib/", "dist-spec/"]
 }
