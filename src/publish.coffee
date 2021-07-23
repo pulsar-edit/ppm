@@ -9,7 +9,7 @@ fs = require './fs'
 config = require './apm'
 Command = require './command'
 Login = require './login'
-Packages = require './packages'
+import * as Packages from './packages'
 request = require './request'
 
 module.exports =
