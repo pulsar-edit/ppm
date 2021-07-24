@@ -4,7 +4,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"

@@ -28,6 +28,7 @@
     "build.test": "npm run get.fixtures && shx rm -rf dist-spec && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec"
   },
   "dependencies": {
+    "@aminya/underscore-plus": "^1.9.0",
     "@atom/plist": "0.4.4",
     "asar-require": "0.3.0",
     "async": "^3.2.0",
@@ -50,7 +51,6 @@
     "semver": "^7.3.5",
     "tar": "^6.1.0",
     "temp": "^0.9.4",
-    "underscore-plus": "1.x",
     "wordwrap": "1.0.0",
     "wrench": "~1.5.1",
     "yargs": "^3.32.0"

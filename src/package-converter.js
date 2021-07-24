@@ -9,7 +9,7 @@
 import path from "path"
 import url from "url"
 import zlib from "zlib"
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import CSON from "season"
 import plist from "@atom/plist"
 import { ScopeSelector } from "first-mate"

@@ -8,7 +8,7 @@
  */
 import child_process from "child_process"
 import path from "path"
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import semver from "semver"
 import * as config from "./apm"
 import * as git from "./git"
