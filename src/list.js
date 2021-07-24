@@ -6,7 +6,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import path from "path"
-import _ from "underscore-plus"
 import CSON from "season"
 import yargs from "yargs"
 import Command from "./command"

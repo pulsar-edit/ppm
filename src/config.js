@@ -4,7 +4,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import path from "path"
-import _ from "underscore-plus"
 import yargs from "yargs"
 import * as apm from "./apm"
 import Command from "./command"
@@ -38,7 +37,7 @@ Usage: apm config set <key> <value>
     let configArgs = ["--globalconfig", apm.getGlobalConfigPath(), "--userconfig", apm.getUserConfigPath(), "config"]
     configArgs = configArgs.concat(options.argv._)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: apm.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: apm.getRustupHomeDirPath() }
     const configOptions = { env }
 
     return this.fork(this.atomNpmPath, configArgs, configOptions, function (code, stderr = "", stdout = "") {

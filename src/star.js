@@ -6,7 +6,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import path from "path"
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import async from "async"
 import CSON from "season"
 import yargs from "yargs"

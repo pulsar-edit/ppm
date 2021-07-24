@@ -5,7 +5,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import path from "path"
 import CSON from "season"
 import yargs from "yargs"

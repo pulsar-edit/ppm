@@ -9,7 +9,6 @@
  */
 import { spawn } from "child_process"
 import path from "path"
-import _ from "underscore-plus"
 import npm from "npm"
 import * as config from "./apm"
 import fs from "./fs"

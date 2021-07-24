@@ -8,7 +8,6 @@ import path from "path"
 import fs from "./fs"
 import yargs from "yargs"
 import async from "async"
-import _ from "underscore-plus"
 import * as config from "./apm"
 import Command from "./command"
 
@@ -59,7 +58,7 @@ but cannot be used to install new packages or dependencies.\
 
     fs.makeTreeSync(this.atomDirectory)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
     const installOptions = { env, streaming: options.argv.verbose }

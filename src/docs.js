@@ -8,7 +8,6 @@
 import yargs from "yargs"
 import open from "open"
 import View from "./view"
-import * as config from "./apm"
 
 export default class Docs extends View {
   parseOptions(argv) {

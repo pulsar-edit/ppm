@@ -9,7 +9,6 @@ import child_process from "child_process"
 import fs from "./fs"
 import path from "path"
 import npm from "npm"
-import semver from "semver"
 let asarPath = null
 
 export function getHomeDirectory() {

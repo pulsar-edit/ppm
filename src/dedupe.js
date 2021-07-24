@@ -6,7 +6,6 @@
  */
 import path from "path"
 import async from "async"
-import _ from "underscore-plus"
 import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
@@ -64,7 +63,7 @@ This command is experimental.\
 
     fs.makeTreeSync(this.atomDirectory)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
     const dedupeOptions = { env }

@@ -9,7 +9,7 @@
 import path from "path"
 import url from "url"
 import zlib from "zlib"
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import CSON from "season"
 import plist from "@atom/plist"
 import { ScopeSelector } from "first-mate"
@@ -113,9 +113,9 @@ export default class PackageConverter {
   }
 
   readFileSync(filePath) {
-    if (_.contains(this.plistExtensions, path.extname(filePath))) {
+    if (this.plistExtensions.includes(path.extname(filePath))) {
       return plist.parseFileSync(filePath)
-    } else if (_.contains([".json", ".cson"], path.extname(filePath))) {
+    } else if ([".json", ".cson"].includes(path.extname(filePath))) {
       return CSON.readFileSync(filePath)
     }
   }
@@ -134,9 +134,9 @@ export default class PackageConverter {
     destinationName = destinationName.toLowerCase()
     const destinationPath = path.join(destinationDir, destinationName)
 
-    if (_.contains(this.plistExtensions, path.extname(sourcePath))) {
+    if (this.plistExtensions.includes(path.extname(sourcePath))) {
       contents = plist.parseFileSync(sourcePath)
-    } else if (_.contains([".json", ".cson"], path.extname(sourcePath))) {
+    } else if ([".json", ".cson"].includes(path.extname(sourcePath))) {
       contents = CSON.readFileSync(sourcePath)
     }
 
@@ -262,7 +262,7 @@ export default class PackageConverter {
             preferencesBySelector[selector] = {}
           }
           if (preferencesBySelector[selector][key] != null) {
-            preferencesBySelector[selector][key] = _.extend(value, preferencesBySelector[selector][key])
+            preferencesBySelector[selector][key] = { ...value, ...preferencesBySelector[selector][key] }
           } else {
             preferencesBySelector[selector][key] = value
           }

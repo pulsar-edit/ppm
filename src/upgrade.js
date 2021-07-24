@@ -6,7 +6,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import path from "path"
-import _ from "underscore-plus"
 import async from "async"
 import yargs from "yargs"
 import read from "read"
@@ -193,7 +192,7 @@ available updates.\
         return callback(error)
       }
 
-      updates = _.filter(updates, (update) => update.latestVersion != null || update.sha != null)
+      updates = updates.filter((update) => update.latestVersion != null || update.sha != null)
       updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name))
 
       return callback(null, updates)

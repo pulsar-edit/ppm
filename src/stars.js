@@ -4,7 +4,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
@@ -60,9 +60,12 @@ List or install starred Atom packages and themes.\
         return callback(error)
       } else if (response.statusCode === 200) {
         let packages = body.filter((pack) => pack?.releases?.latest != null)
-        packages = packages.map(({ readme, metadata, downloads, stargazers_count }) =>
-          _.extend({}, metadata, { readme, downloads, stargazers_count })
-        )
+        packages = packages.map(({ readme, metadata, downloads, stargazers_count }) => ({
+          ...metadata,
+          readme,
+          downloads,
+          stargazers_count,
+        }))
         packages = _.sortBy(packages, "name")
         return callback(null, packages)
       } else {

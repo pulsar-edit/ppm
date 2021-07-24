@@ -5,12 +5,10 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import path from "path"
-import _ from "underscore-plus"
 import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
 import fs from "./fs"
-import Install from "./install"
 
 export default class Rebuild extends Command {
   constructor() {
@@ -49,7 +47,7 @@ All the modules will be rebuilt if no module names are specified.\
 
     fs.makeTreeSync(this.atomDirectory)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
     return this.fork(this.atomNpmPath, rebuildArgs, { env }, callback)

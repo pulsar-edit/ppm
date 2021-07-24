@@ -8,7 +8,7 @@
  */
 import assert from "assert"
 import path from "path"
-import _ from "underscore-plus"
+import * as _ from "@aminya/underscore-plus"
 import async from "async"
 import CSON from "season"
 import yargs from "yargs"
@@ -98,7 +98,7 @@ package names to install with optional versions using the
 
     fs.makeTreeSync(this.atomDirectory)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
     const installOptions = { env }
@@ -225,7 +225,7 @@ Run apm -v after installing Git to see what version has been detected.\
 
     fs.makeTreeSync(this.atomDirectory)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
     const installOptions = { env }
@@ -416,7 +416,7 @@ Run apm -v after installing Git to see what version has been detected.\
   // callback - The callback function to invoke when done with an error as the
   //            first argument.
   installPackageDependencies(options, callback) {
-    options = _.extend({}, options, { installGlobally: false })
+    options = { ...options, installGlobally: false }
     const commands = []
     const object = this.getPackageDependencies()
     for (const name in object) {
@@ -513,7 +513,7 @@ Run apm -v after installing Git to see what version has been detected.\
 
     fs.makeTreeSync(this.atomDirectory)
 
-    const env = _.extend({}, process.env, { HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() })
+    const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
     const buildOptions = { env }

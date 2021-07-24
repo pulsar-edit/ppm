@@ -8,7 +8,6 @@
  */
 import fs from "fs"
 import path from "path"
-import _ from "underscore-plus"
 import async from "async"
 import yargs from "yargs"
 import * as config from "./apm"
@@ -89,14 +88,14 @@ cmd-shift-o to run the package out of the newly cloned repository.\
 
   installDependencies(packageDirectory, options, callback = function () {}) {
     process.chdir(packageDirectory)
-    const installOptions = _.clone(options)
+    const installOptions = { ...options }
     installOptions.callback = callback
 
     return new Install().run(installOptions)
   }
 
   linkPackage(packageDirectory, options, callback) {
-    const linkOptions = _.clone(options)
+    const linkOptions = { ...options }
     if (callback) {
       linkOptions.callback = callback
     }
