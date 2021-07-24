@@ -4,7 +4,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import _ from "underscore-plus"
 import fs from "fs-plus"
 import ncp from "ncp"
 import rm from "rimraf"

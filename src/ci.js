@@ -8,7 +8,6 @@ import path from "path"
 import fs from "./fs"
 import yargs from "yargs"
 import async from "async"
-import _ from "underscore-plus"
 import * as config from "./apm"
 import Command from "./command"
 

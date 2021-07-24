@@ -5,7 +5,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import path from "path"
-import _ from "underscore-plus"
 import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"

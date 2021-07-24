@@ -6,7 +6,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import path from "path"
-import _ from "underscore-plus"
 import async from "async"
 import yargs from "yargs"
 import read from "read"

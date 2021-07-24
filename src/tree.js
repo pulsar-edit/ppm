@@ -5,7 +5,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import _ from "underscore-plus"
 
 export function tree(items, options = {}, callback) {
   if (typeof options === "function") {

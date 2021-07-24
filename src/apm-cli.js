@@ -8,7 +8,6 @@
  */
 import { spawn } from "child_process"
 import path from "path"
-import _ from "underscore-plus"
 import colors from "colors"
 import npm from "npm"
 import yargs from "yargs"

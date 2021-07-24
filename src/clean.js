@@ -5,7 +5,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import yargs from "yargs"
-import _ from "underscore-plus"
 import Command from "./command"
 
 export default class Clean extends Command {

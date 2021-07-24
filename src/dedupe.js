@@ -6,7 +6,6 @@
  */
 import path from "path"
 import async from "async"
-import _ from "underscore-plus"
 import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"

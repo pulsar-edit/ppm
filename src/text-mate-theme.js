@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import _ from "underscore-plus"
 import plist from "@atom/plist"
 import { ScopeSelector } from "first-mate"
 

@@ -8,7 +8,6 @@
  */
 import fs from "fs"
 import path from "path"
-import _ from "underscore-plus"
 import async from "async"
 import yargs from "yargs"
 import * as config from "./apm"
