@@ -9,7 +9,7 @@ import npm from "npm"
 import request from "request"
 import * as config from "./apm"
 
-const loadNpm = function (callback) {
+function loadNpm(callback) {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath(),
@@ -17,8 +17,8 @@ const loadNpm = function (callback) {
   return npm.load(npmOptions, callback)
 }
 
-const configureRequest = (requestOptions, callback) =>
-  loadNpm(function () {
+function configureRequest(requestOptions, callback) {
+  return loadNpm(function () {
     let left
     if (requestOptions.proxy == null) {
       requestOptions.proxy =
@@ -28,8 +28,7 @@ const configureRequest = (requestOptions, callback) =>
       requestOptions.strictSSL = npm.config.get("strict-ssl")
     }
 
-    const userAgent =
-      (left = npm.config.get("user-agent")) != null ? left : `AtomApm/${require("../package.json").version}`
+    const userAgent = (left = npm.config.get("user-agent")) != null ? left : `AtomApm/${require("../package.json").version}`
     if (requestOptions.headers == null) {
       requestOptions.headers = {}
     }
@@ -38,6 +37,7 @@ const configureRequest = (requestOptions, callback) =>
     }
     return callback()
   })
+}
 
 export function get(requestOptions, callback) {
   return configureRequest(requestOptions, function () {
