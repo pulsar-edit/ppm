@@ -20,7 +20,7 @@ import * as config from "./apm"
 import fs from "./fs"
 import * as git from "./git"
 
-const setupTempDirectory = function () {
+function setupTempDirectory() {
   const temp = require("temp")
   let tempDirectory = require("os").tmpdir()
   // Resolve ~ in tmp dir atom/atom#2271
@@ -112,7 +112,7 @@ const commands = {
   show: viewClass,
 }
 
-const parseOptions = function (args = []) {
+function parseOptions(args = []) {
   const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()))
   options.usage(`\
 
@@ -139,7 +139,7 @@ Run \`apm help <command>\` to see the more details about a specific command.\
   return options
 }
 
-const showHelp = function (options) {
+function showHelp(options) {
   if (options == null) {
     return
   }
@@ -153,7 +153,7 @@ const showHelp = function (options) {
   return console.error(help)
 }
 
-const printVersions = function (args, callback) {
+function printVersions(args, callback) {
   let left, left1
   const apmVersion = (left = require("../package.json").version) != null ? left : ""
   const npmVersion = (left1 = require("npm/package.json").version) != null ? left1 : ""
@@ -210,8 +210,8 @@ ${"git".magenta} ${gitVersion.magenta}\
   )
 }
 
-var getAtomVersion = (callback) =>
-  config.getResourcePath(function (resourcePath) {
+function getAtomVersion(callback) {
+  return config.getResourcePath(function (resourcePath) {
     const unknownVersion = "unknown"
     try {
       let left
@@ -221,8 +221,9 @@ var getAtomVersion = (callback) =>
       return callback(unknownVersion)
     }
   })
+}
 
-var getPythonVersion = function (callback) {
+function getPythonVersion(callback) {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath(),
