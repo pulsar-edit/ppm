@@ -28,7 +28,8 @@ function configureRequest(requestOptions, callback) {
       requestOptions.strictSSL = npm.config.get("strict-ssl")
     }
 
-    const userAgent = (left = npm.config.get("user-agent")) != null ? left : `AtomApm/${require("../package.json").version}`
+    const userAgent =
+      (left = npm.config.get("user-agent")) != null ? left : `AtomApm/${require("../package.json").version}`
     if (requestOptions.headers == null) {
       requestOptions.headers = {}
     }
