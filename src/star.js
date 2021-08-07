@@ -66,14 +66,14 @@ Run \`apm stars\` to see all your starred packages.\
     const installedPackages = []
     const userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
     for (const child of fs.list(userPackagesDirectory)) {
-      var manifestPath
+      let manifestPath
       if (!fs.isDirectorySync(path.join(userPackagesDirectory, child))) {
         continue
       }
 
       if ((manifestPath = CSON.resolve(path.join(userPackagesDirectory, child, "package")))) {
         try {
-          var left
+          let left
           const metadata = (left = CSON.readFileSync(manifestPath)) != null ? left : {}
           if (metadata.name && Packages.getRepository(metadata)) {
             installedPackages.push(metadata.name)

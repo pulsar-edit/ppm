@@ -105,7 +105,7 @@ have published it.\
       json: true,
     }
 
-    var requestTags = () =>
+    const requestTags = () =>
       request.get(requestSettings, function (error, response, tags = []) {
         if (response?.statusCode === 200) {
           for (let index = 0; index < tags.length; index++) {

@@ -22,7 +22,7 @@ export function tree(items, options = {}, callback) {
     return (() => {
       const result = []
       for (let index = 0; index < items.length; index++) {
-        var itemLine
+        let itemLine
         const item = items[index]
         if (index === items.length - 1) {
           itemLine = "\u2514\u2500\u2500 "

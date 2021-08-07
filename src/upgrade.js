@@ -55,7 +55,7 @@ available updates.\
   getInstalledPackages(options) {
     let packages = []
     for (const name of fs.list(this.atomPackagesDirectory)) {
-      var pack
+      let pack
       if ((pack = this.getIntalledPackage(name))) {
         packages.push(pack)
       }

@@ -63,6 +63,8 @@ export function getResourcePath(callback) {
     }
   }
 
+  let glob, pattern, asarPaths
+
   switch (process.platform) {
     case "darwin":
       return child_process.exec(
@@ -86,9 +88,9 @@ export function getResourcePath(callback) {
       }
       return process.nextTick(() => callback(asarPath))
     case "win32":
-      var glob = require("glob")
-      var pattern = `/Users/${process.env.USERNAME}/AppData/Local/atom/app-+([0-9]).+([0-9]).+([0-9])/resources/app.asar`
-      var asarPaths = glob.sync(pattern, null) // [] | a sorted array of locations with the newest version being last
+      glob = require("glob")
+      pattern = `/Users/${process.env.USERNAME}/AppData/Local/atom/app-+([0-9]).+([0-9]).+([0-9])/resources/app.asar`
+      asarPaths = glob.sync(pattern, null) // [] | a sorted array of locations with the newest version being last
       asarPath = asarPaths[asarPaths.length - 1]
       return process.nextTick(() => callback(asarPath))
     default:

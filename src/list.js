@@ -121,7 +121,7 @@ List all the installed packages and also the packages bundled with Atom.\
   listPackages(directoryPath, options) {
     const packages = []
     for (const child of fs.list(directoryPath)) {
-      var manifestPath
+      let manifestPath
       if (!fs.isDirectorySync(path.join(directoryPath, child))) {
         continue
       }
