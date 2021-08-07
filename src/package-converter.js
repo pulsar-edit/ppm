@@ -188,7 +188,8 @@ export default class PackageConverter {
     for (const child of fs.readdirSync(sourceSnippets)) {
       let left, selector
       const snippet = (left = this.readFileSync(path.join(sourceSnippets, child))) != null ? left : {}
-      let { scope, name, content, tabTrigger } = snippet
+      const { scope, tabTrigger } = snippet
+      let { name, content } = snippet
       if (!tabTrigger || !content) {
         continue
       }

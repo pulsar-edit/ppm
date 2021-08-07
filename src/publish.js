@@ -434,7 +434,8 @@ have published it.\
     let error, pack
     const { callback } = options
     options = this.parseOptions(options.commandArgs)
-    let { tag, rename } = options.argv
+    const { tag } = options.argv
+    let { rename } = options.argv
     let [version] = Array.from(options.argv._)
 
     try {
