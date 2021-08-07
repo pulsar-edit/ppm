@@ -270,7 +270,7 @@ available updates.\
         console.log(`${"Package Updates Available".cyan} (${updates.length})`)
         tree(updates, function ({ pack, latestVersion, sha }) {
           const { apmInstallSource } = pack
-          let { name, apmInstallSource, version } = pack
+          let { name, version } = pack
           name = name.yellow
           if (sha != null) {
             version = apmInstallSource.sha.substr(0, 8).red
