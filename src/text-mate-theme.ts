@@ -9,7 +9,24 @@
 import plist from "@atom/plist"
 import { ScopeSelector } from "first-mate"
 
+export type RuleSet = {
+  selector: string
+  comment?: string
+  properties: Record<string, string>
+}
+
+export type ScopeSelectorSettings = {
+  "font-weight"?: string
+  "font-style"?: string
+  "text-decoration"?: string
+  color?: string
+  "background-color"?: string
+}
+
 export default class TextMateTheme {
+  contents: string
+  rulesets: RuleSet[]
+  syntaxVariables: string
   constructor(contents) {
     this.contents = contents
     this.rulesets = []
@@ -17,11 +34,8 @@ export default class TextMateTheme {
   }
 
   buildRulesets() {
-    let left, variableSettings
-    let { settings } = (left = plist.parseStringSync(this.contents)) != null ? left : {}
-    if (settings == null) {
-      settings = []
-    }
+    let variableSettings
+    const settings = plist.parseStringSync(this.contents)?.settings ?? []
 
     for (const setting of settings) {
       const { scope, name } = setting.settings
@@ -188,7 +202,7 @@ atom-text-editor.is-focused .line.cursor-line`,
   }
 
   translateScopeSelectorSettings({ foreground, background, fontStyle }) {
-    const properties = {}
+    const properties: ScopeSelectorSettings = {}
 
     if (fontStyle) {
       const fontStyles = fontStyle.split(/\s+/)
