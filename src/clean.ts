@@ -5,15 +5,13 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import yargs from "yargs"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Clean extends Command {
-  constructor() {
-    super()
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
-  }
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage(`\
@@ -25,10 +23,10 @@ as a dependency in the package.json file.\
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     process.stdout.write("Removing extraneous modules ")
-    return this.fork(this.atomNpmPath, ["prune"], (...args) => {
-      return this.logCommandResults(callback, ...Array.from(args))
+    return this.fork(this.atomNpmPath, ["prune"], (...args: LogCommandResultsArgs) => {
+      return this.logCommandResults(callback, ...args)
     })
   }
 }

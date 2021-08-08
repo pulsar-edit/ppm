@@ -13,13 +13,16 @@ import fs from "./fs"
 import * as config from "./apm"
 import { tree } from "./tree"
 import { getRepository } from "./packages"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class List extends Command {
+  private userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
+  private devPackagesDirectory = path.join(config.getAtomDirectory(), "dev", "packages")
+  private disabledPackages?: string[]
   constructor() {
     super()
-    let configPath
-    this.userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
-    this.devPackagesDirectory = path.join(config.getAtomDirectory(), "dev", "packages")
+    let configPath: string
+
     if ((configPath = CSON.resolve(path.join(config.getAtomDirectory(), "config")))) {
       try {
         this.disabledPackages = CSON.readFileSync(configPath)?.["*"]?.core?.disabledPackages
@@ -32,7 +35,7 @@ export default class List extends Command {
     }
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -284,7 +287,7 @@ List all the installed packages and also the packages bundled with Atom.\
     })
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.json) {

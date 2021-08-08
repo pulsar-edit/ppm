@@ -12,7 +12,9 @@ import TextMateTheme from "./text-mate-theme"
 
 // Convert a TextMate theme to an Atom theme
 export default class ThemeConverter {
-  constructor(sourcePath, destinationPath) {
+  sourcePath: string
+  destinationPath: string
+  constructor(sourcePath: string, destinationPath: string) {
     this.sourcePath = sourcePath
     this.destinationPath = path.resolve(destinationPath)
   }

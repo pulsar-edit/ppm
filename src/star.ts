@@ -16,9 +16,10 @@ import fs from "./fs"
 import Login from "./login"
 import * as Packages from "./packages"
 import * as request from "./request"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Star extends Command {
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -87,7 +88,7 @@ Run \`apm stars\` to see all your starred packages.\
     return _.uniq(installedPackages)
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let packageNames
     options = this.parseOptions(options.commandArgs)
 

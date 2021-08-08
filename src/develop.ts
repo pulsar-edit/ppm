@@ -11,20 +11,23 @@ import path from "path"
 import async from "async"
 import yargs from "yargs"
 import * as config from "./apm"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
 import Install from "./install"
 import * as git from "./git"
 import Link from "./link"
 import * as request from "./request"
+import { PackageMetadata, unkownPackage } from "./packages"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Develop extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  atomDevPackagesDirectory: string
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomDevPackagesDirectory = path.join(this.atomDirectory, "dev", "packages")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage(`\
@@ -44,17 +47,17 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  getRepositoryUrl(packageName, callback) {
+  getRepositoryUrl(packageName: string, callback) {
     const requestSettings = {
       url: `${config.getAtomPackagesUrl()}/${packageName}`,
       json: true,
     }
-    return request.get(requestSettings, function (error, response, body = {}) {
+    return request.get(requestSettings, function (error, response, body: PackageMetadata = unkownPackage) {
       if (error != null) {
         return callback(`Request for package information failed: ${error.message}`)
       } else if (response.statusCode === 200) {
-        let repositoryUrl
-        if ((repositoryUrl = body.repository.url)) {
+        const repositoryUrl = body.repository?.url
+        if (repositoryUrl) {
           return callback(null, repositoryUrl)
         } else {
           return callback(`No repository URL found for package: ${packageName}`)
@@ -66,7 +69,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     })
   }
 
-  cloneRepository(repoUrl, packageDirectory, options, callback = function () {}) {
+  cloneRepository(repoUrl: string, packageDirectory: string, options, callback = function () {}) {
     return config.getSetting("git", (command) => {
       if (command == null) {
         command = "git"
@@ -76,30 +79,30 @@ cmd-shift-o to run the package out of the newly cloned repository.\
         process.stdout.write(`Cloning ${repoUrl} `)
       }
       git.addGitToEnv(process.env)
-      return this.spawn(command, args, (...args) => {
+      return this.spawn(command, args, (...logargs: LogCommandResultsArgs) => {
         if (options.argv.json) {
-          return this.logCommandResultsIfFail(callback, ...Array.from(args))
+          return this.logCommandResultsIfFail(callback, ...logargs)
         } else {
-          return this.logCommandResults(callback, ...Array.from(args))
+          return this.logCommandResults(callback, ...logargs)
         }
       })
     })
   }
 
-  installDependencies(packageDirectory, options, callback = function () {}) {
+  installDependencies(packageDirectory: string, options, callback = function () {}) {
     process.chdir(packageDirectory)
     const installOptions = { ...options }
 
     return new Install().run(installOptions, callback)
   }
 
-  linkPackage(packageDirectory, options, callback = function () {}) {
+  linkPackage(packageDirectory: string, options, callback = function () {}) {
     const linkOptions = { ...options }
     linkOptions.commandArgs = [packageDirectory, "--dev"]
     return new Link().run(linkOptions, callback)
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let left
     const packageName = options.commandArgs.shift()
 

@@ -9,11 +9,12 @@ import path from "path"
 import yargs from "yargs"
 import Command from "./command"
 import fs from "./fs"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 const supportedSyntaxes = ["coffeescript", "javascript"]
 
 export default class Init extends Command {
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage(`\
@@ -49,7 +50,7 @@ on the option selected.\
     return options.string("template").describe("template", "Path to the package or theme template")
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let templatePath
     options = this.parseOptions(options.commandArgs)
     if (options.argv.package?.length > 0) {

@@ -11,9 +11,10 @@ import * as config from "./apm"
 import Command from "./command"
 import Login from "./login"
 import * as request from "./request"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Unstar extends Command {
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -54,7 +55,7 @@ Run \`apm stars\` to see all your starred packages.\
     })
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
     const packageNames = this.packageNamesFromArgv(options.argv)
 

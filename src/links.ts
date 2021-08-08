@@ -9,15 +9,13 @@ import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
 import { tree } from "./tree"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Links extends Command {
-  constructor() {
-    super()
-    this.devPackagesPath = path.join(config.getAtomDirectory(), "dev", "packages")
-    this.packagesPath = path.join(config.getAtomDirectory(), "packages")
-  }
+  private devPackagesPath = path.join(config.getAtomDirectory(), "dev", "packages")
+  private packagesPath = path.join(config.getAtomDirectory(), "packages")
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -62,7 +60,7 @@ List all of the symlinked atom packages in ~/.atom/packages and
     })
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     this.logLinks(this.devPackagesPath)
     this.logLinks(this.packagesPath)
     return callback()

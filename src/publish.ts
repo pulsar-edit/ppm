@@ -12,19 +12,16 @@ import Git from "git-utils"
 import semver from "semver"
 import fs from "./fs"
 import * as config from "./apm"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
 import Login from "./login"
 import * as Packages from "./packages"
 import * as request from "./request"
 
 export default class Publish extends Command {
-  constructor() {
-    super()
-    this.userConfigPath = config.getUserConfigPath()
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
-  }
+  userConfigPath = config.getUserConfigPath()
+  atomNpmPath = require.resolve("npm/bin/npm-cli")
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -59,7 +56,7 @@ have published it.\
   // version  - The new version or version increment.
   // callback - The callback function to invoke with an error as the first
   //            argument and a the generated tag string as the second argument.
-  versionPackage(version, callback) {
+  versionPackage(version: string, callback) {
     process.stdout.write("Preparing and tagging a new version ")
     const versionArgs = ["version", version, "-m", "Prepare v%s release"]
     return this.fork(this.atomNpmPath, versionArgs, (code, stderr = "", stdout = "") => {
@@ -79,11 +76,11 @@ have published it.\
   //  pack - The package metadata.
   //  callback - The callback function to invoke with an error as the first
   //             argument.
-  pushVersion(tag, pack, callback) {
+  pushVersion(tag: string, pack: Packages.PackageMetadata, callback: Function) {
     process.stdout.write(`Pushing ${tag} tag `)
     const pushArgs = ["push", Packages.getRemote(pack), "HEAD", tag]
-    return this.spawn("git", pushArgs, (...args) => {
-      return this.logCommandResults(callback, ...Array.from(args))
+    return this.spawn("git", pushArgs, (...args: LogCommandResultsArgs) => {
+      return this.logCommandResults(callback, ...args)
     })
   }
 
@@ -97,7 +94,7 @@ have published it.\
   // callback - The callback function to invoke when either the tag is available
   //            or the maximum numbers of requests for the tag have been made.
   //            No arguments are passed to the callback when it is invoked.
-  waitForTagToBeAvailable(pack, tag, callback) {
+  waitForTagToBeAvailable(pack: Packages.PackageMetadata, tag: string, callback: Function) {
     let retryCount = 5
     const interval = 1000
     const requestSettings = {
@@ -129,7 +126,7 @@ have published it.\
   // packageName - The string package name to check.
   // callback    - The callback function invoke with an error as the first
   //               argument and true/false as the second argument.
-  packageExists(packageName, callback) {
+  packageExists(packageName: string, callback: Function) {
     return Login.getTokenOrLogin(function (error, token) {
       if (error != null) {
         return callback(error)
@@ -156,7 +153,7 @@ have published it.\
   //
   // pack - The package metadata.
   // callback - The callback function.
-  registerPackage(pack, callback) {
+  registerPackage(pack: Packages.PackageMetadata, callback: Function) {
     if (!pack.name) {
       callback("Required name field in package.json not found")
       return
@@ -216,7 +213,7 @@ have published it.\
   // tag - The string Git tag of the new version.
   // callback - The callback function to invoke with an error as the first
   //            argument.
-  createPackageVersion(packageName, tag, options, callback) {
+  createPackageVersion(packageName: string, tag: string, options: { rename: boolean }, callback: Function) {
     return Login.getTokenOrLogin(function (error, token) {
       if (error != null) {
         callback(error)
@@ -254,7 +251,7 @@ have published it.\
   // options - An options Object (optional).
   // callback - The callback function to invoke when done with an error as the
   //            first argument.
-  publishPackage(pack, tag, ...remaining) {
+  publishPackage(pack: Packages.PackageMetadata, tag: string, ...remaining) {
     let options
     if (remaining.length >= 2) {
       options = remaining.shift()
@@ -276,7 +273,7 @@ have published it.\
     })
   }
 
-  logFirstTimePublishMessage(pack) {
+  logFirstTimePublishMessage(pack: Packages.PackageMetadata) {
     process.stdout.write("Congrats on publishing a new package!".rainbow)
     // :+1: :package: :tada: when available
     if (process.platform === "darwin") {
@@ -299,7 +296,7 @@ have published it.\
     }
   }
 
-  saveMetadata(pack, callback) {
+  saveMetadata(pack: Packages.PackageMetadata, callback: Function) {
     const metadataPath = path.resolve("package.json")
     const metadataJson = JSON.stringify(pack, null, 2)
     return fs.writeFile(metadataPath, `${metadataJson}\n`, callback)
@@ -338,7 +335,7 @@ have published it.\
   }
 
   // Rename package if necessary
-  renamePackage(pack, name, callback) {
+  renamePackage(pack: Packages.PackageMetadata, name: string, callback: Function) {
     if (name?.length > 0) {
       if (pack.name === name) {
         return callback("The new package name must be different than the name in the package.json file")
@@ -382,12 +379,12 @@ have published it.\
     }
   }
 
-  setPackageName(pack, name, callback) {
+  setPackageName(pack: Packages.PackageMetadata, name: string, callback: Function) {
     pack.name = name
     return this.saveMetadata(pack, callback)
   }
 
-  validateSemverRanges(pack) {
+  validateSemverRanges(pack: Packages.PackageMetadata) {
     let packageName, semverRange
     if (!pack) {
       return
@@ -431,8 +428,8 @@ have published it.\
   }
 
   // Run the publish command with the given options
-  run(options, callback) {
-    let error, pack
+  run(options, callback: Function) {
+    let error, pack: Packages.PackageMetadata
     options = this.parseOptions(options.commandArgs)
     const { tag } = options.argv
     let { rename } = options.argv

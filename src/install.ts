@@ -22,18 +22,23 @@ import fs from "./fs"
 import RebuildModuleCache from "./rebuild-module-cache"
 import * as request from "./request"
 import { isDeprecatedPackage } from "./deprecated-packages"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Install extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomPackagesDirectory: string
+  private atomNodeDirectory: string
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private repoLocalPackagePathRegex = /^file:(?!\/\/)(.*)/
+  verbose: boolean
+
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomPackagesDirectory = path.join(this.atomDirectory, "packages")
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
-    this.repoLocalPackagePathRegex = /^file:(?!\/\/)(.*)/
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -749,7 +754,7 @@ Run apm -v after installing Git to see what version has been detected.\
     }
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let packageNames
     options = this.parseOptions(options.commandArgs)
     const packagesFilePath = options.argv["packages-file"]

@@ -9,16 +9,19 @@ import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
 import fs from "./fs"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Rebuild extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNodeDirectory: string
+
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -53,7 +56,7 @@ All the modules will be rebuilt if no module names are specified.\
     return this.fork(this.atomNpmPath, rebuildArgs, { env }, callback)
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
 
     return config.loadNpm((error, npm) => {

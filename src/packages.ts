@@ -6,6 +6,10 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import url from "url"
+import { PackageMetadata } from "atom/src/package-manager"
+export { PackageMetadata } from "atom/src/package-manager"
+
+export const unkownPackage = { name: "unkown", version: "0.0.0" }
 
 // Package helpers
 // Parse the repository in `name/owner` format from the package metadata.
@@ -13,9 +17,9 @@ import url from "url"
 // pack - The package metadata object.
 //
 // Returns a name/owner string or null if not parseable.
-export function getRepository(pack = {}) {
-  let repository
-  if ((repository = pack.repository?.url != null ? pack.repository?.url : pack.repository)) {
+export function getRepository(pack: PackageMetadata = unkownPackage) {
+  const repository = getUrl(pack)
+  if (repository) {
     const repoPath = url.parse(repository.replace(/\.git$/, "")).pathname
     const [name, owner] = Array.from(repoPath.split("/").slice(-2))
     if (name && owner) {
@@ -25,10 +29,15 @@ export function getRepository(pack = {}) {
   return null
 }
 
-// Determine remote from package metadata.
+// Determine remote from package metadata (url)
 //
 // pack - The package metadata object.
 // Returns a the remote or 'origin' if not parseable.
-export function getRemote(pack = {}) {
-  return pack.repository?.url || pack.repository || "origin"
+export function getRemote(pack: PackageMetadata = unkownPackage) {
+  return getUrl(pack) || "origin"
+}
+
+/** Get the repository */
+function getUrl(pack: PackageMetadata = unkownPackage) {
+  return typeof pack.repository === "object" && "url" in pack.repository ? pack.repository.url : pack.repository
 }

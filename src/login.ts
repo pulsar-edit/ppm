@@ -12,13 +12,14 @@ import open from "open"
 
 import * as auth from "./auth"
 import Command from "./command"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Login extends Command {
-  constructor(...args) {
+  constructor() {
+    super()
     this.welcomeMessage = this.welcomeMessage.bind(this)
     this.getToken = this.getToken.bind(this)
     this.saveToken = this.saveToken.bind(this)
-    super(...args)
   }
 
   static getTokenOrLogin(callback) {
@@ -31,7 +32,7 @@ export default class Login extends Command {
     })
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage(`\
@@ -44,7 +45,7 @@ be used to identify you when publishing packages to atom.io.\
     return options.string("token").describe("token", "atom.io API token")
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
     return Q({ token: options.argv.token })
       .then(this.welcomeMessage)

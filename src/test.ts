@@ -8,9 +8,10 @@ import yargs from "yargs"
 import temp from "temp"
 import Command from "./command"
 import fs from "./fs"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Test extends Command {
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage(`\
@@ -24,7 +25,7 @@ to the current working directory).\
     return options.alias("p", "path").string("path").describe("path", "Path to atom command")
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let atomCommand
     options = this.parseOptions(options.commandArgs)
     const { env } = process

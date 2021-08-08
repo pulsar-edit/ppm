@@ -9,17 +9,19 @@ import fs from "./fs"
 import yargs from "yargs"
 import async from "async"
 import * as config from "./apm"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Ci extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNodeDirectory: string
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 Usage: apm ci
@@ -63,12 +65,12 @@ but cannot be used to install new packages or dependencies.\
 
     const installOptions = { env, streaming: options.argv.verbose }
 
-    return this.fork(this.atomNpmPath, installArgs, installOptions, (...args) => {
-      return this.logCommandResults(callback, ...Array.from(args))
+    return this.fork(this.atomNpmPath, installArgs, installOptions, (...args: LogCommandResultsArgs) => {
+      return this.logCommandResults(callback, ...args)
     })
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     const opts = this.parseOptions(options.commandArgs)
 
     const commands = []
