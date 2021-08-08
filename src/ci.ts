@@ -15,7 +15,6 @@ export default class Ci extends Command {
   private atomDirectory = config.getAtomDirectory()
   private atomNpmPath = require.resolve("npm/bin/npm-cli")
   private atomNodeDirectory: string
-  npm: typeof import("npm")
   constructor() {
     super()
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
