@@ -9,11 +9,12 @@ import * as apm from "./apm"
 import Command from "./command"
 
 export default class Config extends Command {
+  private atomDirectory = apm.getAtomDirectory()
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNodeDirectory: string
   constructor() {
     super()
-    const atomDirectory = apm.getAtomDirectory()
-    this.atomNodeDirectory = path.join(atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
+    this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
   }
 
   parseOptions(argv) {
