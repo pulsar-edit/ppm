@@ -49,7 +49,9 @@ const fsAdditions = {
   },
 }
 
-export default new Proxy(
+type ProxyFS = typeof import("fs-plus") & typeof fsAdditions
+
+export default new Proxy<ProxyFS>(
   {},
   {
     get(target, key) {
