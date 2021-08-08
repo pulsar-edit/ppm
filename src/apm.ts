@@ -184,7 +184,7 @@ export function visualStudioIsInstalled(version) {
   }
 }
 
-export function loadNpm(callback) {
+export function loadNpm(callback: (config: null, npmVar: typeof npm) => void) {
   const npmOptions = {
     userconfig: getUserConfigPath(),
     globalconfig: getGlobalConfigPath(),

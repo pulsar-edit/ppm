@@ -12,11 +12,13 @@ import * as config from "./apm"
 import Command from "./command"
 
 export default class Ci extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNodeDirectory: string
+  npm: typeof import("npm")
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
   }
 
   parseOptions(argv) {
@@ -63,9 +65,14 @@ but cannot be used to install new packages or dependencies.\
 
     const installOptions = { env, streaming: options.argv.verbose }
 
-    return this.fork(this.atomNpmPath, installArgs, installOptions, (...args) => {
-      return this.logCommandResults(callback, ...Array.from(args))
-    })
+    return this.fork(
+      this.atomNpmPath,
+      installArgs,
+      installOptions,
+      (...args: [code: number, stderr?: string, stdout?: string]) => {
+        return this.logCommandResults(callback, ...args)
+      }
+    )
   }
 
   run(options, callback) {

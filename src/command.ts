@@ -99,7 +99,7 @@ export default class Command {
     }
   }
 
-  logCommandResultsIfFail(callback, code, stderr = "", stdout = "") {
+  logCommandResultsIfFail(callback: (error?: string) => void, code: number, stderr = "", stdout = "") {
     if (code === 0) {
       return callback()
     } else {
