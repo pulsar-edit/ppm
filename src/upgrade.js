@@ -159,7 +159,7 @@ available updates.\
       }
       const args = ["fetch", "origin", "master"]
       git.addGitToEnv(process.env)
-      return this.spawn(command, args, { cwd: repoPath }, function (code, stderr = "", stdout = "") {
+      return this.spawn(command, args, { cwd: repoPath }, function (code, stderr = "") {
         if (code !== 0) {
           return callback(new Error(`Exit code: ${code} - ${stderr}`))
         }

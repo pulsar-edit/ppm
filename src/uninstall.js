@@ -54,7 +54,7 @@ Delete the installed package(s) from the ~/.atom/packages directory.\
         },
       }
 
-      return request.post(requestOptions, (error, response, body) => callback())
+      return request.post(requestOptions, () => callback())
     })
   }
 

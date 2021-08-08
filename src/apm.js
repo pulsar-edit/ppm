@@ -69,7 +69,7 @@ export function getResourcePath(callback) {
     case "darwin":
       return child_process.exec(
         "mdfind \"kMDItemCFBundleIdentifier == 'com.github.atom'\"",
-        function (error, stdout = "", stderr) {
+        function (error, stdout = "") {
           let appLocation
           if (!error) {
             ;[appLocation] = Array.from(stdout.split("\n"))

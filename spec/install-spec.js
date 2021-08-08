@@ -518,7 +518,8 @@ describe("apm install", function () {
     })
 
     describe("when installing a package from a git repository", function () {
-      let [cloneUrl, pkgJsonPath] = Array.from([])
+      let cloneUrl
+      let pkgJsonPath
 
       beforeEach(function () {
         let count = 0
@@ -559,7 +560,8 @@ describe("apm install", function () {
     })
 
     describe("when installing a Git URL and --json is specified", function () {
-      let [cloneUrl, pkgJsonPath] = Array.from([])
+      let cloneUrl
+      let pkgJsonPath
 
       beforeEach(function () {
         const callback = jasmine.createSpy("callback")

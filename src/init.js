@@ -207,7 +207,7 @@ on the option selected.\
 
   dasherize(string) {
     string = string[0].toLowerCase() + string.slice(1)
-    return string.replace(/([A-Z])|(_)/g, function (m, letter, underscore) {
+    return string.replace(/([A-Z])|(_)/g, function (m, letter) {
       if (letter) {
         return `-${letter.toLowerCase()}`
       } else {
@@ -222,7 +222,7 @@ on the option selected.\
 
   underscore(string) {
     string = string[0].toLowerCase() + string.slice(1)
-    return string.replace(/([A-Z])|(-)/g, function (m, letter, dash) {
+    return string.replace(/([A-Z])|(-)/g, function (m, letter) {
       if (letter) {
         return `_${letter.toLowerCase()}`
       } else {

@@ -254,8 +254,7 @@ function getPythonVersion(callback) {
     return spawned.on("close", function (code) {
       let version
       if (code === 0) {
-        let name
-        ;[name, version] = Array.from(Buffer.concat(outputChunks).toString().split(" "))
+        ;[, version] = Array.from(Buffer.concat(outputChunks).toString().split(" "))
         version = version?.trim()
       }
       return callback(version)
