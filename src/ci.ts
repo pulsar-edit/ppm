@@ -10,6 +10,7 @@ import yargs from "yargs"
 import async from "async"
 import * as config from "./apm"
 import Command, { LogCommandResultsArgs } from "./command"
+import type { CliOptions } from "./apm-cli"
 
 export default class Ci extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -20,7 +21,7 @@ export default class Ci extends Command {
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 Usage: apm ci
@@ -69,7 +70,7 @@ but cannot be used to install new packages or dependencies.\
     })
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     const opts = this.parseOptions(options.commandArgs)
 
     const commands = []

@@ -17,6 +17,7 @@ import * as git from "./git"
 import Link from "./link"
 import * as request from "./request"
 import { PackageMetadata, unkownPackage } from "./packages"
+import type { CliOptions } from "./apm-cli"
 
 export default class Develop extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -26,7 +27,7 @@ export default class Develop extends Command {
     this.atomDevPackagesDirectory = path.join(this.atomDirectory, "dev", "packages")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage(`\
@@ -101,7 +102,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     return new Link().run(linkOptions, callback)
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     let left
     const packageName = options.commandArgs.shift()
 

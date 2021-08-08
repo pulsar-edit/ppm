@@ -11,6 +11,7 @@ import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
+import type { CliOptions } from "./apm-cli"
 
 export default class Unlink extends Command {
   constructor() {
@@ -19,7 +20,7 @@ export default class Unlink extends Command {
     this.packagesPath = path.join(config.getAtomDirectory(), "packages")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -121,7 +122,7 @@ Run \`apm links\` to view all the currently linked packages.\
     }
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.all) {

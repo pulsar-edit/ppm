@@ -12,9 +12,10 @@ import * as config from "./apm"
 import * as request from "./request"
 import { tree } from "./tree"
 import { isDeprecatedPackage } from "./deprecated-packages"
+import type { CliOptions } from "./apm-cli"
 
 export default class Search extends Command {
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -63,7 +64,7 @@ Search for Atom packages/themes on the atom.io registry.\
     })
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     options = this.parseOptions(options.commandArgs)
     const [query] = Array.from(options.argv._)
 

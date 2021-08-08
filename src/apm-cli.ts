@@ -114,8 +114,10 @@ const commands = {
   show: viewClass,
 }
 
-function parseOptions(args = []) {
-  const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()))
+export type CliOptions = yargs.Argv<{}> & { commandArgs: string[] } // TODO pass commandArgs directly
+
+function parseOptions(args: string[] = []): CliOptions {
+  const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth())) as CliOptions
   options.usage(`\
 
 apm - Atom Package Manager powered by https://atom.io
@@ -141,7 +143,7 @@ Run \`apm help <command>\` to see the more details about a specific command.\
   return options
 }
 
-function showHelp(options) {
+function showHelp(options: CliOptions) {
   if (options == null) {
     return
   }
@@ -276,7 +278,7 @@ export function run(args, callback) {
   }
 
   let callbackCalled = false
-  const handleErrorCallback = (error) => {
+  const handleErrorCallback = (error?: string | Error) => {
     if (callbackCalled) {
       return
     }

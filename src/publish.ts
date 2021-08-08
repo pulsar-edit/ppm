@@ -21,7 +21,7 @@ export default class Publish extends Command {
   userConfigPath = config.getUserConfigPath()
   atomNpmPath = require.resolve("npm/bin/npm-cli")
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 

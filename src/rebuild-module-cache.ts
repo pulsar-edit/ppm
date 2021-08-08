@@ -10,12 +10,13 @@ import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
+import type { CliOptions } from "./apm-cli"
 
 export default class RebuildModuleCache extends Command {
   atomPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
   moduleCache?: any
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -58,7 +59,7 @@ This command skips all linked packages.\
     })
   }
 
-  run(options: {}, callback: Function) {
+  run(options: CliOptions, callback: Function) {
     const commands = []
     fs.list(this.atomPackagesDirectory).forEach((packageName) => {
       const packageDirectory = path.join(this.atomPackagesDirectory, packageName)

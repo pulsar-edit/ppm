@@ -22,6 +22,7 @@ import fs from "./fs"
 import RebuildModuleCache from "./rebuild-module-cache"
 import * as request from "./request"
 import { isDeprecatedPackage } from "./deprecated-packages"
+import type { CliOptions } from "./apm-cli"
 
 export default class Install extends Command {
   constructor() {
@@ -33,7 +34,7 @@ export default class Install extends Command {
     this.repoLocalPackagePathRegex = /^file:(?!\/\/)(.*)/
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -749,7 +750,7 @@ Run apm -v after installing Git to see what version has been detected.\
     }
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     let packageNames
     options = this.parseOptions(options.commandArgs)
     const packagesFilePath = options.argv["packages-file"]

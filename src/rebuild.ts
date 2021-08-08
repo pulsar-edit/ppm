@@ -9,6 +9,7 @@ import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
 import fs from "./fs"
+import type { CliOptions } from "./apm-cli"
 
 export default class Rebuild extends Command {
   constructor() {
@@ -18,7 +19,7 @@ export default class Rebuild extends Command {
     this.atomNpmPath = require.resolve("npm/bin/npm-cli")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -53,7 +54,7 @@ All the modules will be rebuilt if no module names are specified.\
     return this.fork(this.atomNpmPath, rebuildArgs, { env }, callback)
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     options = this.parseOptions(options.commandArgs)
 
     return config.loadNpm((error, npm) => {

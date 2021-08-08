@@ -13,6 +13,7 @@ import fs from "./fs"
 import * as config from "./apm"
 import { tree } from "./tree"
 import { getRepository } from "./packages"
+import type { CliOptions } from "./apm-cli"
 
 export default class List extends Command {
   constructor() {
@@ -32,7 +33,7 @@ export default class List extends Command {
     }
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -284,7 +285,7 @@ List all the installed packages and also the packages bundled with Atom.\
     })
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.json) {

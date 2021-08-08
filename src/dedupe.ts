@@ -10,6 +10,7 @@ import yargs from "yargs"
 import * as config from "./apm"
 import Command, { LogCommandResultsArgs } from "./command"
 import fs from "./fs"
+import type { CliOptions } from "./apm-cli"
 
 export default class Dedupe extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -22,7 +23,7 @@ export default class Dedupe extends Command {
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
   }
 
-  parseOptions(argv) {
+  parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
 
@@ -81,7 +82,7 @@ This command is experimental.\
     return fs.makeTreeSync(this.atomNodeDirectory)
   }
 
-  run(options, callback) {
+  run(options: CliOptions, callback) {
     const { cwd } = options
     options = this.parseOptions(options.commandArgs)
     options.cwd = cwd
