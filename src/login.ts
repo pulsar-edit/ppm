@@ -15,11 +15,11 @@ import Command from "./command"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Login extends Command {
-  constructor(...args) {
+  constructor() {
+    super()
     this.welcomeMessage = this.welcomeMessage.bind(this)
     this.getToken = this.getToken.bind(this)
     this.saveToken = this.saveToken.bind(this)
-    super(...args)
   }
 
   static getTokenOrLogin(callback) {
