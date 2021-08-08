@@ -62,9 +62,7 @@ List all of the symlinked atom packages in ~/.atom/packages and
     })
   }
 
-  run(options) {
-    const { callback } = options
-
+  run(options, callback) {
     this.logLinks(this.devPackagesPath)
     this.logLinks(this.packagesPath)
     return callback()

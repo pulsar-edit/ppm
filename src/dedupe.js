@@ -79,8 +79,8 @@ This command is experimental.\
     return fs.makeTreeSync(this.atomNodeDirectory)
   }
 
-  run(options) {
-    const { callback, cwd } = options
+  run(options, callback) {
+    const { cwd } = options
     options = this.parseOptions(options.commandArgs)
     options.cwd = cwd
 

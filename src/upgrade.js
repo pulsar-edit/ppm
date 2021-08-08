@@ -223,15 +223,15 @@ available updates.\
           if (verbose) {
             commandArgs.unshift("--verbose")
           }
-          return new Install().run({ callback, commandArgs })
+          return new Install().run({ commandArgs }, callback)
         }))(pack, latestVersion)
     }
 
     return async.waterfall(installCommands, callback)
   }
 
-  run(options) {
-    const { callback, command } = options
+  run(options, callback) {
+    const { command } = options
     options = this.parseOptions(options.commandArgs)
     options.command = command
 

@@ -276,7 +276,7 @@ export function run(args, callback) {
   }
 
   let callbackCalled = false
-  options.callback = function (error) {
+  const handleErrorCallback = (error) => {
     if (callbackCalled) {
       return
     }
@@ -302,14 +302,14 @@ export function run(args, callback) {
   args = options.argv
   const { command } = options
   if (args.version) {
-    return printVersions(args, options.callback)
+    return printVersions(args, handleErrorCallback)
   } else if (args.help) {
     if ((Command = commands[options.command]?.())) {
       showHelp(new Command().parseOptions?.(options.command))
     } else {
       showHelp(options)
     }
-    return options.callback()
+    return handleErrorCallback()
   } else if (command) {
     if (command === "help") {
       if ((Command = commands[options.commandArgs]?.())) {
@@ -317,14 +317,14 @@ export function run(args, callback) {
       } else {
         showHelp(options)
       }
-      return options.callback()
+      return handleErrorCallback()
     } else if ((Command = commands[command]?.())) {
-      return new Command().run(options)
+      return new Command().run(options, handleErrorCallback)
     } else {
-      return options.callback(`Unrecognized command: ${command}`)
+      return handleErrorCallback(`Unrecognized command: ${command}`)
     }
   } else {
     showHelp(options)
-    return options.callback()
+    return handleErrorCallback()
   }
 }

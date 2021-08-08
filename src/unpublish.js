@@ -112,9 +112,8 @@ name is specified.\
     })
   }
 
-  run(options) {
+  run(options, callback) {
     let version
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     let [name] = Array.from(options.argv._)
 

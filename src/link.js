@@ -28,9 +28,8 @@ Run \`apm links\` to view all the currently linked packages.\
     return options.alias("d", "dev").boolean("dev").describe("dev", "Link to ~/.atom/dev/packages")
   }
 
-  run(options) {
+  run(options, callback) {
     let left, targetPath
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
 
     const packagePath = (left = options.argv._[0]?.toString()) != null ? left : "."

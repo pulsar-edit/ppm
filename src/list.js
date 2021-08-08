@@ -284,8 +284,7 @@ List all the installed packages and also the packages bundled with Atom.\
     })
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.json) {

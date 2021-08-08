@@ -431,9 +431,8 @@ have published it.\
   }
 
   // Run the publish command with the given options
-  run(options) {
+  run(options, callback) {
     let error, pack
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     const { tag } = options.argv
     let { rename } = options.argv

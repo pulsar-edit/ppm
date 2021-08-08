@@ -43,9 +43,8 @@ Disables the named package(s).\
     )
   }
 
-  run(options) {
+  run(options, callback) {
     let settings
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
 
     let packageNames = this.packageNamesFromArgv(options.argv)

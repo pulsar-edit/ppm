@@ -24,9 +24,8 @@ to the current working directory).\
     return options.alias("p", "path").string("path").describe("path", "Path to atom command")
   }
 
-  run(options) {
+  run(options, callback) {
     let atomCommand
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     const { env } = process
 

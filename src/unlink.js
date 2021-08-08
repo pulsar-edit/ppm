@@ -121,8 +121,7 @@ Run \`apm links\` to view all the currently linked packages.\
     }
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.all) {

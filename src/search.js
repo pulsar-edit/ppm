@@ -63,8 +63,7 @@ Search for Atom packages/themes on the atom.io registry.\
     })
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
     const [query] = Array.from(options.argv._)
 

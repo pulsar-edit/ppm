@@ -50,8 +50,8 @@ describe("apm develop", function () {
         const repoUrl = path.join(__dirname, "fixtures", "repo.git")
         return callback(null, repoUrl)
       })
-      spyOn(Develop.prototype, "installDependencies").andCallFake(function (packageDirectory, options) {
-        return this.linkPackage(packageDirectory, options)
+      spyOn(Develop.prototype, "installDependencies").andCallFake(function (packageDirectory, options, callback) {
+        return this.linkPackage(packageDirectory, options, callback)
       })
 
       const callback = jasmine.createSpy("callback")

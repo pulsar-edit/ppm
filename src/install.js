@@ -749,9 +749,8 @@ Run apm -v after installing Git to see what version has been detected.\
     }
   }
 
-  run(options) {
+  run(options, callback) {
     let packageNames
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     const packagesFilePath = options.argv["packages-file"]
 
@@ -819,14 +818,14 @@ with Atom will be used.\
     }
 
     const commands = []
-    commands.push((callback) => {
+    commands.push((cb) => {
       return config.loadNpm((error, npm) => {
         this.npm = npm
-        return callback(error)
+        return cb(error)
       })
     })
-    commands.push((callback) => this.loadInstalledAtomMetadata(() => callback()))
-    packageNames.forEach((packageName) => commands.push((callback) => installPackage(packageName, callback)))
+    commands.push((cb) => this.loadInstalledAtomMetadata(() => cb()))
+    packageNames.forEach((packageName) => commands.push((cb) => installPackage(packageName, cb)))
     const iteratee = (item, next) => item(next)
     return async.mapSeries(commands, iteratee, function (err, installedPackagesInfo) {
       if (err) {

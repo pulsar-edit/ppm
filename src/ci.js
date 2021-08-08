@@ -68,8 +68,7 @@ but cannot be used to install new packages or dependencies.\
     })
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     const opts = this.parseOptions(options.commandArgs)
 
     const commands = []

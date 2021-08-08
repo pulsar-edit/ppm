@@ -81,7 +81,7 @@ List or install starred Atom packages and themes.\
     }
 
     const commandArgs = packages.map(({ name }) => name)
-    return new Install().run({ commandArgs, callback })
+    return new Install().run({ commandArgs }, callback)
   }
 
   logPackagesAsJson(packages, callback) {
@@ -123,8 +123,7 @@ List or install starred Atom packages and themes.\
     return callback()
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
     const user = options.argv.user?.toString().trim()
 

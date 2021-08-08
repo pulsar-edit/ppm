@@ -54,8 +54,7 @@ Run \`apm stars\` to see all your starred packages.\
     })
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
     const packageNames = this.packageNamesFromArgv(options.argv)
 
