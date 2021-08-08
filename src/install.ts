@@ -728,7 +728,7 @@ Run apm -v after installing Git to see what version has been detected.\
 
   cloneNormalizedUrl(url, cloneDir, options, callback) {
     // Require here to avoid circular dependency
-    const Develop = require("./develop")
+    const Develop = require("./develop").default
     const develop = new Develop()
 
     return develop.cloneRepository(url, cloneDir, options, (err) => callback(err))
