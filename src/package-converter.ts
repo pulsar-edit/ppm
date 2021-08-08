@@ -20,7 +20,11 @@ import * as request from "./request"
 
 // Convert a TextMate bundle to an Atom package
 export default class PackageConverter {
-  constructor(sourcePath, destinationPath) {
+  sourcePath: string
+  destinationPath: string
+  plistExtensions: string[]
+  directoryMappings: { Preferences: string; Snippets: string; Syntaxes: string }
+  constructor(sourcePath: string, destinationPath: string) {
     this.sourcePath = sourcePath
     this.destinationPath = path.resolve(destinationPath)
 
@@ -33,7 +37,7 @@ export default class PackageConverter {
     }
   }
 
-  convert(callback) {
+  convert(callback: Function) {
     const { protocol } = url.parse(this.sourcePath)
     if (protocol === "http:" || protocol === "https:") {
       return this.downloadBundle(callback)
@@ -48,7 +52,7 @@ export default class PackageConverter {
     return (downloadUrl += "/archive/master.tar.gz")
   }
 
-  downloadBundle(callback) {
+  downloadBundle(callback: Function) {
     const tempPath = temp.mkdirSync("atom-bundle-")
     const requestOptions = { url: this.getDownloadUrl() }
     return request.createReadStream(requestOptions, (readStream) => {
@@ -69,8 +73,8 @@ export default class PackageConverter {
     })
   }
 
-  copyDirectories(sourcePath, callback) {
-    let packageName
+  copyDirectories(sourcePath: string, callback: Function) {
+    let packageName: string
     sourcePath = path.resolve(sourcePath)
     try {
       packageName = JSON.parse(fs.readFileSync(path.join(sourcePath, "package.json")))?.packageName
@@ -92,7 +96,13 @@ export default class PackageConverter {
     return delete object.keyEquivalent
   }
 
-  convertSettings(settings) {
+  convertSettings(settings: {
+    shellVariables: { name: any; value: any }[] | {}
+    increaseIndentPattern: any
+    decreaseIndentPattern: any
+    foldingStopMarker: any
+    completions: any
+  }) {
     if (settings.shellVariables) {
       const shellVariables = {}
       for (const { name, value } of settings.shellVariables) {
@@ -114,7 +124,7 @@ export default class PackageConverter {
     }
   }
 
-  readFileSync(filePath) {
+  readFileSync(filePath: string) {
     if (this.plistExtensions.includes(path.extname(filePath))) {
       return plist.parseFileSync(filePath)
     } else if ([".json", ".cson"].includes(path.extname(filePath))) {
@@ -122,15 +132,15 @@ export default class PackageConverter {
     }
   }
 
-  writeFileSync(filePath, object = {}) {
+  writeFileSync(filePath: string, object = {}) {
     this.filterObject(object)
     if (Object.keys(object).length > 0) {
       return CSON.writeFileSync(filePath, object)
     }
   }
 
-  convertFile(sourcePath, destinationDir) {
-    let contents
+  convertFile(sourcePath: string, destinationDir: string) {
+    let contents: {}
     const extension = path.extname(sourcePath)
     let destinationName = `${path.basename(sourcePath, extension)}.cson`
     destinationName = destinationName.toLowerCase()
@@ -145,7 +155,7 @@ export default class PackageConverter {
     return this.writeFileSync(destinationPath, contents)
   }
 
-  normalizeFilenames(directoryPath) {
+  normalizeFilenames(directoryPath: string) {
     if (!fs.isDirectorySync(directoryPath)) {
       return
     }
@@ -176,7 +186,7 @@ export default class PackageConverter {
     })()
   }
 
-  convertSnippets(packageName, source) {
+  convertSnippets(packageName: string, source: string) {
     let sourceSnippets = path.join(source, "snippets")
     if (!fs.isDirectorySync(sourceSnippets)) {
       sourceSnippets = path.join(source, "Snippets")
@@ -233,7 +243,7 @@ export default class PackageConverter {
     return this.normalizeFilenames(destination)
   }
 
-  convertPreferences(packageName, source) {
+  convertPreferences(packageName: string, source: string) {
     let sourcePreferences = path.join(source, "preferences")
     if (!fs.isDirectorySync(sourcePreferences)) {
       sourcePreferences = path.join(source, "Preferences")
@@ -245,14 +255,14 @@ export default class PackageConverter {
     const preferencesBySelector = {}
     const destination = path.join(this.destinationPath, "settings")
     for (const child of fs.readdirSync(sourcePreferences)) {
-      let left, properties
+      let left, properties: { [x: string]: any; editor?: any }
       const { scope, settings } = (left = this.readFileSync(path.join(sourcePreferences, child))) != null ? left : {}
       if (!scope || !settings) {
         continue
       }
 
       if ((properties = this.convertSettings(settings))) {
-        let selector
+        let selector: string
         try {
           selector = new ScopeSelector(scope).toCssSelector()
         } catch (e) {
@@ -277,7 +287,7 @@ export default class PackageConverter {
     return this.normalizeFilenames(destination)
   }
 
-  convertGrammars(source) {
+  convertGrammars(source: string) {
     let sourceSyntaxes = path.join(source, "syntaxes")
     if (!fs.isDirectorySync(sourceSyntaxes)) {
       sourceSyntaxes = path.join(source, "Syntaxes")
