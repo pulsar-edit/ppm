@@ -89,26 +89,22 @@ cmd-shift-o to run the package out of the newly cloned repository.\
   installDependencies(packageDirectory, options, callback = function () {}) {
     process.chdir(packageDirectory)
     const installOptions = { ...options }
-    installOptions.callback = callback
 
-    return new Install().run(installOptions)
+    return new Install().run(installOptions, callback)
   }
 
-  linkPackage(packageDirectory, options, callback) {
+  linkPackage(packageDirectory, options, callback = function () {}) {
     const linkOptions = { ...options }
-    if (callback) {
-      linkOptions.callback = callback
-    }
     linkOptions.commandArgs = [packageDirectory, "--dev"]
-    return new Link().run(linkOptions)
+    return new Link().run(linkOptions, callback)
   }
 
-  run(options) {
+  run(options, callback) {
     let left
     const packageName = options.commandArgs.shift()
 
     if (packageName?.length <= 0) {
-      return options.callback("Missing required package name")
+      return callback("Missing required package name")
     }
 
     let packageDirectory =
@@ -116,20 +112,20 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     packageDirectory = path.resolve(packageDirectory)
 
     if (fs.existsSync(packageDirectory)) {
-      return this.linkPackage(packageDirectory, options)
+      return this.linkPackage(packageDirectory, options, callback)
     } else {
       return this.getRepositoryUrl(packageName, (error, repoUrl) => {
         if (error != null) {
-          return options.callback(error)
+          return callback(error)
         } else {
           const tasks = []
-          tasks.push((callback) => this.cloneRepository(repoUrl, packageDirectory, options, callback))
+          tasks.push((cb) => this.cloneRepository(repoUrl, packageDirectory, options, cb))
 
-          tasks.push((callback) => this.installDependencies(packageDirectory, options, callback))
+          tasks.push((cb) => this.installDependencies(packageDirectory, options, cb))
 
-          tasks.push((callback) => this.linkPackage(packageDirectory, options, callback))
+          tasks.push((cb) => this.linkPackage(packageDirectory, options, cb))
 
-          return async.waterfall(tasks, options.callback)
+          return async.waterfall(tasks, callback)
         }
       })
     }

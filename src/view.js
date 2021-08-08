@@ -110,8 +110,7 @@ View information about a package/theme in the atom.io registry.\
     })
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
     const [packageName] = Array.from(options.argv._)
 

@@ -30,8 +30,7 @@ Usage: apm config set <key> <value>
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
 
     let configArgs = ["--globalconfig", apm.getGlobalConfigPath(), "--userconfig", apm.getUserConfigPath(), "config"]

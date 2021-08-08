@@ -28,7 +28,9 @@ function setupTempDirectory() {
   temp.dir = tempDirectory
   try {
     fs.makeTreeSync(temp.dir)
-  } catch (error) {}
+  } catch (error) {
+    /* ignore error */
+  }
   return temp.track()
 }
 
@@ -250,7 +252,9 @@ function getPythonVersion(callback) {
     const outputChunks = []
     spawned.stderr.on("data", (chunk) => outputChunks.push(chunk))
     spawned.stdout.on("data", (chunk) => outputChunks.push(chunk))
-    spawned.on("error", function () {})
+    spawned.on("error", function () {
+      /* ignore error */
+    })
     return spawned.on("close", function (code) {
       let version
       if (code === 0) {
@@ -262,67 +266,65 @@ function getPythonVersion(callback) {
   })
 }
 
-export default {
-  run(args, callback) {
-    let Command
-    config.setupApmRcFile()
-    const options = parseOptions(args)
+export function run(args, callback) {
+  let Command
+  config.setupApmRcFile()
+  const options = parseOptions(args)
 
-    if (!options.argv.color) {
-      colors.disable()
+  if (!options.argv.color) {
+    colors.disable()
+  }
+
+  let callbackCalled = false
+  const handleErrorCallback = (error) => {
+    if (callbackCalled) {
+      return
     }
-
-    let callbackCalled = false
-    options.callback = function (error) {
-      if (callbackCalled) {
-        return
+    callbackCalled = true
+    if (error != null) {
+      let message
+      if (typeof error === "string") {
+        message = error
+      } else {
+        message = error.message != null ? error.message : error
       }
-      callbackCalled = true
-      if (error != null) {
-        let message
-        if (typeof error === "string") {
-          message = error
-        } else {
-          message = error.message != null ? error.message : error
-        }
 
-        if (message === "canceled") {
-          // A prompt was canceled so just log an empty line
-          console.log()
-        } else if (message) {
-          console.error(message.red)
-        }
+      if (message === "canceled") {
+        // A prompt was canceled so just log an empty line
+        console.log()
+      } else if (message) {
+        console.error(message.red)
       }
-      return callback?.(error)
     }
+    return callback?.(error)
+  }
 
-    args = options.argv
-    const { command } = options
-    if (args.version) {
-      return printVersions(args, options.callback)
-    } else if (args.help) {
-      if ((Command = commands[options.command]?.())) {
-        showHelp(new Command().parseOptions?.(options.command))
+  args = options.argv
+  const { command } = options
+  if (args.version) {
+    return printVersions(args, handleErrorCallback)
+  } else if (args.help) {
+    if ((Command = commands[options.command]?.())) {
+      showHelp(new Command().parseOptions?.(options.command))
+    } else {
+      showHelp(options)
+    }
+    return handleErrorCallback()
+  } else if (command) {
+    if (command === "help") {
+      if ((Command = commands[options.commandArgs]?.())) {
+        showHelp(new Command().parseOptions?.(options.commandArgs))
       } else {
         showHelp(options)
       }
-      return options.callback()
-    } else if (command) {
-      if (command === "help") {
-        if ((Command = commands[options.commandArgs]?.())) {
-          showHelp(new Command().parseOptions?.(options.commandArgs))
-        } else {
-          showHelp(options)
-        }
-        return options.callback()
-      } else if ((Command = commands[command]?.())) {
-        return new Command().run(options)
-      } else {
-        return options.callback(`Unrecognized command: ${command}`)
-      }
+      return handleErrorCallback()
+    } else if ((Command = commands[command]?.())) {
+      return new Command().run(options, handleErrorCallback)
     } else {
-      showHelp(options)
-      return options.callback()
+      return handleErrorCallback(`Unrecognized command: ${command}`)
     }
-  },
+  } else {
+    showHelp(options)
+    return handleErrorCallback()
+  }
 }

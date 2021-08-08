@@ -28,9 +28,8 @@ Run \`apm links\` to view all the currently linked packages.\
     return options.alias("d", "dev").boolean("dev").describe("dev", "Link to ~/.atom/dev/packages")
   }
 
-  run(options) {
+  run(options, callback) {
     let left, targetPath
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
 
     const packagePath = (left = options.argv._[0]?.toString()) != null ? left : "."
@@ -41,7 +40,9 @@ Run \`apm links\` to view all the currently linked packages.\
       if (!packageName) {
         packageName = CSON.readFileSync(CSON.resolve(path.join(linkPath, "package"))).name
       }
-    } catch (error1) {}
+    } catch (error1) {
+      /* ignore error */
+    }
     if (!packageName) {
       packageName = path.basename(linkPath)
     }

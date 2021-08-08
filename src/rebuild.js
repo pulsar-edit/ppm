@@ -53,8 +53,7 @@ All the modules will be rebuilt if no module names are specified.\
     return this.fork(this.atomNpmPath, rebuildArgs, { env }, callback)
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
 
     return config.loadNpm((error, npm) => {

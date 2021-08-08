@@ -127,7 +127,9 @@ export default class Command {
         if (semver.valid(version)) {
           this.installedAtomVersion = version
         }
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
 
       this.electronVersion =
         process.env.ATOM_ELECTRON_VERSION != null ? process.env.ATOM_ELECTRON_VERSION : electronVersion

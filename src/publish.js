@@ -402,7 +402,9 @@ have published it.\
         if (url.parse(semverRange).protocol.length > 0) {
           return true
         }
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
 
       return semverRange === "latest"
     }
@@ -429,9 +431,8 @@ have published it.\
   }
 
   // Run the publish command with the given options
-  run(options) {
+  run(options, callback) {
     let error, pack
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     const { tag } = options.argv
     let { rename } = options.argv

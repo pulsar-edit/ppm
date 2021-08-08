@@ -49,9 +49,8 @@ on the option selected.\
     return options.string("template").describe("template", "Path to the package or theme template")
   }
 
-  run(options) {
+  run(options, callback) {
     let templatePath
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     if (options.argv.package?.length > 0) {
       if (options.argv.convert) {

@@ -24,7 +24,7 @@ export default class Login extends Command {
   static getTokenOrLogin(callback) {
     return auth.getToken(function (error, token) {
       if (error != null) {
-        return new Login().run({ callback, commandArgs: [] })
+        return new Login().run({ commandArgs: [] }, callback)
       } else {
         return callback(null, token)
       }
@@ -44,8 +44,7 @@ be used to identify you when publishing packages to atom.io.\
     return options.string("token").describe("token", "atom.io API token")
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
     return Q({ token: options.argv.token })
       .then(this.welcomeMessage)

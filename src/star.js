@@ -78,16 +78,17 @@ Run \`apm stars\` to see all your starred packages.\
           if (metadata.name && Packages.getRepository(metadata)) {
             installedPackages.push(metadata.name)
           }
-        } catch (error) {}
+        } catch (error) {
+          /* ignore error */
+        }
       }
     }
 
     return _.uniq(installedPackages)
   }
 
-  run(options) {
+  run(options, callback) {
     let packageNames
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.installed) {

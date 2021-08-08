@@ -60,9 +60,7 @@ This command skips all linked packages.\
     })
   }
 
-  run(options) {
-    const { callback } = options
-
+  run(options, callback) {
     const commands = []
     fs.list(this.atomPackagesDirectory).forEach((packageName) => {
       const packageDirectory = path.join(this.atomPackagesDirectory, packageName)

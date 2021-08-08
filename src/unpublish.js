@@ -112,9 +112,8 @@ name is specified.\
     })
   }
 
-  run(options) {
+  run(options, callback) {
     let version
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     let [name] = Array.from(options.argv._)
 
@@ -129,7 +128,9 @@ name is specified.\
     if (!name) {
       try {
         name = JSON.parse(fs.readFileSync("package.json"))?.name
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
     }
 
     if (!name) {

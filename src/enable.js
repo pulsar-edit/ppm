@@ -24,9 +24,8 @@ Enables the named package(s).\
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  run(options) {
+  run(options, callback) {
     let error, left, settings
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     let packageNames = this.packageNamesFromArgv(options.argv)
 

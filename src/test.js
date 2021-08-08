@@ -24,9 +24,8 @@ to the current working directory).\
     return options.alias("p", "path").string("path").describe("path", "Path to atom command")
   }
 
-  run(options) {
+  run(options, callback) {
     let atomCommand
-    const { callback } = options
     options = this.parseOptions(options.commandArgs)
     const { env } = process
 
@@ -55,7 +54,9 @@ to the current working directory).\
           if (loggedOutput) {
             process.stdout.write(`${loggedOutput}\n`)
           }
-        } catch (error) {}
+        } catch (error) {
+          /* ignore error */
+        }
 
         if (code === 0) {
           process.stdout.write("Tests passed\n".green)

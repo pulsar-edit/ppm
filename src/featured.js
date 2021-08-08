@@ -81,8 +81,7 @@ atom.io registry.\
     })
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
 
     const listCallback = function (error, packages) {

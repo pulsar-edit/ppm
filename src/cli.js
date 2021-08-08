@@ -4,8 +4,8 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import apm from "./apm-cli"
+import { run } from "./apm-cli"
 
 process.title = "apm"
 
-apm.run(process.argv.slice(2), (error) => (process.exitCode = error != null ? 1 : 0))
+run(process.argv.slice(2), (error) => (process.exitCode = error != null ? 1 : 0))

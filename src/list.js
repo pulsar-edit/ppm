@@ -23,7 +23,9 @@ export default class List extends Command {
     if ((configPath = CSON.resolve(path.join(config.getAtomDirectory(), "config")))) {
       try {
         this.disabledPackages = CSON.readFileSync(configPath)?.["*"]?.core?.disabledPackages
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
     }
     if (this.disabledPackages == null) {
       this.disabledPackages = []
@@ -138,7 +140,9 @@ List all the installed packages and also the packages bundled with Atom.\
       if ((manifestPath = CSON.resolve(path.join(directoryPath, child, "package")))) {
         try {
           manifest = CSON.readFileSync(manifestPath)
-        } catch (error) {}
+        } catch (error) {
+          /* ignore error */
+        }
       }
       if (manifest == null) {
         manifest = {}
@@ -195,7 +199,9 @@ List all the installed packages and also the packages bundled with Atom.\
       try {
         const metadataPath = path.join(resourcePath, "package.json")
         ;({ _atomPackages } = JSON.parse(fs.readFileSync(metadataPath)))
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
       if (_atomPackages == null) {
         _atomPackages = {}
       }
@@ -278,8 +284,7 @@ List all the installed packages and also the packages bundled with Atom.\
     })
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.json) {

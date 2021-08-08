@@ -26,8 +26,7 @@ Open a package's homepage in the default browser.\
     return open(repositoryUrl)
   }
 
-  run(options) {
-    const { callback } = options
+  run(options, callback) {
     options = this.parseOptions(options.commandArgs)
     const [packageName] = Array.from(options.argv._)
 
