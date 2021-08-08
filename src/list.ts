@@ -16,11 +16,13 @@ import { getRepository } from "./packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class List extends Command {
+  private userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
+  private devPackagesDirectory = path.join(config.getAtomDirectory(), "dev", "packages")
+  private disabledPackages?: string[]
   constructor() {
     super()
-    let configPath
-    this.userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
-    this.devPackagesDirectory = path.join(config.getAtomDirectory(), "dev", "packages")
+    let configPath: string
+
     if ((configPath = CSON.resolve(path.join(config.getAtomDirectory(), "config")))) {
       try {
         this.disabledPackages = CSON.readFileSync(configPath)?.["*"]?.core?.disabledPackages
