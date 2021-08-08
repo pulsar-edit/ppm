@@ -25,13 +25,17 @@ import { isDeprecatedPackage } from "./deprecated-packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Install extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomPackagesDirectory: string
+  private atomNodeDirectory: string
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private repoLocalPackagePathRegex = /^file:(?!\/\/)(.*)/
+  verbose: boolean
+
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomPackagesDirectory = path.join(this.atomDirectory, "packages")
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
-    this.repoLocalPackagePathRegex = /^file:(?!\/\/)(.*)/
   }
 
   parseOptions(argv: string[]) {
