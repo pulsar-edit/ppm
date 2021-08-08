@@ -12,11 +12,8 @@ import { tree } from "./tree"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Links extends Command {
-  constructor() {
-    super()
-    this.devPackagesPath = path.join(config.getAtomDirectory(), "dev", "packages")
-    this.packagesPath = path.join(config.getAtomDirectory(), "packages")
-  }
+  private devPackagesPath = path.join(config.getAtomDirectory(), "dev", "packages")
+  private packagesPath = path.join(config.getAtomDirectory(), "packages")
 
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
