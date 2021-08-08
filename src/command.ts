@@ -13,6 +13,8 @@ import semver from "semver"
 import * as config from "./apm"
 import * as git from "./git"
 
+export type LogCommandResultsArgs = [code: number, stderr?: string, stdout?: string]
+
 export default class Command {
   private electronVersion: string
   installedAtomVersion: string
@@ -93,7 +95,7 @@ export default class Command {
     }
   }
 
-  logCommandResults(callback, code, stderr = "", stdout = "") {
+  logCommandResults(callback: (error?: string) => void, code: number, stderr = "", stdout = "") {
     if (code === 0) {
       this.logSuccess()
       return callback()

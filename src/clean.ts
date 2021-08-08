@@ -5,7 +5,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import yargs from "yargs"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
 
 export default class Clean extends Command {
   private atomNpmPath = require.resolve("npm/bin/npm-cli")
@@ -24,7 +24,7 @@ as a dependency in the package.json file.\
 
   run(options, callback) {
     process.stdout.write("Removing extraneous modules ")
-    return this.fork(this.atomNpmPath, ["prune"], (...args: [code: number, stderr?: string, stdout?: string]) => {
+    return this.fork(this.atomNpmPath, ["prune"], (...args: LogCommandResultsArgs) => {
       return this.logCommandResults(callback, ...args)
     })
   }

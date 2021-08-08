@@ -8,16 +8,18 @@ import path from "path"
 import async from "async"
 import yargs from "yargs"
 import * as config from "./apm"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
 import fs from "./fs"
 
 export default class Dedupe extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  atomPackagesDirectory: string
+  private atomNodeDirectory: string
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomPackagesDirectory = path.join(this.atomDirectory, "packages")
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
   }
 
   parseOptions(argv) {
@@ -36,8 +38,8 @@ This command is experimental.\
   dedupeModules(options, callback) {
     process.stdout.write("Deduping modules ")
 
-    return this.forkDedupeCommand(options, (...args) => {
-      return this.logCommandResults(callback, ...Array.from(args))
+    return this.forkDedupeCommand(options, (...args: LogCommandResultsArgs) => {
+      return this.logCommandResults(callback, ...args)
     })
   }
 

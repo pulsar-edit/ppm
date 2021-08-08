@@ -9,7 +9,7 @@ import fs from "./fs"
 import yargs from "yargs"
 import async from "async"
 import * as config from "./apm"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
 
 export default class Ci extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -64,14 +64,9 @@ but cannot be used to install new packages or dependencies.\
 
     const installOptions = { env, streaming: options.argv.verbose }
 
-    return this.fork(
-      this.atomNpmPath,
-      installArgs,
-      installOptions,
-      (...args: [code: number, stderr?: string, stdout?: string]) => {
-        return this.logCommandResults(callback, ...args)
-      }
-    )
+    return this.fork(this.atomNpmPath, installArgs, installOptions, (...args: LogCommandResultsArgs) => {
+      return this.logCommandResults(callback, ...args)
+    })
   }
 
   run(options, callback) {
