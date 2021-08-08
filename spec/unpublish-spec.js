@@ -80,7 +80,6 @@ describe("apm unpublish", function () {
           const callback = jasmine.createSpy("callback")
           spyOn(Unpublish.prototype, "prompt").andCallFake(function (...args1) {
             const adjustedLength = Math.max(args1.length, 1),
-              args = args1.slice(0, adjustedLength - 1),
               cb = args1[adjustedLength - 1]
             return cb("")
           })
@@ -141,7 +140,6 @@ describe("apm unpublish", function () {
           const callback = jasmine.createSpy("callback")
           spyOn(Unpublish.prototype, "prompt").andCallFake(function (...args1) {
             const adjustedLength = Math.max(args1.length, 1),
-              args = args1.slice(0, adjustedLength - 1),
               cb = args1[adjustedLength - 1]
             return cb("")
           })

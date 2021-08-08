@@ -90,7 +90,7 @@ Search for Atom packages/themes on the atom.io registry.\
         const heading = `Search Results For '${query}'`.cyan
         console.log(`${heading} (${packages.length})`)
 
-        tree(packages, function ({ name, version, description, downloads, stargazers_count }) {
+        tree(packages, function ({ name, description, downloads, stargazers_count }) {
           let label = name.yellow
           if (description) {
             label += ` ${description.replace(/\s+/g, " ")}`

@@ -237,7 +237,7 @@ atom-text-editor.is-focused .line.cursor-line`,
   }
 }
 
-var SyntaxVariablesTemplate = `\
+const SyntaxVariablesTemplate = `\
 // This defines all syntax variables that syntax themes must implement when they
 // include a syntax-variables.less file.
 

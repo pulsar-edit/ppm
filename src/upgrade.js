@@ -55,7 +55,7 @@ available updates.\
   getInstalledPackages(options) {
     let packages = []
     for (const name of fs.list(this.atomPackagesDirectory)) {
-      var pack
+      let pack
       if ((pack = this.getIntalledPackage(name))) {
         packages.push(pack)
       }
@@ -159,7 +159,7 @@ available updates.\
       }
       const args = ["fetch", "origin", "master"]
       git.addGitToEnv(process.env)
-      return this.spawn(command, args, { cwd: repoPath }, function (code, stderr = "", stdout = "") {
+      return this.spawn(command, args, { cwd: repoPath }, function (code, stderr = "") {
         if (code !== 0) {
           return callback(new Error(`Exit code: ${code} - ${stderr}`))
         }
@@ -269,7 +269,8 @@ available updates.\
       } else {
         console.log(`${"Package Updates Available".cyan} (${updates.length})`)
         tree(updates, function ({ pack, latestVersion, sha }) {
-          let { name, apmInstallSource, version } = pack
+          const { apmInstallSource } = pack
+          let { name, version } = pack
           name = name.yellow
           if (sha != null) {
             version = apmInstallSource.sha.substr(0, 8).red

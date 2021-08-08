@@ -99,7 +99,7 @@ List or install starred Atom packages and themes.\
     }
     console.log(`${label.cyan} (${packages.length})`)
 
-    tree(packages, function ({ name, version, description, downloads, stargazers_count }) {
+    tree(packages, function ({ name, description, downloads, stargazers_count }) {
       label = name.yellow
       if (process.platform === "darwin") {
         label = `\u2B50  ${label}`

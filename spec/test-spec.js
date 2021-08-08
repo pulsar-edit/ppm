@@ -5,7 +5,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const child_process = require("child_process")
-const fs = require("fs")
 const path = require("path")
 const temp = require("temp")
 const apm = require("../lib/apm-cli")

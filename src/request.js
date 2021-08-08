@@ -44,7 +44,7 @@ export function get(requestOptions, callback) {
   return configureRequest(requestOptions, function () {
     let retryCount = requestOptions.retries != null ? requestOptions.retries : 0
     let requestsMade = 0
-    var tryRequest = function () {
+    const tryRequest = function () {
       requestsMade++
       return request.get(requestOptions, function (error, response, body) {
         if (retryCount > 0 && ["ETIMEDOUT", "ECONNRESET"].includes(error?.code)) {

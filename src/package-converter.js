@@ -186,9 +186,10 @@ export default class PackageConverter {
     const snippetsBySelector = {}
     const destination = path.join(this.destinationPath, "snippets")
     for (const child of fs.readdirSync(sourceSnippets)) {
-      var left, selector
+      let left, selector
       const snippet = (left = this.readFileSync(path.join(sourceSnippets, child))) != null ? left : {}
-      let { scope, name, content, tabTrigger } = snippet
+      const { scope, tabTrigger } = snippet
+      let { name, content } = snippet
       if (!tabTrigger || !content) {
         continue
       }
@@ -242,14 +243,14 @@ export default class PackageConverter {
     const preferencesBySelector = {}
     const destination = path.join(this.destinationPath, "settings")
     for (const child of fs.readdirSync(sourcePreferences)) {
-      var left, properties
+      let left, properties
       const { scope, settings } = (left = this.readFileSync(path.join(sourcePreferences, child))) != null ? left : {}
       if (!scope || !settings) {
         continue
       }
 
       if ((properties = this.convertSettings(settings))) {
-        var selector
+        let selector
         try {
           selector = new ScopeSelector(scope).toCssSelector()
         } catch (e) {

@@ -105,7 +105,7 @@ have published it.\
       json: true,
     }
 
-    var requestTags = () =>
+    const requestTags = () =>
       request.get(requestSettings, function (error, response, tags = []) {
         if (response?.statusCode === 200) {
           for (let index = 0; index < tags.length; index++) {
@@ -142,7 +142,7 @@ have published it.\
           authorization: token,
         },
       }
-      return request.get(requestSettings, function (error, response, body = {}) {
+      return request.get(requestSettings, function (error, response) {
         if (error != null) {
           return callback(error)
         } else {
@@ -293,8 +293,7 @@ have published it.\
     }
 
     try {
-      let pack
-      return (pack = JSON.parse(fs.readFileSync(metadataPath)))
+      return JSON.parse(fs.readFileSync(metadataPath))
     } catch (error) {
       throw new Error(`Error parsing package.json file: ${error.message}`)
     }
@@ -434,7 +433,8 @@ have published it.\
     let error, pack
     const { callback } = options
     options = this.parseOptions(options.commandArgs)
-    let { tag, rename } = options.argv
+    const { tag } = options.argv
+    let { rename } = options.argv
     let [version] = Array.from(options.argv._)
 
     try {

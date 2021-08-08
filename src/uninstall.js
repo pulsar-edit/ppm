@@ -54,7 +54,7 @@ Delete the installed package(s) from the ~/.atom/packages directory.\
         },
       }
 
-      return request.post(requestOptions, (error, response, body) => callback())
+      return request.post(requestOptions, () => callback())
     })
   }
 
@@ -80,7 +80,7 @@ Delete the installed package(s) from the ~/.atom/packages directory.\
       }
       process.stdout.write(`Uninstalling ${packageName} `)
       try {
-        var packageDirectory
+        let packageDirectory
         if (!options.argv.dev) {
           packageDirectory = path.join(packagesDirectory, packageName)
           const packageManifestPath = path.join(packageDirectory, "package.json")

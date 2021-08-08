@@ -9,7 +9,6 @@ const fs = require("fs-plus")
 const temp = require("temp")
 const express = require("express")
 const http = require("http")
-const wrench = require("wrench")
 const apm = require("../lib/apm-cli")
 
 const apmRun = function (args, callback) {
@@ -221,7 +220,7 @@ describe("apm upgrade", function () {
   })
 
   return describe("for outdated git packages", function () {
-    let [pkgJsonPath] = Array.from([])
+    let pkgJsonPath
 
     beforeEach(function () {
       delete process.env.ATOM_ELECTRON_URL

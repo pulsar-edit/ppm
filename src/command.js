@@ -47,7 +47,7 @@ export default class Command {
       }
     })
 
-    var onChildExit = function (errorOrExitCode) {
+    const onChildExit = function (errorOrExitCode) {
       spawned.removeListener("error", onChildExit)
       spawned.removeListener("close", onChildExit)
       return callback?.(errorOrExitCode, Buffer.concat(errorChunks).toString(), Buffer.concat(outputChunks).toString())
