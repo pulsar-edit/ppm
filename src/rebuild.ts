@@ -12,11 +12,13 @@ import fs from "./fs"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Rebuild extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNodeDirectory: string
+
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
   }
 
   parseOptions(argv: string[]) {
