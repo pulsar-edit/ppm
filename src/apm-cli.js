@@ -262,67 +262,65 @@ function getPythonVersion(callback) {
   })
 }
 
-export default {
-  run(args, callback) {
-    let Command
-    config.setupApmRcFile()
-    const options = parseOptions(args)
+export function run(args, callback) {
+  let Command
+  config.setupApmRcFile()
+  const options = parseOptions(args)
 
-    if (!options.argv.color) {
-      colors.disable()
+  if (!options.argv.color) {
+    colors.disable()
+  }
+
+  let callbackCalled = false
+  options.callback = function (error) {
+    if (callbackCalled) {
+      return
     }
-
-    let callbackCalled = false
-    options.callback = function (error) {
-      if (callbackCalled) {
-        return
+    callbackCalled = true
+    if (error != null) {
+      let message
+      if (typeof error === "string") {
+        message = error
+      } else {
+        message = error.message != null ? error.message : error
       }
-      callbackCalled = true
-      if (error != null) {
-        let message
-        if (typeof error === "string") {
-          message = error
-        } else {
-          message = error.message != null ? error.message : error
-        }
 
-        if (message === "canceled") {
-          // A prompt was canceled so just log an empty line
-          console.log()
-        } else if (message) {
-          console.error(message.red)
-        }
+      if (message === "canceled") {
+        // A prompt was canceled so just log an empty line
+        console.log()
+      } else if (message) {
+        console.error(message.red)
       }
-      return callback?.(error)
     }
+    return callback?.(error)
+  }
 
-    args = options.argv
-    const { command } = options
-    if (args.version) {
-      return printVersions(args, options.callback)
-    } else if (args.help) {
-      if ((Command = commands[options.command]?.())) {
-        showHelp(new Command().parseOptions?.(options.command))
+  args = options.argv
+  const { command } = options
+  if (args.version) {
+    return printVersions(args, options.callback)
+  } else if (args.help) {
+    if ((Command = commands[options.command]?.())) {
+      showHelp(new Command().parseOptions?.(options.command))
+    } else {
+      showHelp(options)
+    }
+    return options.callback()
+  } else if (command) {
+    if (command === "help") {
+      if ((Command = commands[options.commandArgs]?.())) {
+        showHelp(new Command().parseOptions?.(options.commandArgs))
       } else {
         showHelp(options)
       }
       return options.callback()
-    } else if (command) {
-      if (command === "help") {
-        if ((Command = commands[options.commandArgs]?.())) {
-          showHelp(new Command().parseOptions?.(options.commandArgs))
-        } else {
-          showHelp(options)
-        }
-        return options.callback()
-      } else if ((Command = commands[command]?.())) {
-        return new Command().run(options)
-      } else {
-        return options.callback(`Unrecognized command: ${command}`)
-      }
+    } else if ((Command = commands[command]?.())) {
+      return new Command().run(options)
     } else {
-      showHelp(options)
-      return options.callback()
+      return options.callback(`Unrecognized command: ${command}`)
     }
-  },
+  } else {
+    showHelp(options)
+    return options.callback()
+  }
 }
