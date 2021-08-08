@@ -129,7 +129,9 @@ name is specified.\
     if (!name) {
       try {
         name = JSON.parse(fs.readFileSync("package.json"))?.name
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
     }
 
     if (!name) {

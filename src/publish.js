@@ -402,7 +402,9 @@ have published it.\
         if (url.parse(semverRange).protocol.length > 0) {
           return true
         }
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
 
       return semverRange === "latest"
     }

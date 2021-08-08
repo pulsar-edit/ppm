@@ -74,7 +74,9 @@ export default class PackageConverter {
     sourcePath = path.resolve(sourcePath)
     try {
       packageName = JSON.parse(fs.readFileSync(path.join(sourcePath, "package.json")))?.packageName
-    } catch (error) {}
+    } catch (error) {
+      /* ignore error */
+    }
     if (packageName == null) {
       packageName = path.basename(this.destinationPath)
     }

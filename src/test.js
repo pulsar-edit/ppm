@@ -55,7 +55,9 @@ to the current working directory).\
           if (loggedOutput) {
             process.stdout.write(`${loggedOutput}\n`)
           }
-        } catch (error) {}
+        } catch (error) {
+          /* ignore error */
+        }
 
         if (code === 0) {
           process.stdout.write("Tests passed\n".green)

@@ -78,7 +78,9 @@ Run \`apm stars\` to see all your starred packages.\
           if (metadata.name && Packages.getRepository(metadata)) {
             installedPackages.push(metadata.name)
           }
-        } catch (error) {}
+        } catch (error) {
+          /* ignore error */
+        }
       }
     }
 

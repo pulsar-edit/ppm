@@ -28,7 +28,9 @@ function setupTempDirectory() {
   temp.dir = tempDirectory
   try {
     fs.makeTreeSync(temp.dir)
-  } catch (error) {}
+  } catch (error) {
+    /* ignore error */
+  }
   return temp.track()
 }
 
@@ -250,7 +252,9 @@ function getPythonVersion(callback) {
     const outputChunks = []
     spawned.stderr.on("data", (chunk) => outputChunks.push(chunk))
     spawned.stdout.on("data", (chunk) => outputChunks.push(chunk))
-    spawned.on("error", function () {})
+    spawned.on("error", function () {
+      /* ignore error */
+    })
     return spawned.on("close", function (code) {
       let version
       if (code === 0) {

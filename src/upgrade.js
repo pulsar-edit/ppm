@@ -79,7 +79,9 @@ available updates.\
       if (metadata?.name && metadata?.version) {
         return metadata
       }
-    } catch (error) {}
+    } catch (error) {
+      /* ignore error */
+    }
   }
 
   loadInstalledAtomVersion(options, callback) {

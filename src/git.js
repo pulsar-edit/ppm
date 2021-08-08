@@ -88,7 +88,9 @@ export function getGitVersion(callback) {
     const outputChunks = []
     spawned.stderr.on("data", (chunk) => outputChunks.push(chunk))
     spawned.stdout.on("data", (chunk) => outputChunks.push(chunk))
-    spawned.on("error", function () {})
+    spawned.on("error", function () {
+      /* ignore error */
+    })
     return spawned.on("close", function (code) {
       let version
       if (code === 0) {

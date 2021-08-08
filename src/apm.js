@@ -210,5 +210,7 @@ cache = ${getCacheDirectory()}
 progress = false\
 `
     )
-  } catch (error) {}
+  } catch (error) {
+    /* ignore error */
+  }
 }

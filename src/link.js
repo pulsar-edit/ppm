@@ -41,7 +41,9 @@ Run \`apm links\` to view all the currently linked packages.\
       if (!packageName) {
         packageName = CSON.readFileSync(CSON.resolve(path.join(linkPath, "package"))).name
       }
-    } catch (error1) {}
+    } catch (error1) {
+      /* ignore error */
+    }
     if (!packageName) {
       packageName = path.basename(linkPath)
     }

@@ -560,11 +560,15 @@ Run apm -v after installing Git to see what version has been detected.\
         const onFile = (filePath) => {
           try {
             return CompileCache.addPathToCache(filePath, this.atomDirectory)
-          } catch (error) {}
+          } catch (error) {
+            /* ignore error */
+          }
         }
 
         fs.traverseTreeSync(packageDirectory, onFile, onDirectory)
-      } catch (error) {}
+      } catch (error) {
+        /* ignore error */
+      }
       return callback(null)
     })
   }
