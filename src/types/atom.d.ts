@@ -6,6 +6,10 @@ declare module "atom/src/package-manager" {
     name: string
     version: string
     repository?: string | { url: string }
+    engines?: { atom?: string }
+    dependencies?: { name: string; version: string }[]
+    devDependencies?: { name: string; version: string }[]
+    apmInstallSource?: { sha: string; type: string }
   }
 
   export class PackageManager {

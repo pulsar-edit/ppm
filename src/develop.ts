@@ -16,8 +16,7 @@ import Install from "./install"
 import * as git from "./git"
 import Link from "./link"
 import * as request from "./request"
-
-type RequestBody = { repository?: { url?: string } } | {}
+import { PackageMetadata, unkownPackage } from "./packages"
 
 export default class Develop extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -47,17 +46,17 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  getRepositoryUrl(packageName, callback) {
+  getRepositoryUrl(packageName: string, callback) {
     const requestSettings = {
       url: `${config.getAtomPackagesUrl()}/${packageName}`,
       json: true,
     }
-    return request.get(requestSettings, function (error, response, body: RequestBody = {}) {
+    return request.get(requestSettings, function (error, response, body: PackageMetadata = unkownPackage) {
       if (error != null) {
         return callback(`Request for package information failed: ${error.message}`)
       } else if (response.statusCode === 200) {
-        let repositoryUrl
-        if ((repositoryUrl = body.repository?.url)) {
+        const repositoryUrl = body.repository?.url
+        if (repositoryUrl) {
           return callback(null, repositoryUrl)
         } else {
           return callback(`No repository URL found for package: ${packageName}`)
@@ -69,7 +68,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     })
   }
 
-  cloneRepository(repoUrl, packageDirectory, options, callback = function () {}) {
+  cloneRepository(repoUrl: string, packageDirectory: string, options, callback = function () {}) {
     return config.getSetting("git", (command) => {
       if (command == null) {
         command = "git"
@@ -89,14 +88,14 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     })
   }
 
-  installDependencies(packageDirectory, options, callback = function () {}) {
+  installDependencies(packageDirectory: string, options, callback = function () {}) {
     process.chdir(packageDirectory)
     const installOptions = { ...options }
 
     return new Install().run(installOptions, callback)
   }
 
-  linkPackage(packageDirectory, options, callback = function () {}) {
+  linkPackage(packageDirectory: string, options, callback = function () {}) {
     const linkOptions = { ...options }
     linkOptions.commandArgs = [packageDirectory, "--dev"]
     return new Link().run(linkOptions, callback)

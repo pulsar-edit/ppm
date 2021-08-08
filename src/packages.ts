@@ -7,8 +7,9 @@
  */
 import url from "url"
 import { PackageMetadata } from "atom/src/package-manager"
+export { PackageMetadata } from "atom/src/package-manager"
 
-const unkownPackage = { name: "unkown", version: "0.0.0" }
+export const unkownPackage = { name: "unkown", version: "0.0.0" }
 
 // Package helpers
 // Parse the repository in `name/owner` format from the package metadata.

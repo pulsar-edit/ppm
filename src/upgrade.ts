@@ -19,6 +19,7 @@ import * as Packages from "./packages"
 import * as request from "./request"
 import { tree } from "./tree"
 import * as git from "./git"
+import { PackageMetadata } from "./packages"
 
 export default class Upgrade extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -100,12 +101,12 @@ available updates.\
     }
   }
 
-  folderIsRepo(pack) {
+  folderIsRepo(pack: PackageMetadata) {
     const repoGitFolderPath = path.join(this.atomPackagesDirectory, pack.name, ".git")
     return fs.existsSync(repoGitFolderPath)
   }
 
-  getLatestVersion(pack, callback) {
+  getLatestVersion(pack: PackageMetadata, callback) {
     const requestSettings = {
       url: `${config.getAtomPackagesUrl()}/${pack.name}`,
       json: true,
@@ -155,7 +156,7 @@ available updates.\
     })
   }
 
-  getLatestSha(pack, callback) {
+  getLatestSha(pack: PackageMetadata, callback: Function) {
     const repoPath = path.join(this.atomPackagesDirectory, pack.name)
     return config.getSetting("git", (command) => {
       if (command == null) {
@@ -178,12 +179,12 @@ available updates.\
     })
   }
 
-  hasRepo(pack) {
+  hasRepo(pack: PackageMetadata) {
     return Packages.getRepository(pack) != null
   }
 
-  getAvailableUpdates(packages, callback) {
-    const getLatestVersionOrSha = (pack, done) => {
+  getAvailableUpdates(packages: PackageMetadata[], callback: Function) {
+    const getLatestVersionOrSha = (pack: PackageMetadata, done) => {
       if (this.folderIsRepo(pack) && pack.apmInstallSource?.type === "git") {
         return this.getLatestSha(pack, (err, sha) => done(err, { pack, sha }))
       } else {
@@ -191,16 +192,21 @@ available updates.\
       }
     }
 
-    return async.mapLimit(packages, 10, getLatestVersionOrSha, function (error, updates) {
-      if (error != null) {
-        return callback(error)
+    return async.mapLimit(
+      packages,
+      10,
+      getLatestVersionOrSha,
+      (error, updates: { latestVersion?: string; sha?: string; pack: PackageMetadata }[]) => {
+        if (error != null) {
+          return callback(error)
+        }
+
+        updates = updates.filter((update) => update.latestVersion != null || update.sha != null)
+        updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name))
+
+        return callback(null, updates)
       }
-
-      updates = updates.filter((update) => update.latestVersion != null || update.sha != null)
-      updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name))
-
-      return callback(null, updates)
-    })
+    )
   }
 
   promptForConfirmation(callback) {
