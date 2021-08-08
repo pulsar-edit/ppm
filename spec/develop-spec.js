@@ -7,7 +7,8 @@
 const path = require("path")
 const fs = require("fs-plus")
 const temp = require("temp")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
+import Develop from "../lib/develop"
 
 describe("apm develop", function () {
   let [repoPath, linkedRepoPath] = Array.from([])
@@ -28,7 +29,6 @@ describe("apm develop", function () {
 
   describe("when the package doesn't have a published repository url", () =>
     it("logs an error", function () {
-      const Develop = require("../lib/develop")
       spyOn(Develop.prototype, "getRepositoryUrl").andCallFake((packageName, callback) => callback("Here is the error"))
 
       const callback = jasmine.createSpy("callback")
@@ -45,7 +45,6 @@ describe("apm develop", function () {
 
   describe("when the repository hasn't been cloned", () =>
     it("clones the repository to ATOM_REPOS_HOME and links it to ATOM_HOME/dev/packages", function () {
-      const Develop = require("../lib/develop")
       spyOn(Develop.prototype, "getRepositoryUrl").andCallFake(function (packageName, callback) {
         const repoUrl = path.join(__dirname, "fixtures", "repo.git")
         return callback(null, repoUrl)

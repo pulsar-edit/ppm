@@ -9,7 +9,7 @@ const fs = require("fs-plus")
 const temp = require("temp")
 const express = require("express")
 const http = require("http")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm publish", function () {
   let [server] = Array.from([])

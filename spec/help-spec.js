@@ -3,7 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("command help", function () {
   beforeEach(function () {

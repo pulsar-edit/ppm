@@ -7,7 +7,7 @@
 const path = require("path")
 const fs = require("fs-plus")
 const temp = require("temp")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm config", function () {
   let [atomHome, userConfigPath] = Array.from([])

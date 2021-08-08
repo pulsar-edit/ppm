@@ -147,7 +147,7 @@ package names to install with optional versions using the
         }
 
         let error = `${stdout}\n${stderr}`
-        if (error.indexOf("code ENOGIT") !== -1) {
+        if (error.includes("code ENOGIT")) {
           error = this.getGitErrorMessage(pack)
         }
         return callback(error)
@@ -728,7 +728,7 @@ Run apm -v after installing Git to see what version has been detected.\
 
   cloneNormalizedUrl(url, cloneDir, options, callback) {
     // Require here to avoid circular dependency
-    const Develop = require("./develop")
+    const Develop = require("./develop").default
     const develop = new Develop()
 
     return develop.cloneRepository(url, cloneDir, options, (err) => callback(err))

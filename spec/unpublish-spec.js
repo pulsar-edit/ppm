@@ -8,8 +8,8 @@
 const express = require("express")
 const http = require("http")
 const temp = require("temp")
-const apm = require("../lib/apm-cli")
-const Unpublish = require("../lib/unpublish")
+import * as apm from "../lib/apm-cli"
+import Unpublish from "../lib/unpublish"
 
 describe("apm unpublish", function () {
   let [server, unpublishPackageCallback, unpublishVersionCallback] = Array.from([])

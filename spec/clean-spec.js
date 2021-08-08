@@ -10,7 +10,7 @@ const temp = require("temp")
 const express = require("express")
 const http = require("http")
 const wrench = require("wrench")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm clean", function () {
   let [moduleDirectory, server] = Array.from([])

@@ -96,7 +96,7 @@ on the option selected.\
       return
     }
 
-    const PackageConverter = require("./package-converter")
+    const PackageConverter = require("./package-converter").default
     const converter = new PackageConverter(sourcePath, destinationPath)
     return converter.convert((error) => {
       if (error != null) {
@@ -116,7 +116,7 @@ on the option selected.\
       return
     }
 
-    const ThemeConverter = require("./theme-converter")
+    const ThemeConverter = require("./theme-converter").default
     const converter = new ThemeConverter(sourcePath, destinationPath)
     return converter.convert((error) => {
       if (error != null) {

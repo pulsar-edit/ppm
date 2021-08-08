@@ -6,7 +6,7 @@
 const path = require("path")
 const temp = require("temp")
 const fs = require("fs")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm command line interface", function () {
   beforeEach(function () {

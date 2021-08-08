@@ -6,13 +6,13 @@
  */
 const path = require("path")
 const CSON = require("season")
-const fs = require("../lib/fs")
+import fs from "../lib/fs"
 const temp = require("temp")
 const express = require("express")
 const http = require("http")
 const wrench = require("wrench")
-const apm = require("../lib/apm-cli")
-const Install = require("../lib/install")
+import * as apm from "../lib/apm-cli"
+import Install from "../lib/install"
 
 describe("apm install", function () {
   let [atomHome, resourcePath] = Array.from([])

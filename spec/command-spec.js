@@ -3,7 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const Command = require("../lib/command")
+import Command from "../lib/command"
 
 describe("Command", () =>
   describe("::spawn", () =>

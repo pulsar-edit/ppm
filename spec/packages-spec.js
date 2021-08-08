@@ -3,7 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const Packages = require("../lib/packages")
+import * as Packages from "../lib/packages"
 
 describe("getRemote", function () {
   it("returns origin if remote could not be determined", () => expect(Packages.getRemote()).toEqual("origin"))

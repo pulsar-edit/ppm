@@ -36,34 +36,34 @@ function setupTempDirectory() {
 
 setupTempDirectory()
 
-const ciClass = () => require("./ci")
-const cleanClass = () => require("./clean")
-const configClass = () => require("./config")
-const dedupClass = () => require("./dedupe")
-const developClass = () => require("./develop")
-const disableClass = () => require("./disable")
-const docsClass = () => require("./docs")
-const enableClass = () => require("./enable")
-const featuredClass = () => require("./featured")
-const initClass = () => require("./init")
-const installClass = () => require("./install")
-const linksClass = () => require("./links")
-const linkClass = () => require("./link")
-const listClass = () => require("./list")
-const loginClass = () => require("./login")
-const publishClass = () => require("./publish")
-const rebuildClass = () => require("./rebuild")
-const rebuildModuleCacheClass = () => require("./rebuild-module-cache")
-const searchClass = () => require("./search")
-const starClass = () => require("./star")
-const starsClass = () => require("./stars")
-const testClass = () => require("./test")
-const uninstallClass = () => require("./uninstall")
-const unlinkClass = () => require("./unlink")
-const unpublishClass = () => require("./unpublish")
-const unstarClass = () => require("./unstar")
-const upgradeClass = () => require("./upgrade")
-const viewClass = () => require("./view")
+const ciClass = () => require("./ci").default
+const cleanClass = () => require("./clean").default
+const configClass = () => require("./config").default
+const dedupClass = () => require("./dedupe").default
+const developClass = () => require("./develop").default
+const disableClass = () => require("./disable").default
+const docsClass = () => require("./docs").default
+const enableClass = () => require("./enable").default
+const featuredClass = () => require("./featured").default
+const initClass = () => require("./init").default
+const installClass = () => require("./install").default
+const linksClass = () => require("./links").default
+const linkClass = () => require("./link").default
+const listClass = () => require("./list").default
+const loginClass = () => require("./login").default
+const publishClass = () => require("./publish").default
+const rebuildClass = () => require("./rebuild").default
+const rebuildModuleCacheClass = () => require("./rebuild-module-cache").default
+const searchClass = () => require("./search").default
+const starClass = () => require("./star").default
+const starsClass = () => require("./stars").default
+const testClass = () => require("./test").default
+const uninstallClass = () => require("./uninstall").default
+const unlinkClass = () => require("./unlink").default
+const unpublishClass = () => require("./unpublish").default
+const unstarClass = () => require("./unstar").default
+const upgradeClass = () => require("./upgrade").default
+const viewClass = () => require("./view").default
 
 const commands = {
   ci: ciClass,

@@ -7,7 +7,7 @@
 const child_process = require("child_process")
 const path = require("path")
 const temp = require("temp")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm test", function () {
   let [specPath] = Array.from([])

@@ -6,7 +6,7 @@
 const path = require("path")
 const express = require("express")
 const http = require("http")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm search", function () {
   let server = null
