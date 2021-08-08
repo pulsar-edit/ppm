@@ -7,7 +7,7 @@ const path = require("path")
 const temp = require("temp")
 const CSON = require("season")
 
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm enable", function () {
   beforeEach(function () {

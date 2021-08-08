@@ -7,7 +7,7 @@ const path = require("path")
 const express = require("express")
 const http = require("http")
 const apm = require("../lib/apm-cli")
-let Docs = require("../lib/docs")
+import Docs from "../lib/docs"
 
 describe("apm docs", function () {
   let server = null
@@ -75,7 +75,6 @@ describe("apm docs", function () {
   })
 
   it("prints the package URL if called with the -p short option (and does not open it)", function () {
-    Docs = require("../lib/docs")
     spyOn(Docs.prototype, "openRepositoryUrl")
     const callback = jasmine.createSpy("callback")
     apm.run(["docs", "-p", "wrap-guide"], callback)

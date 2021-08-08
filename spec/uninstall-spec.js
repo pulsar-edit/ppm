@@ -6,7 +6,7 @@
 const path = require("path")
 const fs = require("fs-plus")
 const temp = require("temp")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 const createPackage = function (packageName, includeDev = false) {
   let devPackagePath

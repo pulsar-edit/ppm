@@ -11,7 +11,7 @@ const temp = require("temp")
 const express = require("express")
 const wrench = require("wrench")
 const CSON = require("season")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm ci", function () {
   let [atomHome, resourcePath, server] = Array.from([])

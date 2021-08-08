@@ -7,8 +7,8 @@
 const path = require("path")
 const temp = require("temp")
 const CSON = require("season")
-const apm = require("../lib/apm-cli")
-const fs = require("../lib/fs")
+import * as apm from "../lib/apm-cli"
+import fs from "../lib/fs"
 
 describe("apm init", function () {
   let [packagePath, themePath, languagePath] = Array.from([])

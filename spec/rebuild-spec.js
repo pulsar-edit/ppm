@@ -8,7 +8,7 @@ const path = require("path")
 const temp = require("temp")
 const express = require("express")
 const http = require("http")
-const apm = require("../lib/apm-cli")
+import * as apm from "../lib/apm-cli"
 
 describe("apm rebuild", function () {
   let [server, originalPathEnv] = Array.from([])
