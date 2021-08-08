@@ -13,7 +13,7 @@ import fs from "./fs"
 import * as config from "./apm"
 import { tree } from "./tree"
 import { getRepository } from "./packages"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class List extends Command {
   constructor() {
@@ -285,7 +285,7 @@ List all the installed packages and also the packages bundled with Atom.\
     })
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.json) {

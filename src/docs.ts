@@ -8,7 +8,7 @@
 import yargs from "yargs"
 import open from "open"
 import View from "./view"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Docs extends View {
   parseOptions(argv: string[]) {
@@ -27,7 +27,7 @@ Open a package's homepage in the default browser.\
     return open(repositoryUrl)
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
     const [packageName] = Array.from(options.argv._)
 

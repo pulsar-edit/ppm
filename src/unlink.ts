@@ -11,7 +11,7 @@ import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Unlink extends Command {
   constructor() {
@@ -122,7 +122,7 @@ Run \`apm links\` to view all the currently linked packages.\
     }
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
 
     if (options.argv.all) {

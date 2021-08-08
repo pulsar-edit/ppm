@@ -11,7 +11,7 @@ import CSON from "season"
 import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Enable extends Command {
   parseOptions(argv: string[]) {
@@ -25,7 +25,7 @@ Enables the named package(s).\
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let error, left, settings
     options = this.parseOptions(options.commandArgs)
     let packageNames = this.packageNamesFromArgv(options.argv)

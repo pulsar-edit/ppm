@@ -7,7 +7,7 @@ import path from "path"
 import yargs from "yargs"
 import * as apm from "./apm"
 import Command from "./command"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Config extends Command {
   private atomDirectory = apm.getAtomDirectory()
@@ -32,7 +32,7 @@ Usage: apm config set <key> <value>
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
 
     let configArgs = ["--globalconfig", apm.getGlobalConfigPath(), "--userconfig", apm.getUserConfigPath(), "config"]

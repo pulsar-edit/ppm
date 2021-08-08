@@ -20,7 +20,7 @@ import * as request from "./request"
 import { tree } from "./tree"
 import * as git from "./git"
 import { PackageMetadata } from "./packages"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Upgrade extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -239,7 +239,7 @@ available updates.\
     return async.waterfall(installCommands, callback)
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     const { command } = options
     options = this.parseOptions(options.commandArgs)
     options.command = command

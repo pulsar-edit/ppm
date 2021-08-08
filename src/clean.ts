@@ -6,7 +6,7 @@
  */
 import yargs from "yargs"
 import Command, { LogCommandResultsArgs } from "./command"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Clean extends Command {
   private atomNpmPath = require.resolve("npm/bin/npm-cli")
@@ -23,7 +23,7 @@ as a dependency in the package.json file.\
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     process.stdout.write("Removing extraneous modules ")
     return this.fork(this.atomNpmPath, ["prune"], (...args: LogCommandResultsArgs) => {
       return this.logCommandResults(callback, ...args)

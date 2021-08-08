@@ -9,7 +9,7 @@ import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
 import { tree } from "./tree"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Links extends Command {
   constructor() {
@@ -63,7 +63,7 @@ List all of the symlinked atom packages in ~/.atom/packages and
     })
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     this.logLinks(this.devPackagesPath)
     this.logLinks(this.packagesPath)
     return callback()

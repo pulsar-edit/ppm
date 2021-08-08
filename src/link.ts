@@ -11,7 +11,7 @@ import yargs from "yargs"
 import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Link extends Command {
   parseOptions(argv: string[]) {
@@ -29,7 +29,7 @@ Run \`apm links\` to view all the currently linked packages.\
     return options.alias("d", "dev").boolean("dev").describe("dev", "Link to ~/.atom/dev/packages")
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let left, targetPath
     options = this.parseOptions(options.commandArgs)
 

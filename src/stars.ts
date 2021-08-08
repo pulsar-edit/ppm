@@ -12,7 +12,7 @@ import Install from "./install"
 import Login from "./login"
 import * as request from "./request"
 import { tree } from "./tree"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Stars extends Command {
   parseOptions(argv: string[]) {
@@ -124,7 +124,7 @@ List or install starred Atom packages and themes.\
     return callback()
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
     const user = options.argv.user?.toString().trim()
 

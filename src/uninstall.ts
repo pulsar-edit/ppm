@@ -13,7 +13,7 @@ import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
 import * as request from "./request"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Uninstall extends Command {
   parseOptions(argv: string[]) {
@@ -59,7 +59,7 @@ Delete the installed package(s) from the ~/.atom/packages directory.\
     })
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
     const packageNames = this.packageNamesFromArgv(options.argv)
 

@@ -15,7 +15,7 @@ import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
 import * as request from "./request"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Unpublish extends Command {
   parseOptions(argv: string[]) {
@@ -113,7 +113,7 @@ name is specified.\
     })
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let version
     options = this.parseOptions(options.commandArgs)
     let [name] = Array.from(options.argv._)

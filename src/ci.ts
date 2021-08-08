@@ -10,7 +10,7 @@ import yargs from "yargs"
 import async from "async"
 import * as config from "./apm"
 import Command, { LogCommandResultsArgs } from "./command"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Ci extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -70,7 +70,7 @@ but cannot be used to install new packages or dependencies.\
     })
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     const opts = this.parseOptions(options.commandArgs)
 
     const commands = []

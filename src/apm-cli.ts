@@ -268,7 +268,9 @@ function getPythonVersion(callback) {
   })
 }
 
-export function run(args, callback) {
+export type RunCallback = (error?: string | Error | null) => any
+
+export function run(args, callback: RunCallback) {
   let Command
   config.setupApmRcFile()
   const options = parseOptions(args)

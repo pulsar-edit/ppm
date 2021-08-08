@@ -12,7 +12,7 @@ import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
 import List from "./list"
-import type { CliOptions } from "./apm-cli"
+import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Disable extends Command {
   parseOptions(argv: string[]) {
@@ -44,7 +44,7 @@ Disables the named package(s).\
     )
   }
 
-  run(options: CliOptions, callback) {
+  run(options: CliOptions, callback: RunCallback) {
     let settings
     options = this.parseOptions(options.commandArgs)
 
