@@ -6,10 +6,10 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import npm from "npm"
-import request from "request"
+import request, { Options, RequestCallback } from "request"
 import * as config from "./apm"
 
-function loadNpm(callback) {
+function loadNpm(callback: Parameters<typeof npm["load"]>[1]) {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath(),
@@ -17,7 +17,7 @@ function loadNpm(callback) {
   return npm.load(npmOptions, callback)
 }
 
-function configureRequest(requestOptions, callback) {
+function configureRequest(requestOptions: Options, callback: () => void) {
   return loadNpm(function () {
     let left
     if (requestOptions.proxy == null) {
@@ -40,9 +40,9 @@ function configureRequest(requestOptions, callback) {
   })
 }
 
-export function get(requestOptions, callback) {
+export function get(requestOptions: Options & { retries?: number }, callback: RequestCallback) {
   return configureRequest(requestOptions, function () {
-    let retryCount = requestOptions.retries != null ? requestOptions.retries : 0
+    let retryCount = "retries" in requestOptions ? requestOptions.retries : 0
     let requestsMade = 0
     const tryRequest = function () {
       requestsMade++
@@ -63,19 +63,22 @@ export function get(requestOptions, callback) {
   })
 }
 
-export function del(requestOptions, callback) {
+export function del(requestOptions: Options, callback: RequestCallback) {
   return configureRequest(requestOptions, () => request.del(requestOptions, callback))
 }
 
-export function post(requestOptions, callback) {
+export function post(requestOptions: Options, callback: RequestCallback) {
   return configureRequest(requestOptions, () => request.post(requestOptions, callback))
 }
 
-export function createReadStream(requestOptions, callback) {
+export function createReadStream(
+  requestOptions: Options,
+  callback: { (readStream: any): any; (arg0: request.Request): void }
+) {
   return configureRequest(requestOptions, () => callback(request.get(requestOptions)))
 }
 
-export function getErrorMessage(response, body) {
+export function getErrorMessage(response: request.Response, body: {} | { repository?: { url?: string } }) {
   if (response?.statusCode === 503) {
     return "atom.io is temporarily unavailable, please try again later."
   } else {
@@ -84,6 +87,6 @@ export function getErrorMessage(response, body) {
   }
 }
 
-export function debug(debug) {
+export function debug(debug: boolean) {
   return (request.debug = debug)
 }
