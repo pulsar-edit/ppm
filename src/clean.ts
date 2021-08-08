@@ -8,10 +8,7 @@ import yargs from "yargs"
 import Command from "./command"
 
 export default class Clean extends Command {
-  constructor() {
-    super()
-    this.atomNpmPath = require.resolve("npm/bin/npm-cli")
-  }
+  private atomNpmPath = require.resolve("npm/bin/npm-cli")
 
   parseOptions(argv) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
@@ -27,8 +24,8 @@ as a dependency in the package.json file.\
 
   run(options, callback) {
     process.stdout.write("Removing extraneous modules ")
-    return this.fork(this.atomNpmPath, ["prune"], (...args) => {
-      return this.logCommandResults(callback, ...Array.from(args))
+    return this.fork(this.atomNpmPath, ["prune"], (...args: [code: number, stderr?: string, stdout?: string]) => {
+      return this.logCommandResults(callback, ...args)
     })
   }
 }
