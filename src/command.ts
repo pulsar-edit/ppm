@@ -16,9 +16,9 @@ import * as git from "./git"
 export type LogCommandResultsArgs = [code: number, stderr?: string, stdout?: string]
 
 export default class Command {
-  private electronVersion: string
+  protected electronVersion: string
   installedAtomVersion: string
-  private resourcePath: string
+  protected resourcePath: string
   npm: typeof import("npm")
   constructor() {
     this.logCommandResults = this.logCommandResults.bind(this)

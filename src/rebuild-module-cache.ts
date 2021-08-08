@@ -12,10 +12,8 @@ import * as config from "./apm"
 import fs from "./fs"
 
 export default class RebuildModuleCache extends Command {
-  constructor() {
-    super()
-    this.atomPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
-  }
+  atomPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
+  moduleCache?: any
 
   parseOptions(argv) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
@@ -34,7 +32,7 @@ This command skips all linked packages.\
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  getResourcePath(callback) {
+  getResourcePath(callback: Function) {
     if (this.resourcePath) {
       return process.nextTick(() => callback(this.resourcePath))
     } else {
@@ -45,8 +43,8 @@ This command skips all linked packages.\
     }
   }
 
-  rebuild(packageDirectory, callback) {
-    return this.getResourcePath((resourcePath) => {
+  rebuild(packageDirectory: string, callback: Function) {
+    return this.getResourcePath((resourcePath: string) => {
       try {
         if (this.moduleCache == null) {
           this.moduleCache = require(path.join(resourcePath, "src", "module-cache"))
@@ -60,7 +58,7 @@ This command skips all linked packages.\
     })
   }
 
-  run(options, callback) {
+  run(options: {}, callback: Function) {
     const commands = []
     fs.list(this.atomPackagesDirectory).forEach((packageName) => {
       const packageDirectory = path.join(this.atomPackagesDirectory, packageName)
@@ -71,9 +69,9 @@ This command skips all linked packages.\
         return
       }
 
-      return commands.push((callback) => {
+      return commands.push((callback: Function) => {
         process.stdout.write(`Rebuilding ${packageName} module cache `)
-        return this.rebuild(packageDirectory, (error) => {
+        return this.rebuild(packageDirectory, (error?: Error) => {
           if (error != null) {
             this.logFailure()
           } else {
