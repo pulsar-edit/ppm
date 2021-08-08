@@ -11,16 +11,19 @@ import path from "path"
 import async from "async"
 import yargs from "yargs"
 import * as config from "./apm"
-import Command from "./command"
+import Command, { LogCommandResultsArgs } from "./command"
 import Install from "./install"
 import * as git from "./git"
 import Link from "./link"
 import * as request from "./request"
 
+type RequestBody = { repository?: { url?: string } } | {}
+
 export default class Develop extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  atomDevPackagesDirectory: string
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomDevPackagesDirectory = path.join(this.atomDirectory, "dev", "packages")
   }
 
@@ -49,12 +52,12 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       url: `${config.getAtomPackagesUrl()}/${packageName}`,
       json: true,
     }
-    return request.get(requestSettings, function (error, response, body = {}) {
+    return request.get(requestSettings, function (error, response, body: RequestBody = {}) {
       if (error != null) {
         return callback(`Request for package information failed: ${error.message}`)
       } else if (response.statusCode === 200) {
         let repositoryUrl
-        if ((repositoryUrl = body.repository.url)) {
+        if ((repositoryUrl = body.repository?.url)) {
           return callback(null, repositoryUrl)
         } else {
           return callback(`No repository URL found for package: ${packageName}`)
@@ -76,11 +79,11 @@ cmd-shift-o to run the package out of the newly cloned repository.\
         process.stdout.write(`Cloning ${repoUrl} `)
       }
       git.addGitToEnv(process.env)
-      return this.spawn(command, args, (...args) => {
+      return this.spawn(command, args, (...logargs: LogCommandResultsArgs) => {
         if (options.argv.json) {
-          return this.logCommandResultsIfFail(callback, ...Array.from(args))
+          return this.logCommandResultsIfFail(callback, ...logargs)
         } else {
-          return this.logCommandResults(callback, ...Array.from(args))
+          return this.logCommandResults(callback, ...logargs)
         }
       })
     })
