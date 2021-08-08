@@ -21,9 +21,11 @@ import { tree } from "./tree"
 import * as git from "./git"
 
 export default class Upgrade extends Command {
+  private atomDirectory = config.getAtomDirectory()
+  private atomPackagesDirectory: string
+
   constructor() {
     super()
-    this.atomDirectory = config.getAtomDirectory()
     this.atomPackagesDirectory = path.join(this.atomDirectory, "packages")
   }
 
@@ -69,7 +71,7 @@ available updates.\
     return packages
   }
 
-  getIntalledPackage(name) {
+  getIntalledPackage(name: string) {
     const packageDirectory = path.join(this.atomPackagesDirectory, name)
     if (fs.isSymbolicLinkSync(packageDirectory)) {
       return
