@@ -14,6 +14,10 @@ import * as config from "./apm"
 import * as git from "./git"
 
 export default class Command {
+  private electronVersion: string
+  installedAtomVersion: string
+  private resourcePath: string
+  npm: typeof import("npm")
   constructor() {
     this.logCommandResults = this.logCommandResults.bind(this)
     this.logCommandResultsIfFail = this.logCommandResultsIfFail.bind(this)
@@ -108,7 +112,7 @@ export default class Command {
     }
   }
 
-  normalizeVersion(version) {
+  normalizeVersion(version: string) {
     if (typeof version === "string") {
       // Remove commit SHA suffix
       return version.replace(/-.*$/, "")
@@ -119,11 +123,15 @@ export default class Command {
 
   loadInstalledAtomMetadata(callback) {
     return this.getResourcePath((resourcePath) => {
-      let electronVersion
+      let electronVersion: string | undefined
       try {
-        let left, version
-        ;({ version, electronVersion } = (left = require(path.join(resourcePath, "package.json"))) != null ? left : {})
-        version = this.normalizeVersion(version)
+        const resourcePathJson: { version: string; electronVersion: string } & Record<string, any> =
+          require(path.join(resourcePath, "package.json")) ?? {}
+
+        electronVersion = resourcePath.electronVersion
+
+        const version = this.normalizeVersion(resourcePathJson.version)
+
         if (semver.valid(version)) {
           this.installedAtomVersion = version
         }
