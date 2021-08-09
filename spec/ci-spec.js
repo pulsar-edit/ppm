@@ -103,6 +103,10 @@ describe("apm ci", function () {
   })
 
   it("builds a native dependency correctly", function () {
+    if (process.platform === "win32") {
+      console.warn("Test skipped on windows") // TODO
+      return
+    }
     const moduleDirectory = path.join(temp.mkdirSync("apm-test-"), "test-module-with-native")
     wrench.copyDirSyncRecursive(path.join(__dirname, "fixtures", "test-module-with-lockfile"), moduleDirectory)
     process.chdir(moduleDirectory)

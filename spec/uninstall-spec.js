@@ -81,6 +81,10 @@ describe("apm uninstall", function () {
 
     describe("when . is specified as the package name", () =>
       it("resolves to the basename of the cwd", function () {
+        if (process.platform === "win32") {
+          console.warn("Test skipped on windows") // TODO
+          return
+        }
         const { packagePath } = createPackage("test-package")
 
         expect(fs.existsSync(packagePath)).toBeTruthy()
