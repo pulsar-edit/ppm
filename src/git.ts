@@ -1,11 +1,6 @@
 /*
  * decaffeinate suggestions:
- * use named exports
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 import { spawn } from "child_process"
 import path from "path"
@@ -13,8 +8,8 @@ import npm from "npm"
 import * as config from "./apm"
 import fs from "./fs"
 
-const addPortableGitToEnv = function (env) {
-  let children
+function addPortableGitToEnv(env: Record<string, string | undefined>) {
+  let children: string[]
   const localAppData = env.LOCALAPPDATA
   if (!localAppData) {
     return
@@ -28,7 +23,7 @@ const addPortableGitToEnv = function (env) {
     return
   }
 
-  for (const child of Array.from(children)) {
+  for (const child of children) {
     if (child.indexOf("PortableGit_") === 0) {
       const cmdPath = path.join(githubPath, child, "cmd")
       const binPath = path.join(githubPath, child, "bin")
@@ -42,8 +37,8 @@ const addPortableGitToEnv = function (env) {
   }
 }
 
-const addGitBashToEnv = function (env) {
-  let gitPath
+function addGitBashToEnv(env: Record<string, string | undefined>) {
+  let gitPath: string
   if (env.ProgramFiles) {
     gitPath = path.join(env.ProgramFiles, "Git")
   }
@@ -67,7 +62,7 @@ const addGitBashToEnv = function (env) {
   }
 }
 
-export function addGitToEnv(env) {
+export function addGitToEnv(env: Record<string, string | undefined>) {
   if (process.platform !== "win32") {
     return
   }
@@ -75,14 +70,13 @@ export function addGitToEnv(env) {
   return addGitBashToEnv(env)
 }
 
-export function getGitVersion(callback) {
+export function getGitVersion(callback: (version: string) => any) {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath(),
   }
   return npm.load(npmOptions, function () {
-    let left
-    const git = (left = npm.config.get("git")) != null ? left : "git"
+    const git = (npm.config.get("git") as string | undefined) ?? "git"
     addGitToEnv(process.env)
     const spawned = spawn(git, ["--version"])
     const outputChunks = []
@@ -92,7 +86,7 @@ export function getGitVersion(callback) {
       /* ignore error */
     })
     return spawned.on("close", function (code) {
-      let version
+      let version: string
       if (code === 0) {
         ;[, , version] = Array.from(Buffer.concat(outputChunks).toString().split(" "))
         version = version?.trim()
