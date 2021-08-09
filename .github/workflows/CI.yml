@@ -20,13 +20,17 @@ jobs:
           - 14
         node_arch:
           - x64
+        pnpm:
+          - 6
         include:
           - os: windows-latest
             node_version: 12
             node_arch: x64
+            pnpm: 6
           - os: windows-2016
             node_version: 12
             node_arch: x86
+            pnpm: 6
     steps:
       - uses: actions/checkout@v2
 
@@ -35,13 +39,15 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
+            ~/.pnpm-store
+            D:\.pnpm-store
             ./node_modules/
             ~/npm-cache
             ~/.pnpm-store
             D:\.pnpm-store
             ./bin/node
             ./bin/node.exe
-          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
+          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-pnpm:${{ matrix.pnpm }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
 
       - name: Install Node
         uses: actions/setup-node@v2
@@ -49,16 +55,21 @@ jobs:
           node-version: ${{ matrix.node_version }}
           architecture: ${{ matrix.node_arch }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ matrix.pnpm }}
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install
+        run: pnpm install
 
       - name: Build
         if: steps.cache.outputs.cache-hit == 'true'
-        run: npm run prepare
+        run: pnpm run prepare
 
       - name: Run tests
-        run: ./bin/npm test
+        run: ./bin/pnpm test
 
   Lint:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
@@ -72,13 +83,18 @@ jobs:
       - name: Commit lint ✨
         uses: wagoid/commitlint-github-action@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 6
+
       - name: Install dependencies
-        run: |
-          npm install --ignore-scripts # native modules are not used here
-          npm run prepare
+        run:  |
+          pnpm install --ignore-scripts
+          pnpm run prepare
 
       - name: Format ✨
-        run: npm run test.format
+        run: pnpm run test.format
 
       - name: Lint ✨
-        run: npm run test.lint
+        run: pnpm run test.lint
