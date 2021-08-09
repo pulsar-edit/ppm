@@ -27,10 +27,15 @@ function addPortableGitToEnv(env: Record<string, string | undefined>) {
     if (child.indexOf("PortableGit_") === 0) {
       const cmdPath = path.join(githubPath, child, "cmd")
       const binPath = path.join(githubPath, child, "bin")
+      let corePath = path.join(githubPath, child, "mingw64", "libexec", "git-core")
+      if (!fs.isDirectorySync(corePath)) {
+        corePath = path.join(githubPath, child, "mingw32", "libexec", "git-core")
+      }
+
       if (env.Path) {
-        env.Path += `${path.delimiter}${cmdPath}${path.delimiter}${binPath}`
+        env.Path += `${path.delimiter}${cmdPath}${path.delimiter}${binPath}${path.delimiter}${corePath}`
       } else {
-        env.Path = `${cmdPath}${path.delimiter}${binPath}`
+        env.Path = `${cmdPath}${path.delimiter}${binPath}${path.delimiter}${corePath}`
       }
       break
     }
@@ -38,10 +43,23 @@ function addPortableGitToEnv(env: Record<string, string | undefined>) {
 }
 
 function addGitBashToEnv(env: Record<string, string | undefined>) {
+  // First, check ProgramW6432, as it will _always_ point to the 64-bit Program Files directory
   let gitPath: string
-  if (env.ProgramFiles) {
-    gitPath = path.join(env.ProgramFiles, "Git")
+  if (env.ProgramW6432) {
+    gitPath = path.join(env.ProgramW6432, "Git")
   }
+
+  // Next, check ProgramFiles - this will point to:
+  // - x64 Program Files when running a 64-bit process on 64-bit Windows
+  // - x86 Program Files when running a 32-bit process on 64-bit Windows
+  // - x86 Program Files when running on 32-bit Windows
+  if (!fs.isDirectorySync(gitPath)) {
+    if (env.ProgramFiles) {
+      gitPath = path.join(env.ProgramFiles, "Git")
+    }
+  }
+
+  // Finally, check ProgramFiles(x86) to see if 32-bit Git was installed on 64-bit Windows
 
   if (!fs.isDirectorySync(gitPath)) {
     if (env["ProgramFiles(x86)"]) {
@@ -55,10 +73,15 @@ function addGitBashToEnv(env: Record<string, string | undefined>) {
 
   const cmdPath = path.join(gitPath, "cmd")
   const binPath = path.join(gitPath, "bin")
+  let corePath = path.join(gitPath, "mingw64", "libexec", "git-core")
+  if (!fs.isDirectorySync(corePath)) {
+    corePath = path.join(gitPath, "mingw32", "libexec", "git-core")
+  }
+
   if (env.Path) {
-    return (env.Path += `${path.delimiter}${cmdPath}${path.delimiter}${binPath}`)
+    return (env.Path += `${path.delimiter}${cmdPath}${path.delimiter}${binPath}${path.delimiter}${corePath}`)
   } else {
-    return (env.Path = `${cmdPath}${path.delimiter}${binPath}`)
+    return (env.Path = `${cmdPath}${path.delimiter}${binPath}${path.delimiter}${corePath}`)
   }
 }
 
