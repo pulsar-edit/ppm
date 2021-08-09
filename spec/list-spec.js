@@ -18,7 +18,7 @@ const listPackages = function (args, doneCallback) {
 
   waitsFor(() => callback.callCount === 1)
 
-  return runs(doneCallback)
+  runs(doneCallback)
 }
 
 const createFakePackage = function (type, metadata) {
@@ -105,7 +105,7 @@ describe("apm list", function () {
       expect(lines[7]).toMatch(/user-package@1\.0\.0/)
       expect(lines[9]).toMatch(/Git Packages.*1/)
       expect(lines[10]).toMatch(/git-package@1\.0\.0/)
-      return expect(lines.join("\n")).not.toContain(".bin")
+      expect(lines.join("\n")).not.toContain(".bin")
     })) // ensure invalid packages aren't listed
 
   it("lists the installed packages without versions with --no-versions", () =>
@@ -119,7 +119,7 @@ describe("apm list", function () {
       expect(lines[7]).toMatch(/user-package/)
       expect(lines[9]).toMatch(/Git Packages.*1/)
       expect(lines[10]).toMatch(/git-package/)
-      return expect(lines.join("\n")).not.toContain(".bin")
+      expect(lines.join("\n")).not.toContain(".bin")
     })) // ensure invalid packages aren't listed
 
   describe("enabling and disabling packages", function () {
@@ -144,13 +144,13 @@ describe("apm list", function () {
     it("displays only disabled packages when --disabled is called", () =>
       listPackages(["--disabled"], function () {
         expect(console.log.argsForCall[1][0]).toMatch(/test-module@1\.0\.0$/)
-        return expect(console.log.argsForCall.toString()).not.toContain(["user-package"])
+        expect(console.log.argsForCall.toString()).not.toContain(["user-package"])
       }))
 
-    return it("displays only enabled packages when --enabled is called", () =>
+    it("displays only enabled packages when --enabled is called", () =>
       listPackages(["--enabled"], function () {
         expect(console.log.argsForCall[7][0]).toMatch(/user-package@1\.0\.0$/)
-        return expect(console.log.argsForCall.toString()).not.toContain(["test-module"])
+        expect(console.log.argsForCall.toString()).not.toContain(["test-module"])
       }))
   })
 
@@ -165,7 +165,7 @@ describe("apm list", function () {
       expect(json.core).toEqual([{ name: "test-module", version: "1.0.0" }])
       expect(json.dev).toEqual([{ name: "dev-package", version: "1.0.0" }])
       expect(json.git).toEqual([{ name: "git-package", version: "1.0.0", apmInstallSource }])
-      return expect(json.user).toEqual([{ name: "user-package", version: "1.0.0" }])
+      expect(json.user).toEqual([{ name: "user-package", version: "1.0.0" }])
     }))
 
   it("lists packages in bare format when --bare is passed", () =>
@@ -174,7 +174,7 @@ describe("apm list", function () {
       expect(lines[0]).toMatch(/test-module@1\.0\.0/)
       expect(lines[1]).toMatch(/dev-package@1\.0\.0/)
       expect(lines[2]).toMatch(/user-package@1\.0\.0/)
-      return expect(lines[3]).toMatch(/git-package@1\.0\.0/)
+      expect(lines[3]).toMatch(/git-package@1\.0\.0/)
     }))
 
   it("list packages in bare format without versions when --bare --no-versions is passed", () =>
@@ -183,10 +183,10 @@ describe("apm list", function () {
       expect(lines[0]).toMatch(/test-module/)
       expect(lines[1]).toMatch(/dev-package/)
       expect(lines[2]).toMatch(/user-package/)
-      return expect(lines[3]).toMatch(/git-package/)
+      expect(lines[3]).toMatch(/git-package/)
     }))
 
-  return describe("when a section is empty", function () {
+  describe("when a section is empty", function () {
     it("does not list anything for Dev and Git sections", function () {
       removeFakePackage("git", "git-package")
       removeFakePackage("dev", "dev-package")
@@ -196,11 +196,11 @@ describe("apm list", function () {
         expect(output).not.toMatch(/git-package/)
         expect(output).not.toMatch(/Dev Packages.*1/)
         expect(output).not.toMatch(/dev-package@1\.0\.0/)
-        return expect(output).not.toMatch(/(empty)/)
+        expect(output).not.toMatch(/(empty)/)
       })
     })
 
-    return it('displays "empty" for User section', function () {
+    it('displays "empty" for User section', function () {
       removeFakePackage("user", "user-package")
       return listPackages([], function () {
         const lines = console.log.argsForCall.map((arr) => arr.join(" "))
@@ -212,7 +212,7 @@ describe("apm list", function () {
         expect(lines[7]).toMatch(/(empty)/)
         expect(lines[9]).toMatch(/Git Packages.*1/)
         expect(lines[10]).toMatch(/git-package@1\.0\.0/)
-        return expect(lines.join("\n")).not.toContain(".bin")
+        expect(lines.join("\n")).not.toContain(".bin")
       })
     })
   })

@@ -31,12 +31,10 @@ describe("apm config", function () {
 
       waitsFor("waiting for config get to complete", 600000, () => callback.callCount === 1)
 
-      return runs(() =>
-        expect(process.stdout.write.argsForCall[0][0].trim()).toBe(path.join(process.env.ATOM_HOME, ".apm"))
-      )
+      runs(() => expect(process.stdout.write.argsForCall[0][0].trim()).toBe(path.join(process.env.ATOM_HOME, ".apm")))
     }))
 
-  return describe("apm config set", () =>
+  describe("apm config set", () =>
     it("sets the value in the user config", function () {
       expect(fs.isFileSync(userConfigPath)).toBe(false)
 
@@ -49,11 +47,11 @@ describe("apm config", function () {
         expect(fs.isFileSync(userConfigPath)).toBe(true)
 
         callback.reset()
-        return apm.run(["config", "get", "foo"], callback)
+        apm.run(["config", "get", "foo"], callback)
       })
 
       waitsFor("waiting for config get to complete", 600000, () => callback.callCount === 1)
 
-      return runs(() => expect(process.stdout.write.argsForCall[0][0].trim()).toBe("bar"))
+      runs(() => expect(process.stdout.write.argsForCall[0][0].trim()).toBe("bar"))
     }))
 })

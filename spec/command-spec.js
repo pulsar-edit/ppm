@@ -17,5 +17,5 @@ describe("Command", () =>
 
       waitsFor(() => exited)
 
-      return runs(() => expect(callbackCount).toEqual(1))
+      runs(() => expect(callbackCount).toEqual(1))
     })))

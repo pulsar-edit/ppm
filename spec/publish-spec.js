@@ -29,13 +29,13 @@ describe("apm publish", function () {
       process.env.ATOM_RESOURCE_PATH = temp.mkdirSync("atom-resource-path-")
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("validates the package's package.json file", function () {
@@ -47,7 +47,7 @@ describe("apm publish", function () {
 
     waitsFor("waiting for publish to complete", 600000, () => callback.callCount === 1)
 
-    return runs(() =>
+    runs(() =>
       expect(callback.mostRecentCall.args[0].message).toBe(
         "Error parsing package.json file: Unexpected token } in JSON at position 0"
       )
@@ -67,7 +67,7 @@ describe("apm publish", function () {
 
     waitsFor("waiting for publish to complete", 600000, () => callback.callCount === 1)
 
-    return runs(() =>
+    runs(() =>
       expect(callback.mostRecentCall.args[0].message).toBe(
         "Package must be in a Git repository before publishing: https://help.github.com/articles/create-a-repo"
       )
@@ -90,7 +90,7 @@ describe("apm publish", function () {
 
     waitsFor("waiting for publish to complete", 600000, () => callback.callCount === 1)
 
-    return runs(() =>
+    runs(() =>
       expect(callback.mostRecentCall.args[0].message).toBe(
         "The Atom engine range in the package.json file is invalid: ><>"
       )
@@ -118,14 +118,14 @@ describe("apm publish", function () {
 
     waitsFor("waiting for publish to complete", 600000, () => callback.callCount === 1)
 
-    return runs(() =>
+    runs(() =>
       expect(callback.mostRecentCall.args[0].message).toBe(
         "The foo dependency range in the package.json file is invalid: ^^"
       )
     )
   })
 
-  return it("validates the dev dependency semver ranges in the package.json file", function () {
+  it("validates the dev dependency semver ranges in the package.json file", function () {
     const packageToPublish = temp.mkdirSync("apm-test-package-")
     const metadata = {
       name: "test",
@@ -149,7 +149,7 @@ describe("apm publish", function () {
 
     waitsFor("waiting for publish to complete", 600000, () => callback.callCount === 1)
 
-    return runs(() =>
+    runs(() =>
       expect(callback.mostRecentCall.args[0].message).toBe(
         "The bar dev dependency range in the package.json file is invalid: 1,3"
       )

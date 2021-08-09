@@ -41,13 +41,13 @@ describe("apm unpublish", function () {
       process.env.ATOM_API_URL = "http://localhost:3000"
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   describe("when no version is specified", function () {
@@ -57,10 +57,10 @@ describe("apm unpublish", function () {
 
       waitsFor("waiting for unpublish command to complete", () => callback.callCount > 0)
 
-      return runs(function () {
+      runs(function () {
         expect(callback.argsForCall[0][0]).toBeUndefined()
         expect(unpublishPackageCallback.callCount).toBe(1)
-        return expect(unpublishVersionCallback.callCount).toBe(0)
+        expect(unpublishVersionCallback.callCount).toBe(0)
       })
     })
 
@@ -70,12 +70,12 @@ describe("apm unpublish", function () {
         spyOn(Unpublish.prototype, "prompt")
         apm.run(["unpublish", "test-package"], callback)
 
-        return waitsFor("waiting for prompt to be called", () =>
+        waitsFor("waiting for prompt to be called", () =>
           Unpublish.prototype.prompt.argsForCall[0][0].match(/unpublish ALL VERSIONS of 'test-package'.*irreversible/)
         )
       })
 
-      return describe("when the user accepts the default answer", () =>
+      describe("when the user accepts the default answer", () =>
         it("does not unpublish the package", function () {
           const callback = jasmine.createSpy("callback")
           spyOn(Unpublish.prototype, "prompt").andCallFake(function (...args1) {
@@ -88,39 +88,39 @@ describe("apm unpublish", function () {
 
           waitsFor("waiting for unpublish command to complete", () => callback.callCount > 0)
 
-          return runs(function () {
+          runs(function () {
             expect(Unpublish.prototype.unpublishPackage).not.toHaveBeenCalled()
-            return expect(callback.argsForCall[0][0]).toMatch(/Cancelled/)
+            expect(callback.argsForCall[0][0]).toMatch(/Cancelled/)
           })
         }))
     })
 
-    return describe("when the package does not exist", () =>
+    describe("when the package does not exist", () =>
       it("calls back with an error", function () {
         const callback = jasmine.createSpy("callback")
         apm.run(["unpublish", "--force", "not-a-package"], callback)
 
         waitsFor("waiting for unpublish command to complete", () => callback.callCount > 0)
 
-        return runs(function () {
+        runs(function () {
           expect(callback.argsForCall[0][0]).not.toBeUndefined()
           expect(unpublishPackageCallback.callCount).toBe(0)
-          return expect(unpublishVersionCallback.callCount).toBe(0)
+          expect(unpublishVersionCallback.callCount).toBe(0)
         })
       }))
   })
 
-  return describe("when a version is specified", function () {
+  describe("when a version is specified", function () {
     it("unpublishes the version", function () {
       const callback = jasmine.createSpy("callback")
       apm.run(["unpublish", "--force", "test-package@1.0.0"], callback)
 
       waitsFor("waiting for unpublish command to complete", () => callback.callCount > 0)
 
-      return runs(function () {
+      runs(function () {
         expect(callback.argsForCall[0][0]).toBeUndefined()
         expect(unpublishPackageCallback.callCount).toBe(0)
-        return expect(unpublishVersionCallback.callCount).toBe(1)
+        expect(unpublishVersionCallback.callCount).toBe(1)
       })
     })
 
@@ -130,12 +130,12 @@ describe("apm unpublish", function () {
         spyOn(Unpublish.prototype, "prompt")
         apm.run(["unpublish", "test-package@1.0.0"], callback)
 
-        return waitsFor("waiting for prompt to be called", () =>
+        waitsFor("waiting for prompt to be called", () =>
           Unpublish.prototype.prompt.argsForCall[0][0].match(/unpublish 'test-package@1.0.0'/)
         )
       })
 
-      return describe("when the user accepts the default answer", () =>
+      describe("when the user accepts the default answer", () =>
         it("does not unpublish the package", function () {
           const callback = jasmine.createSpy("callback")
           spyOn(Unpublish.prototype, "prompt").andCallFake(function (...args1) {
@@ -148,24 +148,24 @@ describe("apm unpublish", function () {
 
           waitsFor("waiting for unpublish command to complete", () => callback.callCount > 0)
 
-          return runs(function () {
+          runs(function () {
             expect(Unpublish.prototype.unpublishPackage).not.toHaveBeenCalled()
-            return expect(callback.argsForCall[0][0]).toMatch(/Cancelled/)
+            expect(callback.argsForCall[0][0]).toMatch(/Cancelled/)
           })
         }))
     })
 
-    return describe("when the version does not exist", () =>
+    describe("when the version does not exist", () =>
       it("calls back with an error", function () {
         const callback = jasmine.createSpy("callback")
         apm.run(["unpublish", "--force", "test-package@2.0.0"], callback)
 
         waitsFor("waiting for unpublish command to complete", () => callback.callCount > 0)
 
-        return runs(function () {
+        runs(function () {
           expect(callback.argsForCall[0][0]).not.toBeUndefined()
           expect(unpublishPackageCallback.callCount).toBe(0)
-          return expect(unpublishVersionCallback.callCount).toBe(0)
+          expect(unpublishVersionCallback.callCount).toBe(0)
         })
       }))
   })

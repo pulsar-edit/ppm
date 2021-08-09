@@ -59,13 +59,13 @@ describe("apm clean", function () {
       process.chdir(moduleDirectory)
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("uninstalls any packages not referenced in the package.json", function () {
@@ -82,13 +82,13 @@ describe("apm clean", function () {
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(callback.mostRecentCall.args[0]).toBeUndefined()
-      return expect(fs.existsSync(removedPath)).toBeFalsy()
+      expect(fs.existsSync(removedPath)).toBeFalsy()
     })
   })
 
-  return it("uninstalls a scoped package", function () {
+  it("uninstalls a scoped package", function () {
     const removedPath = path.join(moduleDirectory, "node_modules/@types/atom")
     fs.makeTreeSync(removedPath)
     fs.writeFileSync(
@@ -102,9 +102,9 @@ describe("apm clean", function () {
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(callback.mostRecentCall.args[0]).toBeUndefined()
-      return expect(fs.existsSync(removedPath)).toBeFalsy()
+      expect(fs.existsSync(removedPath)).toBeFalsy()
     })
   })
 })

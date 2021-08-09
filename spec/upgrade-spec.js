@@ -15,7 +15,7 @@ const apmRun = function (args, callback) {
   let ran = false
   apm.run(args, () => (ran = true))
   waitsFor(`waiting for apm ${args.join(" ")}`, 60000, () => ran)
-  return runs(callback)
+  runs(callback)
 }
 
 describe("apm upgrade", function () {
@@ -54,13 +54,13 @@ describe("apm upgrade", function () {
       fs.writeFileSync(path.join(atomApp, "package.json"), JSON.stringify({ version: "0.10.0" }))
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("does not display updates for unpublished packages", function () {
@@ -74,9 +74,9 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[1][0]).toContain("empty")
+      expect(console.log.argsForCall[1][0]).toContain("empty")
     })
   })
 
@@ -91,9 +91,9 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[1][0]).toContain("empty")
+      expect(console.log.argsForCall[1][0]).toContain("empty")
     })
   })
 
@@ -108,9 +108,9 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[1][0]).toContain("multi-module 0.1.0 -> 0.3.0")
+      expect(console.log.argsForCall[1][0]).toContain("multi-module 0.1.0 -> 0.3.0")
     })
   })
 
@@ -125,9 +125,9 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[1][0]).toContain("empty")
+      expect(console.log.argsForCall[1][0]).toContain("empty")
     })
   })
 
@@ -142,9 +142,9 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[1][0]).toContain("different-repo 0.3.0 -> 0.4.0")
+      expect(console.log.argsForCall[1][0]).toContain("different-repo 0.3.0 -> 0.4.0")
     })
   })
 
@@ -163,11 +163,11 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log.callCount).toBe(2)
       expect(console.log.argsForCall[0][0]).not.toContain("multi-module 0.1.0 -> 0.3.0")
       expect(console.log.argsForCall[1][0]).toContain("different-repo 0.3.0 -> 0.4.0")
-      return expect(console.log.argsForCall[1][0]).not.toContain("multi-module 0.1.0 -> 0.3.0")
+      expect(console.log.argsForCall[1][0]).not.toContain("multi-module 0.1.0 -> 0.3.0")
     })
   })
 
@@ -182,9 +182,9 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[1][0]).toContain("empty")
+      expect(console.log.argsForCall[1][0]).toContain("empty")
     })
   })
 
@@ -195,9 +195,9 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.error).toHaveBeenCalled()
-      return expect(console.error.argsForCall[0][0]).toContain("Could not determine current Atom version installed")
+      expect(console.error.argsForCall[0][0]).toContain("Could not determine current Atom version installed")
     })
   })
 
@@ -213,13 +213,13 @@ describe("apm upgrade", function () {
 
     waitsFor("waiting for upgrade to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[1][0]).toContain("multi-module 0.1.0 -> 0.3.0")
+      expect(console.log.argsForCall[1][0]).toContain("multi-module 0.1.0 -> 0.3.0")
     })
   })
 
-  return describe("for outdated git packages", function () {
+  describe("for outdated git packages", function () {
     if (process.platform === "win32") {
       console.warn("Test skipped on windows") // TODO
       return
@@ -245,13 +245,13 @@ describe("apm upgrade", function () {
     it("shows an upgrade plan", () =>
       apmRun(["upgrade", "--list", "--no-color"], function () {
         const text = console.log.argsForCall.map((arr) => arr.join(" ")).join("\n")
-        return expect(text).toMatch(/Available \(1\).*\n.*test-git-repo abcdef12 -> 8ae43234/)
+        expect(text).toMatch(/Available \(1\).*\n.*test-git-repo abcdef12 -> 8ae43234/)
       }))
 
-    return it("updates to the latest sha", () =>
+    it("updates to the latest sha", () =>
       apmRun(["upgrade", "-c", "false", "test-git-repo"], function () {
         const json = JSON.parse(fs.readFileSync(pkgJsonPath), "utf8")
-        return expect(json.apmInstallSource.sha).toBe("8ae432341ac6708aff9bb619eb015da14e9d0c0f")
+        expect(json.apmInstallSource.sha).toBe("8ae432341ac6708aff9bb619eb015da14e9d0c0f")
       }))
   })
 })

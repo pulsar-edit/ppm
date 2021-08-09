@@ -73,13 +73,13 @@ describe("apm ci", function () {
       process.env.npm_config_registry = "http://localhost:3000/"
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("installs dependency versions as specified by the lockfile", function () {
@@ -91,14 +91,14 @@ describe("apm ci", function () {
     apm.run(["ci"], callback)
     waitsFor("waiting for install to complete", 600000, () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(callback.mostRecentCall.args[0]).toBeNull()
 
       const pjson0 = CSON.readFileSync(path.join("node_modules", "test-module-with-dependencies", "package.json"))
       expect(pjson0.version).toBe("1.1.0")
 
       const pjson1 = CSON.readFileSync(path.join("node_modules", "test-module", "package.json"))
-      return expect(pjson1.version).toBe("1.1.0")
+      expect(pjson1.version).toBe("1.1.0")
     })
   })
 
@@ -124,14 +124,14 @@ describe("apm ci", function () {
 
     runs(function () {
       expect(callback0.mostRecentCall.args[0]).toBeNull()
-      return apm.run(["ci"], callback1)
+      apm.run(["ci"], callback1)
     })
 
     waitsFor("waiting for ci to complete", 600000, () => callback1.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(callback1.mostRecentCall.args[0]).toBeNull()
-      return expect(
+      expect(
         fs.existsSync(path.join(moduleDirectory, "node_modules", "native-module", "build", "Release", "native.node"))
       ).toBeTruthy()
     })
@@ -146,10 +146,10 @@ describe("apm ci", function () {
     apm.run(["ci"], callback)
     waitsFor("waiting for install to complete", 600000, () => callback.callCount > 0)
 
-    return runs(() => expect(callback.mostRecentCall.args[0]).not.toBeNull())
+    runs(() => expect(callback.mostRecentCall.args[0]).not.toBeNull())
   })
 
-  return it("fails if the lockfile is out of date", function () {
+  it("fails if the lockfile is out of date", function () {
     const moduleDirectory = path.join(temp.mkdirSync("apm-test-"), "test-module-with-lockfile")
     wrench.copyDirSyncRecursive(path.join(__dirname, "fixtures", "test-module-with-lockfile"), moduleDirectory)
     process.chdir(moduleDirectory)
@@ -163,6 +163,6 @@ describe("apm ci", function () {
     apm.run(["ci"], callback)
     waitsFor("waiting for install to complete", 600000, () => callback.callCount > 0)
 
-    return runs(() => expect(callback.mostRecentCall.args[0]).not.toBeNull())
+    runs(() => expect(callback.mostRecentCall.args[0]).not.toBeNull())
   })
 })

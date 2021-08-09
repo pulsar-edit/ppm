@@ -30,7 +30,7 @@ describe("apm install", function () {
     return (process.env.ATOM_RESOURCE_PATH = resourcePath)
   })
 
-  return describe("when installing an atom package", function () {
+  describe("when installing an atom package", function () {
     let server = null
 
     beforeEach(function () {
@@ -106,13 +106,13 @@ describe("apm install", function () {
         process.env.npm_config_registry = "http://localhost:3000/"
         return (live = true)
       })
-      return waitsFor(() => live)
+      waitsFor(() => live)
     })
 
     afterEach(function () {
       let done = false
       server.close(() => (done = true))
-      return waitsFor(() => done)
+      waitsFor(() => done)
     })
 
     describe("when an invalid URL is specified", () =>
@@ -125,9 +125,9 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(console.error.mostRecentCall.args[0].length).toBeGreaterThan(0)
-          return expect(callback.mostRecentCall.args[0]).not.toBeUndefined()
+          expect(callback.mostRecentCall.args[0]).not.toBeUndefined()
         })
       }))
 
@@ -144,15 +144,15 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(existingTestModuleFile)).toBeFalsy()
           expect(fs.existsSync(path.join(testModuleDirectory, "index.js"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
-          return expect(callback.mostRecentCall.args[0]).toBeNull()
+          expect(callback.mostRecentCall.args[0]).toBeNull()
         })
       })
 
-      return describe("when multiple releases are available", function () {
+      describe("when multiple releases are available", function () {
         it("installs the latest compatible version", function () {
           CSON.writeFileSync(path.join(resourcePath, "package.json"), { version: "1.5.0" })
           const packageDirectory = path.join(atomHome, "packages", "test-module")
@@ -162,9 +162,9 @@ describe("apm install", function () {
 
           waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-          return runs(function () {
+          runs(function () {
             expect(JSON.parse(fs.readFileSync(path.join(packageDirectory, "package.json"))).version).toBe("1.1.0")
-            return expect(callback.mostRecentCall.args[0]).toBeNull()
+            expect(callback.mostRecentCall.args[0]).toBeNull()
           })
         })
 
@@ -177,9 +177,9 @@ describe("apm install", function () {
 
           waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-          return runs(function () {
+          runs(function () {
             expect(JSON.parse(fs.readFileSync(path.join(packageDirectory, "package.json"))).version).toBe("1.1.0")
-            return expect(callback.mostRecentCall.args[0]).toBeNull()
+            expect(callback.mostRecentCall.args[0]).toBeNull()
           })
         })
 
@@ -192,13 +192,13 @@ describe("apm install", function () {
 
           waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-          return runs(function () {
+          runs(function () {
             expect(fs.existsSync(packageDirectory)).toBeFalsy()
-            return expect(callback.mostRecentCall.args[0]).not.toBeNull()
+            expect(callback.mostRecentCall.args[0]).not.toBeNull()
           })
         })
 
-        return describe("when the package has been renamed", () =>
+        describe("when the package has been renamed", () =>
           it("installs the package with the new name and removes the old package", function () {
             const testRenameDirectory = path.join(atomHome, "packages", "test-rename")
             const testModuleDirectory = path.join(atomHome, "packages", "test-module")
@@ -211,12 +211,12 @@ describe("apm install", function () {
 
             waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-            return runs(function () {
+            runs(function () {
               expect(fs.existsSync(testRenameDirectory)).toBeFalsy()
               expect(fs.existsSync(testModuleDirectory)).toBeTruthy()
               expect(fs.existsSync(path.join(testModuleDirectory, "index.js"))).toBeTruthy()
               expect(fs.existsSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
-              return expect(callback.mostRecentCall.args[0]).toBeNull()
+              expect(callback.mostRecentCall.args[0]).toBeNull()
             })
           }))
       })
@@ -232,16 +232,16 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(path.join(testModuleDirectory, "index.js"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModule2Directory, "index2.js"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModule2Directory, "package.json"))).toBeTruthy()
-          return expect(callback.mostRecentCall.args[0]).toBeNull()
+          expect(callback.mostRecentCall.args[0]).toBeNull()
         })
       })
 
-      return it("installs them in order and stops on the first failure", function () {
+      it("installs them in order and stops on the first failure", function () {
         const testModuleDirectory = path.join(atomHome, "packages", "test-module")
         const testModule2Directory = path.join(atomHome, "packages", "test-module2")
 
@@ -250,12 +250,12 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(path.join(testModuleDirectory, "index.js"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModule2Directory, "index2.js"))).toBeFalsy()
           expect(fs.existsSync(path.join(testModule2Directory, "package.json"))).toBeFalsy()
-          return expect(callback.mostRecentCall.args[0]).not.toBeUndefined()
+          expect(callback.mostRecentCall.args[0]).not.toBeUndefined()
         })
       })
     })
@@ -270,10 +270,10 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount > 0)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(path.join(moduleDirectory, "node_modules", "test-module", "index.js"))).toBeTruthy()
           expect(fs.existsSync(path.join(moduleDirectory, "node_modules", "test-module", "package.json"))).toBeTruthy()
-          return expect(callback.mostRecentCall.args[0]).toEqual(null)
+          expect(callback.mostRecentCall.args[0]).toEqual(null)
         })
       }))
 
@@ -288,7 +288,7 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(() => expect(fs.existsSync(atomHome)).toBe(true))
+        runs(() => expect(fs.existsSync(atomHome)).toBe(true))
       }))
 
     describe("when the package contains symlinks", () =>
@@ -300,13 +300,13 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.isFileSync(path.join(testModuleDirectory, "index.js"))).toBeTruthy()
 
           if (process.platform === "win32") {
-            return expect(fs.isFileSync(path.join(testModuleDirectory, "node_modules", ".bin", "abin"))).toBeTruthy()
+            expect(fs.isFileSync(path.join(testModuleDirectory, "node_modules", ".bin", "abin"))).toBeTruthy()
           } else {
-            return expect(fs.realpathSync(path.join(testModuleDirectory, "node_modules", ".bin", "abin"))).toBe(
+            expect(fs.realpathSync(path.join(testModuleDirectory, "node_modules", ".bin", "abin"))).toBe(
               fs.realpathSync(path.join(testModuleDirectory, "node_modules", "test-module-with-bin", "bin", "abin.js"))
             )
           }
@@ -323,9 +323,9 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 60000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(callback.argsForCall[0][0]).toBeFalsy()
-          return expect(fs.isFileSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
+          expect(fs.isFileSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
         })
       }))
 
@@ -340,16 +340,16 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(path.join(testModuleDirectory, "index.js"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModule2Directory, "index2.js"))).toBeTruthy()
           expect(fs.existsSync(path.join(testModule2Directory, "package.json"))).toBeTruthy()
-          return expect(callback.mostRecentCall.args[0]).toBeNull()
+          expect(callback.mostRecentCall.args[0]).toBeNull()
         })
       })
 
-      return it("calls back with an error when the file does not exist", function () {
+      it("calls back with an error when the file does not exist", function () {
         const badFilePath = path.join(__dirname, "fixtures", "not-packages.txt")
 
         const callback = jasmine.createSpy("callback")
@@ -357,7 +357,7 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(() => expect(callback.mostRecentCall.args[0]).not.toBeNull())
+        runs(() => expect(callback.mostRecentCall.args[0]).not.toBeNull())
       })
     })
 
@@ -378,17 +378,17 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount > 0)
 
-        return runs(function () {
+        runs(function () {
           process.chdir(originalPath)
           expect(
             fs.existsSync(path.join(atomRepoPath, "node_modules", "test-module-with-dependencies", "package.json"))
           ).toBeTruthy()
           expect(fs.existsSync(path.join(atomRepoPath, "node_modules", "test-module", "package.json"))).toBeTruthy()
-          return expect(callback.mostRecentCall.args[0]).toEqual(null)
+          expect(callback.mostRecentCall.args[0]).toEqual(null)
         })
       })
 
-      return it("logs a message to standard error", function () {
+      it("logs a message to standard error", function () {
         CSON.writeFileSync(path.join(resourcePath, "package.json"), { packageDependencies: { "test-module": "1.0" } })
 
         const callback = jasmine.createSpy("callback")
@@ -399,7 +399,7 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(() => expect(console.error.mostRecentCall.args[0].length).toBeGreaterThan(0))
+        runs(() => expect(console.error.mostRecentCall.args[0].length).toBeGreaterThan(0))
       })
     })
 
@@ -414,7 +414,7 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(() => expect(callback.mostRecentCall.args[0]).toBeUndefined())
+        runs(() => expect(callback.mostRecentCall.args[0]).toBeUndefined())
       }))
 
     describe("when a deprecated package name is specified", () =>
@@ -424,32 +424,32 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(() => expect(callback.mostRecentCall.args[0]).toBeTruthy())
+        runs(() => expect(callback.mostRecentCall.args[0]).toBeTruthy())
       }))
 
     describe("::getNormalizedGitUrls", function () {
       it("normalizes https:// urls", function () {
         const url = "https://github.com/user/repo.git"
         const urls = new Install().getNormalizedGitUrls(url)
-        return expect(urls).toEqual([url])
+        expect(urls).toEqual([url])
       })
 
       it("normalizes git@ urls", function () {
         const url = "git@github.com:user/repo.git"
         const urls = new Install().getNormalizedGitUrls(url)
-        return expect(urls).toEqual(["git+ssh://git@github.com/user/repo.git"])
+        expect(urls).toEqual(["git+ssh://git@github.com/user/repo.git"])
       })
 
       it("normalizes file:// urls", function () {
         const url = "file:///path/to/folder"
         const urls = new Install().getNormalizedGitUrls(url)
-        return expect(urls).toEqual([url])
+        expect(urls).toEqual([url])
       })
 
-      return it("normalizes user/repo shortcuts into both HTTPS and SSH URLs", function () {
+      it("normalizes user/repo shortcuts into both HTTPS and SSH URLs", function () {
         const url = "user/repo"
         const urls = new Install().getNormalizedGitUrls(url)
-        return expect(urls).toEqual(["https://github.com/user/repo.git", "git+ssh://git@github.com/user/repo.git"])
+        expect(urls).toEqual(["https://github.com/user/repo.git", "git+ssh://git@github.com/user/repo.git"])
       })
     })
 
@@ -471,12 +471,12 @@ describe("apm install", function () {
           return spyOn(install, "cloneNormalizedUrl").andCallFake(fakeCloneRepository)
         })
 
-        return it("tries cloning the next URL until one works", function () {
+        it("tries cloning the next URL until one works", function () {
           install.cloneFirstValidGitUrl(urls, {}, function () {})
           expect(install.cloneNormalizedUrl.calls.length).toBe(3)
           expect(install.cloneNormalizedUrl.argsForCall[0][0]).toBe(urls[0])
           expect(install.cloneNormalizedUrl.argsForCall[1][0]).toBe(urls[1])
-          return expect(install.cloneNormalizedUrl.argsForCall[2][0]).toBe(urls[2])
+          expect(install.cloneNormalizedUrl.argsForCall[2][0]).toBe(urls[2])
         })
       }))
 
@@ -518,7 +518,7 @@ describe("apm install", function () {
       it("includes versioned packages in 'packageDependencies'", () =>
         expect(packageDependencies["versioned-package"]).toBe("1.2.3"))
 
-      return afterEach(() => process.chdir(originalPath))
+      afterEach(() => process.chdir(originalPath))
     })
 
     describe("when installing a package from a git repository", function () {
@@ -534,7 +534,7 @@ describe("apm install", function () {
 
         waitsFor(10000, () => count === 1)
 
-        return runs(() => (pkgJsonPath = path.join(process.env.ATOM_HOME, "packages", "test-git-repo", "package.json")))
+        runs(() => (pkgJsonPath = path.join(process.env.ATOM_HOME, "packages", "test-git-repo", "package.json")))
       })
 
       it("installs the repository with a working dir to $ATOM_HOME/packages", () =>
@@ -543,7 +543,7 @@ describe("apm install", function () {
       it("adds apmInstallSource to the package.json with the source and sha", function () {
         const sha = "8ae432341ac6708aff9bb619eb015da14e9d0c0f"
         const json = require(pkgJsonPath)
-        return expect(json.apmInstallSource).toEqual({
+        expect(json.apmInstallSource).toEqual({
           type: "git",
           source: cloneUrl,
           sha,
@@ -562,7 +562,7 @@ describe("apm install", function () {
         expect(allDeps).toEqual(["tiny-node-module-one", "tiny-node-module-two"])
         return allDeps.forEach(function (dep) {
           const modPath = path.join(process.env.ATOM_HOME, "packages", "test-git-repo", "node_modules", dep)
-          return expect(fs.existsSync(modPath)).toBeTruthy()
+          expect(fs.existsSync(modPath)).toBeTruthy()
         })
       })
     })
@@ -586,17 +586,17 @@ describe("apm install", function () {
 
         waitsFor(10000, () => callback.callCount === 1)
 
-        return runs(() => (pkgJsonPath = path.join(process.env.ATOM_HOME, "packages", "test-git-repo", "package.json")))
+        runs(() => (pkgJsonPath = path.join(process.env.ATOM_HOME, "packages", "test-git-repo", "package.json")))
       })
 
-      return it("logs the installation path and the package metadata for a package installed via git url", function () {
+      it("logs the installation path and the package metadata for a package installed via git url", function () {
         const sha = "8ae432341ac6708aff9bb619eb015da14e9d0c0f"
         expect(process.stdout.write.calls.length).toBe(0)
         const json = JSON.parse(console.log.argsForCall[0][0])
         expect(json.length).toBe(1)
         expect(json[0].installPath).toBe(path.join(process.env.ATOM_HOME, "packages", "test-git-repo"))
         expect(json[0].metadata.name).toBe("test-git-repo")
-        return expect(json[0].metadata.apmInstallSource).toEqual({
+        expect(json[0].metadata.apmInstallSource).toEqual({
           type: "git",
           source: cloneUrl,
           sha,
@@ -612,21 +612,21 @@ describe("apm install", function () {
 
         apm.run(["install", "test-module", "test-module2", "--json"], callback)
 
-        return waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
+        waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
       })
 
-      return it("logs the installation path and the package metadata for a registered package", function () {
+      it("logs the installation path and the package metadata for a registered package", function () {
         expect(process.stdout.write.calls.length).toBe(0)
         const json = JSON.parse(console.log.argsForCall[0][0])
         expect(json.length).toBe(2)
         expect(json[0].installPath).toBe(path.join(process.env.ATOM_HOME, "packages", "test-module"))
         expect(json[0].metadata.name).toBe("test-module")
         expect(json[1].installPath).toBe(path.join(process.env.ATOM_HOME, "packages", "test-module2"))
-        return expect(json[1].metadata.name).toBe("test-module2")
+        expect(json[1].metadata.name).toBe("test-module2")
       })
     })
 
-    return describe("with a space in node-gyp's path", function () {
+    describe("with a space in node-gyp's path", function () {
       const nodeModules = fs.realpathSync(path.join(__dirname, "..", "node_modules"))
 
       beforeEach(function () {
@@ -645,7 +645,7 @@ describe("apm install", function () {
         return fs.removeSync(path.join(nodeModules, "with a space"))
       })
 
-      return it("builds native code successfully", function () {
+      it("builds native code successfully", function () {
         if (process.platform === "win32") {
           console.warn("Test skipped on windows") // TODO
           return
@@ -655,7 +655,7 @@ describe("apm install", function () {
 
         waitsFor("waiting for install to complete", 600000, () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(callback.mostRecentCall.args[0]).toBeNull()
 
           const testModuleDirectory = path.join(atomHome, "packages", "native-package")
@@ -668,7 +668,7 @@ describe("apm install", function () {
             const makefileContent = fs.readFileSync(path.join(testModuleDirectory, "build", "Makefile"), {
               encoding: "utf-8",
             })
-            return expect(makefileContent).toMatch("node_modules/with\\ a\\ space/addon.gypi")
+            expect(makefileContent).toMatch("node_modules/with\\ a\\ space/addon.gypi")
           }
         })
       })

@@ -24,13 +24,13 @@ describe("apm search", function () {
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000"
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("lists the matching packages and excludes deprecated packages", function () {
@@ -39,24 +39,24 @@ describe("apm search", function () {
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
       expect(console.log.argsForCall[1][0]).toContain("duckberg")
       expect(console.log.argsForCall[2][0]).toContain("ducktales")
       expect(console.log.argsForCall[3][0]).toContain("duckblur")
-      return expect(console.log.argsForCall[4][0]).toBeUndefined()
+      expect(console.log.argsForCall[4][0]).toBeUndefined()
     })
   })
 
-  return it("logs an error if the query is missing or empty", function () {
+  it("logs an error if the query is missing or empty", function () {
     const callback = jasmine.createSpy("callback")
     apm.run(["search"], callback)
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.error).toHaveBeenCalled()
-      return expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
+      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
     })
   })
 })
