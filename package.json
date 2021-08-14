@@ -65,7 +65,7 @@
     "@types/jasmine": "^3.0.0",
     "@types/mv": "2.1.2",
     "@types/ncp": "~2.0.5",
-    "@types/npm": "^2.0.32",
+    "@types/npm": "^7.0.0",
     "@types/q": "~1.5.5",
     "@types/read": "~0.0.29",
     "@types/request": "^2.48.6",
