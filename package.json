@@ -1,7 +1,7 @@
 {
   "name": "@atom-ide-community/atom-package-manager",
   "description": "Community build of the Atom package manager",
-  "version": "2.6.1-atomic.1.0",
+  "version": "2.6.5-atomic.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
