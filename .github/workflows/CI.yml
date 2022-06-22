@@ -15,18 +15,26 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
+          - windows-2019
         node_version:
-          - 12
+          - 12.18.3
           - 14
-        node_arch:
+        arch:
           - x64
+        pnpm:
+          - 6
         include:
           - os: windows-2019
-            node_version: 12
-            node_arch: x64
-          - os: windows-2016
-            node_version: 12
-            node_arch: x86
+            node_version: 12.18.3
+            arch: x86
+            pnpm: 6
+          - os: windows-2019
+            node_version: 14
+            arch: x86
+            pnpm: 6
+    env:
+      arch: ${{ matrix.arch }}
+      npm_config_arch: ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v3
 
@@ -35,30 +43,42 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
+            ~/.pnpm-store
+            D:\.pnpm-store
             ./node_modules/
             ~/npm-cache
             ~/.pnpm-store
             D:\.pnpm-store
             ./bin/node
             ./bin/node.exe
-          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
+          key: "cache-OS:${{ matrix.os }}-${{ matrix.arch }}-pnpm:${{ matrix.pnpm }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
 
       - name: Install Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
-          architecture: ${{ matrix.node_arch }}
+          architecture: ${{ matrix.arch }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ matrix.pnpm }}
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          architecture: ${{ matrix.arch }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install
+        run: pnpm install
 
       - name: Build
         if: steps.cache.outputs.cache-hit == 'true'
-        run: npm run prepare
+        run: pnpm run prepare
 
       - name: Run tests
-        run: ./bin/npm test
+        run: ./bin/pnpm test
 
   Lint:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
@@ -72,13 +92,18 @@ jobs:
       - name: Commit lint ✨
         uses: wagoid/commitlint-github-action@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 6
+
       - name: Install dependencies
         run: |
-          npm install --ignore-scripts # native modules are not used here
-          npm run prepare
+          pnpm install --ignore-scripts
+          pnpm run prepare
 
       - name: Format ✨
-        run: npm run test.format
+        run: pnpm run test.format
 
       - name: Lint ✨
-        run: npm run test.lint
+        run: pnpm run test.lint
