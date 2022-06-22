@@ -39,7 +39,7 @@ but cannot be used to install new packages or dependencies.\
     return options.boolean("verbose").default("verbose", false).describe("verbose", "Show verbose debug information")
   }
 
-  installModules(options, callback) {
+  installModules(options: CliOptions, callback: (error?: string) => void) {
     process.stdout.write("Installing locked modules")
     if (options.argv.verbose) {
       process.stdout.write("\n")
