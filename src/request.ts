@@ -9,12 +9,10 @@ import npm from "npm"
 import request, { Options, RequestCallback } from "request"
 import * as config from "./apm"
 
-function loadNpm(callback: Parameters<typeof npm["load"]>[1]) {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath(),
-  }
-  return npm.load(npmOptions, callback)
+function loadNpm(callback: Parameters<typeof npm["load"]>[0]) {
+  npm.config.defs.defaults.userconfig = config.getUserConfigPath()
+  npm.config.defs.defaults.globalconfig = config.getGlobalConfigPath()
+  return npm.load(callback)
 }
 
 function configureRequest(requestOptions: Options, callback: () => void) {

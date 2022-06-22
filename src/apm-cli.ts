@@ -228,11 +228,9 @@ function getAtomVersion(callback) {
 }
 
 function getPythonVersion(callback) {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath(),
-  }
-  return npm.load(npmOptions, function () {
+  npm.config.defs.defaults.userconfig = config.getUserConfigPath()
+  npm.config.defs.defaults.globalconfig = config.getGlobalConfigPath()
+  return npm.load(function () {
     let left
     let python = (left = npm.config.get("python")) != null ? left : process.env.PYTHON
     if (config.isWin32() && !python) {
