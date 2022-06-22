@@ -24,6 +24,10 @@ jobs:
         pnpm:
           - 6
         include:
+          - os: windows-2022
+            node_version: 12.18.3
+            arch: x64
+            pnpm: 6
           - os: windows-2019
             node_version: 12.18.3
             arch: x86
