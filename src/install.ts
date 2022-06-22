@@ -125,7 +125,11 @@ package names to install with optional versions using the
         if (installGlobally) {
           const commands = []
           const children = fs.readdirSync(nodeModulesDirectory).filter((dir) => dir !== ".bin")
-          assert.equal(children.length, 1, "Expected there to only be one child in node_modules")
+          assert.equal(
+            children.length,
+            1,
+            `Expected there to only be one child in node_modules, but multiple were found:\n${children.join("\n")}`
+          )
           child = children[0]
           const source = path.join(nodeModulesDirectory, child)
           destination = path.join(this.atomPackagesDirectory, child)
