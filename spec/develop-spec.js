@@ -56,7 +56,7 @@ describe("apm develop", function () {
       const callback = jasmine.createSpy("callback")
       apm.run(["develop", "fake-package"], callback)
 
-      waitsFor("waiting for develop to complete", () => callback.callCount === 1)
+      waitsFor("waiting for develop to complete", 60000, () => callback.callCount === 1)
 
       runs(function () {
         expect(callback.mostRecentCall.args[0]).toBeFalsy()
