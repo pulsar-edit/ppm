@@ -5,7 +5,6 @@ Thumbs.db
 # Node
 node_modules
 npm-debug.log
-pnpm-lock.yaml
 package-lock.json
 
 # TypeScript
