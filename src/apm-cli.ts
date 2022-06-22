@@ -228,8 +228,13 @@ function getAtomVersion(callback) {
 }
 
 function getPythonVersion(callback) {
-  npm.config.defs.defaults.userconfig = config.getUserConfigPath()
-  npm.config.defs.defaults.globalconfig = config.getGlobalConfigPath()
+  npm.config.defs = {
+    defaults: {
+      userconfig: config.getUserConfigPath(),
+      globalconfig: config.getGlobalConfigPath(),
+    },
+    types: undefined,
+  }
   return npm.load(function () {
     let left
     let python = (left = npm.config.get("python")) != null ? left : process.env.PYTHON

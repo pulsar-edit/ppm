@@ -185,8 +185,13 @@ export function visualStudioIsInstalled(version) {
 }
 
 export function loadNpm(callback: (config: null, npmVar: typeof npm) => void) {
-  npm.config.defs.defaults.userconfig = getUserConfigPath()
-  npm.config.defs.defaults.globalconfig = getGlobalConfigPath()
+  npm.config.defs = {
+    defaults: {
+      userconfig: getUserConfigPath(),
+      globalconfig: getGlobalConfigPath(),
+    },
+    types: undefined,
+  }
   return npm.load(() => callback(null, npm))
 }
 
