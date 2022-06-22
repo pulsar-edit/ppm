@@ -10,7 +10,8 @@ const temp = require("temp")
 import * as apm from "../lib/apm-cli"
 
 describe("apm config", function () {
-  let [atomHome, userConfigPath] = Array.from([])
+  let atomHome
+  let userConfigPath
 
   beforeEach(function () {
     spyOnToken()
@@ -20,8 +21,8 @@ describe("apm config", function () {
     process.env.ATOM_HOME = atomHome
     userConfigPath = path.join(atomHome, ".apmrc")
 
-    // Make sure the cache used is the one for the test env
-    return delete process.env.npm_config_cache
+    // // Make sure the cache used is the one for the test env
+    // delete process.env.npm_config_cache
   })
 
   describe("apm config get", () =>
