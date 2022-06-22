@@ -124,7 +124,9 @@ package names to install with optional versions using the
         let child, destination
         if (installGlobally) {
           const commands = []
-          const children = fs.readdirSync(nodeModulesDirectory).filter((dir) => dir !== ".bin")
+          const children = fs
+            .readdirSync(nodeModulesDirectory)
+            .filter((dir) => ![".bin", "package-lock.json"].includes(dir))
           assert.equal(
             children.length,
             1,
