@@ -11,10 +11,11 @@ import * as config from "./apm"
 import Command, { LogCommandResultsArgs } from "./command"
 import fs from "./fs"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { sync as resolveSync } from "resolve"
 
 export default class Dedupe extends Command {
   private atomDirectory = config.getAtomDirectory()
-  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNpmPath = resolveSync("npm/bin/npm-cli")
   atomPackagesDirectory: string
   private atomNodeDirectory: string
   constructor() {

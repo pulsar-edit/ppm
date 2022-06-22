@@ -13,6 +13,7 @@ const http = require("http")
 const wrench = require("wrench")
 import * as apm from "../lib/apm-cli"
 import Install from "../lib/install"
+import { sync as resolveSync } from "resolve"
 
 describe("apm install", function () {
   let [atomHome, resourcePath] = Array.from([])
@@ -632,7 +633,7 @@ describe("apm install", function () {
       beforeEach(function () {
         // Normally npm_config_node_gyp would be ignored, but it works here because we're calling apm
         // directly and not through the scripts in bin/
-        const nodeGypPath = path.dirname(path.dirname(require.resolve("node-gyp"))) // find an installed node-gyp
+        const nodeGypPath = path.dirname(path.dirname(resolveSync("node-gyp"))) // find an installed node-gyp
         fs.copySync(nodeGypPath, path.join(nodeModules, "with a space"))
         process.env.npm_config_node_gyp = path.join(nodeModules, "with a space", "bin", "node-gyp.js")
 

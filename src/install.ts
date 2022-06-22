@@ -23,12 +23,13 @@ import RebuildModuleCache from "./rebuild-module-cache"
 import * as request from "./request"
 import { isDeprecatedPackage } from "./deprecated-packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { sync as resolveSync } from "resolve"
 
 export default class Install extends Command {
   private atomDirectory = config.getAtomDirectory()
   private atomPackagesDirectory: string
   private atomNodeDirectory: string
-  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNpmPath = resolveSync("npm/bin/npm-cli")
   private repoLocalPackagePathRegex = /^file:(?!\/\/)(.*)/
   verbose: boolean
 

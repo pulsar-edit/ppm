@@ -8,10 +8,11 @@ import yargs from "yargs"
 import * as apm from "./apm"
 import Command from "./command"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { sync as resolveSync } from "resolve"
 
 export default class Config extends Command {
   private atomDirectory = apm.getAtomDirectory()
-  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNpmPath = resolveSync("npm/bin/npm-cli")
   private atomNodeDirectory: string
   constructor() {
     super()

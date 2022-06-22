@@ -10,10 +10,11 @@ import * as config from "./apm"
 import Command from "./command"
 import fs from "./fs"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { sync as resolveSync } from "resolve"
 
 export default class Rebuild extends Command {
   private atomDirectory = config.getAtomDirectory()
-  private atomNpmPath = require.resolve("npm/bin/npm-cli")
+  private atomNpmPath = resolveSync("npm/bin/npm-cli")
   private atomNodeDirectory: string
 
   constructor() {
