@@ -64,6 +64,11 @@ jobs:
         with:
           version: ${{ matrix.pnpm }}
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          architecture: ${{ matrix.arch }}
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm install
