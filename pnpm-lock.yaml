@@ -16,7 +16,7 @@ importers:
       '@types/jasmine': ^4.0.0
       '@types/mv': 2.1.2
       '@types/ncp': ~2.0.5
-      '@types/npm': ^7.0.0
+      '@types/npm': ^7.19.0
       '@types/q': ~1.5.5
       '@types/read': ~0.0.29
       '@types/request': ^2.48.6
@@ -46,9 +46,9 @@ importers:
       ncp: ~2.0.0
       node-downloader-helper: ^2.0.0
       node-gyp: ^9.0.0
-      npm: ^6.14.13
+      npm: ^7.24.2
       open: 7.4.2
-      pnpm: ^6.12.1
+      pnpm: ^6.32.23
       prettier: ^2.7.1
       prettier-config-atomic: ^3.0.10
       q: ~1.5.1
@@ -77,7 +77,7 @@ importers:
       keytar: 7.7.0
       mv: 2.1.1
       ncp: 2.0.0
-      npm: 6.14.13
+      npm: 7.24.2
       open: 7.4.2
       q: 1.5.1
       read: 1.0.7
@@ -5617,134 +5617,81 @@ packages:
     dev: true
     optional: true
 
-  /npm/6.14.13:
-    resolution: {integrity: sha512-SRl4jJi0EBHY2xKuu98FLRMo3VhYQSA6otyLnjSEiHoSG/9shXCFNJy9tivpUJvtkN9s6VDdItHa5Rn+fNBzag==}
-    engines: {node: 6 >=6.2.0 || 8 || >=9.3.0}
+  /npm/7.24.2:
+    resolution: {integrity: sha512-120p116CE8VMMZ+hk8IAb1inCPk4Dj3VZw29/n2g6UI77urJKVYb7FZUDW8hY+EBnfsjI/2yrobBgFyzo7YpVQ==}
+    engines: {node: '>=10'}
     hasBin: true
     dev: false
     bundledDependencies:
+      - '@isaacs/string-locale-compare'
+      - '@npmcli/arborist'
+      - '@npmcli/ci-detect'
+      - '@npmcli/config'
+      - '@npmcli/map-workspaces'
+      - '@npmcli/package-json'
+      - '@npmcli/run-script'
       - abbrev
       - ansicolors
       - ansistyles
-      - aproba
       - archy
-      - bin-links
-      - bluebird
-      - byte-size
       - cacache
-      - call-limit
+      - chalk
       - chownr
-      - ci-info
       - cli-columns
       - cli-table3
-      - cmd-shim
       - columnify
-      - config-chain
-      - debuglog
-      - detect-indent
-      - detect-newline
-      - dezalgo
-      - editor
-      - figgy-pudding
-      - find-npm-prefix
-      - fs-vacuum
-      - fs-write-stream-atomic
-      - gentle-fs
+      - fastest-levenshtein
       - glob
       - graceful-fs
-      - has-unicode
       - hosted-git-info
-      - iferr
-      - imurmurhash
-      - infer-owner
-      - inflight
-      - inherits
       - ini
       - init-package-json
       - is-cidr
-      - json-parse-better-errors
-      - JSONStream
-      - lazy-property
-      - libcipm
-      - libnpm
+      - json-parse-even-better-errors
       - libnpmaccess
+      - libnpmdiff
+      - libnpmexec
+      - libnpmfund
       - libnpmhook
       - libnpmorg
+      - libnpmpack
+      - libnpmpublish
       - libnpmsearch
       - libnpmteam
-      - libnpx
-      - lock-verify
-      - lockfile
-      - lodash._baseindexof
-      - lodash._baseuniq
-      - lodash._bindcallback
-      - lodash._cacheindexof
-      - lodash._createcache
-      - lodash._getnative
-      - lodash.clonedeep
-      - lodash.restparam
-      - lodash.union
-      - lodash.uniq
-      - lodash.without
-      - lru-cache
-      - meant
-      - mississippi
+      - libnpmversion
+      - make-fetch-happen
+      - minipass
+      - minipass-pipeline
       - mkdirp
-      - move-concurrently
+      - mkdirp-infer-owner
+      - ms
       - node-gyp
       - nopt
-      - normalize-package-data
       - npm-audit-report
-      - npm-cache-filename
       - npm-install-checks
-      - npm-lifecycle
       - npm-package-arg
-      - npm-packlist
       - npm-pick-manifest
       - npm-profile
       - npm-registry-fetch
       - npm-user-validate
       - npmlog
-      - once
       - opener
-      - osenv
       - pacote
-      - path-is-inside
-      - promise-inflight
+      - parse-conflict-json
       - qrcode-terminal
-      - query-string
-      - qw
-      - read-cmd-shim
-      - read-installed
-      - read-package-json
-      - read-package-tree
       - read
-      - readable-stream
+      - read-package-json
+      - read-package-json-fast
       - readdir-scoped-modules
-      - request
-      - retry
       - rimraf
-      - safe-buffer
       - semver
-      - sha
-      - slide
-      - sorted-object
-      - sorted-union-stream
       - ssri
-      - stringify-package
       - tar
       - text-table
       - tiny-relative-date
-      - uid-number
-      - umask
-      - unique-filename
-      - unpipe
-      - update-notifier
-      - uuid
-      - validate-npm-package-license
+      - treeverse
       - validate-npm-package-name
       - which
-      - worker-farm
       - write-file-atomic
 
   /npmlog/4.1.2:
