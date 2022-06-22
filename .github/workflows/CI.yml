@@ -21,7 +21,7 @@ jobs:
         node_arch:
           - x64
         include:
-          - os: windows-latest
+          - os: windows-2019
             node_version: 12
             node_arch: x64
           - os: windows-2016
