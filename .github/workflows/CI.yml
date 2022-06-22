@@ -18,19 +18,22 @@ jobs:
         node_version:
           - 12
           - 14
-        node_arch:
+        arch:
           - x64
         pnpm:
           - 6
         include:
           - os: windows-2019
             node_version: 12
-            node_arch: x64
+            arch: x64
             pnpm: 6
           - os: windows-2019
             node_version: 12
-            node_arch: x86
+            arch: x86
             pnpm: 6
+    env:
+      arch: ${{ matrix.arch }}
+      npm_config_arch: ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v3
 
@@ -47,13 +50,13 @@ jobs:
             D:\.pnpm-store
             ./bin/node
             ./bin/node.exe
-          key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-pnpm:${{ matrix.pnpm }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
+          key: "cache-OS:${{ matrix.os }}-${{ matrix.arch }}-pnpm:${{ matrix.pnpm }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
 
       - name: Install Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
-          architecture: ${{ matrix.node_arch }}
+          architecture: ${{ matrix.arch }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
