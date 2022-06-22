@@ -5,6 +5,7 @@
   "repository": "https://github.com/atom-community/papm",
   "license": "MIT",
   "author": "Amin Yahyaabadi",
+  "type": "commonjs",
   "main": "./lib/apm.js",
   "bin": {
     "apm": "bin/apm"
