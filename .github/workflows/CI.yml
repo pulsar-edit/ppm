@@ -27,7 +27,7 @@ jobs:
             node_version: 12
             node_arch: x64
             pnpm: 6
-          - os: windows-2016
+          - os: windows-2019
             node_version: 12
             node_arch: x86
             pnpm: 6
@@ -89,7 +89,7 @@ jobs:
           version: 6
 
       - name: Install dependencies
-        run:  |
+        run: |
           pnpm install --ignore-scripts
           pnpm run prepare
 
