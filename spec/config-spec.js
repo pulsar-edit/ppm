@@ -32,7 +32,7 @@ describe("apm config", function () {
       const callback = jasmine.createSpy("callback")
       apm.run(["config", "get", "cache"], callback)
 
-      waitsFor("waiting for config get to complete", 600000, () => callback.callCount === 1)
+      waitsFor("waiting for config get to complete", 6000000, () => callback.callCount === 1)
 
       runs(() => expect(process.stdout.write.argsForCall[0][0].trim()).toBe(path.join(process.env.ATOM_HOME, ".apm")))
     }))
