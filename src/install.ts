@@ -25,6 +25,7 @@ import { isDeprecatedPackage } from "./deprecated-packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
 import { sync as resolveSync } from "resolve"
 import type { SpawnArgs } from "./command"
+import { ChildProcessWithoutNullStreams } from "child_process"
 
 export default class Install extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -122,7 +123,8 @@ package names to install with optional versions using the
 
     return this.fork(this.atomNpmPath, installArgs, installOptions, (code, stderr = "", stdout = "") => {
       if (code === 0) {
-        let child, destination
+        let child: string | undefined
+        let destination: string | undefined
         if (installGlobally) {
           const commands = []
           const children = fs
@@ -217,7 +219,10 @@ Run apm -v after installing Git to see what version has been detected.\
     })
   }
 
-  forkInstallCommand(options, callback) {
+  forkInstallCommand(
+    options: { argv: { silent: boolean; quiet: boolean; production: boolean }; cwd: string },
+    callback: (code: number, stderr?: string, stdout?: string) => void
+  ) {
     const installArgs = [
       "--globalconfig",
       config.getGlobalConfigPath(),
@@ -257,7 +262,7 @@ Run apm -v after installing Git to see what version has been detected.\
   // packageName - The string name of the package to request.
   // callback - The function to invoke when the request completes with an error
   //            as the first argument and an object as the second.
-  requestPackage(packageName, callback) {
+  requestPackage(packageName: string, callback: (error: string, pack?: any) => any) {
     const requestSettings = {
       url: `${config.getAtomPackagesUrl()}/${packageName}`,
       json: true,
@@ -290,7 +295,7 @@ Run apm -v after installing Git to see what version has been detected.\
   //  * packageVersion: The string version of the package.
   isPackageInstalled(packageName, packageVersion) {
     try {
-      let left
+      let left: { version: string }
       const { version } =
         (left = CSON.readFileSync(CSON.resolve(path.join("node_modules", packageName, "package")))) != null ? left : {}
       return packageVersion === version
@@ -721,7 +726,12 @@ Run apm -v after installing Git to see what version has been detected.\
     }
   }
 
-  cloneFirstValidGitUrl(urls, cloneDir, options, callback) {
+  cloneFirstValidGitUrl(
+    urls: string[],
+    cloneDir: string,
+    options: Record<string, string>,
+    callback: (err?: Error) => any
+  ) {
     return async.detectSeries(
       urls,
       (url, next) => {
@@ -739,7 +749,7 @@ Run apm -v after installing Git to see what version has been detected.\
     )
   }
 
-  cloneNormalizedUrl(url, cloneDir, options, callback) {
+  cloneNormalizedUrl(url: string, cloneDir: string, options: Record<string, string>, callback: (err?: Error) => any) {
     // Require here to avoid circular dependency
     const Develop = require("./develop").default
     const develop = new Develop()
@@ -752,20 +762,20 @@ Run apm -v after installing Git to see what version has been detected.\
     return this.installDependencies(options, callback)
   }
 
-  getRepositoryHeadSha(repoDir, callback) {
+  getRepositoryHeadSha(repoDir, callback: (err?: Error, data?: any) => any) {
     try {
       const repo = Git.open(repoDir)
       const sha = repo.getReferenceTarget("HEAD")
       return callback(null, sha)
     } catch (err) {
-      return callback(err)
+      return callback(err as Error)
     }
   }
 
   run(options: CliOptions, callback: RunCallback) {
-    let packageNames
+    let packageNames: string[]
     options = this.parseOptions(options.commandArgs)
-    const packagesFilePath = options.argv["packages-file"]
+    const packagesFilePath: string | undefined = options.argv["packages-file"]
 
     this.createAtomDirectories()
 
@@ -821,7 +831,7 @@ with Atom will be used.\
         packageNames = this.packageNamesFromPath(packagesFilePath)
       } catch (error1) {
         const error = error1
-        return callback(error)
+        return callback(error as Error)
       }
     } else {
       packageNames = this.packageNamesFromArgv(options.argv)
@@ -837,7 +847,7 @@ with Atom will be used.\
         return cb(error)
       })
     })
-    commands.push((cb) => this.loadInstalledAtomMetadata(() => cb()))
+    commands.push((cb: () => ChildProcessWithoutNullStreams) => this.loadInstalledAtomMetadata(() => cb()))
     packageNames.forEach((packageName) => commands.push((cb) => installPackage(packageName, cb)))
     const iteratee = (item, next) => item(next)
     return async.mapSeries(commands, iteratee, function (err, installedPackagesInfo) {
