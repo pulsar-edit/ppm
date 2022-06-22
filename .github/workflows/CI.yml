@@ -23,7 +23,7 @@ jobs:
         pnpm:
           - 6
         include:
-          - os: windows-latest
+          - os: windows-2019
             node_version: 12
             node_arch: x64
             pnpm: 6
@@ -32,11 +32,11 @@ jobs:
             node_arch: x86
             pnpm: 6
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.pnpm-store
@@ -50,7 +50,7 @@ jobs:
           key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-pnpm:${{ matrix.pnpm }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
 
       - name: Install Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
           architecture: ${{ matrix.node_arch }}
@@ -77,11 +77,11 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Commit lint ✨
-        uses: wagoid/commitlint-github-action@v4
+        uses: wagoid/commitlint-github-action@v5
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
