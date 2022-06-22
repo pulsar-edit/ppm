@@ -524,7 +524,7 @@ Run apm -v after installing Git to see what version has been detected.\
       config.getGlobalConfigPath(),
       "--userconfig",
       config.getUserConfigPath(),
-      "build",
+      "rebuild",
     ]
     buildArgs.push(path.resolve(__dirname, "..", "native-module"))
     buildArgs.push(...Array.from(this.getNpmBuildFlags() || []))
