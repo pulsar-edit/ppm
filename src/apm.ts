@@ -139,7 +139,7 @@ export function x86ProgramFilesDirectory() {
   return process.env["ProgramFiles(x86)"] || process.env.ProgramFiles
 }
 
-export function getInstalledVisualStudioFlag() {
+export function getInstalledVisualStudioFlag(): string {
   if (!isWin32()) {
     return null
   }
@@ -149,18 +149,18 @@ export function getInstalledVisualStudioFlag() {
     return process.env.GYP_MSVS_VERSION
   }
 
-  if (visualStudioIsInstalled("2019")) {
-    return "2019"
+  for (const vsVersion of [2022, 2019, 2017]) {
+    if (visualStudioIsInstalled(vsVersion)) {
+      return String(vsVersion)
+    }
   }
-  if (visualStudioIsInstalled("2017")) {
-    return "2017"
-  }
-  if (visualStudioIsInstalled("14.0")) {
+
+  if (visualStudioIsInstalled(14.0)) {
     return "2015"
   }
 }
 
-export function visualStudioIsInstalled(version) {
+export function visualStudioIsInstalled(version: number): boolean {
   if (version < 2017) {
     return fs.existsSync(path.join(x86ProgramFilesDirectory(), `Microsoft Visual Studio ${version}`, "Common7", "IDE"))
   } else {
