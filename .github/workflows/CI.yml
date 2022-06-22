@@ -44,7 +44,7 @@ jobs:
           key: "cache-OS:${{ matrix.os }}-${{ matrix.node_arch }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
 
       - name: Install Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
           architecture: ${{ matrix.node_arch }}
