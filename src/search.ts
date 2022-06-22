@@ -13,6 +13,8 @@ import * as request from "./request"
 import { tree } from "./tree"
 import { isDeprecatedPackage } from "./deprecated-packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { PackageMetadata } from "./packages"
+import { PackageData } from "./stars"
 
 export default class Search extends Command {
   parseOptions(argv: string[]) {
@@ -78,7 +80,7 @@ Search for Atom packages/themes on the atom.io registry.\
       themes: options.argv.themes,
     }
 
-    return this.searchPackages(query, searchOptions, function (error, packages) {
+    return this.searchPackages(query, searchOptions, function (error, packages: PackageData[]) {
       if (error != null) {
         callback(error)
         return
@@ -90,7 +92,7 @@ Search for Atom packages/themes on the atom.io registry.\
         const heading = `Search Results For '${query}'`.cyan
         console.log(`${heading} (${packages.length})`)
 
-        tree(packages, function ({ name, description, downloads, stargazers_count }) {
+        tree(packages, {}, function ({ name, description, downloads, stargazers_count }) {
           let label = name.yellow
           if (description) {
             label += ` ${description.replace(/\s+/g, " ")}`

@@ -14,6 +14,8 @@ import * as config from "./apm"
 import * as request from "./request"
 import { tree } from "./tree"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { PackageData } from "./stars"
+import { PackageMetadata } from "./packages"
 
 export default class View extends Command {
   parseOptions(argv: string[]) {
@@ -44,7 +46,7 @@ View information about a package/theme in the atom.io registry.\
     })
   }
 
-  getLatestCompatibleVersion(pack, options, callback) {
+  getLatestCompatibleVersion(pack: PackageData, options, callback) {
     return this.loadInstalledAtomVersion(options, function (installedAtomVersion) {
       if (!installedAtomVersion) {
         return callback(pack.releases.latest)
@@ -81,14 +83,14 @@ View information about a package/theme in the atom.io registry.\
     })
   }
 
-  getRepository(pack) {
+  getRepository(pack: PackageMetadata) {
     let repository
     if ((repository = pack.repository?.url != null ? pack.repository?.url : pack.repository)) {
       return repository.replace(/\.git$/, "")
     }
   }
 
-  getPackage(packageName, options, callback) {
+  getPackage(packageName: string, options: CliOptions, callback: (error: string, pack?: any) => any) {
     const requestSettings = {
       url: `${config.getAtomPackagesUrl()}/${packageName}`,
       json: true,

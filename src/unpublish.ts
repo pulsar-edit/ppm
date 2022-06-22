@@ -114,9 +114,9 @@ name is specified.\
   }
 
   run(options: CliOptions, callback: RunCallback) {
-    let version
+    let version: string
     options = this.parseOptions(options.commandArgs)
-    let [name] = Array.from(options.argv._)
+    let [name] = Array.from(options.argv._) as [string]
 
     if (name?.length > 0) {
       const atIndex = name.indexOf("@")
@@ -128,7 +128,7 @@ name is specified.\
 
     if (!name) {
       try {
-        name = JSON.parse(fs.readFileSync("package.json"))?.name
+        name = JSON.parse(fs.readFileSync("package.json", "utf8"))?.name
       } catch (error) {
         /* ignore error */
       }

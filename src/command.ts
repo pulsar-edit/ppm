@@ -15,6 +15,16 @@ import * as git from "./git"
 
 export type LogCommandResultsArgs = [code: number, stderr?: string, stdout?: string]
 
+export type SpawnArgs =
+  | {
+      // options
+      env?: NodeJS.ProcessEnv
+      streaming?: boolean
+      cwd?: string
+    }
+  // callback
+  | ((code: number, stderr?: string, stdout?: string) => void)
+
 export default class Command {
   protected electronVersion: string
   installedAtomVersion: string
@@ -25,7 +35,7 @@ export default class Command {
     this.logCommandResultsIfFail = this.logCommandResultsIfFail.bind(this)
   }
 
-  spawn(command, args, ...remaining) {
+  spawn(command: string, args: string[], ...remaining: SpawnArgs[]) {
     let options
     if (remaining.length >= 2) {
       options = remaining.shift()
@@ -65,7 +75,7 @@ export default class Command {
     return spawned
   }
 
-  fork(script, args, ...remaining) {
+  fork(script: string, args: string[], ...remaining: SpawnArgs[]) {
     args.unshift(script)
     return this.spawn(process.execPath, args, ...Array.from(remaining))
   }
@@ -74,7 +84,7 @@ export default class Command {
     return this.sanitizePackageNames(argv._)
   }
 
-  sanitizePackageNames(packageNames = []) {
+  sanitizePackageNames(packageNames: string[] = []) {
     packageNames = packageNames.map((packageName) => packageName.trim())
     return _.compact(_.uniq(packageNames))
   }
@@ -123,7 +133,7 @@ export default class Command {
     }
   }
 
-  loadInstalledAtomMetadata(callback) {
+  loadInstalledAtomMetadata(callback: () => child_process.ChildProcessWithoutNullStreams) {
     return this.getResourcePath((resourcePath) => {
       let electronVersion: string | undefined
       try {
@@ -151,7 +161,7 @@ export default class Command {
     })
   }
 
-  getResourcePath(callback) {
+  getResourcePath(callback: (resourcePath: string) => child_process.ChildProcessWithoutNullStreams) {
     if (this.resourcePath) {
       return process.nextTick(() => callback(this.resourcePath))
     } else {
@@ -162,7 +172,7 @@ export default class Command {
     }
   }
 
-  addBuildEnvVars(env) {
+  addBuildEnvVars(env: Record<string, string>) {
     if (config.isWin32()) {
       this.updateWindowsEnv(env)
     }
@@ -183,13 +193,13 @@ export default class Command {
     ]
   }
 
-  updateWindowsEnv(env) {
+  updateWindowsEnv(env: Record<string, string>) {
     env.USERPROFILE = env.HOME
 
     return git.addGitToEnv(env)
   }
 
-  addNodeBinToEnv(env) {
+  addNodeBinToEnv(env: Record<string, string>) {
     const nodeBinFolder = path.resolve(__dirname, "..", "bin")
     const pathKey = config.isWin32() ? "Path" : "PATH"
     if (env[pathKey]) {
@@ -199,7 +209,7 @@ export default class Command {
     }
   }
 
-  addProxyToEnv(env) {
+  addProxyToEnv(env: Record<string, string>) {
     let left
     const httpProxy = this.npm.config.get("proxy")
     if (httpProxy) {

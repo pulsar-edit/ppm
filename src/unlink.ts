@@ -12,6 +12,7 @@ import Command from "./command"
 import * as config from "./apm"
 import fs from "./fs"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { PathLike } from "fs-plus"
 
 export default class Unlink extends Command {
   devPackagesPath = path.join(config.getAtomDirectory(), "dev", "packages")
@@ -37,15 +38,15 @@ Run \`apm links\` to view all the currently linked packages.\
       .describe("all", "Unlink all packages in ~/.atom/packages and ~/.atom/dev/packages")
   }
 
-  getDevPackagePath(packageName) {
+  getDevPackagePath(packageName: string) {
     return path.join(this.devPackagesPath, packageName)
   }
 
-  getPackagePath(packageName) {
+  getPackagePath(packageName: string) {
     return path.join(this.packagesPath, packageName)
   }
 
-  unlinkPath(pathToUnlink) {
+  unlinkPath(pathToUnlink: PathLike) {
     try {
       process.stdout.write(`Unlinking ${pathToUnlink} `)
       fs.unlinkSync(pathToUnlink)
@@ -56,9 +57,9 @@ Run \`apm links\` to view all the currently linked packages.\
     }
   }
 
-  unlinkAll(options, callback) {
+  unlinkAll(options: CliOptions, callback: (error?: string | Error) => any) {
     try {
-      let child, packagePath
+      let child: string, packagePath: string
       for (child of fs.list(this.devPackagesPath)) {
         packagePath = path.join(this.devPackagesPath, child)
         if (fs.isSymbolicLinkSync(packagePath)) {
@@ -75,12 +76,12 @@ Run \`apm links\` to view all the currently linked packages.\
       }
       return callback()
     } catch (error) {
-      return callback(error)
+      return callback(error as Error)
     }
   }
 
-  unlinkPackage(options, callback) {
-    let error, left, packageName
+  unlinkPackage(options: CliOptions, callback: (error?: string | Error) => any) {
+    let error: Error, left: any, packageName: string
     const packagePath = (left = options.argv._[0]?.toString()) != null ? left : "."
     const linkPath = path.resolve(process.cwd(), packagePath)
 
@@ -99,11 +100,11 @@ Run \`apm links\` to view all the currently linked packages.\
         this.unlinkPath(this.getPackagePath(packageName))
         return callback()
       } catch (error1) {
-        error = error1
-        return callback(error)
+        error = error1 as Error
+        return callback(error as Error)
       }
     } else {
-      let targetPath
+      let targetPath: string
       if (options.argv.dev) {
         targetPath = this.getDevPackagePath(packageName)
       } else {
@@ -113,7 +114,7 @@ Run \`apm links\` to view all the currently linked packages.\
         this.unlinkPath(targetPath)
         return callback()
       } catch (error2) {
-        error = error2
+        error = error2 as Error
         return callback(error)
       }
     }

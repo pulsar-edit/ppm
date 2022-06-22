@@ -23,6 +23,7 @@ import RebuildModuleCache from "./rebuild-module-cache"
 import * as request from "./request"
 import { isDeprecatedPackage } from "./deprecated-packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import type { SpawnArgs } from "./command"
 
 export default class Install extends Command {
   private atomDirectory = config.getAtomDirectory()
@@ -106,7 +107,7 @@ package names to install with optional versions using the
     const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
-    const installOptions = { env }
+    const installOptions: SpawnArgs = { env }
     if (this.verbose) {
       installOptions.streaming = true
     }
@@ -233,7 +234,7 @@ Run apm -v after installing Git to see what version has been detected.\
     const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
-    const installOptions = { env }
+    const installOptions: SpawnArgs = { env }
     if (options.cwd) {
       installOptions.cwd = options.cwd
     }

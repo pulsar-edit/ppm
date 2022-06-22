@@ -11,7 +11,7 @@ import wrench from "wrench"
 import path from "path"
 
 const fsAdditions = {
-  list(directoryPath) {
+  list(directoryPath: string) {
     if (fs.isDirectorySync(directoryPath)) {
       try {
         return fs.readdirSync(directoryPath)
@@ -23,11 +23,11 @@ const fsAdditions = {
     }
   },
 
-  listRecursive(directoryPath) {
+  listRecursive(directoryPath: string) {
     return wrench.readdirSyncRecursive(directoryPath)
   },
 
-  cp(sourcePath, destinationPath, callback) {
+  cp(sourcePath: string, destinationPath: string, callback: (err: Error | Error[]) => void) {
     return rm(destinationPath, function (error) {
       if (error != null) {
         return callback(error)
@@ -37,7 +37,7 @@ const fsAdditions = {
     })
   },
 
-  mv(sourcePath, destinationPath, callback) {
+  mv(sourcePath: fs.PathLike, destinationPath: string, callback: fs.NoParamCallback) {
     return rm(destinationPath, function (error) {
       if (error != null) {
         return callback(error)
