@@ -196,6 +196,13 @@ export function loadNpm(callback: (config: null, npmVar: typeof npm) => void) {
 }
 
 export function getSetting(key, callback) {
+  npm.config.defs = {
+    defaults: {
+      userconfig: getUserConfigPath(),
+      globalconfig: getGlobalConfigPath(),
+    },
+    types: undefined,
+  }
   return loadNpm(() => callback(npm.config.get(key)))
 }
 
