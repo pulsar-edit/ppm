@@ -63,13 +63,13 @@ describe("apm stars", function () {
       return (live = true)
     })
 
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let closed = false
     server.close(() => (closed = true))
-    return waitsFor(() => closed)
+    waitsFor(() => closed)
   })
 
   describe("when no user flag is specified", () =>
@@ -79,9 +79,9 @@ describe("apm stars", function () {
 
       waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-      return runs(function () {
+      runs(function () {
         expect(console.log).toHaveBeenCalled()
-        return expect(console.log.argsForCall[1][0]).toContain("beverly-hills")
+        expect(console.log.argsForCall[1][0]).toContain("beverly-hills")
       })
     }))
 
@@ -92,9 +92,9 @@ describe("apm stars", function () {
 
       waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-      return runs(function () {
+      runs(function () {
         expect(console.log).toHaveBeenCalled()
-        return expect(console.log.argsForCall[1][0]).toContain("test-module")
+        expect(console.log.argsForCall[1][0]).toContain("test-module")
       })
     }))
 
@@ -107,24 +107,24 @@ describe("apm stars", function () {
 
       waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-      return runs(function () {
+      runs(function () {
         expect(callback.mostRecentCall.args[0]).toBeNull()
         expect(fs.existsSync(path.join(testModuleDirectory, "index.js"))).toBeTruthy()
-        return expect(fs.existsSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
+        expect(fs.existsSync(path.join(testModuleDirectory, "package.json"))).toBeTruthy()
       })
     }))
 
-  return describe("when the theme flag is specified", () =>
+  describe("when the theme flag is specified", () =>
     it("only lists themes", function () {
       const callback = jasmine.createSpy("callback")
       apm.run(["stars", "--themes"], callback)
 
       waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-      return runs(function () {
+      runs(function () {
         expect(console.log).toHaveBeenCalled()
         expect(console.log.argsForCall[1][0]).toContain("duckblur")
-        return expect(console.log.argsForCall[1][0]).not.toContain("beverly-hills")
+        expect(console.log.argsForCall[1][0]).not.toContain("beverly-hills")
       })
     }))
 })

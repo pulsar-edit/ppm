@@ -49,7 +49,7 @@ describe("apm rebuild", function () {
       process.env.PATH = ""
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
@@ -57,7 +57,7 @@ describe("apm rebuild", function () {
 
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("rebuilds all modules when no module names are specified", function () {
@@ -69,10 +69,10 @@ describe("apm rebuild", function () {
 
     waitsFor("waiting for rebuild to complete", 600000, () => callback.callCount === 1)
 
-    return runs(() => expect(callback.mostRecentCall.args[0]).toBeUndefined())
+    runs(() => expect(callback.mostRecentCall.args[0]).toBeUndefined())
   })
 
-  return it("rebuilds the specified modules", function () {
+  it("rebuilds the specified modules", function () {
     const packageToRebuild = path.join(__dirname, "fixtures/package-with-native-deps")
 
     process.chdir(packageToRebuild)
@@ -81,6 +81,6 @@ describe("apm rebuild", function () {
 
     waitsFor("waiting for rebuild to complete", 600000, () => callback.callCount === 1)
 
-    return runs(() => expect(callback.mostRecentCall.args[0]).toBeUndefined())
+    runs(() => expect(callback.mostRecentCall.args[0]).toBeUndefined())
   })
 })

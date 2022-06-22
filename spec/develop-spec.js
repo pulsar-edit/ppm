@@ -36,10 +36,10 @@ describe("apm develop", function () {
 
       waitsFor("waiting for develop to complete", () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(callback.mostRecentCall.args[0]).toBe("Here is the error")
         expect(fs.existsSync(repoPath)).toBeFalsy()
-        return expect(fs.existsSync(linkedRepoPath)).toBeFalsy()
+        expect(fs.existsSync(linkedRepoPath)).toBeFalsy()
       })
     }))
 
@@ -58,16 +58,16 @@ describe("apm develop", function () {
 
       waitsFor("waiting for develop to complete", () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(callback.mostRecentCall.args[0]).toBeFalsy()
         expect(fs.existsSync(repoPath)).toBeTruthy()
         expect(fs.existsSync(path.join(repoPath, "Syntaxes", "Makefile.plist"))).toBeTruthy()
         expect(fs.existsSync(linkedRepoPath)).toBeTruthy()
-        return expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath))
+        expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath))
       })
     }))
 
-  return describe("when the repository has already been cloned", () =>
+  describe("when the repository has already been cloned", () =>
     it("links it to ATOM_HOME/dev/packages", function () {
       fs.makeTreeSync(repoPath)
       fs.writeFileSync(path.join(repoPath, "package.json"), "")
@@ -76,11 +76,11 @@ describe("apm develop", function () {
 
       waitsFor("waiting for develop to complete", () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(callback.mostRecentCall.args[0]).toBeFalsy()
         expect(fs.existsSync(repoPath)).toBeTruthy()
         expect(fs.existsSync(linkedRepoPath)).toBeTruthy()
-        return expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath))
+        expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath))
       })
     }))
 })

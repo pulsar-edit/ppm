@@ -29,13 +29,13 @@ describe("apm featured", function () {
       process.env.ATOM_API_URL = "http://localhost:3000"
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("lists the featured packages and themes", function () {
@@ -44,25 +44,25 @@ describe("apm featured", function () {
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
       expect(console.log.argsForCall[1][0]).toContain("beverly-hills")
       expect(console.log.argsForCall[2][0]).toContain("multi-version")
-      return expect(console.log.argsForCall[3][0]).toContain("duckblur")
+      expect(console.log.argsForCall[3][0]).toContain("duckblur")
     })
   })
 
-  return describe("when the theme flag is specified", () =>
+  describe("when the theme flag is specified", () =>
     it("lists the featured themes", function () {
       const callback = jasmine.createSpy("callback")
       apm.run(["featured", "--themes"], callback)
 
       waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-      return runs(function () {
+      runs(function () {
         expect(console.log).toHaveBeenCalled()
         expect(console.log.argsForCall[1][0]).toContain("duckblur")
-        return expect(console.log.argsForCall[2][0]).toBeUndefined()
+        expect(console.log.argsForCall[2][0]).toBeUndefined()
       })
     }))
 })

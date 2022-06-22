@@ -33,7 +33,7 @@ describe("apm init", function () {
 
         waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(packagePath)).toBeTruthy()
           expect(fs.existsSync(path.join(packagePath, "keymaps"))).toBeTruthy()
           expect(fs.existsSync(path.join(packagePath, "keymaps", "fake-package.cson"))).toBeTruthy()
@@ -47,7 +47,7 @@ describe("apm init", function () {
           expect(fs.existsSync(path.join(packagePath, "styles", "fake-package.less"))).toBeTruthy()
           expect(fs.existsSync(path.join(packagePath, "package.json"))).toBeTruthy()
           expect(JSON.parse(fs.readFileSync(path.join(packagePath, "package.json"))).name).toBe("fake-package")
-          return expect(JSON.parse(fs.readFileSync(path.join(packagePath, "package.json"))).repository).toBe(
+          expect(JSON.parse(fs.readFileSync(path.join(packagePath, "package.json"))).repository).toBe(
             "https://github.com/somebody/fake-package"
           )
         })
@@ -60,7 +60,7 @@ describe("apm init", function () {
 
         waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(packagePath)).toBeTruthy()
           expect(fs.existsSync(path.join(packagePath, "keymaps"))).toBeTruthy()
           expect(fs.existsSync(path.join(packagePath, "keymaps", "fake-package.json"))).toBeTruthy()
@@ -74,7 +74,7 @@ describe("apm init", function () {
           expect(fs.existsSync(path.join(packagePath, "styles", "fake-package.less"))).toBeTruthy()
           expect(fs.existsSync(path.join(packagePath, "package.json"))).toBeTruthy()
           expect(JSON.parse(fs.readFileSync(path.join(packagePath, "package.json"))).name).toBe("fake-package")
-          return expect(JSON.parse(fs.readFileSync(path.join(packagePath, "package.json"))).repository).toBe(
+          expect(JSON.parse(fs.readFileSync(path.join(packagePath, "package.json"))).repository).toBe(
             "https://github.com/somebody/fake-package"
           )
         })
@@ -87,16 +87,16 @@ describe("apm init", function () {
 
         waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-        return runs(() => expect(callback.argsForCall[0][0].length).toBeGreaterThan(0))
+        runs(() => expect(callback.argsForCall[0][0].length).toBeGreaterThan(0))
       }))
 
-    return describe("when converting a TextMate bundle", function () {
+    describe("when converting a TextMate bundle", function () {
       beforeEach(function () {
         const callback = jasmine.createSpy("callback")
         const textMateBundlePath = path.join(__dirname, "fixtures", "r.tmbundle")
         apm.run(["init", "--package", "fake-package", "--convert", textMateBundlePath], callback)
 
-        return waitsFor("waiting for init to complete", () => callback.callCount === 1)
+        waitsFor("waiting for init to complete", () => callback.callCount === 1)
       })
 
       it("generates the proper file structure", function () {
@@ -118,21 +118,19 @@ describe("apm init", function () {
           body: "attach($1) *outlet",
           prefix: "att",
         })
-        return expect(
-          CSON.readFileSync(path.join(packagePath, "settings", "fake-package.cson"))[".source.r"].editor
-        ).toEqual({
+        expect(CSON.readFileSync(path.join(packagePath, "settings", "fake-package.cson"))[".source.r"].editor).toEqual({
           decreaseIndentPattern: "^\\s*\\}",
           foldEndPattern: "(^\\s*\\)|^\\s*\\})",
           commentStart: "# ",
         })
       })
 
-      return it("unescapes escaped dollar signs `$` in snippets", function () {
+      it("unescapes escaped dollar signs `$` in snippets", function () {
         let forLoopBody = CSON.readFileSync(path.join(packagePath, "snippets", "fake-package.cson"))[".source.perl"][
           "For Loop"
         ].body
         forLoopBody = forLoopBody.replace(/\r?\n/g, "\n")
-        return expect(forLoopBody).toBe(`\
+        expect(forLoopBody).toBe(`\
 for (my $\${1:var} = 0; $$1 < \${2:expression}; $$1++) {
 \t\${3:# body...}
 }
@@ -149,7 +147,7 @@ for (my $\${1:var} = 0; $$1 < \${2:expression}; $$1++) {
 
       waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(fs.existsSync(themePath)).toBeTruthy()
         expect(fs.existsSync(path.join(themePath, "styles"))).toBeTruthy()
         expect(fs.existsSync(path.join(themePath, "styles", "colors.less"))).toBeTruthy()
@@ -160,13 +158,13 @@ for (my $\${1:var} = 0; $$1 < \${2:expression}; $$1++) {
         expect(fs.existsSync(path.join(themePath, "README.md"))).toBeTruthy()
         expect(fs.existsSync(path.join(themePath, "package.json"))).toBeTruthy()
         expect(JSON.parse(fs.readFileSync(path.join(themePath, "package.json"))).name).toBe("fake-theme")
-        return expect(JSON.parse(fs.readFileSync(path.join(themePath, "package.json"))).repository).toBe(
+        expect(JSON.parse(fs.readFileSync(path.join(themePath, "package.json"))).repository).toBe(
           "https://github.com/somebody/fake-theme"
         )
       })
     })
 
-    return describe("when converting a TextMate theme", function () {
+    describe("when converting a TextMate theme", function () {
       it("generates the proper file structure", function () {
         const callback = jasmine.createSpy("callback")
         const textMateThemePath = path.join(__dirname, "fixtures", "Dawn.tmTheme")
@@ -174,7 +172,7 @@ for (my $\${1:var} = 0; $$1 < \${2:expression}; $$1++) {
 
         waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-        return runs(function () {
+        runs(function () {
           expect(fs.existsSync(themePath)).toBeTruthy()
           expect(fs.existsSync(path.join(themePath, "styles"))).toBeTruthy()
           expect(fs.readFileSync(path.join(themePath, "styles", "syntax-variables.less"), "utf8")).toContain(`\
@@ -200,32 +198,32 @@ atom-text-editor .gutter {
           expect(fs.existsSync(path.join(themePath, "package.json"))).toBeTruthy()
           expect(fs.existsSync(path.join(themePath, "LICENSE.md"))).toBeFalsy()
           expect(JSON.parse(fs.readFileSync(path.join(themePath, "package.json"))).name).toBe("fake-theme")
-          return expect(JSON.parse(fs.readFileSync(path.join(themePath, "package.json"))).repository).toBe(
+          expect(JSON.parse(fs.readFileSync(path.join(themePath, "package.json"))).repository).toBe(
             "https://github.com/somebody/fake-theme"
           )
         })
       })
 
-      return it("logs an error if it doesn't have all the required color settings", function () {
+      it("logs an error if it doesn't have all the required color settings", function () {
         const callback = jasmine.createSpy("callback")
         const textMateThemePath = path.join(__dirname, "fixtures", "Bad.tmTheme")
         apm.run(["init", "--theme", "fake-theme", "--convert", textMateThemePath], callback)
 
         waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-        return runs(() => expect(callback.argsForCall[0][0].message.length).toBeGreaterThan(0))
+        runs(() => expect(callback.argsForCall[0][0].message.length).toBeGreaterThan(0))
       })
     })
   })
 
-  return describe("when creating a language", function () {
+  describe("when creating a language", function () {
     it("generates the proper file structure", function () {
       const callback = jasmine.createSpy("callback")
       apm.run(["init", "--language", "fake"], callback)
 
       waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(fs.existsSync(languagePath)).toBeTruthy()
         expect(fs.existsSync(path.join(languagePath, "grammars", "fake.cson"))).toBeTruthy()
         expect(fs.existsSync(path.join(languagePath, "settings", "language-fake.cson"))).toBeTruthy()
@@ -233,19 +231,19 @@ atom-text-editor .gutter {
         expect(fs.existsSync(path.join(languagePath, "spec", "language-fake-spec.coffee"))).toBeTruthy()
         expect(fs.existsSync(path.join(languagePath, "package.json"))).toBeTruthy()
         expect(JSON.parse(fs.readFileSync(path.join(languagePath, "package.json"))).name).toBe("language-fake")
-        return expect(JSON.parse(fs.readFileSync(path.join(languagePath, "package.json"))).repository).toBe(
+        expect(JSON.parse(fs.readFileSync(path.join(languagePath, "package.json"))).repository).toBe(
           "https://github.com/somebody/language-fake"
         )
       })
     })
 
-    return it("does not add language prefix to name if already present", function () {
+    it("does not add language prefix to name if already present", function () {
       const callback = jasmine.createSpy("callback")
       apm.run(["init", "--language", "language-fake"], callback)
 
       waitsFor("waiting for init to complete", () => callback.callCount === 1)
 
-      return runs(() => expect(fs.existsSync(languagePath)).toBeTruthy())
+      runs(() => expect(fs.existsSync(languagePath)).toBeTruthy())
     })
   })
 })

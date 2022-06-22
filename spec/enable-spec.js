@@ -12,7 +12,7 @@ import * as apm from "../lib/apm-cli"
 describe("apm enable", function () {
   beforeEach(function () {
     spyOnConsole()
-    return spyOnToken()
+    spyOnToken()
   })
 
   it("enables a disabled package", function () {
@@ -33,13 +33,13 @@ describe("apm enable", function () {
 
     waitsFor("waiting for enable to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
       expect(console.log.argsForCall[0][0]).toMatch(/Not Disabled:\s*not-installed/)
       expect(console.log.argsForCall[1][0]).toMatch(/Enabled:\s*vim-mode/)
 
       const config = CSON.readFileSync(configFilePath)
-      return expect(config).toEqual({
+      expect(config).toEqual({
         "*": {
           core: {
             disabledPackages: ["metrics", "exception-reporting"],
@@ -67,12 +67,12 @@ describe("apm enable", function () {
 
     waitsFor("waiting for enable to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.log).toHaveBeenCalled()
       expect(console.log.argsForCall[0][0]).toMatch(/Not Disabled:\s*vim-mode/)
 
       const config = CSON.readFileSync(configFilePath)
-      return expect(config).toEqual({
+      expect(config).toEqual({
         "*": {
           core: {
             disabledPackages: ["metrics", "exception-reporting"],
@@ -91,13 +91,13 @@ describe("apm enable", function () {
 
     waitsFor("waiting for enable to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.error).toHaveBeenCalled()
-      return expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
+      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
     })
   })
 
-  return it("complains if user supplies no packages", function () {
+  it("complains if user supplies no packages", function () {
     const atomHome = temp.mkdirSync("apm-home-dir-")
     process.env.ATOM_HOME = atomHome
     const callback = jasmine.createSpy("callback")
@@ -106,9 +106,9 @@ describe("apm enable", function () {
 
     waitsFor("waiting for enable to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.error).toHaveBeenCalled()
-      return expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
+      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
     })
   })
 })

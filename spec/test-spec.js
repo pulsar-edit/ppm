@@ -35,19 +35,19 @@ describe("apm test", function () {
 
     waitsFor("waiting for test to complete", () => atomSpawn.callCount === 1)
 
-    return runs(function () {
+    runs(function () {
       // On Windows, there's a suffix (atom.cmd), so we only check that atom is _included_ in the path
       expect(atomSpawn.mostRecentCall.args[0].indexOf("atom")).not.toBe(-1)
       expect(atomSpawn.mostRecentCall.args[1][0]).toEqual("--dev")
       expect(atomSpawn.mostRecentCall.args[1][1]).toEqual("--test")
       expect(atomSpawn.mostRecentCall.args[1][2]).toEqual(specPath)
       if (process.platform !== "win32") {
-        return expect(atomSpawn.mostRecentCall.args[2].streaming).toBeTruthy()
+        expect(atomSpawn.mostRecentCall.args[2].streaming).toBeTruthy()
       }
     })
   })
 
-  return describe("returning", function () {
+  describe("returning", function () {
     let [callback] = Array.from([])
 
     const returnWithCode = function (type, code) {
@@ -67,34 +67,34 @@ describe("apm test", function () {
         on: atomReturnFn,
         removeListener() {},
       }) // no op
-      return apm.run(["test"], callback)
+      apm.run(["test"], callback)
     }
 
     describe("successfully", function () {
       beforeEach(() => returnWithCode("close", 0))
 
-      return it("prints success", function () {
+      it("prints success", function () {
         expect(callback).toHaveBeenCalled()
         expect(callback.mostRecentCall.args[0]).toBeUndefined()
-        return expect(process.stdout.write.mostRecentCall.args[0]).toEqual("Tests passed\n".green)
+        expect(process.stdout.write.mostRecentCall.args[0]).toEqual("Tests passed\n".green)
       })
     })
 
     describe("with a failure", function () {
       beforeEach(() => returnWithCode("close", 1))
 
-      return it("prints failure", function () {
+      it("prints failure", function () {
         expect(callback).toHaveBeenCalled()
-        return expect(callback.mostRecentCall.args[0]).toEqual("Tests failed")
+        expect(callback.mostRecentCall.args[0]).toEqual("Tests failed")
       })
     })
 
-    return describe("with an error", function () {
+    describe("with an error", function () {
       beforeEach(() => returnWithCode("error"))
 
-      return it("prints failure", function () {
+      it("prints failure", function () {
         expect(callback).toHaveBeenCalled()
-        return expect(callback.mostRecentCall.args[0]).toEqual("Tests failed")
+        expect(callback.mostRecentCall.args[0]).toEqual("Tests failed")
       })
     })
   })

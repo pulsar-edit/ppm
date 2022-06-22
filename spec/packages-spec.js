@@ -15,11 +15,11 @@ describe("getRemote", function () {
         url: "https://github.com/atom/apm.git",
       },
     }
-    return expect(Packages.getRemote(pack)).toEqual(pack.repository.url)
+    expect(Packages.getRemote(pack)).toEqual(pack.repository.url)
   })
 
-  return it("returns repository", function () {
+  it("returns repository", function () {
     const pack = { repository: "https://github.com/atom/apm" }
-    return expect(Packages.getRemote(pack)).toEqual(pack.repository)
+    expect(Packages.getRemote(pack)).toEqual(pack.repository)
   })
 })

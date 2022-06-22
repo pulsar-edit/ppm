@@ -28,13 +28,13 @@ describe("apm docs", function () {
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000"
       return (live = true)
     })
-    return waitsFor(() => live)
+    waitsFor(() => live)
   })
 
   afterEach(function () {
     let done = false
     server.close(() => (done = true))
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it("logs an error if the package has no URL", function () {
@@ -42,9 +42,9 @@ describe("apm docs", function () {
     apm.run(["docs", "install"], callback)
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
-    return runs(function () {
+    runs(function () {
       expect(console.error).toHaveBeenCalled()
-      return expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
+      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
     })
   })
 
@@ -54,9 +54,9 @@ describe("apm docs", function () {
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(console.error).toHaveBeenCalled()
-      return expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
+      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0)
     })
   })
 
@@ -67,10 +67,10 @@ describe("apm docs", function () {
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(Docs.prototype.openRepositoryUrl).not.toHaveBeenCalled()
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[0][0]).toContain("https://github.com/atom/wrap-guide")
+      expect(console.log.argsForCall[0][0]).toContain("https://github.com/atom/wrap-guide")
     })
   })
 
@@ -81,20 +81,20 @@ describe("apm docs", function () {
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(function () {
+    runs(function () {
       expect(Docs.prototype.openRepositoryUrl).not.toHaveBeenCalled()
       expect(console.log).toHaveBeenCalled()
-      return expect(console.log.argsForCall[0][0]).toContain("https://github.com/atom/wrap-guide")
+      expect(console.log.argsForCall[0][0]).toContain("https://github.com/atom/wrap-guide")
     })
   })
 
-  return it("opens the package URL", function () {
+  it("opens the package URL", function () {
     spyOn(Docs.prototype, "openRepositoryUrl")
     const callback = jasmine.createSpy("callback")
     apm.run(["docs", "wrap-guide"], callback)
 
     waitsFor("waiting for command to complete", () => callback.callCount > 0)
 
-    return runs(() => expect(Docs.prototype.openRepositoryUrl).toHaveBeenCalled())
+    runs(() => expect(Docs.prototype.openRepositoryUrl).toHaveBeenCalled())
   })
 })

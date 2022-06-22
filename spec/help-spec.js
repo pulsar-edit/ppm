@@ -18,9 +18,9 @@ describe("command help", function () {
 
       waitsFor("waiting for help to complete", 60000, () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(console.error.callCount).toBeGreaterThan(0)
-        return expect(callback.mostRecentCall.args[0]).toBeUndefined()
+        expect(callback.mostRecentCall.args[0]).toBeUndefined()
       })
     }))
 
@@ -31,9 +31,9 @@ describe("command help", function () {
 
       waitsFor("waiting for help to complete", 60000, () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(console.error.callCount).toBeGreaterThan(0)
-        return expect(callback.mostRecentCall.args[0]).toBeUndefined()
+        expect(callback.mostRecentCall.args[0]).toBeUndefined()
       })
     }))
 
@@ -44,22 +44,22 @@ describe("command help", function () {
 
       waitsFor("waiting for help to complete", 60000, () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(console.error.callCount).toBeGreaterThan(0)
-        return expect(callback.mostRecentCall.args[0]).toBeUndefined()
+        expect(callback.mostRecentCall.args[0]).toBeUndefined()
       })
     }))
 
-  return describe("apm", () =>
+  describe("apm", () =>
     it("displays the help for apm", function () {
       const callback = jasmine.createSpy("callback")
       apm.run([], callback)
 
       waitsFor("waiting for help to complete", 60000, () => callback.callCount === 1)
 
-      return runs(function () {
+      runs(function () {
         expect(console.error.callCount).toBeGreaterThan(0)
-        return expect(callback.mostRecentCall.args[0]).toBeUndefined()
+        expect(callback.mostRecentCall.args[0]).toBeUndefined()
       })
     }))
 })
