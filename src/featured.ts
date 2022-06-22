@@ -12,6 +12,7 @@ import * as config from "./apm"
 import * as request from "./request"
 import { tree } from "./tree"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { PackageData } from "./stars"
 
 export default class Featured extends Command {
   parseOptions(argv: string[]) {
@@ -85,7 +86,7 @@ atom.io registry.\
   run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
 
-    const listCallback = function (error, packages) {
+    const listCallback = function (error, packages: PackageData[]) {
       if (error != null) {
         return callback(error)
       }
@@ -99,7 +100,7 @@ atom.io registry.\
           console.log(`${"Featured Atom Packages".cyan} (${packages.length})`)
         }
 
-        tree(packages, function ({ name, description, downloads, stargazers_count }) {
+        tree(packages, {}, function ({ name, description, downloads, stargazers_count }) {
           let label = name.yellow
           if (description) {
             label += ` ${description.replace(/\s+/g, " ")}`

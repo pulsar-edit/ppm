@@ -13,6 +13,20 @@ import Login from "./login"
 import * as request from "./request"
 import { tree } from "./tree"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { Options } from "request"
+import { PackageMetadata } from "./packages"
+
+export type PackageData = {
+  name: string
+  description: string
+  readme: string
+  metadata?: PackageMetadata
+  downloads: number
+  stargazers_count: number
+  releases?: {
+    latest?: string
+  }
+}
 
 export default class Stars extends Command {
   parseOptions(argv: string[]) {
@@ -55,8 +69,11 @@ List or install starred Atom packages and themes.\
     }
   }
 
-  requestStarredPackages(requestSettings, callback) {
-    return request.get(requestSettings, function (error, response, body = []) {
+  requestStarredPackages(
+    requestSettings: Options & { retries?: number },
+    callback: (error: string, data?: any) => void
+  ) {
+    return request.get(requestSettings, function (error, response, body: PackageData[] = []) {
       if (error != null) {
         return callback(error)
       } else if (response.statusCode === 200) {
@@ -66,7 +83,7 @@ List or install starred Atom packages and themes.\
           readme,
           downloads,
           stargazers_count,
-        }))
+        })) as PackageData[]
         packages = _.sortBy(packages, "name")
         return callback(null, packages)
       } else {
@@ -90,7 +107,7 @@ List or install starred Atom packages and themes.\
     return callback()
   }
 
-  logPackagesAsText(user, packagesAreThemes, packages, callback) {
+  logPackagesAsText(user, packagesAreThemes, packages: PackageData[], callback) {
     let label
     const userLabel = user != null ? user : "you"
     if (packagesAreThemes) {
@@ -100,7 +117,7 @@ List or install starred Atom packages and themes.\
     }
     console.log(`${label.cyan} (${packages.length})`)
 
-    tree(packages, function ({ name, description, downloads, stargazers_count }) {
+    tree(packages, {}, function ({ name, description, downloads, stargazers_count }) {
       label = name.yellow
       if (process.platform === "darwin") {
         label = `\u2B50  ${label}`

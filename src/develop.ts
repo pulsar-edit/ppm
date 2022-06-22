@@ -69,7 +69,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     })
   }
 
-  cloneRepository(repoUrl: string, packageDirectory: string, options, callback = function () {}) {
+  cloneRepository(repoUrl: string, packageDirectory: string, options: CliOptions, callback = function () {}) {
     return config.getSetting("git", (command) => {
       if (command == null) {
         command = "git"
@@ -89,9 +89,9 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     })
   }
 
-  installDependencies(packageDirectory: string, options, callback = function () {}) {
+  installDependencies(packageDirectory: string, options: CliOptions, callback = function () {}) {
     process.chdir(packageDirectory)
-    const installOptions = { ...options }
+    const installOptions = { ...options } as CliOptions
 
     return new Install().run(installOptions, callback)
   }
@@ -103,21 +103,21 @@ cmd-shift-o to run the package out of the newly cloned repository.\
   }
 
   run(options: CliOptions, callback: RunCallback) {
-    let left
+    let left: string
     const packageName = options.commandArgs.shift()
 
     if (packageName?.length <= 0) {
       return callback("Missing required package name")
     }
 
-    let packageDirectory =
+    let packageDirectory: string =
       (left = options.commandArgs.shift()) != null ? left : path.join(config.getReposDirectory(), packageName)
     packageDirectory = path.resolve(packageDirectory)
 
     if (fs.existsSync(packageDirectory)) {
       return this.linkPackage(packageDirectory, options, callback)
     } else {
-      return this.getRepositoryUrl(packageName, (error, repoUrl) => {
+      return this.getRepositoryUrl(packageName, (error, repoUrl: string) => {
         if (error != null) {
           return callback(error)
         } else {
