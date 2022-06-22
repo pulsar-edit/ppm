@@ -261,67 +261,70 @@ available updates.\
 
   upgradePackages(options, callback) {
     const packages = this.getInstalledPackages(options)
-    return this.getAvailableUpdates(packages, (error, updates) => {
-      if (error != null) {
-        return callback(error)
-      }
+    return this.getAvailableUpdates(
+      packages,
+      (error, updates: { pack: PackageMetadata; latestVersion: string; sha: string }[]) => {
+        if (error != null) {
+          return callback(error)
+        }
 
-      if (options.argv.json) {
-        const packagesWithLatestVersionOrSha = updates.map(function ({ pack, latestVersion, sha }) {
-          if (latestVersion) {
-            pack.latestVersion = latestVersion
-          }
-          if (sha) {
-            pack.latestSha = sha
-          }
-          return pack
-        })
-        console.log(JSON.stringify(packagesWithLatestVersionOrSha))
-      } else {
-        console.log(`${"Package Updates Available".cyan} (${updates.length})`)
-        tree(updates, function ({ pack, latestVersion, sha }) {
-          const { apmInstallSource } = pack
-          let { name, version } = pack
-          name = name.yellow
-          if (sha != null) {
-            version = apmInstallSource.sha.substr(0, 8).red
-            latestVersion = sha.substr(0, 8).green
-          } else {
-            version = version.red
-            latestVersion = latestVersion.green
-          }
-          latestVersion = latestVersion?.green || apmInstallSource?.sha?.green
-          return `${name} ${version} -> ${latestVersion}`
-        })
-      }
+        if (options.argv.json) {
+          const packagesWithLatestVersionOrSha = updates.map(function ({ pack, latestVersion, sha }) {
+            if (latestVersion) {
+              pack.latestVersion = latestVersion
+            }
+            if (sha) {
+              pack.latestSha = sha
+            }
+            return pack
+          })
+          console.log(JSON.stringify(packagesWithLatestVersionOrSha))
+        } else {
+          console.log(`${"Package Updates Available".cyan} (${updates.length})`)
+          tree(updates, {}, function ({ pack, latestVersion, sha }) {
+            const { apmInstallSource } = pack
+            let { name, version } = pack
+            name = name.yellow
+            if (sha != null) {
+              version = apmInstallSource.sha.substr(0, 8).red
+              latestVersion = sha.substr(0, 8).green
+            } else {
+              version = version.red
+              latestVersion = latestVersion.green
+            }
+            latestVersion = latestVersion?.green || apmInstallSource?.sha?.green
+            return `${name} ${version} -> ${latestVersion}`
+          })
+        }
 
-      if (options.command === "outdated") {
-        return callback()
-      }
-      if (options.argv.list) {
-        return callback()
-      }
-      if (updates.length === 0) {
-        return callback()
-      }
+        if (options.command === "outdated") {
+          return callback()
+        }
+        if (options.argv.list) {
+          return callback()
+        }
+        if (updates.length === 0) {
+          return callback()
+        }
 
-      console.log()
-      if (options.argv.confirm) {
-        return this.promptForConfirmation((error, confirmed) => {
-          if (error != null) {
-            return callback(error)
-          }
+        console.log()
+        if (options.argv.confirm) {
+          return this.promptForConfirmation((error, confirmed) => {
+            if (error != null) {
+              return callback(error)
+            }
 
-          if (confirmed) {
-            console.log()
-            return this.installUpdates(updates, callback)
-          } else {
-            return callback()
-          }
-        })
-      } else {
-        return this.installUpdates(updates, callback)
+            if (confirmed) {
+              console.log()
+              return this.installUpdates(updates, callback)
+            } else {
+              return callback()
+            }
+          })
+        } else {
+          return this.installUpdates(updates, callback)
+        }
       }
-    })
+    )
   }
 }

@@ -12,8 +12,9 @@ import Command from "./command"
 import fs from "./fs"
 import * as config from "./apm"
 import { tree } from "./tree"
-import { getRepository } from "./packages"
+import { getRepository, PackageMetadata } from "./packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import { PackageData } from "./stars"
 
 export default class List extends Command {
   private userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
@@ -67,10 +68,10 @@ List all the installed packages and also the packages bundled with Atom.\
   }
 
   isPackageDisabled(name) {
-    return this.disabledPackages.indexOf(name) !== -1
+    return this.disabledPackages.includes(name)
   }
 
-  logPackages(packages, options) {
+  logPackages(packages: PackageMetadata[], options) {
     if (options.argv.bare) {
       return (() => {
         const result = []
@@ -84,7 +85,7 @@ List all the installed packages and also the packages bundled with Atom.\
         return result
       })()
     } else {
-      tree(packages, (pack) => {
+      tree(packages, {}, (pack) => {
         let packageLine = pack.name
         if (pack.version != null && options.argv.versions) {
           packageLine += `@${pack.version}`

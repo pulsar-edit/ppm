@@ -9,7 +9,7 @@ import fs from "./fs"
 import yargs from "yargs"
 import async from "async"
 import * as config from "./apm"
-import Command, { LogCommandResultsArgs } from "./command"
+import Command, { LogCommandResultsArgs, SpawnArgs } from "./command"
 import type { CliOptions, RunCallback } from "./apm-cli"
 import { sync as resolveSync } from "resolve"
 
@@ -64,7 +64,7 @@ but cannot be used to install new packages or dependencies.\
     const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath() }
     this.addBuildEnvVars(env)
 
-    const installOptions = { env, streaming: options.argv.verbose }
+    const installOptions: SpawnArgs = { env, streaming: options.argv.verbose }
 
     return this.fork(this.atomNpmPath, installArgs, installOptions, (...args: LogCommandResultsArgs) => {
       return this.logCommandResults(callback, ...args)

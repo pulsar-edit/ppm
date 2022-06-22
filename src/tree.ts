@@ -6,7 +6,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 
-export function tree(items, options = {}, callback) {
+export function tree<T>(
+  items: T[],
+  options: { emptyMessage?: string } | ((item: T) => T) = {},
+  callback?: (item: T) => T | string
+) {
   if (typeof options === "function") {
     callback = options
     options = {}

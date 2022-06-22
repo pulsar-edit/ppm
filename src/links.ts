@@ -27,16 +27,16 @@ List all of the symlinked atom packages in ~/.atom/packages and
     return options.alias("h", "help").describe("help", "Print this usage message")
   }
 
-  getDevPackagePath(packageName) {
+  getDevPackagePath(packageName: string) {
     return path.join(this.devPackagesPath, packageName)
   }
 
-  getPackagePath(packageName) {
+  getPackagePath(packageName: string) {
     return path.join(this.packagesPath, packageName)
   }
 
-  getSymlinks(directoryPath) {
-    const symlinks = []
+  getSymlinks(directoryPath: string) {
+    const symlinks: string[] = []
     for (const directory of fs.list(directoryPath)) {
       const symlinkPath = path.join(directoryPath, directory)
       if (fs.isSymbolicLinkSync(symlinkPath)) {
