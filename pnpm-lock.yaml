@@ -16,10 +16,11 @@ importers:
       '@types/jasmine': ^4.0.0
       '@types/mv': 2.1.2
       '@types/ncp': ~2.0.5
-      '@types/npm': ^7.0.0
+      '@types/npm': ^7.19.0
       '@types/q': ~1.5.5
       '@types/read': ~0.0.29
       '@types/request': ^2.48.6
+      '@types/resolve': ^1.20.2
       '@types/rimraf': ^3.0.1
       '@types/season': ^6.0.1
       '@types/semver': ^7.3.7
@@ -46,14 +47,15 @@ importers:
       ncp: ~2.0.0
       node-downloader-helper: ^2.0.0
       node-gyp: ^9.0.0
-      npm: ^6.14.13
+      npm: ^7.24.2
       open: 7.4.2
-      pnpm: ^6.12.1
+      pnpm: ^6.32.23
       prettier: ^2.7.1
       prettier-config-atomic: ^3.0.10
       q: ~1.5.1
       read: ~1.0.7
       request: ^2.88.2
+      resolve: ^1.22.1
       rimraf: ^3.0.2
       season: ^6.0.2
       semver: ^7.3.5
@@ -77,11 +79,12 @@ importers:
       keytar: 7.9.0
       mv: 2.1.1
       ncp: 2.0.0
-      npm: 6.14.17
+      npm: 7.24.2
       open: 7.4.2
       q: 1.5.1
       read: 1.0.7
       request: 2.88.2
+      resolve: 1.22.1
       rimraf: 3.0.2
       season: 6.0.2
       semver: 7.3.7
@@ -105,6 +108,7 @@ importers:
       '@types/q': 1.5.5
       '@types/read': 0.0.29
       '@types/request': 2.48.8
+      '@types/resolve': 1.20.2
       '@types/rimraf': 3.0.2
       '@types/season': 6.0.1
       '@types/semver': 7.3.10
@@ -1949,6 +1953,10 @@ packages:
       '@types/node': 18.0.0
       '@types/tough-cookie': 4.0.2
       form-data: 2.5.1
+    dev: true
+
+  /@types/resolve/1.20.2:
+    resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: true
 
   /@types/rimraf/3.0.2:
@@ -4203,7 +4211,6 @@ packages:
 
   /function-bind/1.1.1:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
-    dev: true
 
   /function.prototype.name/1.1.5:
     resolution: {integrity: sha512-uN7m/BzVKQnCUF/iW8jYea67v++2u7m5UgENbHRtdDVclOUP+FMPlCNdmk0h/ysGyo2tavMJEDqJAkJdRa1vMA==}
@@ -4465,7 +4472,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
-    dev: true
 
   /hosted-git-info/2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -4677,7 +4683,6 @@ packages:
     resolution: {integrity: sha512-+5FPy5PnwmO3lvfMb0AsoPaBG+5KHUI0wYFXOtYPnVVVspTFUuMZNfNaNVRt3FZadstu2c8x23vykRW/NBoU6A==}
     dependencies:
       has: 1.0.3
-    dev: true
 
   /is-date-object/1.0.5:
     resolution: {integrity: sha512-9YQaSxsAiSwcvS33MBk3wTCVnWK+HhF8VZR2jRxehM16QcVOdHqPn4VPHmRK4lSr38n9JriurInLcP90xsYNfQ==}
@@ -5565,134 +5570,81 @@ packages:
     dev: true
     optional: true
 
-  /npm/6.14.17:
-    resolution: {integrity: sha512-CxEDn1ydVRPDl4tHrlnq+WevYAhv4GF2AEHzJKQ4prZDZ96IS3Uo6t0Sy6O9kB6XzqkI+J00WfYCqqk0p6IJ1Q==}
-    engines: {node: 6 >=6.2.0 || 8 || >=9.3.0}
+  /npm/7.24.2:
+    resolution: {integrity: sha512-120p116CE8VMMZ+hk8IAb1inCPk4Dj3VZw29/n2g6UI77urJKVYb7FZUDW8hY+EBnfsjI/2yrobBgFyzo7YpVQ==}
+    engines: {node: '>=10'}
     hasBin: true
     dev: false
     bundledDependencies:
+      - '@isaacs/string-locale-compare'
+      - '@npmcli/arborist'
+      - '@npmcli/ci-detect'
+      - '@npmcli/config'
+      - '@npmcli/map-workspaces'
+      - '@npmcli/package-json'
+      - '@npmcli/run-script'
       - abbrev
       - ansicolors
       - ansistyles
-      - aproba
       - archy
-      - bin-links
-      - bluebird
-      - byte-size
       - cacache
-      - call-limit
+      - chalk
       - chownr
-      - ci-info
       - cli-columns
       - cli-table3
-      - cmd-shim
       - columnify
-      - config-chain
-      - debuglog
-      - detect-indent
-      - detect-newline
-      - dezalgo
-      - editor
-      - figgy-pudding
-      - find-npm-prefix
-      - fs-vacuum
-      - fs-write-stream-atomic
-      - gentle-fs
+      - fastest-levenshtein
       - glob
       - graceful-fs
-      - has-unicode
       - hosted-git-info
-      - iferr
-      - imurmurhash
-      - infer-owner
-      - inflight
-      - inherits
       - ini
       - init-package-json
       - is-cidr
-      - json-parse-better-errors
-      - JSONStream
-      - lazy-property
-      - libcipm
-      - libnpm
+      - json-parse-even-better-errors
       - libnpmaccess
+      - libnpmdiff
+      - libnpmexec
+      - libnpmfund
       - libnpmhook
       - libnpmorg
+      - libnpmpack
+      - libnpmpublish
       - libnpmsearch
       - libnpmteam
-      - libnpx
-      - lock-verify
-      - lockfile
-      - lodash._baseindexof
-      - lodash._baseuniq
-      - lodash._bindcallback
-      - lodash._cacheindexof
-      - lodash._createcache
-      - lodash._getnative
-      - lodash.clonedeep
-      - lodash.restparam
-      - lodash.union
-      - lodash.uniq
-      - lodash.without
-      - lru-cache
-      - meant
-      - mississippi
+      - libnpmversion
+      - make-fetch-happen
+      - minipass
+      - minipass-pipeline
       - mkdirp
-      - move-concurrently
+      - mkdirp-infer-owner
+      - ms
       - node-gyp
       - nopt
-      - normalize-package-data
       - npm-audit-report
-      - npm-cache-filename
       - npm-install-checks
-      - npm-lifecycle
       - npm-package-arg
-      - npm-packlist
       - npm-pick-manifest
       - npm-profile
       - npm-registry-fetch
       - npm-user-validate
       - npmlog
-      - once
       - opener
-      - osenv
       - pacote
-      - path-is-inside
-      - promise-inflight
+      - parse-conflict-json
       - qrcode-terminal
-      - query-string
-      - qw
-      - read-cmd-shim
-      - read-installed
-      - read-package-json
-      - read-package-tree
       - read
-      - readable-stream
+      - read-package-json
+      - read-package-json-fast
       - readdir-scoped-modules
-      - request
-      - retry
       - rimraf
-      - safe-buffer
       - semver
-      - sha
-      - slide
-      - sorted-object
-      - sorted-union-stream
       - ssri
-      - stringify-package
       - tar
       - text-table
       - tiny-relative-date
-      - uid-number
-      - umask
-      - unique-filename
-      - unpipe
-      - update-notifier
-      - uuid
-      - validate-npm-package-license
+      - treeverse
       - validate-npm-package-name
       - which
-      - worker-farm
       - write-file-atomic
 
   /npmlog/6.0.2:
@@ -5911,7 +5863,6 @@ packages:
 
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
-    dev: true
 
   /path-to-regexp/0.1.7:
     resolution: {integrity: sha1-32BBeABfUi8V60SQ5yR6G/qmf4w=}
@@ -6296,7 +6247,6 @@ packages:
       is-core-module: 2.9.0
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
-    dev: true
 
   /resolve/2.0.0-next.4:
     resolution: {integrity: sha512-iMDbmAWtfU+MHpxt/I5iWI7cY6YVEZUQ3MBgPQ++XD1PELuJHIl82xBmObyP2KyQmkNB2dsqF7seoQQiAn5yDQ==}
@@ -6716,7 +6666,6 @@ packages:
   /supports-preserve-symlinks-flag/1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
-    dev: true
 
   /tar-fs/2.1.1:
     resolution: {integrity: sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==}

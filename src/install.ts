@@ -127,7 +127,7 @@ package names to install with optional versions using the
           const commands = []
           const children = fs
             .readdirSync(nodeModulesDirectory)
-            .filter((dir) => ![".bin", "package-lock.json"].includes(dir))
+            .filter((dir) => ![".bin", ".package-lock.json"].includes(dir))
           assert.equal(
             children.length,
             1,
