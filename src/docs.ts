@@ -29,7 +29,7 @@ Open a package's homepage in the default browser.\
 
   run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
-    const [packageName] = Array.from(options.argv._)
+    const [packageName] = Array.from(options.argv._) as [string]
 
     if (!packageName) {
       callback("Missing required package name")

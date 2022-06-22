@@ -26,6 +26,7 @@ export type PackageData = {
   releases?: {
     latest?: string
   }
+  versions: PackageMetadata[]
 }
 
 export default class Stars extends Command {

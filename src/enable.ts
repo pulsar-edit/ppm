@@ -26,7 +26,7 @@ Enables the named package(s).\
   }
 
   run(options: CliOptions, callback: RunCallback) {
-    let error, left, settings
+    let error: Error, left, settings
     options = this.parseOptions(options.commandArgs)
     let packageNames = this.packageNamesFromArgv(options.argv)
 
@@ -39,7 +39,7 @@ Enables the named package(s).\
     try {
       settings = CSON.readFileSync(configFilePath)
     } catch (error1) {
-      error = error1
+      error = error1 as Error
       callback(`Failed to load \`${configFilePath}\`: ${error.message}`)
       return
     }
@@ -66,7 +66,7 @@ Enables the named package(s).\
     try {
       CSON.writeFileSync(configFilePath, settings)
     } catch (error2) {
-      error = error2
+      error = error2 as Error
       callback(`Failed to save \`${configFilePath}\`: ${error.message}`)
       return
     }
