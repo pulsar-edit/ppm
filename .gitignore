@@ -12,7 +12,8 @@ package-lock.json
 
 # Build directories
 *.pyc
-/bin/node*
+/bin/node
+/bin/node.exe
 dist
 stats.html
 native-module/build
