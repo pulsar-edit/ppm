@@ -7,11 +7,8 @@
 import yargs from "yargs"
 import Command, { LogCommandResultsArgs } from "./command"
 import type { CliOptions, RunCallback } from "./apm-cli"
-import { sync as resolveSync } from "resolve"
 
 export default class Clean extends Command {
-  private atomNpmPath = resolveSync("npm/bin/npm-cli")
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 

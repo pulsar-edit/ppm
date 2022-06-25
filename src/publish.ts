@@ -16,12 +16,9 @@ import Command, { LogCommandResultsArgs } from "./command"
 import Login from "./login"
 import * as Packages from "./packages"
 import * as request from "./request"
-import { sync as resolveSync } from "resolve"
 
 export default class Publish extends Command {
   userConfigPath = config.getUserConfigPath()
-  atomNpmPath = resolveSync("npm/bin/npm-cli")
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\

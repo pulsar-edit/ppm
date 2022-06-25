@@ -23,23 +23,12 @@ import RebuildModuleCache from "./rebuild-module-cache"
 import * as request from "./request"
 import { isDeprecatedPackage } from "./deprecated-packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
-import { sync as resolveSync } from "resolve"
 import type { SpawnArgs } from "./command"
 import { ChildProcessWithoutNullStreams } from "child_process"
 
 export default class Install extends Command {
-  private atomDirectory = config.getAtomDirectory()
-  private atomPackagesDirectory: string
-  private atomNodeDirectory: string
-  private atomNpmPath = resolveSync("npm/bin/npm-cli")
   private repoLocalPackagePathRegex = /^file:(?!\/\/)(.*)/
   verbose: boolean
-
-  constructor() {
-    super()
-    this.atomPackagesDirectory = path.join(this.atomDirectory, "packages")
-    this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-  }
 
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))

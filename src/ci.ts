@@ -4,24 +4,14 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import path from "path"
 import fs from "./fs"
 import yargs from "yargs"
 import async from "async"
 import * as config from "./apm"
 import Command, { LogCommandResultsArgs, SpawnArgs } from "./command"
 import type { CliOptions, RunCallback } from "./apm-cli"
-import { sync as resolveSync } from "resolve"
 
 export default class Ci extends Command {
-  private atomDirectory = config.getAtomDirectory()
-  private atomNpmPath = resolveSync("npm/bin/npm-cli")
-  private atomNodeDirectory: string
-  constructor() {
-    super()
-    this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-  }
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\

@@ -20,13 +20,6 @@ import { PackageMetadata, unkownPackage } from "./packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Develop extends Command {
-  private atomDirectory = config.getAtomDirectory()
-  atomDevPackagesDirectory: string
-  constructor() {
-    super()
-    this.atomDevPackagesDirectory = path.join(this.atomDirectory, "dev", "packages")
-  }
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 

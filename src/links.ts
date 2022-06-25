@@ -6,15 +6,11 @@
 import path from "path"
 import yargs from "yargs"
 import Command from "./command"
-import * as config from "./apm"
 import fs from "./fs"
 import { tree } from "./tree"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Links extends Command {
-  private devPackagesPath = path.join(config.getAtomDirectory(), "dev", "packages")
-  private packagesPath = path.join(config.getAtomDirectory(), "packages")
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
@@ -28,11 +24,11 @@ List all of the symlinked atom packages in ~/.atom/packages and
   }
 
   getDevPackagePath(packageName: string) {
-    return path.join(this.devPackagesPath, packageName)
+    return path.join(this.atomDevPackagesDirectory, packageName)
   }
 
   getPackagePath(packageName: string) {
-    return path.join(this.packagesPath, packageName)
+    return path.join(this.atomPackagesDirectory, packageName)
   }
 
   getSymlinks(directoryPath: string) {
@@ -61,8 +57,8 @@ List all of the symlinked atom packages in ~/.atom/packages and
   }
 
   run(options: CliOptions, callback: RunCallback) {
-    this.logLinks(this.devPackagesPath)
-    this.logLinks(this.packagesPath)
+    this.logLinks(this.atomDevPackagesDirectory)
+    this.logLinks(this.atomPackagesDirectory)
     return callback()
   }
 }
