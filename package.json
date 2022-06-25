@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "npm run clean.lib && npm run tsc",
-    "build.test": "npm run get.fixtures && shx rm -rf ./dist-spec/ && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec",
+    "build.test": "npm run get.fixtures && shx rm -rf ./dist-spec/ ./native-module/build && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec",
     "check-version": "node script/check-version.js",
     "clean.bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean.lib": "shx rm -rf lib/",
@@ -92,5 +92,10 @@
     "prettier": "^2.7.1",
     "prettier-config-atomic": "^3.0.10",
     "shx": "^0.3.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "node-gyp": "^9.0.0"
+    }
   }
 }

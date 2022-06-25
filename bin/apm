@@ -28,7 +28,7 @@ done
 
 binDir=`pwd -P`
 
-# Force npm to use the bundled node-gyp
+# set the path to the node-gyp fallback
 export npm_config_node_gyp="$SCRIPT_DIR"/../node_modules/node-gyp/bin/node-gyp.js
 
 cliPath="$binDir/../lib/cli.js"

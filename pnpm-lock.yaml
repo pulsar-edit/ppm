@@ -1,5 +1,8 @@
 lockfileVersion: 5.4
 
+overrides:
+  node-gyp: ^9.0.0
+
 importers:
 
   .:
