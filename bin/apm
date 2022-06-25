@@ -30,7 +30,6 @@ binDir=`pwd -P`
 
 # add the paths to the bundled tools
 export npm_config_node_gyp="$SCRIPT_DIR"/../node_modules/node-gyp/bin/node-gyp.js
-export PATH="$SCRIPT_DIR/../node_modules/.bin/:$PATH"
 export PATH="$SCRIPT_DIR:$PATH"
 
 cliPath="$binDir/../lib/cli.js"

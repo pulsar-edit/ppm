@@ -1,6 +1,5 @@
 #!/bin/bash
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export PATH="$SCRIPT_DIR/../node_modules/.bin/:$PATH"
 export PATH="$SCRIPT_DIR:$PATH"
 
 # add the paths to the bundled tools
