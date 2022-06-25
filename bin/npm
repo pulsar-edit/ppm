@@ -2,7 +2,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export PATH="$SCRIPT_DIR:$PATH"
 
-# Force npm to use its builtin node-gyp
-unset npm_config_node_gyp
+# Force npm to use the bundled node-gyp
+export npm_config_node_gyp="$SCRIPT_DIR"/../node_modules/node-gyp/bin/node-gyp.js
 
 "$SCRIPT_DIR"/../node_modules/.bin/npm $@
