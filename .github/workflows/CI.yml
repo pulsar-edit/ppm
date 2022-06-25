@@ -53,9 +53,7 @@ jobs:
             ~/npm-cache
             ~/.pnpm-store
             D:\.pnpm-store
-            ./bin/node
-            ./bin/node.exe
-          key: "cache-OS:${{ matrix.os }}-${{ matrix.arch }}-pnpm:${{ matrix.pnpm }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
+          key: "papm-${{ matrix.os }}-${{ matrix.arch }}-pnpm:${{ matrix.pnpm }}-node:${{ matrix.node_version }}-${{ hashFiles('./package.json') }}-${{ hashFiles('./.npmrc') }}"
 
       - name: Install Node
         uses: actions/setup-node@v3
@@ -73,13 +71,8 @@ jobs:
           python-version: "3.x"
           architecture: ${{ matrix.arch }}
 
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install and build
         run: pnpm install
-
-      - name: Build
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: pnpm run prepare
 
       - name: Run tests
         run: ./bin/pnpm test
