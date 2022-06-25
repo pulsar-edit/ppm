@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "npm run clean.lib && npm run tsc",
-    "build.test": "npm run get.fixtures && shx rm -rf ./dist-spec/ && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec",
+    "build.test": "npm run get.fixtures && shx rm -rf ./dist-spec/ ./native-module/build && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec",
     "check-version": "node script/check-version.js",
     "clean.bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean.lib": "shx rm -rf lib/",
@@ -42,8 +42,10 @@
     "keytar": "^7.7.0",
     "mv": "2.1.1",
     "ncp": "~2.0.0",
+    "node-gyp": "^9.0.0",
     "npm": "^7.24.2",
     "open": "7.4.2",
+    "pnpm": "^6.32.23",
     "q": "~1.5.1",
     "read": "~1.0.7",
     "request": "^2.88.2",
@@ -87,10 +89,13 @@
     "gitly": "^2.1.2",
     "jasmine-focused": ">=1.0.7 <2.0",
     "node-downloader-helper": "^2.0.0",
-    "node-gyp": "^9.0.0",
-    "pnpm": "^6.32.23",
     "prettier": "^2.7.1",
     "prettier-config-atomic": "^3.0.10",
     "shx": "^0.3.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "node-gyp": "^9.0.0"
+    }
   }
 }
