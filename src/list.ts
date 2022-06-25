@@ -14,11 +14,8 @@ import * as config from "./apm"
 import { tree } from "./tree"
 import { getRepository, PackageMetadata } from "./packages"
 import type { CliOptions, RunCallback } from "./apm-cli"
-import { PackageData } from "./stars"
 
 export default class List extends Command {
-  private userPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
-  private devPackagesDirectory = path.join(config.getAtomDirectory(), "dev", "packages")
   private disabledPackages?: string[]
   constructor() {
     super()
@@ -163,9 +160,9 @@ List all the installed packages and also the packages bundled with Atom.\
   }
 
   listUserPackages(options, callback) {
-    const userPackages = this.listPackages(this.userPackagesDirectory, options).filter((pack) => !pack.apmInstallSource)
+    const userPackages = this.listPackages(this.atomPackagesDirectory, options).filter((pack) => !pack.apmInstallSource)
     if (!options.argv.bare && !options.argv.json) {
-      console.log(`Community Packages (${userPackages.length})`.cyan, `${this.userPackagesDirectory}`)
+      console.log(`Community Packages (${userPackages.length})`.cyan, `${this.atomPackagesDirectory}`)
     }
     return callback?.(null, userPackages)
   }
@@ -175,22 +172,22 @@ List all the installed packages and also the packages bundled with Atom.\
       return callback?.(null, [])
     }
 
-    const devPackages = this.listPackages(this.devPackagesDirectory, options)
+    const devPackages = this.listPackages(this.atomDevPackagesDirectory, options)
     if (devPackages.length > 0) {
       if (!options.argv.bare && !options.argv.json) {
-        console.log(`Dev Packages (${devPackages.length})`.cyan, `${this.devPackagesDirectory}`)
+        console.log(`Dev Packages (${devPackages.length})`.cyan, `${this.atomDevPackagesDirectory}`)
       }
     }
     return callback?.(null, devPackages)
   }
 
   listGitPackages(options, callback) {
-    const gitPackages = this.listPackages(this.userPackagesDirectory, options).filter(
+    const gitPackages = this.listPackages(this.atomPackagesDirectory, options).filter(
       (pack) => pack.apmInstallSource?.type === "git"
     )
     if (gitPackages.length > 0) {
       if (!options.argv.bare && !options.argv.json) {
-        console.log(`Git Packages (${gitPackages.length})`.cyan, `${this.userPackagesDirectory}`)
+        console.log(`Git Packages (${gitPackages.length})`.cyan, `${this.atomPackagesDirectory}`)
       }
     }
     return callback?.(null, gitPackages)

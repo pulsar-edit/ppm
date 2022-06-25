@@ -10,26 +10,29 @@ const temp = require("temp")
 import * as apm from "../lib/apm-cli"
 
 describe("apm config", function () {
-  let [atomHome, userConfigPath] = Array.from([])
+  let userConfigPath
 
   beforeEach(function () {
     spyOnToken()
     spyOnConsole()
 
-    atomHome = temp.mkdirSync("apm-home-dir-")
-    process.env.ATOM_HOME = atomHome
+    const atomHome = temp.mkdirSync("apm-home-dir-")
+    process.env.ATOM_HOME = atomHome // sets the atom home, so that apm config uses this as the global cache
     userConfigPath = path.join(atomHome, ".apmrc")
 
     // Make sure the cache used is the one for the test env
-    return delete process.env.npm_config_cache
+    delete process.env.npm_config_cache
   })
 
   describe("apm config get", () =>
     it("reads the value from the global config when there is no user config", function () {
+      expect(fs.isFileSync(userConfigPath)).toBe(false)
+      expect(process.env.npm_config_cache).toBe(undefined)
+
       const callback = jasmine.createSpy("callback")
       apm.run(["config", "get", "cache"], callback)
 
-      waitsFor("waiting for config get to complete", 600000, () => callback.callCount === 1)
+      waitsFor("waiting for config get to complete", 6000000, () => callback.callCount === 1)
 
       runs(() => expect(process.stdout.write.argsForCall[0][0].trim()).toBe(path.join(process.env.ATOM_HOME, ".apm")))
     }))

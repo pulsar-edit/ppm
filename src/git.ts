@@ -94,11 +94,14 @@ export function addGitToEnv(env: Record<string, string | undefined>) {
 }
 
 export function getGitVersion(callback: (version: string) => any) {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath(),
+  npm.config.defs = {
+    defaults: {
+      userconfig: config.getUserConfigPath(),
+      globalconfig: config.getGlobalConfigPath(),
+    },
+    types: undefined,
   }
-  return npm.load(npmOptions, function () {
+  return npm.load(function () {
     const git = (npm.config.get("git") as string | undefined) ?? "git"
     addGitToEnv(process.env)
     const spawned = spawn(git, ["--version"])

@@ -228,15 +228,18 @@ function getAtomVersion(callback) {
 }
 
 function getPythonVersion(callback) {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath(),
+  npm.config.defs = {
+    defaults: {
+      userconfig: config.getUserConfigPath(),
+      globalconfig: config.getGlobalConfigPath(),
+    },
+    types: undefined,
   }
-  return npm.load(npmOptions, function () {
+  return npm.load(function () {
     let left
     let python = (left = npm.config.get("python")) != null ? left : process.env.PYTHON
     if (config.isWin32() && !python) {
-      let rootDir = process.env.SystemDrive != null ? process.env.SystemDrive : "C:\\"
+      let rootDir = process.env.SystemDrive || "C:\\"
       if (rootDir[rootDir.length - 1] !== "\\") {
         rootDir += "\\"
       }

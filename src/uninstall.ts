@@ -68,9 +68,6 @@ Delete the installed package(s) from the ~/.atom/packages directory.\
       return
     }
 
-    const packagesDirectory = path.join(config.getAtomDirectory(), "packages")
-    const devPackagesDirectory = path.join(config.getAtomDirectory(), "dev", "packages")
-
     const uninstallsToRegister = []
     let uninstallError = null
 
@@ -82,7 +79,7 @@ Delete the installed package(s) from the ~/.atom/packages directory.\
       try {
         let packageDirectory
         if (!options.argv.dev) {
-          packageDirectory = path.join(packagesDirectory, packageName)
+          packageDirectory = path.join(this.atomPackagesDirectory, packageName)
           const packageManifestPath = path.join(packageDirectory, "package.json")
           if (fs.existsSync(packageManifestPath)) {
             const packageVersion = this.getPackageVersion(packageDirectory)
@@ -96,7 +93,7 @@ Delete the installed package(s) from the ~/.atom/packages directory.\
         }
 
         if (options.argv.hard || options.argv.dev) {
-          packageDirectory = path.join(devPackagesDirectory, packageName)
+          packageDirectory = path.join(this.atomDevPackagesDirectory, packageName)
           if (fs.existsSync(packageDirectory)) {
             fs.removeSync(packageDirectory)
           } else if (!options.argv.hard) {

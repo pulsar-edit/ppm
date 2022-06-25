@@ -9,15 +9,11 @@ import path from "path"
 import CSON from "season"
 import yargs from "yargs"
 import Command from "./command"
-import * as config from "./apm"
 import fs from "./fs"
 import type { CliOptions, RunCallback } from "./apm-cli"
 import { PathLike } from "fs-plus"
 
 export default class Unlink extends Command {
-  devPackagesPath = path.join(config.getAtomDirectory(), "dev", "packages")
-  packagesPath = path.join(config.getAtomDirectory(), "packages")
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
@@ -39,11 +35,11 @@ Run \`apm links\` to view all the currently linked packages.\
   }
 
   getDevPackagePath(packageName: string) {
-    return path.join(this.devPackagesPath, packageName)
+    return path.join(this.atomDevPackagesDirectory, packageName)
   }
 
   getPackagePath(packageName: string) {
-    return path.join(this.packagesPath, packageName)
+    return path.join(this.atomPackagesDirectory, packageName)
   }
 
   unlinkPath(pathToUnlink: PathLike) {
@@ -60,15 +56,15 @@ Run \`apm links\` to view all the currently linked packages.\
   unlinkAll(options: CliOptions, callback: (error?: string | Error) => any) {
     try {
       let child: string, packagePath: string
-      for (child of fs.list(this.devPackagesPath)) {
-        packagePath = path.join(this.devPackagesPath, child)
+      for (child of fs.list(this.atomDevPackagesDirectory)) {
+        packagePath = path.join(this.atomDevPackagesDirectory, child)
         if (fs.isSymbolicLinkSync(packagePath)) {
           this.unlinkPath(packagePath)
         }
       }
       if (!options.argv.dev) {
-        for (child of fs.list(this.packagesPath)) {
-          packagePath = path.join(this.packagesPath, child)
+        for (child of fs.list(this.atomPackagesDirectory)) {
+          packagePath = path.join(this.atomPackagesDirectory, child)
           if (fs.isSymbolicLinkSync(packagePath)) {
             this.unlinkPath(packagePath)
           }

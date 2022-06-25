@@ -13,7 +13,6 @@ import fs from "./fs"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class RebuildModuleCache extends Command {
-  atomPackagesDirectory = path.join(config.getAtomDirectory(), "packages")
   moduleCache?: any
 
   parseOptions(argv: string[]) {

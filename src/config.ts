@@ -3,21 +3,14 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import path from "path"
 import yargs from "yargs"
 import * as apm from "./apm"
 import Command from "./command"
 import type { CliOptions, RunCallback } from "./apm-cli"
+import fs from "fs-plus"
+import path from "path"
 
 export default class Config extends Command {
-  private atomDirectory = apm.getAtomDirectory()
-  private atomNpmPath = require.resolve("npm/bin/npm-cli")
-  private atomNodeDirectory: string
-  constructor() {
-    super()
-    this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-  }
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\
@@ -35,7 +28,12 @@ Usage: apm config set <key> <value>
   run(options: CliOptions, callback: RunCallback) {
     options = this.parseOptions(options.commandArgs)
 
-    let configArgs = ["--globalconfig", apm.getGlobalConfigPath(), "--userconfig", apm.getUserConfigPath(), "config"]
+    const userconfig = apm.getUserConfigPath()
+    const globalconfig = apm.getGlobalConfigPath()
+
+    set_npm_config_cache(userconfig, globalconfig)
+
+    let configArgs = ["--globalconfig", globalconfig, "--userconfig", userconfig, "config"]
     configArgs = configArgs.concat(options.argv._)
 
     const env = { ...process.env, HOME: this.atomNodeDirectory, RUSTUP_HOME: apm.getRustupHomeDirPath() }
@@ -54,5 +52,14 @@ Usage: apm config set <key> <value>
         return callback(new Error(`npm config failed: ${code}`))
       }
     })
+  }
+}
+
+/// set the npm cache to the apm paths if they exist
+export function set_npm_config_cache(userconfig: string, globalconfig: string) {
+  if (fs.existsSync(userconfig)) {
+    process.env.npm_config_cache = path.dirname(userconfig)
+  } else if (fs.existsSync(globalconfig)) {
+    process.env.npm_config_cache = path.dirname(globalconfig)
   }
 }

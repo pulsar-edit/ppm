@@ -4,7 +4,6 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import path from "path"
 import yargs from "yargs"
 import * as config from "./apm"
 import Command from "./command"
@@ -12,15 +11,6 @@ import fs from "./fs"
 import type { CliOptions, RunCallback } from "./apm-cli"
 
 export default class Rebuild extends Command {
-  private atomDirectory = config.getAtomDirectory()
-  private atomNpmPath = require.resolve("npm/bin/npm-cli")
-  private atomNodeDirectory: string
-
-  constructor() {
-    super()
-    this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
-  }
-
   parseOptions(argv: string[]) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage(`\

@@ -12,6 +12,7 @@ import * as _ from "@aminya/underscore-plus"
 import semver from "semver"
 import * as config from "./apm"
 import * as git from "./git"
+import { sync as resolveSync } from "resolve"
 
 export type LogCommandResultsArgs = [code: number, stderr?: string, stdout?: string]
 
@@ -26,11 +27,22 @@ export type SpawnArgs =
   | ((code: number, stderr?: string, stdout?: string) => void)
 
 export default class Command {
+  protected atomNpmPath = resolveSync("npm/bin/npm-cli")
+  protected atomDirectory = config.getAtomDirectory()
+  protected atomNodeDirectory: string
+  protected atomPackagesDirectory: string
+  protected atomDevPackagesDirectory: string
+
   protected electronVersion: string
   installedAtomVersion: string
   protected resourcePath: string
+
   npm: typeof import("npm")
   constructor() {
+    this.atomNodeDirectory = path.join(this.atomDirectory, ".node-gyp")
+    this.atomPackagesDirectory = path.join(this.atomDirectory, "packages")
+    this.atomDevPackagesDirectory = path.join(this.atomDirectory, "dev", "packages")
+
     this.logCommandResults = this.logCommandResults.bind(this)
     this.logCommandResultsIfFail = this.logCommandResultsIfFail.bind(this)
   }
@@ -151,8 +163,7 @@ export default class Command {
         /* ignore error */
       }
 
-      this.electronVersion =
-        process.env.ATOM_ELECTRON_VERSION != null ? process.env.ATOM_ELECTRON_VERSION : electronVersion
+      this.electronVersion = process.env.ATOM_ELECTRON_VERSION || electronVersion
       if (this.electronVersion == null) {
         throw new Error("Could not determine Electron version")
       }
