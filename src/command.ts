@@ -151,8 +151,7 @@ export default class Command {
         /* ignore error */
       }
 
-      this.electronVersion =
-        process.env.ATOM_ELECTRON_VERSION != null ? process.env.ATOM_ELECTRON_VERSION : electronVersion
+      this.electronVersion = process.env.ATOM_ELECTRON_VERSION || electronVersion
       if (this.electronVersion == null) {
         throw new Error("Could not determine Electron version")
       }

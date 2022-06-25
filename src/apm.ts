@@ -20,7 +20,7 @@ export function getHomeDirectory() {
 }
 
 export function getAtomDirectory() {
-  return process.env.ATOM_HOME != null ? process.env.ATOM_HOME : path.join(getHomeDirectory(), ".atom")
+  return process.env.ATOM_HOME || path.join(getHomeDirectory(), ".atom")
 }
 
 export function getRustupHomeDirPath() {
@@ -99,19 +99,19 @@ export function getResourcePath(callback) {
 }
 
 export function getReposDirectory() {
-  return process.env.ATOM_REPOS_HOME != null ? process.env.ATOM_REPOS_HOME : path.join(getHomeDirectory(), "github")
+  return process.env.ATOM_REPOS_HOME || path.join(getHomeDirectory(), "github")
 }
 
 export function getElectronUrl() {
-  return process.env.ATOM_ELECTRON_URL != null ? process.env.ATOM_ELECTRON_URL : "https://atom.io/download/electron"
+  return process.env.ATOM_ELECTRON_URL || "https://atom.io/download/electron"
 }
 
 export function getAtomPackagesUrl() {
-  return process.env.ATOM_PACKAGES_URL != null ? process.env.ATOM_PACKAGES_URL : `${getAtomApiUrl()}/packages`
+  return process.env.ATOM_PACKAGES_URL || `${getAtomApiUrl()}/packages`
 }
 
 export function getAtomApiUrl() {
-  return process.env.ATOM_API_URL != null ? process.env.ATOM_API_URL : "https://atom.io/api"
+  return process.env.ATOM_API_URL || "https://atom.io/api"
 }
 
 export function getElectronArch() {
@@ -119,7 +119,7 @@ export function getElectronArch() {
     case "darwin":
       return "x64"
     default:
-      return process.env.ATOM_ARCH != null ? process.env.ATOM_ARCH : process.arch
+      return process.env.ATOM_ARCH || process.arch
   }
 }
 

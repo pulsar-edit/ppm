@@ -239,7 +239,7 @@ function getPythonVersion(callback) {
     let left
     let python = (left = npm.config.get("python")) != null ? left : process.env.PYTHON
     if (config.isWin32() && !python) {
-      let rootDir = process.env.SystemDrive != null ? process.env.SystemDrive : "C:\\"
+      let rootDir = process.env.SystemDrive || "C:\\"
       if (rootDir[rootDir.length - 1] !== "\\") {
         rootDir += "\\"
       }

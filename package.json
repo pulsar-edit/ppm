@@ -12,10 +12,10 @@
   },
   "scripts": {
     "build": "npm run clean.lib && npm run tsc",
-    "build.test": "npm run get.fixtures && shx rm -rf dist-spec && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec",
+    "build.test": "npm run get.fixtures && shx rm -rf ./dist-spec/ && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec",
     "check-version": "node script/check-version.js",
     "clean.bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
-    "clean.lib": "shx rm -rf lib/ dist-spec/",
+    "clean.lib": "shx rm -rf lib/",
     "copy": "shx cp -r src lib",
     "format": "prettier --write .",
     "get.fixtures": "node ./script/get-fixtures.js && shx cp -r ./spec/fixtures/r.tmbundle-patch/Snippets/ ./spec/fixtures/r.tmbundle/",

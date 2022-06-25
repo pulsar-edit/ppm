@@ -17,7 +17,7 @@ describe("apm config", function () {
     spyOnConsole()
 
     const atomHome = temp.mkdirSync("apm-home-dir-")
-    process.env.ATOM_HOME = atomHome
+    process.env.ATOM_HOME = atomHome // sets the atom home, so that apm config uses this as the global cache
     userConfigPath = path.join(atomHome, ".apmrc")
 
     // Make sure the cache used is the one for the test env
