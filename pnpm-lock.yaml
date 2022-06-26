@@ -3,134 +3,133 @@ lockfileVersion: 5.3
 overrides:
   node-gyp: ^9.0.0
 
-importers:
+specifiers:
+  '@aminya/underscore-plus': ^1.9.0
+  '@atom/plist': 0.4.4
+  '@types/async': ^3.2.7
+  '@types/atom': ^1.40.11
+  '@types/express': ^4.17.13
+  '@types/first-mate': ^7.0.6
+  '@types/fs-plus': 3.0.2
+  '@types/glob': ^7.1.4
+  '@types/hosted-git-info': ^3.0.2
+  '@types/jasmine': ^4.0.0
+  '@types/mv': 2.1.2
+  '@types/ncp': ~2.0.5
+  '@types/npm': ^7.19.0
+  '@types/q': ~1.5.5
+  '@types/read': ~0.0.29
+  '@types/request': ^2.48.6
+  '@types/resolve': ^1.20.2
+  '@types/rimraf': ^3.0.1
+  '@types/season': ^6.0.1
+  '@types/semver': ^7.3.7
+  '@types/tar': ^6.0.0
+  '@types/temp': ^0.9.1
+  '@types/wordwrap': 1.0.1
+  '@types/wrench': ~0.0.29
+  '@types/yargs': ^17.0.0
+  asar-require: 0.3.0
+  async: ^3.2.0
+  babel-preset-atomic: ^4.2.0
+  colors: ~1.4.0
+  eslint-config-atomic: ^1.16.2
+  express: ^4.17.1
+  first-mate: ^7.4.3
+  fs-plus: 3.x
+  git-utils: ^5.7.3
+  gitly: ^2.1.2
+  glob: ^7.1.7
+  hosted-git-info: ^3.0.8
+  jasmine-focused: '>=1.0.7 <2.0'
+  keytar: ^7.7.0
+  mv: 2.1.1
+  ncp: ~2.0.0
+  node-downloader-helper: ^2.0.0
+  node-gyp: ^9.0.0
+  npm: ^7.24.2
+  open: 7.4.2
+  pnpm: ^6.32.23
+  prettier: ^2.7.1
+  prettier-config-atomic: ^3.0.10
+  q: ~1.5.1
+  read: ~1.0.7
+  request: ^2.88.2
+  resolve: ^1.22.1
+  rimraf: ^3.0.2
+  season: ^6.0.2
+  semver: ^7.3.5
+  shx: ^0.3.4
+  tar: ^6.1.0
+  temp: ^0.9.4
+  wordwrap: 1.0.0
+  wrench: ~1.5.1
+  yargs: ^3.32.0
 
-  .:
-    specifiers:
-      '@aminya/underscore-plus': ^1.9.0
-      '@atom/plist': 0.4.4
-      '@types/async': ^3.2.7
-      '@types/atom': ^1.40.11
-      '@types/express': ^4.17.13
-      '@types/first-mate': ^7.0.6
-      '@types/fs-plus': 3.0.2
-      '@types/glob': ^7.1.4
-      '@types/hosted-git-info': ^3.0.2
-      '@types/jasmine': ^4.0.0
-      '@types/mv': 2.1.2
-      '@types/ncp': ~2.0.5
-      '@types/npm': ^7.19.0
-      '@types/q': ~1.5.5
-      '@types/read': ~0.0.29
-      '@types/request': ^2.48.6
-      '@types/resolve': ^1.20.2
-      '@types/rimraf': ^3.0.1
-      '@types/season': ^6.0.1
-      '@types/semver': ^7.3.7
-      '@types/tar': ^6.0.0
-      '@types/temp': ^0.9.1
-      '@types/wordwrap': 1.0.1
-      '@types/wrench': ~0.0.29
-      '@types/yargs': ^17.0.0
-      asar-require: 0.3.0
-      async: ^3.2.0
-      babel-preset-atomic: ^4.2.0
-      colors: ~1.4.0
-      eslint-config-atomic: ^1.16.2
-      express: ^4.17.1
-      first-mate: ^7.4.3
-      fs-plus: 3.x
-      git-utils: ^5.7.3
-      gitly: ^2.1.2
-      glob: ^7.1.7
-      hosted-git-info: ^3.0.8
-      jasmine-focused: '>=1.0.7 <2.0'
-      keytar: ^7.7.0
-      mv: 2.1.1
-      ncp: ~2.0.0
-      node-downloader-helper: ^2.0.0
-      node-gyp: ^9.0.0
-      npm: ^7.24.2
-      open: 7.4.2
-      pnpm: ^6.32.23
-      prettier: ^2.7.1
-      prettier-config-atomic: ^3.0.10
-      q: ~1.5.1
-      read: ~1.0.7
-      request: ^2.88.2
-      resolve: ^1.22.1
-      rimraf: ^3.0.2
-      season: ^6.0.2
-      semver: ^7.3.5
-      shx: ^0.3.3
-      tar: ^6.1.0
-      temp: ^0.9.4
-      wordwrap: 1.0.0
-      wrench: ~1.5.1
-      yargs: ^3.32.0
-    dependencies:
-      '@aminya/underscore-plus': 1.9.0
-      '@atom/plist': 0.4.4
-      asar-require: 0.3.0
-      async: 3.2.4
-      colors: 1.4.0
-      first-mate: 7.4.3
-      fs-plus: 3.1.1
-      git-utils: 5.7.3
-      glob: 7.2.3
-      hosted-git-info: 3.0.8
-      keytar: 7.9.0
-      mv: 2.1.1
-      ncp: 2.0.0
-      node-gyp: 9.0.0
-      npm: 7.24.2
-      open: 7.4.2
-      pnpm: 6.32.23
-      q: 1.5.1
-      read: 1.0.7
-      request: 2.88.2
-      resolve: 1.22.1
-      rimraf: 3.0.2
-      season: 6.0.2
-      semver: 7.3.7
-      tar: 6.1.11
-      temp: 0.9.4
-      wordwrap: 1.0.0
-      wrench: 1.5.9
-      yargs: 3.32.0
-    devDependencies:
-      '@types/async': 3.2.13
-      '@types/atom': 1.40.11
-      '@types/express': 4.17.13
-      '@types/first-mate': 7.0.6
-      '@types/fs-plus': 3.0.2
-      '@types/glob': 7.2.0
-      '@types/hosted-git-info': 3.0.2
-      '@types/jasmine': 4.0.3
-      '@types/mv': 2.1.2
-      '@types/ncp': 2.0.5
-      '@types/npm': 7.19.0
-      '@types/q': 1.5.5
-      '@types/read': 0.0.29
-      '@types/request': 2.48.8
-      '@types/resolve': 1.20.2
-      '@types/rimraf': 3.0.2
-      '@types/season': 6.0.1
-      '@types/semver': 7.3.10
-      '@types/tar': 6.1.1
-      '@types/temp': 0.9.1
-      '@types/wordwrap': 1.0.1
-      '@types/wrench': 0.0.29
-      '@types/yargs': 17.0.10
-      babel-preset-atomic: 4.3.0
-      eslint-config-atomic: 1.18.0
-      express: 4.18.1
-      gitly: 2.2.0
-      jasmine-focused: 1.0.7
-      node-downloader-helper: 2.1.1
-      prettier: 2.7.1
-      prettier-config-atomic: 3.0.10
-      shx: 0.3.4
+dependencies:
+  '@aminya/underscore-plus': 1.9.0
+  '@atom/plist': 0.4.4
+  asar-require: 0.3.0
+  async: 3.2.4
+  colors: 1.4.0
+  first-mate: 7.4.3
+  fs-plus: 3.1.1
+  git-utils: 5.7.3
+  glob: 7.2.3
+  hosted-git-info: 3.0.8
+  keytar: 7.9.0
+  mv: 2.1.1
+  ncp: 2.0.0
+  node-gyp: 9.0.0
+  npm: 7.24.2
+  open: 7.4.2
+  pnpm: 6.32.23
+  q: 1.5.1
+  read: 1.0.7
+  request: 2.88.2
+  resolve: 1.22.1
+  rimraf: 3.0.2
+  season: 6.0.2
+  semver: 7.3.7
+  shx: 0.3.4
+  tar: 6.1.11
+  temp: 0.9.4
+  wordwrap: 1.0.0
+  wrench: 1.5.9
+  yargs: 3.32.0
+
+devDependencies:
+  '@types/async': 3.2.13
+  '@types/atom': 1.40.11
+  '@types/express': 4.17.13
+  '@types/first-mate': 7.0.6
+  '@types/fs-plus': 3.0.2
+  '@types/glob': 7.2.0
+  '@types/hosted-git-info': 3.0.2
+  '@types/jasmine': 4.0.3
+  '@types/mv': 2.1.2
+  '@types/ncp': 2.0.5
+  '@types/npm': 7.19.0
+  '@types/q': 1.5.5
+  '@types/read': 0.0.29
+  '@types/request': 2.48.8
+  '@types/resolve': 1.20.2
+  '@types/rimraf': 3.0.2
+  '@types/season': 6.0.1
+  '@types/semver': 7.3.10
+  '@types/tar': 6.1.1
+  '@types/temp': 0.9.1
+  '@types/wordwrap': 1.0.1
+  '@types/wrench': 0.0.29
+  '@types/yargs': 17.0.10
+  babel-preset-atomic: 4.3.0
+  eslint-config-atomic: 1.18.0
+  express: 4.18.1
+  gitly: 2.2.0
+  jasmine-focused: 1.0.7
+  node-downloader-helper: 2.1.1
+  prettier: 2.7.1
+  prettier-config-atomic: 3.0.10
 
 packages:
 
@@ -4627,7 +4626,7 @@ packages:
   /interpret/1.4.0:
     resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
     engines: {node: '>= 0.10'}
-    dev: true
+    dev: false
 
   /invariant/2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
@@ -6126,7 +6125,7 @@ packages:
     engines: {node: '>= 0.10'}
     dependencies:
       resolve: 1.22.1
-    dev: true
+    dev: false
 
   /regenerate-unicode-properties/10.0.1:
     resolution: {integrity: sha512-vn5DU6yg6h8hP/2OkQo3K7uVILvY4iu0oI4t3HFa81UPkhGJwkRwM10JEc3upjdhHjs/k8GJY1sRBhk5sr69Bw==}
@@ -6407,7 +6406,7 @@ packages:
       glob: 7.2.3
       interpret: 1.4.0
       rechoir: 0.6.2
-    dev: true
+    dev: false
 
   /shx/0.3.4:
     resolution: {integrity: sha512-N6A9MLVqjxZYcVn8hLmtneQWIJtp8IKzMP4eMnx+nqkvXoqinUPCbUFLp2UcWTEIUONhlk0ewxr/jaVGlc+J+g==}
@@ -6416,7 +6415,7 @@ packages:
     dependencies:
       minimist: 1.2.6
       shelljs: 0.8.5
-    dev: true
+    dev: false
 
   /side-channel/1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
