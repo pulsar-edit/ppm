@@ -66,9 +66,11 @@ jobs:
         with:
           version: ${{ matrix.pnpm }}
 
-      - uses: actions/setup-python@v4
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
         with:
-          python-version: "3.x"
+          vcvarsall: ${{ contains(matrix.os, 'windows') }}
+          python: true
           architecture: ${{ matrix.arch }}
 
       - name: Install and build
