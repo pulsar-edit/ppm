@@ -94,6 +94,10 @@
     "prettier-config-atomic": "^3.0.10",
     "shx": "^0.3.3"
   },
+  "engines": {
+    "node": "12 || 14 || 16",
+    "pnpm": "6"
+  },
   "pnpm": {
     "overrides": {
       "node-gyp": "^9.0.0"
