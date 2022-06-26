@@ -152,7 +152,7 @@ export default class Command {
         const resourcePathJson: { version: string; electronVersion: string } & Record<string, any> =
           require(path.join(resourcePath, "package.json")) ?? {}
 
-        electronVersion = resourcePath.electronVersion
+        electronVersion = resourcePathJson.electronVersion
 
         const version = this.normalizeVersion(resourcePathJson.version)
 
