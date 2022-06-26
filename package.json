@@ -1,6 +1,6 @@
 {
   "name": "papm",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Performant Atom Package Manager",
   "repository": "https://github.com/atom-community/papm",
   "license": "MIT",
@@ -10,19 +10,31 @@
   "bin": {
     "apm": "bin/apm"
   },
+  "files": [
+    "lib",
+    "bin",
+    "src",
+    "script",
+    "templates",
+    "native-module",
+    ".npmrc",
+    "pnpm-lock.yaml",
+    "deprecated-packages.json"
+  ],
   "scripts": {
     "build": "npm run clean.lib && npm run tsc",
     "build.test": "npm run get.fixtures && shx rm -rf ./dist-spec/ ./native-module/build && shx cp -r spec dist-spec && babel ./dist-spec --out-dir ./dist-spec",
     "check-version": "node script/check-version.js",
     "clean": "npm run clean.bin && npm run clean.lib",
     "clean.bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
-    "clean.lib": "shx rm -rf lib/",
+    "clean.lib": "shx rm -rf lib/ ./native-module/build",
     "copy": "shx cp -r src lib",
     "format": "prettier --write .",
     "get.fixtures": "node ./script/get-fixtures.js && shx cp -r ./spec/fixtures/r.tmbundle-patch/Snippets/ ./spec/fixtures/r.tmbundle/",
     "postinstall": "node ./script/download-node.js && shx chmod +x ./bin/npm && shx chmod +x ./bin/apm",
     "lint": "eslint . --fix",
     "prepare": "npm run build",
+    "prepublishOnly": "npm run clean.bin",
     "test": "npm run check-version && npm run build.test && jasmine-focused --captureExceptions dist-spec",
     "test.format": "prettier . --check",
     "test.lint": "eslint .",
