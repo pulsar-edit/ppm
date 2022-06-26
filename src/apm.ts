@@ -135,7 +135,7 @@ export function isWin32() {
   return process.platform === "win32"
 }
 
-export function getInstalledVisualStudioFlag(): string {
+export function getInstalledVisualStudioFlag(): string | null {
   if (!isWin32()) {
     return null
   }
