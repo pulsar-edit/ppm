@@ -135,10 +135,6 @@ export function isWin32() {
   return process.platform === "win32"
 }
 
-export function x86ProgramFilesDirectory() {
-  return process.env["ProgramFiles(x86)"] || process.env.ProgramFiles
-}
-
 export function getInstalledVisualStudioFlag(): string {
   if (!isWin32()) {
     return null
@@ -161,27 +157,32 @@ export function getInstalledVisualStudioFlag(): string {
 }
 
 export function visualStudioIsInstalled(version: number): boolean {
-  if (version < 2017) {
-    return fs.existsSync(path.join(x86ProgramFilesDirectory(), `Microsoft Visual Studio ${version}`, "Common7", "IDE"))
-  } else {
-    return (
-      fs.existsSync(
-        path.join(x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "BuildTools", "Common7", "IDE")
-      ) ||
-      fs.existsSync(
-        path.join(x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Community", "Common7", "IDE")
-      ) ||
-      fs.existsSync(
-        path.join(x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Enterprise", "Common7", "IDE")
-      ) ||
-      fs.existsSync(
-        path.join(x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Professional", "Common7", "IDE")
-      ) ||
-      fs.existsSync(
-        path.join(x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "WDExpress", "Common7", "IDE")
-      )
-    )
+  const programFiles = [
+    process.env.ProgramFiles,
+    process.env["ProgramFiles(x86)"],
+    "C:\\Program Files",
+    "C:\\Program Files (x86)",
+  ].filter((vs) => typeof vs === "string" && vs !== "")
+
+  const vsTypes = ["BuildTools", "Community", "Enterprise", "Professional", "WDExpress"]
+
+  for (const programFile of programFiles) {
+    if (version < 2017) {
+      const vsPath = path.join(programFile, `Microsoft Visual Studio ${version}`, "Common7", "IDE")
+      if (fs.existsSync(vsPath)) {
+        return true
+      }
+    } else {
+      for (const vsType of vsTypes) {
+        const vsPath = path.join(programFile, "Microsoft Visual Studio", `${version}`, vsType, "Common7", "IDE")
+        if (fs.existsSync(vsPath)) {
+          return true
+        }
+      }
+    }
   }
+
+  return false
 }
 
 export function loadNpm(callback: (config: null, npmVar: typeof npm) => void) {
