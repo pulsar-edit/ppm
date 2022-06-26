@@ -11,6 +11,8 @@ const http = require("http")
 const temp = require("temp")
 import * as apm from "../lib/apm-cli"
 
+const atomElectronVersion = fs.readFileSync(`${path.dirname(__dirname)}/.npmrc`, "utf8").match(/target=(.*)\n/)[1]
+
 describe("apm stars", function () {
   let [atomHome, server] = Array.from([])
 
@@ -23,19 +25,19 @@ describe("apm stars", function () {
     app.get("/users/hubot/stars", (request, response) =>
       response.sendFile(path.join(__dirname, "fixtures", "stars.json"))
     )
-    app.get("/node/v10.20.1/node-v10.20.1.tar.gz", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node-v10.20.1.tar.gz"))
+    app.get(`/node/${atomElectronVersion}/node-${atomElectronVersion}.tar.gz`, (request, response) =>
+      response.sendFile(path.join(__dirname, `fixtures`, `node-${atomElectronVersion}.tar.gz`))
     )
-    app.get("/node/v10.20.1/node-v10.20.1-headers.tar.gz", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node-v10.20.1-headers.tar.gz"))
+    app.get(`/node/${atomElectronVersion}/node-${atomElectronVersion}-headers.tar.gz`, (request, response) =>
+      response.sendFile(path.join(__dirname, `fixtures`, `node-${atomElectronVersion}-headers.tar.gz`))
     )
-    app.get("/node/v10.20.1/node.lib", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node.lib"))
+    app.get(`/node/${atomElectronVersion}/node.lib`, (request, response) =>
+      response.sendFile(path.join(__dirname, `fixtures`, `node.lib`))
     )
-    app.get("/node/v10.20.1/x64/node.lib", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node_x64.lib"))
+    app.get(`/node/${atomElectronVersion}/x64/node.lib`, (request, response) =>
+      response.sendFile(path.join(__dirname, `fixtures`, `node_x64.lib`))
     )
-    app.get("/node/v10.20.1/SHASUMS256.txt", (request, response) =>
+    app.get(`/node/${atomElectronVersion}/SHASUMS256.txt`, (request, response) =>
       response.sendFile(path.join(__dirname, "fixtures", "SHASUMS256.txt"))
     )
     app.get("/tarball/test-module-1.2.0.tgz", (request, response) =>
@@ -57,7 +59,7 @@ describe("apm stars", function () {
       process.env.ATOM_API_URL = "http://localhost:3000"
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-      process.env.ATOM_ELECTRON_VERSION = "v10.20.1"
+      process.env.ATOM_ELECTRON_VERSION = atomElectronVersion
       process.env.npm_config_registry = "http://localhost:3000/"
 
       return (live = true)

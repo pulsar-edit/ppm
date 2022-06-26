@@ -21,9 +21,9 @@ lib
 dist-spec
 
 # Downloaded spec
-spec/fixtures/node-v10.20.1.tar.gz
+spec/fixtures/node-*.tar.gz
 spec/fixtures/node.lib
 spec/fixtures/node_x64.lib
-spec/fixtures/node-v10.20.1-headers.tar.gz
+spec/fixtures/node-*-headers.tar.gz
 spec/fixtures/repo.git
 spec/fixtures/r.tmbundle

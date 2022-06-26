@@ -13,6 +13,8 @@ const wrench = require("wrench")
 const CSON = require("season")
 import * as apm from "../lib/apm-cli"
 
+const atomElectronVersion = fs.readFileSync(`${path.dirname(__dirname)}/.npmrc`, "utf8").match(/target=(.*)\n/)[1]
+
 describe("apm ci", function () {
   let [atomHome, resourcePath, server] = Array.from([])
 
@@ -29,19 +31,19 @@ describe("apm ci", function () {
     delete process.env.npm_config_cache
 
     const app = express()
-    app.get("/node/v10.20.1/node-v10.20.1.tar.gz", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node-v10.20.1.tar.gz"))
+    app.get(`/node/${atomElectronVersion}/node-${atomElectronVersion}.tar.gz`, (request, response) =>
+      response.sendFile(path.join(__dirname, "fixtures", `node-${atomElectronVersion}.tar.gz`))
     )
-    app.get("/node/v10.20.1/node-v10.20.1-headers.tar.gz", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node-v10.20.1-headers.tar.gz"))
+    app.get(`/node/${atomElectronVersion}/node-${atomElectronVersion}-headers.tar.gz`, (request, response) =>
+      response.sendFile(path.join(__dirname, "fixtures", `node-${atomElectronVersion}-headers.tar.gz`))
     )
-    app.get("/node/v10.20.1/node.lib", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node.lib"))
+    app.get(`/node/${atomElectronVersion}/node.lib`, (request, response) =>
+      response.sendFile(path.join(__dirname, "fixtures", `node.lib`))
     )
-    app.get("/node/v10.20.1/x64/node.lib", (request, response) =>
-      response.sendFile(path.join(__dirname, "fixtures", "node_x64.lib"))
+    app.get(`/node/${atomElectronVersion}/x64/node.lib`, (request, response) =>
+      response.sendFile(path.join(__dirname, "fixtures", `node_x64.lib`))
     )
-    app.get("/node/v10.20.1/SHASUMS256.txt", (request, response) =>
+    app.get(`/node/${atomElectronVersion}/SHASUMS256.txt`, (request, response) =>
       response.sendFile(path.join(__dirname, "fixtures", "SHASUMS256.txt"))
     )
     app.get("/test-module-with-dependencies", (request, response) =>
@@ -69,7 +71,7 @@ describe("apm ci", function () {
     server.listen(3000, "127.0.0.1", function () {
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-      process.env.ATOM_ELECTRON_VERSION = "v10.20.1"
+      process.env.ATOM_ELECTRON_VERSION = atomElectronVersion
       process.env.npm_config_registry = "http://localhost:3000/"
       return (live = true)
     })
