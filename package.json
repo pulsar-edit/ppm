@@ -66,6 +66,7 @@
     "rimraf": "^3.0.2",
     "season": "^6.0.2",
     "semver": "^7.3.5",
+    "shx": "^0.3.4",
     "tar": "^6.1.0",
     "temp": "^0.9.4",
     "wordwrap": "1.0.0",
@@ -103,8 +104,7 @@
     "jasmine-focused": ">=1.0.7 <2.0",
     "node-downloader-helper": "^2.0.0",
     "prettier": "^2.7.1",
-    "prettier-config-atomic": "^3.0.10",
-    "shx": "^0.3.3"
+    "prettier-config-atomic": "^3.0.10"
   },
   "engines": {
     "node": "12 || 14 || 16",

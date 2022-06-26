@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "incremental": true,
     "inlineSourceMap": true,
-    "inlineSources": true,
+    "inlineSources": false,
     "preserveSymlinks": true,
     "removeComments": false,
     "jsx": "react",

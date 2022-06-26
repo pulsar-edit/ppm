@@ -158,17 +158,25 @@ function showHelp(options: CliOptions) {
 }
 
 function printVersions(args, callback) {
-  let left, left1
-  const apmVersion = (left = require("../package.json").version) != null ? left : ""
-  const npmVersion = (left1 = require("npm/package.json").version) != null ? left1 : ""
-  const nodeVersion = process.versions.node != null ? process.versions.node : ""
+  const apmVersion = require("../package.json").version
+  const npmVersion = require("npm/package.json").version
+  const nodeVersion = process.versions.node
 
   return getPythonVersion((pythonVersion) =>
     git.getGitVersion((gitVersion) =>
       getAtomVersion(function (atomVersion) {
-        let versions
+        let versionsObj: {
+          apm: string
+          npm: string
+          node: string
+          atom: string
+          python: string
+          git: string
+          nodeArch: string
+          visualStudio?: string
+        }
         if (args.json) {
-          versions = {
+          versionsObj = {
             apm: apmVersion,
             npm: npmVersion,
             node: nodeVersion,
@@ -178,9 +186,9 @@ function printVersions(args, callback) {
             nodeArch: process.arch,
           }
           if (config.isWin32()) {
-            versions.visualStudio = config.getInstalledVisualStudioFlag()
+            versionsObj.visualStudio = config.getInstalledVisualStudioFlag()
           }
-          console.log(JSON.stringify(versions))
+          console.log(JSON.stringify(versionsObj))
         } else {
           if (pythonVersion == null) {
             pythonVersion = ""
@@ -191,7 +199,7 @@ function printVersions(args, callback) {
           if (atomVersion == null) {
             atomVersion = ""
           }
-          versions = `\
+          let versions = `\
 ${"apm".red}  ${apmVersion.red}
 ${"npm".green}  ${npmVersion.green}
 ${"node".blue} ${nodeVersion.blue} ${process.arch.blue}
@@ -201,8 +209,7 @@ ${"git".magenta} ${gitVersion.magenta}\
 `
 
           if (config.isWin32()) {
-            let left2
-            const visualStudioVersion = (left2 = config.getInstalledVisualStudioFlag()) != null ? left2 : ""
+            const visualStudioVersion = config.getInstalledVisualStudioFlag()
             versions += `\n${"visual studio".cyan} ${visualStudioVersion.cyan}`
           }
 
@@ -218,8 +225,8 @@ function getAtomVersion(callback) {
   return config.getResourcePath(function (resourcePath) {
     const unknownVersion = "unknown"
     try {
-      let left
-      const { version } = (left = require(path.join(resourcePath, "package.json"))) != null ? left : unknownVersion
+      const maybeAtomVersion = require(path.join(resourcePath, "package.json"))
+      const { version } = maybeAtomVersion ? maybeAtomVersion : unknownVersion
       return callback(version)
     } catch (error) {
       return callback(unknownVersion)
@@ -236,8 +243,8 @@ function getPythonVersion(callback) {
     types: undefined,
   }
   return npm.load(function () {
-    let left
-    let python = (left = npm.config.get("python")) != null ? left : process.env.PYTHON
+    const maybePythonConfig = npm.config.get("python")
+    let python = maybePythonConfig != null ? maybePythonConfig : process.env.PYTHON
     if (config.isWin32() && !python) {
       let rootDir = process.env.SystemDrive || "C:\\"
       if (rootDir[rootDir.length - 1] !== "\\") {
@@ -261,7 +268,7 @@ function getPythonVersion(callback) {
       /* ignore error */
     })
     return spawned.on("close", function (code) {
-      let version
+      let version: string | undefined = undefined
       if (code === 0) {
         ;[, version] = Array.from(Buffer.concat(outputChunks).toString().split(" "))
         version = version?.trim()
