@@ -19,5 +19,34 @@
   "bugs": {
     "url": "https://github.com/pulsar-edit/ppm/issues"
   },
-  "homepage": "https://github.com/pulsar-edit/ppm#readme"
+  "homepage": "https://github.com/pulsar-edit/ppm#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "@atom/plist": "^0.4.4",
+    "asar-require": "^0.3.0",
+    "async": "^3.2.4",
+    "colors": "^1.4.0",
+    "first-mate": "^7.4.3",
+    "fs-plus": "^3.1.1",
+    "git-utils": "^5.7.3",
+    "glob": "^8.0.3",
+    "hosted-git-info": "^5.0.0",
+    "keytar": "^7.9.0",
+    "mv": "^2.1.1",
+    "ncp": "^2.0.0",
+    "npm": "^6.14.9",
+    "open": "^8.4.0",
+    "q": "^1.5.1",
+    "read": "^1.0.7",
+    "request": "^2.88.2",
+    "rimraf": "^3.0.2",
+    "season": "^6.0.2",
+    "semver": "^7.3.7",
+    "tar": "^6.1.11",
+    "temp": "^0.9.4",
+    "underscore-plus": "^1.7.0",
+    "wordwrap": "^1.0.0",
+    "wrench": "^1.5.9",
+    "yargs": "^17.5.1"
+  }
 }
