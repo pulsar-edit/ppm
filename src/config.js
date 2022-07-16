@@ -9,7 +9,7 @@ let Config;
 const path = require('path');
 const _ = require('underscore-plus');
 const yargs = require('yargs');
-const apm = require('./apm');
+const apm = require('./ppm');
 const Command = require('./command');
 
 module.exports =
@@ -29,11 +29,11 @@ module.exports =
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
-Usage: apm config set <key> <value>
-       apm config get <key>
-       apm config delete <key>
-       apm config list
-       apm config edit\
+Usage: ppm config set <key> <value>
+       ppm config get <key>
+       ppm config delete <key>
+       ppm config list
+       ppm config edit\
 `
       );
       return options.alias('h', 'help').describe('help', 'Print this usage message');

@@ -12,7 +12,7 @@ const yargs = require('yargs');
 const async = require('async');
 const _ = require('underscore-plus');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 
 module.exports =
@@ -32,7 +32,7 @@ module.exports =
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
-Usage: apm ci
+Usage: ppm ci
 Install a package with a clean slate.
 If you have an up-to-date package-lock.json file created by apm install,
 apm ci will install its locked contents exactly. It is substantially

@@ -14,7 +14,7 @@ const CSON = require('season');
 const yargs = require('yargs');
 
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const fs = require('./fs');
 
 module.exports =

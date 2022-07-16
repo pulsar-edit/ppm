@@ -44,7 +44,7 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
       options.usage(`\
-Usage: apm login
+Usage: ppm login
 
 Enter your Atom.io API token and save it to the keychain. This token will
 be used to identify you when publishing packages to atom.io.\

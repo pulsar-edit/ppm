@@ -15,7 +15,7 @@ const Git = require('git-utils');
 const semver = require('semver');
 
 const fs = require('./fs');
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 const Login = require('./login');
 const Packages = require('./packages');

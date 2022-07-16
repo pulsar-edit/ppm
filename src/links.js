@@ -11,7 +11,7 @@ const path = require('path');
 const yargs = require('yargs');
 
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const fs = require('./fs');
 const tree = require('./tree');
 
@@ -32,7 +32,7 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: apm links
+Usage: ppm links
 
 List all of the symlinked atom packages in ~/.atom/packages and
 ~/.atom/dev/packages.\

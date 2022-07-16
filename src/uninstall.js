@@ -15,7 +15,7 @@ const yargs = require('yargs');
 
 const auth = require('./auth');
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const fs = require('./fs');
 const request = require('./request');
 

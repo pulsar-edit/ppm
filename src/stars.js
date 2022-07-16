@@ -11,7 +11,7 @@ const _ = require('underscore-plus');
 const yargs = require('yargs');
 
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const Install = require('./install');
 const Login = require('./login');
 const request = require('./request');

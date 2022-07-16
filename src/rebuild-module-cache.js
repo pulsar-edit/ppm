@@ -10,7 +10,7 @@ const path = require('path');
 const async = require('async');
 const yargs = require('yargs');
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const fs = require('./fs');
 
 module.exports =

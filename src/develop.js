@@ -15,7 +15,7 @@ const _ = require('underscore-plus');
 const async = require('async');
 const yargs = require('yargs');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 const Install = require('./install');
 const git = require('./git');
@@ -39,7 +39,7 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
       options.usage(`\
-Usage: apm develop <package_name> [<directory>]
+Usage: ppm develop <package_name> [<directory>]
 Clone the given package's Git repository to the directory specified,
 install its dependencies, and link it for development to
 ~/.atom/dev/packages/<package_name>.

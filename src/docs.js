@@ -11,7 +11,7 @@ const yargs = require('yargs');
 const open = require('open');
 
 const View = require('./view');
-const config = require('./apm');
+const config = require('./ppm');
 
 module.exports =
 (Docs = (function() {
@@ -23,7 +23,7 @@ module.exports =
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
-Usage: apm docs [options] <package_name>
+Usage: ppm docs [options] <package_name>
 Open a package's homepage in the default browser.\
 `
       );

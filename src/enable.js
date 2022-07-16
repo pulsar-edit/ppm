@@ -12,7 +12,7 @@ const path = require('path');
 const CSON = require('season');
 const yargs = require('yargs');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 
 module.exports =
@@ -25,7 +25,7 @@ module.exports =
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
-Usage: apm enable [<package_name>]...
+Usage: ppm enable [<package_name>]...
 Enables the named package(s).\
 `
       );

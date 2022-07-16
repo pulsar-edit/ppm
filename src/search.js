@@ -11,7 +11,7 @@ const _ = require('underscore-plus');
 const yargs = require('yargs');
 
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const request = require('./request');
 const tree = require('./tree');
 const {isDeprecatedPackage} = require('./deprecated-packages');

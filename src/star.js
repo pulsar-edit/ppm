@@ -15,7 +15,7 @@ const async = require('async');
 const CSON = require('season');
 const yargs = require('yargs');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 const fs = require('./fs');
 const Login = require('./login');

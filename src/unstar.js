@@ -10,7 +10,7 @@ let Unstar;
 const async = require('async');
 const yargs = require('yargs');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 const Login = require('./login');
 const request = require('./request');

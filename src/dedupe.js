@@ -12,7 +12,7 @@ const async = require('async');
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 const fs = require('./fs');
 
@@ -34,7 +34,7 @@ module.exports =
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
-Usage: apm dedupe [<package_name>...]
+Usage: ppm dedupe [<package_name>...]
 Reduce duplication in the node_modules folder in the current directory.
 This command is experimental.\
 `

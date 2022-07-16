@@ -12,7 +12,7 @@ const path = require('path');
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 const fs = require('./fs');
 const Install = require('./install');

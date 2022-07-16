@@ -13,7 +13,7 @@ const yargs = require('yargs');
 const semver = require('semver');
 
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const request = require('./request');
 const tree = require('./tree');
 

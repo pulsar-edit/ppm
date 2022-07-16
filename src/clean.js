@@ -14,7 +14,7 @@ const yargs = require('yargs');
 const _ = require('underscore-plus');
 
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const fs = require('./fs');
 
 module.exports =
@@ -33,7 +33,7 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
       options.usage(`\
-Usage: apm clean
+Usage: ppm clean
 Deletes all packages in the node_modules folder that are not referenced
 as a dependency in the package.json file.\
 `

@@ -17,7 +17,7 @@ const yargs = require('yargs');
 
 const Command = require('./command');
 const fs = require('./fs');
-const config = require('./apm');
+const config = require('./ppm');
 const tree = require('./tree');
 const {getRepository} = require("./packages");
 
@@ -45,13 +45,13 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: apm list
-       apm list --themes
-       apm list --packages
-       apm list --installed
-       apm list --installed --enabled
-       apm list --installed --bare > my-packages.txt
-       apm list --json
+Usage: ppm list
+       ppm list --themes
+       ppm list --packages
+       ppm list --installed
+       ppm list --installed --enabled
+       ppm list --installed --bare > my-packages.txt
+       ppm list --json
 
 List all the installed packages and also the packages bundled with Atom.\
 `

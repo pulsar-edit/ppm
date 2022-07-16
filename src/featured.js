@@ -12,7 +12,7 @@ const _ = require('underscore-plus');
 const yargs = require('yargs');
 
 const Command = require('./command');
-const config = require('./apm');
+const config = require('./ppm');
 const request = require('./request');
 const tree = require('./tree');
 
@@ -26,10 +26,10 @@ module.exports =
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
-Usage: apm featured
-       apm featured --themes
-       apm featured --compatible 0.49.0
-List the Atom packages and themes that are currently featured in the
+Usage: ppm featured
+       ppm featured --themes
+       ppm featured --compatible 0.49.0
+List the Pulsar packages and themes that are currently featured in the
 atom.io registry.\
 `
       );
@@ -99,7 +99,7 @@ atom.io registry.\
           });
 
           console.log();
-          console.log(`Use \`apm install\` to install them or visit ${'http://atom.io/packages'.underline} to read more about them.`);
+          console.log(`Use \`ppm install\` to install them or visit ${'http://atom.io/packages'.underline} to read more about them.`);
           console.log();
         }
 

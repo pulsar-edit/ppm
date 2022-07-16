@@ -11,7 +11,7 @@ const child_process = require('child_process');
 const path = require('path');
 const _ = require('underscore-plus');
 const semver = require('semver');
-const config = require('./apm');
+const config = require('./ppm');
 const git = require('./git');
 
 module.exports =

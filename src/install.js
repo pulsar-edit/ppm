@@ -22,7 +22,7 @@ const semver = require('semver');
 const temp = require('temp');
 const hostedGitInfo = require('hosted-git-info');
 
-const config = require('./apm');
+const config = require('./ppm');
 const Command = require('./command');
 const fs = require('./fs');
 const RebuildModuleCache = require('./rebuild-module-cache');
@@ -51,12 +51,12 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: apm install [<package_name>...]
-       apm install <package_name>@<package_version>
-       apm install <git_remote>
-       apm install <github_username>/<github_project>
-       apm install --packages-file my-packages.txt
-       apm i (with any of the previous argument usage)
+Usage: ppm install [<package_name>...]
+       ppm install <package_name>@<package_version>
+       ppm install <git_remote>
+       ppm install <github_username>/<github_project>
+       ppm install --packages-file my-packages.txt
+       ppm i (with any of the previous argument usage)
 
 Install the given Atom package to ~/.atom/packages/<package_name>.
 

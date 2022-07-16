@@ -10,7 +10,7 @@ const {spawn} = require('child_process');
 const path = require('path');
 const _ = require('underscore-plus');
 const npm = require('npm');
-const config = require('./apm');
+const config = require('./ppm');
 const fs = require('./fs');
 
 const addPortableGitToEnv = function(env) {

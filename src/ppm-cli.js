@@ -20,7 +20,7 @@ const wordwrap = require('wordwrap');
 // Enable "require" scripts in asar archives
 require('asar-require');
 
-const config = require('./apm');
+const config = require('./ppm');
 const fs = require('./fs');
 const git = require('./git');
 

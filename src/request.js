@@ -8,7 +8,7 @@
 const npm = require('npm');
 const request = require('request');
 
-const config = require('./apm');
+const config = require('./ppm');
 
 const loadNpm = function(callback) {
   const npmOptions = {

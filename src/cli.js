@@ -4,8 +4,8 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const apm = require('./apm-cli');
+const apm = require('./ppm-cli');
 
-process.title = 'apm';
+process.title = 'ppm';
 
 apm.run(process.argv.slice(2), error => process.exitCode = (error != null) ? 1 : 0);
