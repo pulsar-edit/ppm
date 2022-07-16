@@ -2,7 +2,10 @@
   "name": "ppm",
   "version": "1.0.0",
   "description": "Pulsar Package Manager",
-  "main": "./lib/apms.js",
+  "main": "./src/ppm.js",
+  "bin": {
+    "ppm": "bin/ppm"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
