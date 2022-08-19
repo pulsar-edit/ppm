@@ -16,14 +16,10 @@ jobs:
           - macos-latest
           - windows-latest
         node_version:
-          - 12
           - 14
+          - 16
         node_arch:
           - x64
-        include:
-          - os: windows-2016
-            node_version: 12
-            node_arch: x86
     steps:
       - uses: actions/checkout@v2
 
