@@ -1,14 +1,14 @@
 {
-  "name": "@atom-ide-community/atom-package-manager",
-  "description": "Community build of the Atom package manager",
-  "version": "2.6.5-atomic.1.0",
+  "name": "pulsar-package-manager",
+  "description": "Pulsar package manager",
+  "version": "2.7.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atom-ide-community/apm.git"
+    "url": "https://github.com/pulsar-edit/ppm"
   },
   "bugs": {
-    "url": "https://github.com/atom-ide-community/apm/issues"
+    "url": "https://github.com/pulsar-edit/ppm/issues"
   },
   "main": "./lib/apm.js",
   "bin": {
