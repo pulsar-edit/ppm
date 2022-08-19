@@ -102,7 +102,8 @@ const downloadNode = function (version, done) {
   }
 }
 
-const versionToInstall = fs.readFileSync(path.resolve(__dirname, "..", ".npmrc"), "utf8").match(/target=(.*)\n/)[1]
+const versionToInstall = fs.readFileSync(path.resolve(__dirname, '..', 'BUNDLED_NODE_VERSION'), 'utf8').trim()
+
 downloadNode(versionToInstall, function (error) {
   if (error != null) {
     console.error("Failed to download node", error)
