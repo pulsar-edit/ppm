@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "express": "^4.17.1",
-    "jasmine-focused": ">=1.0.7 <2.0",
+    "jasmine-focused": "https://github.com/pulsar-edit/jasmine-focused/archive/refs/tags/v1.0.7.tar.gz",
     "node-gyp": "^5.1.1",
     "shx": "^0.3.3"
   }
