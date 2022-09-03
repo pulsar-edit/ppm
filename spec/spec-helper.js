@@ -4,7 +4,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const auth = require('../lib/auth');
+const auth = require('../lib/auth.js');
 
 global.silenceOutput = function(callThrough) {
   if (callThrough == null) { callThrough = false; }
