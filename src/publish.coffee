@@ -306,9 +306,10 @@ class Publish extends Command
 
       semverRange is 'latest'
 
-    if pack.engines?.atom?
-      unless semver.validRange(pack.engines.atom)
-        throw new Error("The Atom engine range in the package.json file is invalid: #{pack.engines.atom}")
+    range = pack.engines?.pulsar or pack.engines?.atom
+    if range?
+      unless semver.validRange(range)
+        throw new Error("The Pulsar or Atom engine range in the package.json file is invalid: #{range}")
 
     for packageName, semverRange of pack.dependencies
       unless isValidRange(semverRange)
