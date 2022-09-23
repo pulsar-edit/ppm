@@ -32,7 +32,7 @@ jobs:
       - name: Install npm
         run: npm install -g npm
 
-      - if: "!contains(matrix.os, 'windows')"
+      - if: "contains(matrix.os, 'windows')"
         name: Instal windows build tools
         uses: crazy-max/ghaction-chocolatey@v2
         with:
