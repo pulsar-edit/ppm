@@ -29,7 +29,7 @@ class Develop extends Command
 
       Clone the given package's Git repository to the directory specified,
       install its dependencies, and link it for development to
-      ~/.atom/dev/packages/<package_name>.
+      ~/.pulsar/dev/packages/<package_name>.
 
       If no directory is specified then the repository is cloned to
       ~/github/<package_name>. The default folder to clone packages into can

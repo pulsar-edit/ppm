@@ -20,11 +20,11 @@ class Uninstall extends Command
 
       Usage: apm uninstall <package_name>...
 
-      Delete the installed package(s) from the ~/.atom/packages directory.
+      Delete the installed package(s) from the ~/.pulsar/packages directory.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
-    options.alias('d', 'dev').boolean('dev').describe('dev', 'Uninstall from ~/.atom/dev/packages')
-    options.boolean('hard').describe('hard', 'Uninstall from ~/.atom/packages and ~/.atom/dev/packages')
+    options.alias('d', 'dev').boolean('dev').describe('dev', 'Uninstall from ~/.pulsar/dev/packages')
+    options.boolean('hard').describe('hard', 'Uninstall from ~/.pulsar/packages and ~/.pulsar/dev/packages')
 
   getPackageVersion: (packageDirectory) ->
     try

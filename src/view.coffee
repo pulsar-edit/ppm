@@ -39,7 +39,7 @@ class View extends Command
         continue unless semver.valid(version)
         continue unless metadata
 
-        engine = metadata.engines?.atom ? '*'
+        engine = metadata.engines?.pulsar or metadata.engines?.atom or '*'
         continue unless semver.validRange(engine)
         continue unless semver.satisfies(installedAtomVersion, engine)
 

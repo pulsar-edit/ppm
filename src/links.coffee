@@ -23,7 +23,7 @@ class Links extends Command
       Usage: apm links
 
       List all of the symlinked atom packages in ~/.atom/packages and
-      ~/.atom/dev/packages.
+      ~/.pulsar/dev/packages.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
 

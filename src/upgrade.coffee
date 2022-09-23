@@ -33,7 +33,7 @@ class Upgrade extends Command
              apm upgrade --list
              apm upgrade [<package_name>...]
 
-      Upgrade out of date packages installed to ~/.atom/packages
+      Upgrade out of date packages installed to ~/.pulsar/packages
 
       This command lists the out of date packages and then prompts to install
       available updates.
@@ -96,7 +96,7 @@ class Upgrade extends Command
           continue unless semver.valid(version)
           continue unless metadata
 
-          engine = metadata.engines?.atom ? '*'
+          engine = metadata.engines?.pulsar or metadata.engines?.atom or '*'
           continue unless semver.validRange(engine)
           continue unless semver.satisfies(atomVersion, engine)
 

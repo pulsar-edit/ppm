@@ -74,7 +74,7 @@ describe 'apm publish', ->
       callback.callCount is 1
 
     runs ->
-      expect(callback.mostRecentCall.args[0].message).toBe 'The Atom engine range in the package.json file is invalid: ><>'
+      expect(callback.mostRecentCall.args[0].message).toBe 'The Pulsar or Atom engine range in the package.json file is invalid: ><>'
 
   it "validates the dependency semver ranges in the package.json file", ->
     packageToPublish = temp.mkdirSync('apm-test-package-')

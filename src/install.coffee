@@ -441,7 +441,8 @@ class Install extends Command
       continue unless metadata
       continue if isDeprecatedPackage(pack.name, version)
 
-      engine = metadata.engines?.atom ? '*'
+      engines = metadata.engines
+      engine = engines?.pulsar or engines?.atom or '*'
       continue unless semver.validRange(engine)
       continue unless semver.satisfies(@installedAtomVersion, engine)
 
