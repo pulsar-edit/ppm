@@ -41,13 +41,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - if: "!contains(matrix.os, 'windows')"
-        name: Run tests 👩🏾‍💻
+      # - if: "!contains(matrix.os, 'windows')"
+      - name: Run tests 👩🏾‍💻
         run: ./bin/npm test
 
-      - if: "contains(matrix.os, 'windows')"
-        name: Run tests 👩🏾‍💻
-        run: bin\npm.exe test
+      # - if: "contains(matrix.os, 'windows')"
+      #   name: Run tests 👩🏾‍💻
+      #   run: bin\npm.exe test
 
   Skip:
     if: contains(github.event.head_commit.message, '[skip ci]')
