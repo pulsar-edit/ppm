@@ -32,12 +32,22 @@ jobs:
       - name: Install npm
         run: npm install -g npm
 
+      - if: "!contains(matrix.os, 'windows')"
+        name: Instal windows build tools
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: install visualstudio2019-workload-vctools -y
+
       - name: Install dependencies
         run: npm install
 
       - if: "!contains(matrix.os, 'windows')"
         name: Run tests 👩🏾‍💻
         run: ./bin/npm test
+
+      - if: "contains(matrix.os, 'windows')"
+        name: Run tests 👩🏾‍💻
+        run: bin\npm.exe test
 
   Skip:
     if: contains(github.event.head_commit.message, '[skip ci]')
