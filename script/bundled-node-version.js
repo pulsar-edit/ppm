@@ -1,23 +1,69 @@
 const child_process = require('child_process')
 
 module.exports = function(filename, callback) {
-  child_process.exec(filename + ' -v', function(error, stdout) {
-    if (error != null) {
-      callback(error);
-      return;
-    }
+  if (process.platform === 'win32') {
 
+    // Due to windows shell handling, using spawn here will allow better compatibility
     let version = null;
-    if (stdout != null) {
-      version = stdout.toString().trim();
-    }
+    let arch = null;
 
-    child_process.exec(filename + " -p 'process.arch'", function(error, stdout) {
-      let arch = null;
-      if (stdout != null) {
-        arch = stdout.toString().trim();
+    const node_shell = child_process.spawn(`"${filename}"`, ['-v'], { shell: true });
+
+    node_shell.stderr.on('data', (error) => {
+      callback(error.toString());
+    });
+
+    node_shell.stdout.on('data', (data) => {
+      if (data != null) {
+        version = data.toString().trim();
       }
-      callback(error, version, arch);
-    })
-  });
+    });
+
+    node_shell.on('close', (code) => {
+      if (code !== 0) {
+        callback(`${filename} -v' Exited with: ${code}`);
+      }
+    });
+
+    const arch_shell = child_process.spawn(`"${filename}"`, ['-p', 'process.arch'], { shell: true });
+
+    arch_shell.stderr.on('data', (error) => {
+      callback(error.toString());
+    });
+
+    arch_shell.stdout.on('data', (data) => {
+      if (data != null) {
+        arch = data.toString().trim();
+      }
+
+      callback(null, version, arch);
+    });
+
+    arch_shell.on('close', (code) => {
+      if (code !== 0) {
+        callback(`'${filename} -p process.arch' Exited with: ${code}`);
+      }
+    });
+
+  } else {
+    child_process.exec(filename + ' -v', function(error, stdout) {
+      if (error != null) {
+        callback(error);
+        return;
+      }
+
+      let version = null;
+      if (stdout != null) {
+        version = stdout.toString().trim();
+      }
+
+      child_process.exec(filename + " -p 'process.arch'", function(error, stdout) {
+        let arch = null;
+        if (stdout != null) {
+          arch = stdout.toString().trim();
+        }
+        callback(error, version, arch);
+      })
+    });
+  }
 }
