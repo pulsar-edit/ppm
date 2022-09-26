@@ -71,7 +71,7 @@ describe('apm ci', function() {
       console.log("Shutting down Testing Server...");
     });
   });
-    it('installs dependency versions as specified by the lockfile', function() {
+    it('installs dependency versions as specified by the lockfile', async function() {
       var callback, moduleDirectory;
       moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module-with-lockfile');
       wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
