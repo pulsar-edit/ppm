@@ -1,4 +1,4 @@
-# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
+# See https://pulsar-edit.github.io/docs/atom-archive/hacking-atom/#menus for more details
 'context-menu':
   'atom-text-editor': [
     {

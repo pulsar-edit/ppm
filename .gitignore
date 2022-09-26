@@ -1,5 +1,6 @@
 /node_modules/
 /bin/node*
+src/
 .DS_Store
 npm-debug.log
 *~

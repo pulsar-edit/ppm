@@ -1,5 +1,5 @@
 # If you want some example snippets, check out:
-# https://github.com/atom/language-javascript/blob/master/snippets/javascript.cson
+# https://github.com/pulsar-edit/language-javascript/blob/master/snippets/language-javascript.cson
 
 '.source.__package-name__':
   'Method documentation':
