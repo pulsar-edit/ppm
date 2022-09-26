@@ -14,8 +14,9 @@ describe('apm ci', function() {
   let resourcePath = ref[1];
   let server = ref[2];
 
+  let app = express();
+
   beforeAll(function() {
-    let app, live;
     //spyOnToken();
     //silenceOutput();
     atomHome = temp.mkdirSync('apm-home-dir-');
@@ -23,8 +24,6 @@ describe('apm ci', function() {
     resourcePath = temp.mkdirSync('atom-resource-path-');
     process.env.ATOM_RESOURCE_PATH = resourcePath;
     delete process.env.npm_config_cache;
-
-    app = express();
 
     app.get('/node/v10.20.1/node-v10.20.1.tar.gz', (req, res) => {
       res.sendFile(path.join(__dirname, 'fixtures', 'node-v10.20.1.tar.gz'));
@@ -68,12 +67,8 @@ describe('apm ci', function() {
     });
   });
   afterAll(function() {
-    let done = false;
-    server.close(function() {
-      return done = true;
-    });
-    return waitsFor(function() {
-      return done;
+    server.close(() => {
+      console.log("Shutting down Testing Server...");
     });
   });
     it('installs dependency versions as specified by the lockfile', function() {
