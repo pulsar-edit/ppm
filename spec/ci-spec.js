@@ -16,9 +16,9 @@ describe('apm ci', function() {
 
   let app = express();
 
-  beforeAll(function() {
-    //spyOnToken();
-    //silenceOutput();
+  beforeEach(function() {
+    spyOnToken();
+    silenceOutput();
     atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
     resourcePath = temp.mkdirSync('atom-resource-path-');
@@ -66,7 +66,7 @@ describe('apm ci', function() {
       process.env.npm_config_registry = 'http://localhost:3300/';
     });
   });
-  afterAll(function() {
+  afterEach(function() {
     server.close(() => {
       console.log("Shutting down Testing Server...");
     });
