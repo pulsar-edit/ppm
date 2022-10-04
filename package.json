@@ -1,11 +1,11 @@
 {
-  "name": "pulsar-package-manager",
+  "name": "@pulsar-edit/pulsar-package-manager",
   "description": "Pulsar package manager",
   "version": "2.7.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pulsar-edit/ppm"
+    "url": "git+https://github.com/pulsar-edit/ppm.git"
   },
   "bugs": {
     "url": "https://github.com/pulsar-edit/ppm/issues"
@@ -15,16 +15,16 @@
     "apm": "bin/apm"
   },
   "scripts": {
-    "check-version": "node script/check-version.js",
+    "check-version": "pnpm script/check-version.js",
     "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean:lib": "shx rm -rf lib && shx mkdir -p lib",
-    "clean": "npm run clean:lib && npm run clean:bin",
+    "clean": "pnpm clean:lib && pnpm clean:bin",
     "lint": "coffeelint src spec",
     "coffee": "coffee --compile --output lib src",
-    "build": "npm run clean:lib && npm run coffee",
-    "prepare": "npm run build",
-    "postinstall": "node script/postinstall.js",
-    "test": "npm run check-version && npm run lint && jasmine-focused --captureExceptions --coffee spec"
+    "build": "pnpm clean:lib && pnpm coffee",
+    "prepare": "pnpm build",
+    "postinstall": "pnpm script/postinstall.js",
+    "test": "pnpm check-version && pnpm lint && jasmine-focused --captureExceptions --coffee spec"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",
@@ -61,5 +61,16 @@
     "jasmine-focused": ">=1.0.7 <2.0",
     "node-gyp": "^5.1.1",
     "shx": "^0.3.3"
-  }
+  },
+  "homepage": "https://github.com/pulsar-edit/ppm#readme",
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [
+    "pulsar",
+    "ppm",
+    "javascript",
+    "pnpm"
+  ],
+  "author": "@pulsar-edit"
 }
