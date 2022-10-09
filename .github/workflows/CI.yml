@@ -35,8 +35,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - if: "!contains(matrix.os, 'windows')"
-        name: Run tests 👩🏾‍💻
+      - name: Run tests 👩🏾‍💻
         run: ./bin/npm test
 
   Skip:
