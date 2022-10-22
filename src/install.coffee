@@ -174,7 +174,7 @@ class Install extends Command
 
     @fork(@atomNpmPath, installArgs, installOptions, callback)
 
-  # Request package information from the atom.io API for a given package name.
+  # Request package information from the package API for a given package name.
   #
   # packageName - The string name of the package to request.
   # callback - The function to invoke when the request completes with an error

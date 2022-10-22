@@ -51,7 +51,7 @@ module.exports =
 
   getErrorMessage: (response, body) ->
     if response?.statusCode is 503
-      'atom.io is temporarily unavailable, please try again later.'
+      "#{response.host} is temporarily unavailable, please try again later."
     else
       body?.message ? body?.error ? body
 

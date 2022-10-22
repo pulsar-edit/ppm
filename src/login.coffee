@@ -24,11 +24,11 @@ class Login extends Command
     options.usage """
       Usage: apm login
 
-      Enter your Atom.io API token and save it to the keychain. This token will
-      be used to identify you when publishing packages to atom.io.
+      Enter your package API token and save it to the keychain. This token will
+      be used to identify you when publishing packages.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
-    options.string('token').describe('token', 'atom.io API token')
+    options.string('token').describe('token', 'Package API token')
 
   run: (options) ->
     {callback} = options
@@ -59,7 +59,7 @@ class Login extends Command
     """
     console.log welcome
 
-    @prompt({prompt: "Press [Enter] to open your account page on Atom.io."})
+    @prompt({prompt: "Press [Enter] to open your account page."})
 
   openURL: (state) ->
     return Q(state) if state.token

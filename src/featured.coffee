@@ -18,8 +18,7 @@ class Featured extends Command
              apm featured --themes
              apm featured --compatible 0.49.0
 
-      List the Atom packages and themes that are currently featured in the
-      atom.io registry.
+      List the Atom packages and themes that are currently featured.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.alias('t', 'themes').boolean('themes').describe('themes', 'Only list themes')
