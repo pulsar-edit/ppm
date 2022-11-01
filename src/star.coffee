@@ -22,7 +22,7 @@ class Star extends Command
 
       Usage: apm star <package_name>...
 
-      Star the given packages on https://atom.io
+      Star the given packages
 
       Run `apm stars` to see all your starred packages.
     """

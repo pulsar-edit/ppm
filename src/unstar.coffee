@@ -16,7 +16,7 @@ class Unstar extends Command
 
       Usage: apm unstar <package_name>...
 
-      Unstar the given packages on https://atom.io
+      Unstar the given packages
 
       Run `apm stars` to see all your starred packages.
     """

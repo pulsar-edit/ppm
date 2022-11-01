@@ -17,7 +17,7 @@ class Search extends Command
 
       Usage: apm search <package_name>
 
-      Search for Atom packages/themes on the atom.io registry.
+      Search for packages/themes.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.boolean('json').describe('json', 'Output matching packages as JSON array')

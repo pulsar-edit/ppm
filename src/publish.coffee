@@ -40,7 +40,7 @@ class Publish extends Command
       For example, `apm publish -t v1.12.0`.
 
       If a new name is provided via the --rename flag, the package.json file is
-      updated with the new name and the package's name is updated on Atom.io.
+      updated with the new name and the package's name is updated.
 
       Run `apm featured` to see all the featured packages or
       `apm view <packagename>` to see information about your package after you
@@ -79,7 +79,7 @@ class Publish extends Command
       @logCommandResults(callback, args...)
 
   # Check for the tag being available from the GitHub API before notifying
-  # atom.io about the new version.
+  # the package server about the new version.
   #
   # The tag is checked for 5 times at 1 second intervals.
   #

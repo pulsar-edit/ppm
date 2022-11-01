@@ -17,7 +17,7 @@ class View extends Command
 
       Usage: apm view <package_name>
 
-      View information about a package/theme in the atom.io registry.
+      View information about a package/theme.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.boolean('json').describe('json', 'Output featured packages as JSON array')

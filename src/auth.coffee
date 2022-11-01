@@ -12,7 +12,7 @@ catch error
 tokenName = 'Atom.io API Token'
 
 module.exports =
-  # Get the Atom.io API token from the keychain.
+  # Get the package API token from the keychain.
   #
   # callback - A function to call with an error as the first argument and a
   #            string token as the second argument.
@@ -28,7 +28,7 @@ module.exports =
           callback(null, token)
         else
           callback """
-            No Atom.io API token in keychain
+            No package API token in keychain
             Run `apm login` or set the `ATOM_ACCESS_TOKEN` environment variable.
           """
 
