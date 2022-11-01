@@ -35,8 +35,8 @@ class Install extends Command
 
       Usage: apm install [<package_name>...]
              apm install <package_name>@<package_version>
-             apm install <git_remote>
-             apm install <github_username>/<github_project>
+             apm install <git_remote> [-b <branch_or_tag_or_commit>]
+             apm install <github_username>/<github_project> [-b <branch_or_tag_or_commit>]
              apm install --packages-file my-packages.txt
              apm i (with any of the previous argument usage)
 
@@ -50,9 +50,11 @@ class Install extends Command
       package names to install with optional versions using the
       `package-name@version` syntax.
     """
-    options.alias('c', 'compatible').string('compatible').describe('compatible', 'Only install packages/themes compatible with this Atom version')
+    options.alias('c', 'compatible').string('compatible').describe('compatible', 'Only install packages/themes compatible with this Pulsar version')
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.alias('s', 'silent').boolean('silent').describe('silent', 'Set the npm log level to silent')
+    options.alias('b', 'branch').string('branch').describe('branch', 'Sets the tag or branch to install')
+    options.alias('t', 'tag').string('tag').describe('tag', 'Sets the tag or branch to install')
     options.alias('q', 'quiet').boolean('quiet').describe('quiet', 'Set the npm log level to warn')
     options.boolean('check').describe('check', 'Check that native build tools are installed')
     options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information')
@@ -454,7 +456,7 @@ class Install extends Command
   getHostedGitInfo: (name) ->
     hostedGitInfo.fromUrl(name)
 
-  installGitPackage: (packageUrl, options, callback) ->
+  installGitPackage: (packageUrl, options, callback, version) ->
     tasks = []
 
     cloneDir = temp.mkdirSync("atom-git-package-clone-")
@@ -465,12 +467,20 @@ class Install extends Command
         next(err, data)
 
     tasks.push (data, next) =>
-      @installGitPackageDependencies cloneDir, options, (err) ->
-        next(err, data)
+      if version
+        repo = Git.open(cloneDir)
+        data.sha = version
+        checked = repo.checkoutRef("refs/tags/#{version}", false) or
+                  repo.checkoutReference(version, false)
+        error = "Can't find the branch, tag, or commit referenced by #{version}" unless checked
+        next(error, data)
+      else
+        @getRepositoryHeadSha cloneDir, (err, sha) ->
+          data.sha = sha
+          next(err, data)
 
     tasks.push (data, next) =>
-      @getRepositoryHeadSha cloneDir, (err, sha) ->
-        data.sha = sha
+      @installGitPackageDependencies cloneDir, options, (err) ->
         next(err, data)
 
     tasks.push (data, next) ->
@@ -573,7 +583,7 @@ class Install extends Command
       gitPackageInfo = @getHostedGitInfo(name)
 
       if gitPackageInfo or name.indexOf('file://') is 0
-        @installGitPackage name, options, nextInstallStep
+        @installGitPackage name, options, nextInstallStep, options.argv.branch or options.argv.tag
       else if name is '.'
         @installDependencies(options, nextInstallStep)
       else # is registered package
