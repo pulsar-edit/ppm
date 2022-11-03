@@ -62,7 +62,7 @@ for (const commandClass of commandClasses) {
 }
 
 function parseOptions(args) {
-  args ||= [];
+  if (!args) args = [];
   const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()));
   options.usage("\nPulsar Package Manager powered by https://pulsar-edit.com\n\n  Usage: apm <command>\n\n  where <command> is one of:\n  " + (wordwrap(4, 80)(Object.keys(commands).sort().join(', '))) + ".\n\n  Run `apm help <command>` to see the more details about a specific command.");
   options.alias('v', 'version').describe('version', 'Print the apm version');
@@ -109,16 +109,13 @@ function printVersions(args, callback) {
           }
           console.log(JSON.stringify(versions));
         } else {
-          pythonVersion ||= '';
-          gitVersion ||= '';
-          atomVersion ||= '';
           const versions = [
             `apm  ${apmVersion}`.red,
             `npm  ${npmVersion}`.green,
             `node ${nodeVersion} ${process.arch}`.blue,
-            `atom ${atomVersion}`.cyan,
-            `python ${pythonVersion}`.yellow,
-            `git ${gitVersion}`.magenta
+            `atom ${atomVersion || ''}`.cyan,
+            `python ${pythonVersion || ''}`.yellow,
+            `git ${gitVersion || ''}`.magenta
           ];
           if (config.isWin32()) {
             const visualStudioVersion = config.getInstalledVisualStudioFlag() || '';
@@ -161,7 +158,7 @@ function getPythonVersion(callback) {
         python = pythonExe;
       }
     }
-    python ||= 'python';
+    if (!python) python = 'python';
     const spawned = spawn(python, ['--version']);
     const outputChunks = [];
     spawned.stderr.on('data', chunk =>
