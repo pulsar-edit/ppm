@@ -22,7 +22,36 @@ function setupTempDirectory() {
 
 setupTempDirectory();
 
-const commandClasses = [require('./ci'), require('./clean'), require('./config'), require('./dedupe'), require('./develop'), require('./disable'), require('./docs'), require('./enable'), require('./featured'), require('./init'), require('./install'), require('./links'), require('./link'), require('./list'), require('./login'), require('./publish'), require('./rebuild'), require('./rebuild-module-cache'), require('./search'), require('./star'), require('./stars'), require('./test'), require('./uninstall'), require('./unlink'), require('./unpublish'), require('./unstar'), require('./upgrade'), require('./view')];
+const commandClasses = [
+  require('./ci'),
+  require('./clean'),
+  require('./config'),
+  require('./dedupe'),
+  require('./develop'),
+  require('./disable'),
+  require('./docs'),
+  require('./enable'),
+  require('./featured'),
+  require('./init'),
+  require('./install'),
+  require('./links'),
+  require('./link'),
+  require('./list'),
+  require('./login'),
+  require('./publish'),
+  require('./rebuild'),
+  require('./rebuild-module-cache'),
+  require('./search'),
+  require('./star'),
+  require('./stars'),
+  require('./test'),
+  require('./uninstall'),
+  require('./unlink'),
+  require('./unpublish'),
+  require('./unstar'),
+  require('./upgrade'),
+  require('./view')
+];
 
 const commands = {};
 
