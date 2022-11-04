@@ -5,6 +5,7 @@ const colors = require('colors');
 const npm = require('npm');
 const yargs = require('yargs');
 const wordwrap = require('wordwrap');
+// Enable "require" scripts in asar archives
 require('asar-require');
 const config = require('./apm');
 const fs = require('./fs');
@@ -12,6 +13,7 @@ const git = require('./git');
 
 function setupTempDirectory() {
   const temp = require('temp');
+  // Resolve ~ in tmp dir atom/atom#2271
   let tempDirectory = require('os').tmpdir();
   temp.dir = path.resolve(fs.absolute(tempDirectory));
   try {
@@ -197,6 +199,7 @@ module.exports = {
           message = error.message || error;
         }
         if (message === 'canceled') {
+          // A prompt was canceled so just log an empty line
           console.log();
         } else if (message) {
           console.error(message.red);
