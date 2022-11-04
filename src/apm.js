@@ -63,7 +63,7 @@ module.exports = {
       case 'win32':
         const glob = require('glob');
         const pattern = "/Users/" + process.env.USERNAME + "/AppData/Local/atom/app-+([0-9]).+([0-9]).+([0-9])/resources/app.asar";
-        const asarPaths = glob.sync(pattern, null);
+        const asarPaths = glob.sync(pattern, null); // [] | a sorted array of locations with the newest version being last
         asarPath = asarPaths[asarPaths.length - 1];
         return process.nextTick( () => callback(asarPath) );
       default:
@@ -89,6 +89,7 @@ module.exports = {
     if (!this.isWin32()) {
       return null;
     }
+    // Use the explictly-configured version when set
     if (process.env.GYP_MSVS_VERSION) {
       return process.env.GYP_MSVS_VERSION;
     }
