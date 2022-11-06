@@ -86,7 +86,7 @@ function showHelp(options) {
     help += "\n  Prefix an option with `no-` to set it to false such as --no-color to disable";
     help += "\n  colored output.";
   }
-  return console.error(help);
+  console.error(help);
 };
 
 function printVersions(args, callback) {
