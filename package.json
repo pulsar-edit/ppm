@@ -21,7 +21,7 @@
     "clean": "npm run clean:lib && npm run clean:bin",
     "lint": "coffeelint src spec",
     "coffee": "coffee --compile --output lib src",
-    "build": "npm run clean:lib && npm run coffee",
+    "build": "npm run clean:lib && npm run coffee && shx cp src/*.js lib",
     "prepare": "npm run build",
     "postinstall": "node script/postinstall.js",
     "test": "npm run check-version && npm run lint && jasmine-focused --captureExceptions --coffee spec"
