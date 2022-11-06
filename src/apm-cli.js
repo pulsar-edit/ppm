@@ -80,7 +80,7 @@ function parseOptions(args) {
 };
 
 function showHelp(options) {
-  if (options == null) return;
+  if (!options) return;
   let help = options.help();
   if (help.indexOf('Options:') >= 0) {
     help += "\n  Prefix an option with `no-` to set it to false such as --no-color to disable";
