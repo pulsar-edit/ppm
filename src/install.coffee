@@ -332,7 +332,7 @@ class Install extends Command
   # Get all package dependency names and versions from the package.json file.
   getPackageDependencies: (cloneDir) ->
     try
-      fileName = path.join cloneDir, 'package.json'
+      fileName = path.join (cloneDir || '.'), 'package.json'
       metadata = fs.readFileSync(fileName, 'utf8')
       {packageDependencies, dependencies} = JSON.parse(metadata) ? {}
 
