@@ -1,10 +1,7 @@
 const path = require('path')
-const CSON = require('season')
-const fs = require('fs-plus')
 const temp = require('temp')
 const express = require('express')
 const http = require('http')
-const wrench = require('wrench')
 const apm = require('../lib/apm-cli')
 
 describe('apm rebuild', () => {
