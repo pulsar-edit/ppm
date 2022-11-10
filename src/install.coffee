@@ -311,7 +311,7 @@ class Install extends Command
   installPackageDependencies: (options, callback) ->
     options = _.extend({}, options, installGlobally: false)
     commands = []
-    for name, version of @getPackageDependencies()
+    for name, version of @getPackageDependencies(options.cwd)
       do (name, version) =>
         commands.push (next) =>
           if @repoLocalPackagePathRegex.test(version)
@@ -330,9 +330,10 @@ class Install extends Command
     async.waterfall commands, callback
 
   # Get all package dependency names and versions from the package.json file.
-  getPackageDependencies: ->
+  getPackageDependencies: (cloneDir) ->
     try
-      metadata = fs.readFileSync('package.json', 'utf8')
+      fileName = path.join (cloneDir or '.'), 'package.json'
+      metadata = fs.readFileSync(fileName, 'utf8')
       {packageDependencies, dependencies} = JSON.parse(metadata) ? {}
 
       return {} unless packageDependencies
