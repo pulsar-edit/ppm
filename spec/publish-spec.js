@@ -7,7 +7,6 @@ const apm = require('../lib/apm-cli')
 
 describe('apm publish', () => {
   var server
-  server = [][0]
 
   beforeEach(() => {
     spyOnToken()
@@ -16,8 +15,7 @@ describe('apm publish', () => {
     server = http.createServer(app)
     var live = false
     server.listen(3000, '127.0.0.1', () => {
-      const atomHome = temp.mkdirSync('apm-home-dir-')
-      process.env.ATOM_HOME = atomHome
+      process.env.ATOM_HOME = temp.mkdirSync('apm-home-dir-')
       process.env.ATOM_API_URL = 'http://localhost:3000/api'
       process.env.ATOM_RESOURCE_PATH = temp.mkdirSync('atom-resource-path-')
       live = true
