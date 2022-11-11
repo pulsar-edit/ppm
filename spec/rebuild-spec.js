@@ -47,7 +47,7 @@ describe('apm rebuild', () => {
     server.close(() => {
       done = true
     })
-    return waitsFor(() => done)
+    waitsFor(() => done)
   })
 
   it('rebuilds all modules when no module names are specified', () => {
