@@ -203,7 +203,7 @@ module.exports = {
         if (_.isString(error)) {
           message = error;
         } else {
-          message = error.message ?? error;
+          message = error?.message ?? error;
         }
 
         if (message === 'canceled') {
