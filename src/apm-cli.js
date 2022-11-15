@@ -1,25 +1,28 @@
 const {spawn} = require('child_process');
 const path = require('path');
+
 const _ = require('underscore-plus');
 const colors = require('colors');
 const npm = require('npm');
 const yargs = require('yargs');
 const wordwrap = require('wordwrap');
+
 // Enable "require" scripts in asar archives
 require('asar-require');
+
 const config = require('./apm');
 const fs = require('./fs');
 const git = require('./git');
 
 function setupTempDirectory() {
   const temp = require('temp');
-  // Resolve ~ in tmp dir atom/atom#2271
   let tempDirectory = require('os').tmpdir();
+  // Resolve ~ in tmp dir atom/atom#2271
   temp.dir = path.resolve(fs.absolute(tempDirectory));
   try {
     fs.makeTreeSync(temp.dir);
   } catch (e) {}
-  return temp.track();
+  temp.track();
 };
 
 setupTempDirectory();
@@ -56,7 +59,6 @@ const commandClasses = [
 ];
 
 const commands = {};
-
 for (const commandClass of commandClasses) {
   for (const name of commandClass.commandNames || []) {
     commands[name] = commandClass;
@@ -66,10 +68,10 @@ for (const commandClass of commandClasses) {
 function parseOptions(args) {
   if (!args) args = [];
   const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()));
-  options.usage("\nPulsar Package Manager powered by https://pulsar-edit.com\n\n  Usage: apm <command>\n\n  where <command> is one of:\n  " + (wordwrap(4, 80)(Object.keys(commands).sort().join(', '))) + ".\n\n  Run `apm help <command>` to see the more details about a specific command.");
+  options.usage(`\nPulsar Package Manager powered by https://pulsar-edit.com\n\n  Usage: apm <command>\n\n  where <command> is one of:\n  ${wordwrap(4, 80)(Object.keys(commands).sort().join(', '))}.\n\n  Run \`apm help <command>\` to see the more details about a specific command.`);
   options.alias('v', 'version').describe('version', 'Print the apm version');
   options.alias('h', 'help').describe('help', 'Print this usage message');
-  options.boolean('color')["default"]('color', true).describe('color', 'Enable colored output');
+  options.boolean('color').default('color', true).describe('color', 'Enable colored output');
   options.command = options.argv._[0];
   for (let i = 0; i < args.length; i++) {
     if (args[i] !== options.command) continue;
@@ -80,19 +82,22 @@ function parseOptions(args) {
 };
 
 function showHelp(options) {
-  if (!options) return;
+  if (options == null) return;
+
   let help = options.help();
   if (help.indexOf('Options:') >= 0) {
     help += "\n  Prefix an option with `no-` to set it to false such as --no-color to disable";
     help += "\n  colored output.";
   }
+
   console.error(help);
 };
 
 function printVersions(args, callback) {
-  const apmVersion = require('../package.json').version || '';
-  const npmVersion = require('npm/package.json').version || '';
-  const nodeVersion = process.versions.node || '';
+  const apmVersion = require('../package.json').version ?? '';
+  const npmVersion = require('npm/package.json').version ?? '';
+  const nodeVersion = process.versions.node ?? '';
+
   getPythonVersion( pythonVersion =>
     git.getGitVersion( gitVersion =>
       getAtomVersion( atomVersion => {
@@ -119,10 +124,12 @@ function printVersions(args, callback) {
             `python ${pythonVersion || ''}`.yellow,
             `git ${gitVersion || ''}`.magenta
           ];
+
           if (config.isWin32()) {
             const visualStudioVersion = config.getInstalledVisualStudioFlag() || '';
             versions.push(`visual studio ${visualStudioVersion}`.cyan);
           }
+      
           console.log(versions.join("\n"));
         }
         callback();
@@ -133,15 +140,14 @@ function printVersions(args, callback) {
 
 function getAtomVersion(callback) {
   config.getResourcePath( resourcePath => {
-    const unknownVersion = 'unknown';
     try {
-      const version = require(path.join(resourcePath, 'package.json')).version || unknownVersion;
+      const version = require(path.join(resourcePath, 'package.json')).version ?? 'unknown';
       callback(version);
     } catch (e) {
       callback(unknownVersion);
     }
   });
-};
+}
 
 function getPythonVersion(callback) {
   const npmOptions = {
@@ -149,9 +155,9 @@ function getPythonVersion(callback) {
     globalconfig: config.getGlobalConfigPath()
   };
   npm.load(npmOptions, () => {
-    let python = npm.config.get('python') || process.env.PYTHON;
+    let python = npm.config.get('python') ?? process.env.PYTHON;
     if (config.isWin32() && !python) {
-      let rootDir = process.env.SystemDrive || 'C:\\';
+      let rootDir = process.env.SystemDrive ?? 'C:\\';
       if (rootDir[rootDir.length - 1] !== '\\') {
         rootDir += '\\';
       }
@@ -160,20 +166,19 @@ function getPythonVersion(callback) {
         python = pythonExe;
       }
     }
-    if (!python) python = 'python';
+
+    if (python == null) python = 'python';
+
     const spawned = spawn(python, ['--version']);
     const outputChunks = [];
-    spawned.stderr.on('data', chunk =>
-      outputChunks.push(chunk)
-    );
-    spawned.stdout.on('data', chunk =>
-      outputChunks.push(chunk)
-    );
+    spawned.stderr.on('data', chunk => outputChunks.push(chunk));
+    spawned.stdout.on('data', chunk => outputChunks.push(chunk));
     spawned.on('error', () => {});
     spawned.on('close', code => {
       let version;
       if (code === 0) {
-        version = Buffer.concat(outputChunks).toString().split(' ')[1]?.trim();
+        version = Buffer.concat(outputChunks).toString().split(' ')[1];
+        version = version != null ? version.trim() : undefined;
       }
       callback(version);
     });
@@ -184,9 +189,11 @@ module.exports = {
   run(rawArgs, callback) {
     config.setupApmRcFile();
     const options = parseOptions(rawArgs);
+
     if (!options.argv.color) {
       colors.disable();
     }
+
     let callbackCalled = false;
     options.callback = error => {
       if (callbackCalled) return;
@@ -196,8 +203,9 @@ module.exports = {
         if (_.isString(error)) {
           message = error;
         } else {
-          message = error.message || error;
+          message = error.message ?? error;
         }
+
         if (message === 'canceled') {
           // A prompt was canceled so just log an empty line
           console.log();
@@ -207,8 +215,9 @@ module.exports = {
       }
       callback?.(error);
     };
+
     const args = options.argv;
-    const command = options.command;
+    const {command} = options;
     if (args.version) {
       printVersions(args, options.callback);
     } else if (args.help) {
@@ -233,7 +242,7 @@ module.exports = {
         if (Command) {
           new Command().run(options);
         } else {
-          options.callback("Unrecognized command: " + command);
+          options.callback(`Unrecognized command: ${command}`);
         }
       }
     } else {
