@@ -68,7 +68,16 @@ for (const commandClass of commandClasses) {
 function parseOptions(args) {
   if (!args) args = [];
   const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()));
-  options.usage(`\nPulsar Package Manager powered by https://pulsar-edit.com\n\n  Usage: apm <command>\n\n  where <command> is one of:\n  ${wordwrap(4, 80)(Object.keys(commands).sort().join(', '))}.\n\n  Run \`apm help <command>\` to see the more details about a specific command.`);
+  options.usage(
+    "Pulsar Package Manager powered by https://pulsar-edit.com\n"+
+    "\n"+
+    "  Usage: apm <command>\n"+
+    "\n"+
+    "  where <command> is one of:\n"+
+    `  ${wordwrap(4, 80)(Object.keys(commands).sort().join(', '))}.\n`+
+    "\n"+
+    "  Run `apm help <command>` to see the more details about a specific command.\n"
+  );
   options.alias('v', 'version').describe('version', 'Print the apm version');
   options.alias('h', 'help').describe('help', 'Print this usage message');
   options.boolean('color').default('color', true).describe('color', 'Enable colored output');
