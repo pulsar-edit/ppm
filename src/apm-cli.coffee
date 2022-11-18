@@ -68,14 +68,14 @@ parseOptions = (args=[]) ->
 
   Pulsar Package Manager powered by https://pulsar-edit.com
 
-    Usage: apm <command>
+    Usage: pulsar --package <command>
 
     where <command> is one of:
     #{wordwrap(4, 80)(Object.keys(commands).sort().join(', '))}.
 
-    Run `apm help <command>` to see the more details about a specific command.
+    Run `pulsar --package help <command>` to see the more details about a specific command.
   """
-  options.alias('v', 'version').describe('version', 'Print the apm version')
+  options.alias('v', 'version').describe('version', 'Print the ppm version')
   options.alias('h', 'help').describe('help', 'Print this usage message')
   options.boolean('color').default('color', true).describe('color', 'Enable colored output')
   options.command = options.argv._[0]
