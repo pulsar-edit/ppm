@@ -22,7 +22,7 @@
     "lint": "coffeelint src spec",
     "coffee": "coffee --compile --output lib src",
     "build": "npm run clean:lib && npm run coffee",
-    "prepare": "npm run build",
+    "prepare": "echo 'prepare script disabled! Run build script manually if needed!'",
     "postinstall": "node script/postinstall.js",
     "test": "npm run check-version && npm run lint && jasmine-focused --captureExceptions --coffee spec"
   },
