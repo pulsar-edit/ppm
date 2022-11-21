@@ -28,9 +28,7 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
           architecture: ${{ matrix.node_arch }}
-
-      - name: Install npm
-        run: npm install -g npm
+          check-latest: true
 
       - name: Install dependencies
         run: npm install
