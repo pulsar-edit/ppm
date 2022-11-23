@@ -21,10 +21,12 @@
     "clean": "npm run clean:lib && npm run clean:bin",
     "lint": "coffeelint src spec",
     "coffee": "coffee --compile --output lib src",
+    "ensure-fixtures": "node script/ensure-node-source-fixture-files.js",
     "build": "npm run clean:lib && npm run coffee",
     "prepare": "npm run build",
     "postinstall": "node script/postinstall.js",
-    "test": "npm run check-version && npm run lint && jasmine-focused --captureExceptions --coffee spec"
+    "specs": "jasmine-focused --captureExceptions --coffee spec",
+    "test": "npm run check-version && npm run lint && npm run ensure-fixtures && npm run specs"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",
