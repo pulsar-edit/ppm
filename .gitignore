@@ -1,6 +1,7 @@
 /node_modules/
 /bin/node*
 /lib/
+/spec/fixtures/node-source/
 .DS_Store
 npm-debug.log
 *~
