@@ -13,18 +13,20 @@ describe 'apm clean', ->
     silenceOutput()
     spyOnToken()
 
+    nodeVersion = 'v18.12.1'
+
     app = express()
 
-    app.get '/node/v10.20.1/node-v10.20.1.tar.gz', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1.tar.gz')
-    app.get '/node/v10.20.1/node-v10.20.1-headers.tar.gz', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1-headers.tar.gz')
-    app.get '/node/v10.20.1/node.lib', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node.lib')
-    app.get '/node/v10.20.1/x64/node.lib', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node_x64.lib')
-    app.get '/node/v10.20.1/SHASUMS256.txt', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'SHASUMS256.txt')
+    app.get "/node/#{nodeVersion}/node-#{nodeVersion}.tar.gz", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', "node-#{nodeVersion}.tar.gz")
+    app.get "/node/#{nodeVersion}/node-#{nodeVersion}-headers.tar.gz", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', "node-#{nodeVersion}-headers.tar.gz")
+    app.get "/node/#{nodeVersion}/node.lib", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'node.lib')
+    app.get "/node/#{nodeVersion}/x64/node.lib", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'node_x64.lib')
+    app.get "/node/#{nodeVersion}/SHASUMS256.txt", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'SHASUMS256.txt')
     app.get '/test-module', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'install-test-module.json')
     app.get '/tarball/test-module-1.2.0.tgz', (request, response) ->
@@ -38,7 +40,7 @@ describe 'apm clean', ->
       atomHome = temp.mkdirSync('apm-home-dir-')
       process.env.ATOM_HOME = atomHome
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
-      process.env.ATOM_ELECTRON_VERSION = 'v10.20.1'
+      process.env.ATOM_ELECTRON_VERSION = "#{nodeVersion}"
       process.env.npm_config_registry = 'http://localhost:3000/'
 
       moduleDirectory = path.join(temp.mkdirSync('apm-test-module-'), 'test-module-with-dependencies')

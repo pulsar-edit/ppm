@@ -12,21 +12,23 @@ describe 'apm stars', ->
     silenceOutput()
     spyOnToken()
 
+    nodeVersion = 'v18.12.1'
+
     app = express()
     app.get '/stars', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'available.json')
     app.get '/users/hubot/stars', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'stars.json')
-    app.get '/node/v10.20.1/node-v10.20.1.tar.gz', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1.tar.gz')
-    app.get '/node/v10.20.1/node-v10.20.1-headers.tar.gz', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1-headers.tar.gz')
-    app.get '/node/v10.20.1/node.lib', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node.lib')
-    app.get '/node/v10.20.1/x64/node.lib', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node_x64.lib')
-    app.get '/node/v10.20.1/SHASUMS256.txt', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'SHASUMS256.txt')
+    app.get "/node/#{nodeVersion}/node-#{nodeVersion}.tar.gz", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', "node-#{nodeVersion}.tar.gz")
+    app.get "/node/#{nodeVersion}/node-#{nodeVersion}-headers.tar.gz", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', "node-#{nodeVersion}-headers.tar.gz")
+    app.get "/node/#{nodeVersion}/node.lib", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'node.lib')
+    app.get "/node/#{nodeVersion}/x64/node.lib", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'node_x64.lib')
+    app.get "/node/#{nodeVersion}/SHASUMS256.txt", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'SHASUMS256.txt')
     app.get '/tarball/test-module-1.2.0.tgz', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'test-module-1.2.0.tgz')
     app.get '/tarball/test-module2-2.0.0.tgz', (request, response) ->
@@ -43,7 +45,7 @@ describe 'apm stars', ->
       process.env.ATOM_API_URL = "http://localhost:3000"
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-      process.env.ATOM_ELECTRON_VERSION = 'v10.20.1'
+      process.env.ATOM_ELECTRON_VERSION = "#{nodeVersion}"
       process.env.npm_config_registry = 'http://localhost:3000/'
 
       live = true

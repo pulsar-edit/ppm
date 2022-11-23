@@ -22,6 +22,8 @@ describe "apm upgrade", ->
     atomHome = temp.mkdirSync('apm-home-dir-')
     process.env.ATOM_HOME = atomHome
 
+    nodeVersion = 'v18.12.1'
+
     app = express()
     app.get '/packages/test-module', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'upgrade-test-module.json')
@@ -39,7 +41,7 @@ describe "apm upgrade", ->
       process.env.ATOM_HOME = atomHome
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-      process.env.ATOM_ELECTRON_VERSION = 'v10.20.1'
+      process.env.ATOM_ELECTRON_VERSION = "#{nodeVersion}"
       process.env.ATOM_RESOURCE_PATH = atomApp
 
       fs.writeFileSync(path.join(atomApp, 'package.json'), JSON.stringify(version: '0.10.0'))
