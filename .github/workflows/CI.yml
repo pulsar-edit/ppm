@@ -34,6 +34,13 @@ jobs:
         run: npm install
 
       - if: "!contains(matrix.os, 'windows')"
+        name: Cache NodeJS source fixtures
+        uses: actions/cache@v3
+        with:
+          path: spec/fixtures/node-source
+          key: nodeVersion-v18.12.1
+
+      - if: "!contains(matrix.os, 'windows')"
         name: Run tests 👩🏾‍💻
         run: ./bin/npm test
 
