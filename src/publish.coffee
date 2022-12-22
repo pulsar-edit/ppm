@@ -153,7 +153,7 @@ class Publish extends Command
         requestSettings =
           url: config.getAtomPackagesUrl()
           json: true
-          body:
+          qs:
             repository: repository
           headers:
             authorization: token
@@ -183,7 +183,7 @@ class Publish extends Command
       requestSettings =
         url: "#{config.getAtomPackagesUrl()}/#{packageName}/versions"
         json: true
-        body:
+        qs:
           tag: tag
           rename: options.rename
         headers:
