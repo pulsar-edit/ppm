@@ -44,21 +44,16 @@ module.exports =
 
     switch process.platform
       when 'darwin'
-        child_process.exec 'mdfind "kMDItemCFBundleIdentifier == \'com.github.atom\'"', (error, stdout='', stderr) ->
+        child_process.exec 'mdfind "kMDItemCFBundleIdentifier == \'dev.pulsar-edit.pulsar\'"', (error, stdout='', stderr) ->
           [appLocation] = stdout.split('\n') unless error
-          appLocation = '/Applications/Atom.app' unless appLocation
+          appLocation = '/Applications/Pulsar.app' unless appLocation
           asarPath = "#{appLocation}/Contents/Resources/app.asar"
           return process.nextTick -> callback(asarPath)
       when 'linux'
-        asarPath = '/usr/local/share/atom/resources/app.asar'
-        unless fs.existsSync(asarPath)
-          asarPath = '/usr/share/atom/resources/app.asar'
+        asarPath = '/opt/Pulsar/resources/app.asar'
         return process.nextTick -> callback(asarPath)
       when 'win32'
-        glob = require 'glob'
-        pattern = "/Users/#{process.env.USERNAME}/AppData/Local/atom/app-+([0-9]).+([0-9]).+([0-9])/resources/app.asar"
-        asarPaths = glob.sync(pattern, null) # [] | a sorted array of locations with the newest version being last
-        asarPath = asarPaths[asarPaths.length - 1]
+        asarPath = "/Users/#{process.env.USERNAME}/AppData/Local/Programs/pulsar/resources/app.asar"
         return process.nextTick -> callback(asarPath)
       else
         return process.nextTick -> callback('')
