@@ -20,24 +20,24 @@ const nodeVersion = "v18.12.1";
 //   And finally copy-paste the updated SHA256 hash values into the array below.
 const filesToFetch = [
   {
-    url: `https://nodejs.org/dist/${nodeVersion}/node-${nodeVersion}.tar.gz`,
-    filename: `node-${nodeVersion}.tar.gz`,
-    sha256sum: "ba8174dda00d5b90943f37c6a180a1d37c861d91e04a4cb38dc1c0c74981c186"
-  },
-  {
     url: `https://nodejs.org/dist/${nodeVersion}/node-${nodeVersion}-headers.tar.gz`,
     filename: `node-${nodeVersion}-headers.tar.gz`,
     sha256sum: "9d55ee072ba6d5a141db092cef1a0f715f7d3fc938285a6d927a1d0a0c7442f7"
   },
   {
-    url: `https://nodejs.org/dist/${nodeVersion}/win-x64/node.lib`,
-    filename: "node_x64.lib",
-    sha256sum: "1bd376a23d181d85096d1a9c46e6be7fcd20d30f9b8f77a2a847d3dbff8e25c7"
+    url: `https://nodejs.org/dist/${nodeVersion}/node-${nodeVersion}.tar.gz`,
+    filename: `node-${nodeVersion}.tar.gz`,
+    sha256sum: "ba8174dda00d5b90943f37c6a180a1d37c861d91e04a4cb38dc1c0c74981c186"
   },
   {
     url: `https://nodejs.org/dist/${nodeVersion}/win-x86/node.lib`,
     filename: "node.lib",
     sha256sum: "b1c6dc670911d85ef1704fa56f4cc4c7e1071f4869778398e6d88b3b0b565978"
+  },
+  {
+    url: `https://nodejs.org/dist/${nodeVersion}/win-x64/node.lib`,
+    filename: "node_x64.lib",
+    sha256sum: "1bd376a23d181d85096d1a9c46e6be7fcd20d30f9b8f77a2a847d3dbff8e25c7"
   },
   {
     url: `https://nodejs.org/dist/${nodeVersion}/SHASUMS256.txt`,
