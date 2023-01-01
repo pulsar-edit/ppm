@@ -1,23 +1,22 @@
-# apm - Atom Package Manager
+# ppm - Pulsar Package Manager
 
-![Build Status](https://github.com/atom-ide-community/apm/workflows/CI/badge.svg)
-[![Dependency Status](https://david-dm.org/atom/apm.svg)](https://david-dm.org/atom/apm)
+Discover and install Pulsar packages powered by [pulsar-edit.dev](https://web.pulsar-edit.dev).
 
-Discover and install Atom packages powered by [atom.io](https://atom.io)
+ppm is bundled with the `pulsar` binaries so any ppm command can also be run with `pulsar -p` or `pulsar --package`.
 
-You can configure apm by using the `apm config` command line option (recommended) or by manually editing the `~/.atom/.apmrc` file as per the [npm config](https://docs.npmjs.com/misc/config).
+You can configure ppm by using the `ppm config` command line option (recommended) or by manually editing the `~/.pulsar/.apmrc` file as per the [npm config](https://docs.npmjs.com/misc/config).
 
 ## Relation to npm
 
-apm bundles [npm](https://github.com/npm/npm) with it and spawns `npm` processes to install Atom packages. The major difference is that `apm` sets multiple command line arguments to `npm` to ensure that native modules are built against Chromium's v8 headers instead of node's v8 headers.
+ppm bundles [npm](https://github.com/npm/npm) with it and spawns `npm` processes to install Pulsar packages. The major difference is that `ppm` sets multiple command line arguments to `npm` to ensure that native modules are built against Chromium's v8 headers instead of node's v8 headers.
 
-The other major difference is that Atom packages are installed to `~/.atom/packages` instead of a local `node_modules` folder and Atom packages are published to and installed from GitHub repositories instead of [npmjs.com](https://www.npmjs.com/)
+The other major difference is that Pulasr packages are installed to `~/.pulsar/packages` instead of a local `node_modules` folder and Pulsar packages are published to and installed from GitHub repositories instead of [npmjs.com](https://www.npmjs.com/)
 
-Therefore you can think of `apm` as a simple `npm` wrapper that builds on top of the many strengths of `npm` but is customized and optimized to be used for Atom packages.
+Therefore you can think of `ppm` as a simple `npm` wrapper that builds on top of the many strengths of `npm` but is customized and optimized to be used for Pulsar packages.
 
 ## Installing
 
-`apm` is bundled and installed automatically with Atom. You can run the _Atom > Install Shell Commands_ menu option to install it again if you aren't able to run it from a terminal (macOS only).
+`ppm` is bundled and installed automatically with Pulsar. You can run the _Pulsar > Install Shell Commands_ menu option to install it again if you aren't able to run it from a terminal (macOS only).
 
 ## Building
 
@@ -29,16 +28,16 @@ Therefore you can think of `apm` as a simple `npm` wrapper that builds on top of
 
 ### Why `bin/npm` / `bin\npm.cmd`?
 
-`apm` includes `npm`, and spawns it for various processes. It also comes with a bundled version of Node, and this script ensures that npm uses the right version of Node for things like running the tests. If you're using the same version of Node as is listed in `BUNDLED_NODE_VERSION`, you can skip using this script.
+`ppm` includes `npm`, and spawns it for various processes. It also comes with a bundled version of Node, and this script ensures that npm uses the right version of Node for things like running the tests. If you're using the same version of Node as is listed in `BUNDLED_NODE_VERSION`, you can skip using this script.
 
 ## Using
 
-Run `apm help` to see all the supported commands and `apm help <command>` to
+Run `ppm help` to see all the supported commands and `ppm help <command>` to
 learn more about a specific command.
 
-The common commands are `apm install <package_name>` to install a new package,
-`apm featured` to see all the featured packages, and `apm publish` to publish
-a package to [atom.io](https://atom.io).
+The common commands are `ppm install <package_name>` to install a new package,
+`ppm featured` to see all the featured packages, and `ppm publish` to publish
+a package to [pulsar-edit.dev](https://web.pulsar-edit.dev).
 
 ## Two-factor authentication?
 
@@ -50,19 +49,19 @@ If you are behind a firewall and seeing SSL errors when installing packages
 you can disable strict SSL by running:
 
 ```
-apm config set strict-ssl false
+ppm config set strict-ssl false
 ```
 
 ## Using a proxy?
 
-If you are using a HTTP(S) proxy you can configure `apm` to use it by running:
+If you are using a HTTP(S) proxy you can configure `ppm` to use it by running:
 
 ```
-apm config set https-proxy https://9.0.2.1:0
+ppm config set https-proxy https://9.0.2.1:0
 ```
 
-You can run `apm config get https-proxy` to verify it has been set correctly.
+You can run `ppm config get https-proxy` to verify it has been set correctly.
 
 ## Viewing configuration
 
-You can also run `apm config list` to see all the custom config settings.
+You can also run `ppm config list` to see all the custom config settings.
