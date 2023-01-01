@@ -6,6 +6,7 @@ express = require 'express'
 http = require 'http'
 wrench = require 'wrench'
 apm = require '../lib/apm-cli'
+nodeVersion = require('./config.json').nodeVersion
 
 describe 'apm rebuild', ->
   [server, originalPathEnv] = []
@@ -13,8 +14,6 @@ describe 'apm rebuild', ->
   beforeEach ->
     spyOnToken()
     silenceOutput()
-
-    nodeVersion = 'v12.2.3'
 
     app = express()
     app.get "/node/#{nodeVersion}/node-#{nodeVersion}.tar.gz", (request, response) ->

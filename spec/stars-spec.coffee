@@ -4,6 +4,7 @@ fs = require 'fs-plus'
 http = require 'http'
 temp = require 'temp'
 apm = require '../lib/apm-cli'
+nodeVersion = require('./config.json').nodeVersion
 
 describe 'apm stars', ->
   [atomHome, server] = []
@@ -11,8 +12,6 @@ describe 'apm stars', ->
   beforeEach ->
     silenceOutput()
     spyOnToken()
-
-    nodeVersion = 'v12.2.3'
 
     app = express()
     app.get '/stars', (request, response) ->

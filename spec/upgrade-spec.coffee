@@ -5,6 +5,7 @@ express = require 'express'
 http = require 'http'
 wrench = require 'wrench'
 apm = require '../lib/apm-cli'
+nodeVersion = require('./config.json').nodeVersion
 
 apmRun = (args, callback) ->
   ran = false
@@ -21,8 +22,6 @@ describe "apm upgrade", ->
 
     atomHome = temp.mkdirSync('apm-home-dir-')
     process.env.ATOM_HOME = atomHome
-
-    nodeVersion = 'v12.2.3'
 
     app = express()
     app.get '/packages/test-module', (request, response) ->

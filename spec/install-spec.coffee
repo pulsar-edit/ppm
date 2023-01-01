@@ -7,6 +7,7 @@ http = require 'http'
 wrench = require 'wrench'
 apm = require '../lib/apm-cli'
 Install = require '../lib/install'
+nodeVersion = require('./config.json').nodeVersion
 
 describe 'apm install', ->
   [atomHome, resourcePath] = []
@@ -28,8 +29,6 @@ describe 'apm install', ->
     server = null
 
     beforeEach ->
-      nodeVersion = 'v12.2.3'
-
       app = express()
       app.get "/node/#{nodeVersion}/node-#{nodeVersion}.tar.gz", (request, response) ->
         response.sendFile path.join(__dirname, 'fixtures', 'node-source', "node-#{nodeVersion}.tar.gz")

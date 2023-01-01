@@ -6,6 +6,7 @@ express = require 'express'
 wrench = require 'wrench'
 CSON = require 'season'
 apm = require '../lib/apm-cli'
+nodeVersion = require('./config.json').nodeVersion
 
 describe 'apm ci', ->
   [atomHome, resourcePath, server] = []
@@ -21,8 +22,6 @@ describe 'apm ci', ->
     process.env.ATOM_RESOURCE_PATH = resourcePath
 
     delete process.env.npm_config_cache
-
-    nodeVersion = 'v12.2.3'
 
     app = express()
     app.get "/node/#{nodeVersion}/node-#{nodeVersion}.tar.gz", (request, response) ->

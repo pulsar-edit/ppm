@@ -3,14 +3,14 @@ const path = require("path");
 const https = require("https");
 
 // This "nodeVersion" specifies the version of Node or Electron built against
-// during certain specs. Update nodeVersion here to run those specs
+// during certain specs. Update nodeVersion in this JSON file to run those specs
 // against a different version of Node's or Electron's source files.
-// This string is also hard-coded in those spec files, so update it there, too.
+// This value is also used in those spec files, via this same json file.
 // (Note: We may need to update this to work around build issues encountered
 // when updating Node bundled with ppm.)
 // (Note: This should ideally match Pulsar's current Electron version.)
 // (Note: Electron forks (and mildly modifies) Node for inclusion in Electron.)
-const nodeVersion = "v12.2.3";
+const nodeVersion = require("../spec/config.json").nodeVersion;
 
 // This "distUrl" can be any Node.JS or Electron distribution mirror on the web,
 // such as "https://nodejs.org/dist",

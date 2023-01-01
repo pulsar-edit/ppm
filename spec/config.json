@@ -1,0 +1,4 @@
+{
+  "nodeVersion": "v12.2.3",
+  "comment": "This is used by specs and scripts. See 'script/ensure-node-source-fixture-files.js' for an explanation of what 'nodeVersion' is used for."
+}

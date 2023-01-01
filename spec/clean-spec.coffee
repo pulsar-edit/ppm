@@ -5,6 +5,7 @@ express = require 'express'
 http = require 'http'
 wrench = require 'wrench'
 apm = require '../lib/apm-cli'
+nodeVersion = require('./config.json').nodeVersion
 
 describe 'apm clean', ->
   [moduleDirectory, server] = []
@@ -12,8 +13,6 @@ describe 'apm clean', ->
   beforeEach ->
     silenceOutput()
     spyOnToken()
-
-    nodeVersion = 'v12.2.3'
 
     app = express()
 
