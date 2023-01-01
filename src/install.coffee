@@ -40,7 +40,7 @@ class Install extends Command
              apm install --packages-file my-packages.txt
              apm i (with any of the previous argument usage)
 
-      Install the given Atom package to ~/.atom/packages/<package_name>.
+      Install the given Atom package to ~/.pulsar/packages/<package_name>.
 
       If no package name is given then all the dependencies in the package.json
       file are installed to the node_modules folder in the current working

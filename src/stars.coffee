@@ -83,7 +83,7 @@ class Stars extends Command
       label
 
     console.log()
-    console.log "Use `apm stars --install` to install them all or visit #{'http://atom.io/packages'.underline} to read more about them."
+    console.log "Use `apm stars --install` to install them all or visit #{'https://pulsar-edit.dev'.underline} to read more about them."
     console.log()
     callback()
 
