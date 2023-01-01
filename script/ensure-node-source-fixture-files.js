@@ -8,6 +8,16 @@ const https = require("https");
 // This string is also hard-coded in those spec files, so update it there, too.
 const nodeVersion = "v18.12.1";
 
+// If you do update the above `nodeVersion` to a different version,
+// remember to calculate the new sha256sums and update them in the array below.
+// Instructions:
+//   Update `nodeVersion` to the new version number above, re-run this script
+//   so it will download the new files to "spec/fixtures/node-source",
+//   then calculate the SHA256SUMS of the updated files, like so:
+//     on Linux/macOS: `shasum -a 256 spec/fixtures/node-source/*`
+//     in Windows cmd: `for /r "spec\fixtures\node-source" %i in (*) do CertUtil -hashfile %i SHA256`
+//     in Windows PowerShell: `Get-FileHash -Algorithm SHA256 "spec\fixtures\node-source\*" | Format-List`
+//   And finally copy-paste the updated SHA256 hash values into the array below.
 const filesToFetch = [
   {
     url: `https://nodejs.org/dist/${nodeVersion}/node-${nodeVersion}.tar.gz`,
@@ -34,8 +44,7 @@ const filesToFetch = [
     filename: "SHASUMS256.txt",
     sha256sum: "64aad1211a6003dd6529ebf9f19167769d0356ce5affc4245bb26c35aa66a9ed"
   },
-]; // If you ever need to update to a newer Node version, just calculate the sha256sums
-   // for the new files and update them here to match the new files.
+];
 
 const sourceFixtureDir = path.resolve(__dirname, "..", "spec", "fixtures", "node-source");
 fs.mkdirSync(sourceFixtureDir, { recursive: true });
