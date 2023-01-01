@@ -12,7 +12,7 @@ describe 'apm stars', ->
     silenceOutput()
     spyOnToken()
 
-    nodeVersion = 'v18.12.1'
+    nodeVersion = 'v12.2.3'
 
     app = express()
     app.get '/stars', (request, response) ->

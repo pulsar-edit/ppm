@@ -14,7 +14,7 @@ describe 'apm rebuild', ->
     spyOnToken()
     silenceOutput()
 
-    nodeVersion = 'v18.12.1'
+    nodeVersion = 'v12.2.3'
 
     app = express()
     app.get "/node/#{nodeVersion}/node-#{nodeVersion}.tar.gz", (request, response) ->

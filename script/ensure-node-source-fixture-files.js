@@ -2,17 +2,29 @@ const fs = require("fs");
 const path = require("path");
 const https = require("https");
 
-// This "nodeVersion" specifies the version of Node used by certain specs.
-// Update nodeVersion here to run those specs against newer Node source files.
-// (May be needed to work around build issues with newer Node bundled with ppm.)
+// This "nodeVersion" specifies the version of Node or Electron built against
+// during certain specs. Update nodeVersion here to run those specs
+// against a different version of Node's or Electron's source files.
 // This string is also hard-coded in those spec files, so update it there, too.
-const nodeVersion = "v18.12.1";
+// (Note: We may need to update this to work around build issues encountered
+// when updating Node bundled with ppm.)
+// (Note: This should ideally match Pulsar's current Electron version.)
+// (Note: Electron forks (and mildly modifies) Node for inclusion in Electron.)
+const nodeVersion = "v12.2.3";
 
-// If you do update the above `nodeVersion` to a different version,
+// This "distUrl" can be any Node.JS or Electron distribution mirror on the web,
+// such as "https://nodejs.org/dist",
+// or "https://artifacts.electronjs.org/headers/dist"...
+// but it should probably be the official Electron dist URL, so we can test
+// building dummy spec packages against the Electron version Pulsar uses.
+const distUrl = "https://artifacts.electronjs.org/headers/dist";
+
+// Important note: If you update the above `nodeVersion` to a different version,
 // remember to calculate the new sha256sums and update them in the array below.
 // Instructions:
-//   Update `nodeVersion` to the new version number above, re-run this script
-//   so it will download the new files to "spec/fixtures/node-source",
+//   Delete any old files under "spec/fixtures/node-source",
+//   update `nodeVersion` to the desired version number above,
+//   re-run this script so it will download the new files,
 //   then calculate the SHA256SUMS of the updated files, like so:
 //     on Linux/macOS: `shasum -a 256 spec/fixtures/node-source/*`
 //     in Windows cmd: `for /r "spec\fixtures\node-source" %i in (*) do CertUtil -hashfile %i SHA256`
@@ -20,29 +32,29 @@ const nodeVersion = "v18.12.1";
 //   And finally copy-paste the updated SHA256 hash values into the array below.
 const filesToFetch = [
   {
-    url: `https://nodejs.org/dist/${nodeVersion}/node-${nodeVersion}-headers.tar.gz`,
+    url: `${distUrl}/${nodeVersion}/node-${nodeVersion}-headers.tar.gz`,
     filename: `node-${nodeVersion}-headers.tar.gz`,
-    sha256sum: "9d55ee072ba6d5a141db092cef1a0f715f7d3fc938285a6d927a1d0a0c7442f7"
+    sha256sum: "092a039e403f758f542a0f801acac8604e2d7a9b63d8f3c8c31df71c7ba8aac5"
   },
   {
-    url: `https://nodejs.org/dist/${nodeVersion}/node-${nodeVersion}.tar.gz`,
+    url: `${distUrl}/${nodeVersion}/node-${nodeVersion}.tar.gz`,
     filename: `node-${nodeVersion}.tar.gz`,
-    sha256sum: "ba8174dda00d5b90943f37c6a180a1d37c861d91e04a4cb38dc1c0c74981c186"
+    sha256sum: "092a039e403f758f542a0f801acac8604e2d7a9b63d8f3c8c31df71c7ba8aac5"
   },
   {
-    url: `https://nodejs.org/dist/${nodeVersion}/win-x86/node.lib`,
+    url: `${distUrl}/${nodeVersion}/win-x86/node.lib`,
     filename: "node.lib",
-    sha256sum: "b1c6dc670911d85ef1704fa56f4cc4c7e1071f4869778398e6d88b3b0b565978"
+    sha256sum: "4c59ee4f9b78dfdd904cc211080acbbc485104d467c29df24bf45c4017ef638e"
   },
   {
-    url: `https://nodejs.org/dist/${nodeVersion}/win-x64/node.lib`,
+    url: `${distUrl}/${nodeVersion}/win-x64/node.lib`,
     filename: "node_x64.lib",
-    sha256sum: "1bd376a23d181d85096d1a9c46e6be7fcd20d30f9b8f77a2a847d3dbff8e25c7"
+    sha256sum: "248a81dd4d5cdaf8c0497a4f6c6855c1e2db3e0439757bfed4f2c1e3c530d04e"
   },
   {
-    url: `https://nodejs.org/dist/${nodeVersion}/SHASUMS256.txt`,
+    url: `${distUrl}/${nodeVersion}/SHASUMS256.txt`,
     filename: "SHASUMS256.txt",
-    sha256sum: "64aad1211a6003dd6529ebf9f19167769d0356ce5affc4245bb26c35aa66a9ed"
+    sha256sum: "8ceda90dbb1f65b9c1ca73321949c3ec6ed81f20f49215535d537164612930a7"
   },
 ];
 
