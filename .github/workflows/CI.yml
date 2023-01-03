@@ -34,11 +34,16 @@ jobs:
         run: npm install
 
       - if: "!contains(matrix.os, 'windows')"
+        name: Get nodeVersion for cache step
+        id: get-node-version
+        run: echo "NODE_VERSION=`node -e "console.log(require('./spec/config.json').nodeVersion)"`" > $GITHUB_OUTPUT
+
+      - if: "!contains(matrix.os, 'windows')"
         name: Cache NodeJS source fixtures
         uses: actions/cache@v3
         with:
           path: spec/fixtures/node-source
-          key: nodeVersion-v18.12.1
+          key: nodeVersion-${{ steps.get-node-version.outputs.NODE_VERSION }}
 
       - if: "!contains(matrix.os, 'windows')"
         name: Run tests 👩🏾‍💻
