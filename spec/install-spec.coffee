@@ -34,9 +34,9 @@ describe 'apm install', ->
         response.sendFile path.join(__dirname, 'fixtures', 'node-source', "node-#{nodeVersion}.tar.gz")
       app.get "/node/#{nodeVersion}/node-#{nodeVersion}-headers.tar.gz", (request, response) ->
         response.sendFile path.join(__dirname, 'fixtures', 'node-source', "node-#{nodeVersion}-headers.tar.gz")
-      app.get "/node/#{nodeVersion}/node.lib", (request, response) ->
+      app.get "/node/#{nodeVersion}/win-x86/node.lib", (request, response) ->
         response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'node.lib')
-      app.get "/node/#{nodeVersion}/x64/node.lib", (request, response) ->
+      app.get "/node/#{nodeVersion}/win-x64/node.lib", (request, response) ->
         response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'node_x64.lib')
       app.get "/node/#{nodeVersion}/SHASUMS256.txt", (request, response) ->
         response.sendFile path.join(__dirname, 'fixtures', 'node-source', 'SHASUMS256.txt')
