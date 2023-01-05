@@ -54,6 +54,8 @@ module.exports =
         return process.nextTick -> callback(asarPath)
       when 'win32'
         asarPath = "/Users/#{process.env.USERNAME}/AppData/Local/Programs/pulsar/resources/app.asar"
+        unless fs.existsSync(asarPath)
+          asarPath = "/Program Files/Pulsar/resources/app.asar"
         return process.nextTick -> callback(asarPath)
       else
         return process.nextTick -> callback('')
