@@ -23,15 +23,13 @@ describe 'apm ci', ->
     delete process.env.npm_config_cache
 
     app = express()
-    app.get '/node/v10.20.1/node-v10.20.1.tar.gz', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1.tar.gz')
-    app.get '/node/v10.20.1/node-v10.20.1-headers.tar.gz', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1-headers.tar.gz')
-    app.get '/node/v10.20.1/node.lib', (request, response) ->
+    app.get '/node/v12.2.3/node-v12.2.3-headers.tar.gz', (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-v12.2.3-headers.tar.gz')
+    app.get '/node/v12.2.3/win-x86/node.lib', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'node.lib')
-    app.get '/node/v10.20.1/x64/node.lib', (request, response) ->
+    app.get '/node/v12.2.3/win-x64/node.lib', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'node_x64.lib')
-    app.get '/node/v10.20.1/SHASUMS256.txt', (request, response) ->
+    app.get '/node/v12.2.3/SHASUMS256.txt', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'SHASUMS256.txt')
     app.get '/test-module-with-dependencies', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'install-locked-version.json')
@@ -52,7 +50,7 @@ describe 'apm ci', ->
     server.listen 3000, '127.0.0.1', ->
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-      process.env.ATOM_ELECTRON_VERSION = 'v10.20.1'
+      process.env.ATOM_ELECTRON_VERSION = 'v12.2.3'
       process.env.npm_config_registry = 'http://localhost:3000/'
       live = true
     waitsFor -> live
