@@ -10,7 +10,7 @@ You can configure ppm by using the `ppm config` command line option (recommended
 
 ppm bundles [npm](https://github.com/npm/npm) with it and spawns `npm` processes to install Pulsar packages. The major difference is that `ppm` sets multiple command line arguments to `npm` to ensure that native modules are built against Chromium's v8 headers instead of node's v8 headers.
 
-The other major difference is that Pulasr packages are installed to `~/.pulsar/packages` instead of a local `node_modules` folder and Pulsar packages are published to and installed from GitHub repositories instead of [npmjs.com](https://www.npmjs.com/)
+The other major difference is that Pulsar packages are installed to `~/.pulsar/packages` instead of a local `node_modules` folder and Pulsar packages are published to and installed from GitHub repositories instead of [npmjs.com](https://www.npmjs.com/)
 
 Therefore you can think of `ppm` as a simple `npm` wrapper that builds on top of the many strengths of `npm` but is customized and optimized to be used for Pulsar packages.
 
