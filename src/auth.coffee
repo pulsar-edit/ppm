@@ -9,7 +9,7 @@ catch error
   else
     throw error
 
-tokenName = 'pulsar-edit.dev API Token'
+tokenName = 'pulsar-edit.dev Package API Token'
 
 module.exports =
   # Get the package API token from the keychain.
