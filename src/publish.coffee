@@ -224,7 +224,7 @@ class Publish extends Command
     if process.platform is 'darwin'
       process.stdout.write ' \uD83D\uDC4D  \uD83D\uDCE6  \uD83C\uDF89'
 
-    process.stdout.write "\nCheck it out at https://atom.io/packages/#{pack.name}\n"
+    process.stdout.write "\nCheck it out at https://web.pulsar-edit.dev/packages/#{pack.name}\n"
 
   loadMetadata: ->
     metadataPath = path.resolve('package.json')

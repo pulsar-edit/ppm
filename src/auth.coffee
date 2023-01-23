@@ -9,7 +9,7 @@ catch error
   else
     throw error
 
-tokenName = 'Atom.io API Token'
+tokenName = 'pulsar-edit.dev Package API Token'
 
 module.exports =
   # Get the package API token from the keychain.
@@ -36,4 +36,4 @@ module.exports =
   #
   # token - A string token to save.
   saveToken: (token) ->
-    keytar.setPassword(tokenName, 'atom.io', token)
+    keytar.setPassword(tokenName, 'pulsar-edit.dev', token)

@@ -49,11 +49,11 @@ class Login extends Command
     return Q(state) if state.token
 
     welcome = """
-      Welcome to Atom!
+      Welcome to Pulsar!
 
       Before you can publish packages, you'll need an API token.
 
-      Visit your account page on Atom.io #{'https://atom.io/account'.underline},
+      Visit your account page on pulsar-edit.dev #{'https://web.pulsar-edit.dev/users'.underline},
       copy the token and paste it below when prompted.
 
     """
@@ -64,7 +64,7 @@ class Login extends Command
   openURL: (state) ->
     return Q(state) if state.token
 
-    open('https://atom.io/account')
+    open('https://web.pulsar-edit.dev/users')
 
   getToken: (state) =>
     return Q(state) if state.token

@@ -73,7 +73,7 @@ module.exports =
     process.env.ATOM_PACKAGES_URL ? "#{@getAtomApiUrl()}/packages"
 
   getAtomApiUrl: ->
-    process.env.ATOM_API_URL ? 'https://pulsar-edit.com/api'
+    process.env.ATOM_API_URL ? 'https://api.pulsar-edit.dev/api'
 
   getElectronArch: ->
     switch process.platform
@@ -123,7 +123,7 @@ module.exports =
         ; This file is auto-generated and should not be edited since any
         ; modifications will be lost the next time any apm command is run.
         ;
-        ; You should instead edit your .apmrc config located in ~/.atom/.apmrc
+        ; You should instead edit your .apmrc config located in ~/.pulsar/.apmrc
         cache = #{@getCacheDirectory()}
         ; Hide progress-bar to prevent npm from altering apm console output.
         progress = false

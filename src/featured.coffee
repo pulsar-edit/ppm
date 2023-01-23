@@ -18,11 +18,11 @@ class Featured extends Command
              apm featured --themes
              apm featured --compatible 0.49.0
 
-      List the Atom packages and themes that are currently featured.
+      List the Pulsar packages and themes that are currently featured.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.alias('t', 'themes').boolean('themes').describe('themes', 'Only list themes')
-    options.alias('c', 'compatible').string('compatible').describe('compatible', 'Only list packages/themes compatible with this Atom version')
+    options.alias('c', 'compatible').string('compatible').describe('compatible', 'Only list packages/themes compatible with this Pulsar version')
     options.boolean('json').describe('json', 'Output featured packages as JSON array')
 
   getFeaturedPackagesByType: (atomVersion, packageType, callback) ->
@@ -64,9 +64,9 @@ class Featured extends Command
         console.log(JSON.stringify(packages))
       else
         if options.argv.themes
-          console.log "#{'Featured Atom Themes'.cyan} (#{packages.length})"
+          console.log "#{'Featured Pulsar Themes'.cyan} (#{packages.length})"
         else
-          console.log "#{'Featured Atom Packages'.cyan} (#{packages.length})"
+          console.log "#{'Featured Pulsar Packages'.cyan} (#{packages.length})"
 
         tree packages, ({name, version, description, downloads, stargazers_count}) ->
           label = name.yellow
@@ -75,7 +75,7 @@ class Featured extends Command
           label
 
         console.log()
-        console.log "Use `apm install` to install them or visit #{'http://atom.io/packages'.underline} to read more about them."
+        console.log "Use `apm install` to install them or visit #{'https://web.pulsar-edit.dev/'.underline} to read more about them."
         console.log()
 
       callback()
