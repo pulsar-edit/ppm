@@ -5,6 +5,7 @@ express = require 'express'
 http = require 'http'
 wrench = require 'wrench'
 apm = require '../lib/apm-cli'
+nodeVersion = require('./config.json').nodeVersion
 
 apmRun = (args, callback) ->
   ran = false
@@ -39,7 +40,7 @@ describe "apm upgrade", ->
       process.env.ATOM_HOME = atomHome
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-      process.env.ATOM_ELECTRON_VERSION = 'v12.2.3'
+      process.env.ATOM_ELECTRON_VERSION = nodeVersion
       process.env.ATOM_RESOURCE_PATH = atomApp
 
       fs.writeFileSync(path.join(atomApp, 'package.json'), JSON.stringify(version: '0.10.0'))

@@ -4,6 +4,7 @@ fs = require 'fs-plus'
 http = require 'http'
 temp = require 'temp'
 apm = require '../lib/apm-cli'
+nodeVersion = require('./config.json').nodeVersion
 
 describe 'apm stars', ->
   [atomHome, server] = []
@@ -17,13 +18,13 @@ describe 'apm stars', ->
       response.sendFile path.join(__dirname, 'fixtures', 'available.json')
     app.get '/users/hubot/stars', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'stars.json')
-    app.get '/node/v12.2.3/node-v12.2.3-headers.tar.gz', (request, response) ->
-      response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node-v12.2.3-headers.tar.gz')
-    app.get '/node/v12.2.3/win-x86/node.lib', (request, response) ->
+    app.get "/node/#{nodeVersion}/node-#{nodeVersion}-headers.tar.gz", (request, response) ->
+      response.sendFile path.join(__dirname, 'fixtures', 'node-dist', "node-#{nodeVersion}-headers.tar.gz")
+    app.get "/node/#{nodeVersion}/win-x86/node.lib", (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node.lib')
-    app.get '/node/v12.2.3/win-x64/node.lib', (request, response) ->
+    app.get "/node/#{nodeVersion}/win-x64/node.lib", (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node_x64.lib')
-    app.get '/node/v12.2.3/SHASUMS256.txt', (request, response) ->
+    app.get "/node/#{nodeVersion}/SHASUMS256.txt", (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'SHASUMS256.txt')
     app.get '/tarball/test-module-1.2.0.tgz', (request, response) ->
       response.sendFile path.join(__dirname, 'fixtures', 'test-module-1.2.0.tgz')
@@ -41,7 +42,7 @@ describe 'apm stars', ->
       process.env.ATOM_API_URL = "http://localhost:3000"
       process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
       process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-      process.env.ATOM_ELECTRON_VERSION = 'v12.2.3'
+      process.env.ATOM_ELECTRON_VERSION = nodeVersion
       process.env.npm_config_registry = 'http://localhost:3000/'
 
       live = true
