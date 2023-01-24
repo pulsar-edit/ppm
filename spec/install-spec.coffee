@@ -30,13 +30,13 @@ describe 'apm install', ->
     beforeEach ->
       app = express()
       app.get '/node/v12.2.3/node-v12.2.3-headers.tar.gz', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'node-v12.2.3-headers.tar.gz')
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node-v12.2.3-headers.tar.gz')
       app.get '/node/v12.2.3/win-x86/node.lib', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'node.lib')
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node.lib')
       app.get '/node/v12.2.3/win-x64/node.lib', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'node_x64.lib')
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node_x64.lib')
       app.get '/node/v12.2.3/SHASUMS256.txt', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'SHASUMS256.txt')
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'SHASUMS256.txt')
       app.get '/test-module', (request, response) ->
         response.sendFile path.join(__dirname, 'fixtures', 'install-test-module.json')
       app.get '/tarball/test-module-1.1.0.tgz', (request, response) ->
