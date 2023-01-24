@@ -7,6 +7,7 @@ http = require 'http'
 wrench = require 'wrench'
 apm = require '../lib/apm-cli'
 Install = require '../lib/install'
+nodeVersion = require('./config.json').nodeVersion
 
 describe 'apm install', ->
   [atomHome, resourcePath] = []
@@ -29,16 +30,14 @@ describe 'apm install', ->
 
     beforeEach ->
       app = express()
-      app.get '/node/v10.20.1/node-v10.20.1.tar.gz', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1.tar.gz')
-      app.get '/node/v10.20.1/node-v10.20.1-headers.tar.gz', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'node-v10.20.1-headers.tar.gz')
-      app.get '/node/v10.20.1/node.lib', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'node.lib')
-      app.get '/node/v10.20.1/x64/node.lib', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'node_x64.lib')
-      app.get '/node/v10.20.1/SHASUMS256.txt', (request, response) ->
-        response.sendFile path.join(__dirname, 'fixtures', 'SHASUMS256.txt')
+      app.get "/node/#{nodeVersion}/node-#{nodeVersion}-headers.tar.gz", (request, response) ->
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', "node-#{nodeVersion}-headers.tar.gz")
+      app.get "/node/#{nodeVersion}/win-x86/node.lib", (request, response) ->
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node.lib')
+      app.get "/node/#{nodeVersion}/win-x64/node.lib", (request, response) ->
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'node_x64.lib')
+      app.get "/node/#{nodeVersion}/SHASUMS256.txt", (request, response) ->
+        response.sendFile path.join(__dirname, 'fixtures', 'node-dist', 'SHASUMS256.txt')
       app.get '/test-module', (request, response) ->
         response.sendFile path.join(__dirname, 'fixtures', 'install-test-module.json')
       app.get '/tarball/test-module-1.1.0.tgz', (request, response) ->
@@ -78,7 +77,7 @@ describe 'apm install', ->
         process.env.ATOM_HOME = atomHome
         process.env.ATOM_ELECTRON_URL = "http://localhost:3000/node"
         process.env.ATOM_PACKAGES_URL = "http://localhost:3000/packages"
-        process.env.ATOM_ELECTRON_VERSION = 'v10.20.1'
+        process.env.ATOM_ELECTRON_VERSION = nodeVersion
         process.env.npm_config_registry = 'http://localhost:3000/'
         live = true
       waitsFor -> live
