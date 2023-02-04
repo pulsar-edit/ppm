@@ -5,3 +5,8 @@ bin/npm text eol=lf
 
 # Batch files (Windows-style line endings)
 *.cmd   text eol=crlf
+
+# Normalize package metadata line endings, so we don't get large, line-ending-only diffs when edited on different OSes
+/package.json		text eol=lf
+/package-lock.json	text eol=lf
+/yarn.lock		text eol=lf
