@@ -109,14 +109,14 @@ class Upgrade extends Command
 
   getLatestSha: (pack, callback) ->
     repoPath = path.join(@atomPackagesDirectory, pack.name)
+    repo = Git.open(repoPath)
     config.getSetting 'git', (command) =>
       command ?= 'git'
-      args = ['fetch', 'origin', 'master']
+      args = ['fetch', 'origin', repo.getShortHead()]
       git.addGitToEnv(process.env)
       @spawn command, args, {cwd: repoPath}, (code, stderr='', stdout='') ->
         return callback(new Error('Exit code: ' + code + ' - ' + stderr)) unless code is 0
-        repo = Git.open(repoPath)
-        sha = repo.getReferenceTarget(repo.getUpstreamBranch('refs/heads/master'))
+        sha = repo.getReferenceTarget(repo.getHead())
         if sha isnt pack.apmInstallSource.sha
           callback(null, sha)
         else
