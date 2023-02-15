@@ -198,3 +198,30 @@ describe "apm upgrade", ->
       apmRun ['upgrade', '-c', 'false', 'test-git-repo'], ->
         json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8')
         expect(json.apmInstallSource.sha).toBe '8ae432341ac6708aff9bb619eb015da14e9d0c0f'
+
+  describe "for outdated git packages (when HEAD points to main)", ->
+    [pkgJsonPath] = []
+
+    beforeEach ->
+      delete process.env.ATOM_ELECTRON_URL
+      delete process.env.ATOM_PACKAGES_URL
+      process.env.ATOM_ELECTRON_VERSION = "0.22.0"
+
+      gitRepo = path.join(__dirname, "fixtures", "test-git-repo-with-main.git")
+      cloneUrl = "file://#{gitRepo}"
+
+      apmRun ["install", cloneUrl], ->
+        pkgJsonPath = path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo-with-main', 'package.json')
+        json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8')
+        json.apmInstallSource.sha = 'abcdef1234567890'
+        fs.writeFileSync pkgJsonPath, JSON.stringify(json)
+
+    it 'shows an upgrade plan', ->
+      apmRun ['upgrade', '--list', '--no-color'], ->
+        text = console.log.argsForCall.map((arr) -> arr.join(' ')).join("\n")
+        expect(text).toMatch /Available \(1\).*\n.*test-git-repo-with-main abcdef12 -> c81278af/
+
+    it 'updates to the latest sha', ->
+      apmRun ['upgrade', '-c', 'false', 'test-git-repo-with-main'], ->
+        json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8')
+        expect(json.apmInstallSource.sha).toBe 'c81278af71de6c12ce0bc02936d5c1eb22aadaf9'
