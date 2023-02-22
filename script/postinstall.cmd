@@ -13,3 +13,5 @@ echo ^>^> Rebuilding apm dependencies with bundled Node !bundledVersion!
 setx JOBS 16
 
 call .\bin\npm.cmd rebuild
+
+exit /b
