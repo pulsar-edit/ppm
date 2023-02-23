@@ -538,7 +538,8 @@ describe 'apm install', ->
         # Normally npm_config_node_gyp would be ignored, but it works here because we're calling apm
         # directly and not through the scripts in bin/
         nodeGypPath =  path.dirname(path.dirname(require.resolve('node-gyp'))) # find an installed node-gyp
-        fs.copySync nodeGypPath, path.join(nodeModules, 'with a space')
+        fs.symlink(nodeGypPath, path.join(nodeModules, 'with a space'), 'dir', (err) -> {})
+        #fs.copySync nodeGypPath, path.join(nodeModules, 'with a space')
         process.env.npm_config_node_gyp = path.join(nodeModules, 'with a space', 'bin', 'node-gyp.js')
 
         # Read + execute permission
