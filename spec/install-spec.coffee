@@ -532,10 +532,10 @@ describe 'apm install', ->
         expect(json[1].metadata.name).toBe 'test-module2'
 
     describe "with a space in node-gyp's path", ->
-        nodeGypExecutableName = 'node-gyp'
+      nodeGypExecutableName = 'node-gyp'
 
-        if process.platform is 'win32'
-          nodeGypExecutableName = nodeGypExecutableName + '.cmd'
+      if process.platform is 'win32'
+        nodeGypExecutableName = nodeGypExecutableName + '.cmd'
 
       beforeEach ->
         # Normally npm_config_node_gyp would be ignored, but it works here because we're calling apm
