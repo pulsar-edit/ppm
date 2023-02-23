@@ -532,22 +532,30 @@ describe 'apm install', ->
         expect(json[1].metadata.name).toBe 'test-module2'
 
     describe "with a space in node-gyp's path", ->
-      nodeModules = fs.realpathSync(path.join(__dirname, '..', 'node_modules'))
+        nodeGypExecutableName = 'node-gyp'
+
+        if process.platform is 'win32'
+          nodeGypExecutableName = nodeGypExecutableName + '.cmd'
 
       beforeEach ->
         # Normally npm_config_node_gyp would be ignored, but it works here because we're calling apm
         # directly and not through the scripts in bin/
         # Grab npm, and then dive into its included node-gyp
-        nodeGypPath =  path.join(path.dirname(path.dirname(require.resolve('npm'))), 'node_modules', 'node-gyp')
-        fs.copySync(nodeGypPath, path.join(nodeModules, 'with a space'))
-        process.env.npm_config_node_gyp = path.join(nodeModules, 'with a space', 'bin', 'node-gyp.js')
+        nodeGypPath =  path.join(path.dirname(path.dirname(require.resolve('npm'))), 'bin', 'node-gyp-bin')
+        # Copy the 'node-gyp-bin' folder but rename it to 'with a space'
+        fs.copySync(nodeGypPath, path.join(path.dirname(nodeGypPath), 'with a space'))
+        # Tell npm use use the 'node-gyp' file within the new directory
+        process.env.npm_config_node_gyp = path.join(path.dirname(nodeGypPath), 'with a space', nodeGypExecutableName)
 
         # Read + execute permission
         fs.chmodSync(process.env.npm_config_node_gyp, fs.constants.S_IRUSR | fs.constants.S_IXUSR)
 
       afterEach ->
+        # Remove the previously copied folder
+        fs.removeSync(path.dirname(process.env.npm_config_node_gyp))
+        # Unset the environment variable
         delete process.env.npm_config_node_gyp
-        fs.removeSync(path.join(nodeModules, 'with a space'))
+
 
       it 'builds native code successfully', ->
         callback = jasmine.createSpy('callback')
