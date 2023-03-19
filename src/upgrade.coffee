@@ -116,7 +116,7 @@ class Upgrade extends Command
       git.addGitToEnv(process.env)
       @spawn command, args, {cwd: repoPath}, (code, stderr='', stdout='') ->
         return callback(new Error('Exit code: ' + code + ' - ' + stderr)) unless code is 0
-        sha = repo.getReferenceTarget(repo.getHead())
+        sha = repo.getReferenceTarget(repo.getUpstreamBranch(repo.getHead()))
         if sha isnt pack.apmInstallSource.sha
           callback(null, sha)
         else
