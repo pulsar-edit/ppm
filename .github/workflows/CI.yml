@@ -21,7 +21,6 @@ jobs:
           - 14
           - 16
           - 18
-          - 19
         node_arch:
           - x64
     steps:
