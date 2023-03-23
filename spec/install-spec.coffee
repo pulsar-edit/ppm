@@ -531,39 +531,39 @@ describe 'apm install', ->
         expect(json[1].installPath).toBe path.join(process.env.ATOM_HOME, 'packages', 'test-module2')
         expect(json[1].metadata.name).toBe 'test-module2'
 
-#    describe "with a space in node-gyp's path", ->
-#      nodeModules = fs.realpathSync(path.join(__dirname, '..', 'node_modules'))
-#
-#      beforeEach ->
-#        # Normally npm_config_node_gyp would be ignored, but it works here because we're calling apm
-#        # directly and not through the scripts in bin/
-#        nodeGypPath =  path.dirname(path.dirname(require.resolve('node-gyp'))) # find an installed node-gyp
-#        fs.copySync nodeGypPath, path.join(nodeModules, 'with a space')
-#        process.env.npm_config_node_gyp = path.join(nodeModules, 'with a space', 'bin', 'node-gyp.js')
-#
-#        # Read + execute permission
-#        fs.chmodSync(process.env.npm_config_node_gyp, fs.constants.S_IRUSR | fs.constants.S_IXUSR)
-#
-#      afterEach ->
-#        delete process.env.npm_config_node_gyp
-#        fs.removeSync(path.join(nodeModules, 'with a space'))
-#
-#      it 'builds native code successfully', ->
-#        callback = jasmine.createSpy('callback')
-#        apm.run(['install', 'native-package'], callback)
-#
-#        waitsFor 'waiting for install to complete', 600000, ->
-#          callback.callCount is 1
-#
-#        runs ->
-#          expect(callback.mostRecentCall.args[0]).toBeNull()
-#
-#          testModuleDirectory = path.join(atomHome, 'packages', 'native-package')
-#          expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy()
-#          expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy()
-#          expect(fs.existsSync(path.join(testModuleDirectory, 'build', 'Release', 'native.node'))).toBeTruthy()
-#
-#          # TODO: Find a way to make this cross-platform (config.gypi, perhaps?)
-#          if process.platform isnt 'win32'
-#            makefileContent = fs.readFileSync(path.join(testModuleDirectory, 'build', 'Makefile'), {encoding: 'utf-8'})
-#            expect(makefileContent).toMatch('node_modules/with\\ a\\ space/addon.gypi')
+   describe "with a space in node-gyp's path", ->
+     nodeModules = fs.realpathSync(path.join(__dirname, '..', 'node_modules'))
+
+     beforeEach ->
+       # Normally npm_config_node_gyp would be ignored, but it works here because we're calling apm
+       # directly and not through the scripts in bin/
+       nodeGypPath =  path.dirname(path.dirname(require.resolve('node-gyp'))) # find an installed node-gyp
+       fs.copySync nodeGypPath, path.join(nodeModules, 'with a space')
+       process.env.npm_config_node_gyp = path.join(nodeModules, 'with a space', 'bin', 'node-gyp.js')
+
+       # Read + execute permission
+       fs.chmodSync(process.env.npm_config_node_gyp, fs.constants.S_IRUSR | fs.constants.S_IXUSR)
+
+     afterEach ->
+       delete process.env.npm_config_node_gyp
+       fs.removeSync(path.join(nodeModules, 'with a space'))
+
+     it 'builds native code successfully', ->
+       callback = jasmine.createSpy('callback')
+       apm.run(['install', 'native-package'], callback)
+
+       waitsFor 'waiting for install to complete', 600000, ->
+         callback.callCount is 1
+
+       runs ->
+         expect(callback.mostRecentCall.args[0]).toBeNull()
+
+         testModuleDirectory = path.join(atomHome, 'packages', 'native-package')
+         expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy()
+         expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy()
+         expect(fs.existsSync(path.join(testModuleDirectory, 'build', 'Release', 'native.node'))).toBeTruthy()
+
+         # TODO: Find a way to make this cross-platform (config.gypi, perhaps?)
+         if process.platform isnt 'win32'
+           makefileContent = fs.readFileSync(path.join(testModuleDirectory, 'build', 'Makefile'), {encoding: 'utf-8'})
+           expect(makefileContent).toMatch('node_modules/with\\ a\\ space/addon.gypi')
