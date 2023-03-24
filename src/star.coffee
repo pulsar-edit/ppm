@@ -20,11 +20,11 @@ class Star extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm star <package_name>...
+      Usage: ppm star <package_name>...
 
       Star the given packages
 
-      Run `apm stars` to see all your starred packages.
+      Run `ppm stars` to see all your starred packages.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages')

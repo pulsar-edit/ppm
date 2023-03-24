@@ -15,7 +15,7 @@ class Search extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm search <package_name>
+      Usage: ppm search <package_name>
 
       Search for packages/themes.
     """
@@ -81,7 +81,7 @@ class Search extends Command
           label
 
         console.log()
-        console.log "Use `apm install` to install them or visit #{'https://web.pulsar-edit.dev'.underline} to read more about them."
+        console.log "Use `ppm install` to install them or visit #{'https://web.pulsar-edit.dev'.underline} to read more about them."
         console.log()
 
       callback()

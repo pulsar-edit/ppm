@@ -15,7 +15,7 @@ class View extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm view <package_name>
+      Usage: ppm view <package_name>
 
       View information about a package/theme.
     """
@@ -100,7 +100,7 @@ class View extends Command
         tree(items)
 
         console.log()
-        console.log "Run `apm install #{pack.name}` to install this package."
+        console.log "Run `ppm install #{pack.name}` to install this package."
         console.log()
 
       callback()

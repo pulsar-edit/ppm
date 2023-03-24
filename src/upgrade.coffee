@@ -29,9 +29,9 @@ class Upgrade extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm upgrade
-             apm upgrade --list
-             apm upgrade [<package_name>...]
+      Usage: ppm upgrade
+             ppm upgrade --list
+             ppm upgrade [<package_name>...]
 
       Upgrade out of date packages installed to ~/.pulsar/packages
 

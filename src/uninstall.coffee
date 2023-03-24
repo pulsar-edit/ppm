@@ -18,7 +18,7 @@ class Uninstall extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm uninstall <package_name>...
+      Usage: ppm uninstall <package_name>...
 
       Delete the installed package(s) from the ~/.pulsar/packages directory.
     """

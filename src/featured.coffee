@@ -14,9 +14,9 @@ class Featured extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm featured
-             apm featured --themes
-             apm featured --compatible 0.49.0
+      Usage: ppm featured
+             ppm featured --themes
+             ppm featured --compatible 0.49.0
 
       List the Pulsar packages and themes that are currently featured.
     """
@@ -75,7 +75,7 @@ class Featured extends Command
           label
 
         console.log()
-        console.log "Use `apm install` to install them or visit #{'https://web.pulsar-edit.dev/'.underline} to read more about them."
+        console.log "Use `ppm install` to install them or visit #{'https://web.pulsar-edit.dev/'.underline} to read more about them."
         console.log()
 
       callback()

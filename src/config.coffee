@@ -18,11 +18,11 @@ class Config extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm config set <key> <value>
-             apm config get <key>
-             apm config delete <key>
-             apm config list
-             apm config edit
+      Usage: ppm config set <key> <value>
+             ppm config get <key>
+             ppm config delete <key>
+             ppm config list
+             ppm config edit
 
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')

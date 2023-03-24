@@ -16,10 +16,10 @@ class Stars extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm stars
-             apm stars --install
-             apm stars --user thedaniel
-             apm stars --themes
+      Usage: ppm stars
+             ppm stars --install
+             ppm stars --user thedaniel
+             ppm stars --themes
 
       List or install starred Atom packages and themes.
     """
@@ -83,7 +83,7 @@ class Stars extends Command
       label
 
     console.log()
-    console.log "Use `apm stars --install` to install them all or visit #{'https://web.pulsar-edit.dev'.underline} to read more about them."
+    console.log "Use `ppm stars --install` to install them all or visit #{'https://web.pulsar-edit.dev'.underline} to read more about them."
     console.log()
     callback()
 

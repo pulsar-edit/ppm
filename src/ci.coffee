@@ -20,13 +20,13 @@ class Ci extends Command
   parseOptions: (argv) ->
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
-      Usage: apm ci
+      Usage: ppm ci
 
       Install a package with a clean slate.
 
-      If you have an up-to-date package-lock.json file created by apm install,
-      apm ci will install its locked contents exactly. It is substantially
-      faster than apm install and produces consistently reproduceable builds,
+      If you have an up-to-date package-lock.json file created by ppm install,
+      ppm ci will install its locked contents exactly. It is substantially
+      faster than ppm install and produces consistently reproduceable builds,
       but cannot be used to install new packages or dependencies.
     """
 

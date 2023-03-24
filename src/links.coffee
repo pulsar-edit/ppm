@@ -20,7 +20,7 @@ class Links extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm links
+      Usage: ppm links
 
       List all of the symlinked atom packages in ~/.atom/packages and
       ~/.pulsar/dev/packages.

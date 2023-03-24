@@ -20,12 +20,12 @@ class Unlink extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm unlink [<package_path>]
+      Usage: ppm unlink [<package_path>]
 
       Delete the symlink in ~/.pulsar/packages for the package. The package in the
       current working directory is unlinked if no path is given.
 
-      Run `apm links` to view all the currently linked packages.
+      Run `ppm links` to view all the currently linked packages.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.alias('d', 'dev').boolean('dev').describe('dev', 'Unlink package from ~/.pulsar/dev/packages')

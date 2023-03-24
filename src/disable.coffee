@@ -15,7 +15,7 @@ class Disable extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm disable [<package_name>]...
+      Usage: ppm disable [<package_name>]...
 
       Disables the named package(s).
     """
