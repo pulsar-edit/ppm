@@ -8,13 +8,16 @@ const CSON = require('season');
 const apm = require('../lib/apm-cli');
 
 describe('apm ci', () => {
-  var server;
+  let [atomHome, resourcePath, server] = Array.from([]);
 
   beforeEach(() => {
     spyOnToken();
     silenceOutput();
-    process.env.ATOM_HOME = temp.mkdirSync('apm-home-dir-');
-    process.env.ATOM_RESOURCE_PATH = temp.mkdirSync('atom-resource-path-');
+    atomHome = temp.mkdirSync('apm-home-dir-');
+    process.env.ATOM_HOME = atomHome;
+
+    resourcePath = temp.mkdirSync('atom-resource-path-');
+    process.env.ATOM_RESOURCE_PATH = resourcePath;
     delete process.env.npm_config_cache;
     const app = express();
     app.get(`/node/${nodeVersion}/node-${nodeVersion}-headers.tar.gz`, (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'node-dist', `node-${nodeVersion}-headers.tar.gz`)));
@@ -28,7 +31,7 @@ describe('apm ci', () => {
     app.get('/tarball/test-module-1.1.0.tgz', (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'test-module-1.1.0.tgz')));
     app.get('/tarball/native-module-1.0.0.tgz', (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'native-module-1.0.0.tgz')));
     server = http.createServer(app);
-    var live = false;
+    let live = false;
     server.listen(3000, '127.0.0.1', () => {
       process.env.ATOM_ELECTRON_URL = 'http://localhost:3000/node';
       process.env.ATOM_PACKAGES_URL = 'http://localhost:3000/packages';
@@ -40,7 +43,7 @@ describe('apm ci', () => {
   })
 
   afterEach(() => {
-    var done = false;
+    let done = false;
     server.close(() => {
       done = true;
     });
