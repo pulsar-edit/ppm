@@ -1,25 +1,16 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 const auth = require('../lib/auth');
 
-global.silenceOutput = function(callThrough) {
-  if (callThrough == null) { callThrough = false; }
+global.silenceOutput = (callThrough = false) => {
   spyOn(console, 'log');
   spyOn(console, 'error');
   spyOn(process.stdout, 'write');
   spyOn(process.stderr, 'write');
 
   if (callThrough) {
-    return ([
-      console.log,
-      console.error,
-      process.stdout.write,
-      process.stderr.write
-    ]).map((spy) => spy.andCallThrough());
+    const ref = [console.log, console.error, process.stdout.write, process.stderr.write];
+    for (const spy of ref) {
+      spy.andCallThrough();
+    }
   }
 };
 
