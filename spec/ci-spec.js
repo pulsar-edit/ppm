@@ -6,19 +6,17 @@ const express = require('express');
 const wrench = require('wrench');
 const CSON = require('season');
 const apm = require('../lib/apm-cli');
-const { nodeVersion } = JSON.parse(fs.readFileSync('./config.json'));
+const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
 describe('apm ci', () => {
-  let [atomHome, resourcePath, server] = Array.from([]);
+  let server;
 
   beforeEach(() => {
     spyOnToken();
     silenceOutput();
-    atomHome = temp.mkdirSync('apm-home-dir-');
-    process.env.ATOM_HOME = atomHome;
+    process.env.ATOM_HOME = temp.mkdirSync('apm-home-dir-');
 
-    resourcePath = temp.mkdirSync('atom-resource-path-');
-    process.env.ATOM_RESOURCE_PATH = resourcePath;
+    process.env.ATOM_RESOURCE_PATH = temp.mkdirSync('atom-resource-path-');
     delete process.env.npm_config_cache;
     const app = express();
     app.get(`/node/${nodeVersion}/node-${nodeVersion}-headers.tar.gz`, (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'node-dist', `node-${nodeVersion}-headers.tar.gz`)));
