@@ -5,7 +5,7 @@ const express = require('express');
 const http = require('http');
 const wrench = require('wrench');
 const apm = require('../lib/apm-cli');
-const { nodeVersion } = JSON.parse(fs.readFileSync('./config.json'));
+const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
 
 describe('apm clean', () => {
   let server, moduleDirectory;
