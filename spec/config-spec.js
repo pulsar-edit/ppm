@@ -12,6 +12,7 @@ describe('apm config', () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
     userConfigPath = path.join(atomHome, '.apmrc');
+    // Make sure the cache used is the one for the test env
     delete process.env.npm_config_cache;
   });
 
