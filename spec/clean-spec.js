@@ -49,7 +49,12 @@ describe('apm clean', () => {
   it('uninstalls any packages not referenced in the package.json', () => {
     const removedPath = path.join(moduleDirectory, 'node_modules', 'will-be-removed');
     fs.makeTreeSync(removedPath);
-    fs.writeFileSync(path.join(removedPath, 'package.json'), '{"name": "will-be-removed", "version": "1.0.0", "dependencies": {}}', 'utf8');
+    fs.writeFileSync(
+      path.join(removedPath, 'package.json'),
+      '{"name": "will-be-removed", "version": "1.0.0", "dependencies": {}}',
+      'utf8'
+    );
+
     const callback = jasmine.createSpy('callback');
     apm.run(['clean'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
@@ -62,7 +67,12 @@ describe('apm clean', () => {
   it('uninstalls a scoped package', () => {
     const removedPath = path.join(moduleDirectory, 'node_modules/@types/atom');
     fs.makeTreeSync(removedPath);
-    fs.writeFileSync(path.join(removedPath, 'package.json'), '{"name": "@types/atom", "version": "1.0.0", "dependencies": {}}', 'utf8');
+    fs.writeFileSync(
+      path.join(removedPath, 'package.json'),
+      '{"name": "@types/atom", "version": "1.0.0", "dependencies": {}}',
+      'utf8'
+    );
+
     const callback = jasmine.createSpy('callback');
     apm.run(['clean'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
