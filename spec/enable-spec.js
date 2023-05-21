@@ -15,6 +15,7 @@ describe('apm enable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
     const configFilePath = path.join(atomHome, 'config.cson');
+    
     CSON.writeFileSync(configFilePath, {
       '*': {
         core: {
@@ -22,15 +23,19 @@ describe('apm enable', () => {
         }
       }
     });
+    
     runs(() => {
       apm.run(['enable', 'vim-mode', 'not-installed', 'file-icons'], callback);
     });
+    
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(console.log).toHaveBeenCalled();
       expect(console.log.argsForCall[0][0]).toMatch(/Not Disabled:\s*not-installed/);
       expect(console.log.argsForCall[1][0]).toMatch(/Enabled:\s*vim-mode/);
       const config = CSON.readFileSync(configFilePath);
+      
       expect(config).toEqual({
         '*': {
           core: {
@@ -46,6 +51,7 @@ describe('apm enable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
     const configFilePath = path.join(atomHome, 'config.cson');
+    
     CSON.writeFileSync(configFilePath, {
       '*': {
         core: {
@@ -53,14 +59,18 @@ describe('apm enable', () => {
         }
       }
     });
+    
     runs(() => {
       apm.run(['enable', 'vim-mode'], callback);
     });
+    
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(console.log).toHaveBeenCalled();
       expect(console.log.argsForCall[0][0]).toMatch(/Not Disabled:\s*vim-mode/);
       const config = CSON.readFileSync(configFilePath);
+      
       expect(config).toEqual({
         '*': {
           core: {
@@ -75,10 +85,13 @@ describe('apm enable', () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
+    
     runs(() => {
       apm.run(['enable', 'vim-mode'], callback);
     });
+    
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(console.error).toHaveBeenCalled();
       expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
@@ -89,6 +102,7 @@ describe('apm enable', () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
+    
     runs(() => {
       apm.run(['enable'], callback);
     });
