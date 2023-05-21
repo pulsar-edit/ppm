@@ -22,7 +22,7 @@ class Login extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage """
-      Usage: apm login
+      Usage: ppm login
 
       Enter your package API token and save it to the keychain. This token will
       be used to identify you when publishing packages.

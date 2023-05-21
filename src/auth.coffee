@@ -29,7 +29,7 @@ module.exports =
         else
           callback """
             No package API token in keychain
-            Run `apm login` or set the `ATOM_ACCESS_TOKEN` environment variable.
+            Run `ppm login` or set the `ATOM_ACCESS_TOKEN` environment variable.
           """
 
   # Save the given token to the keychain.

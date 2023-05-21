@@ -21,7 +21,7 @@ class Clean extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage """
-      Usage: apm clean
+      Usage: ppm clean
 
       Deletes all packages in the node_modules folder that are not referenced
       as a dependency in the package.json file.

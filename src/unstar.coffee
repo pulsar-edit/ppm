@@ -14,11 +14,11 @@ class Unstar extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm unstar <package_name>...
+      Usage: ppm unstar <package_name>...
 
       Unstar the given packages
 
-      Run `apm stars` to see all your starred packages.
+      Run `ppm stars` to see all your starred packages.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
 

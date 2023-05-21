@@ -17,8 +17,8 @@ class Unpublish extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage """
-      Usage: apm unpublish [<package_name>]
-             apm unpublish <package_name>@<package_version>
+      Usage: ppm unpublish [<package_name>]
+             ppm unpublish <package_name>@<package_version>
 
       Remove a published package or package version.
 
@@ -68,7 +68,7 @@ class Unpublish extends Command
       question = "Are you sure you want to unpublish '#{packageLabel}'? (no) "
     else
       question = "Are you sure you want to unpublish ALL VERSIONS of '#{packageLabel}'? " +
-                 "This will remove it from the apm registry, including " +
+                 "This will remove it from the ppm registry, including " +
                  "download counts and stars, and this action is irreversible. (no)"
 
     @prompt question, (answer) =>

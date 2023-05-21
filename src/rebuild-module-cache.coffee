@@ -17,7 +17,7 @@ class RebuildModuleCache extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm rebuild-module-cache
+      Usage: ppm rebuild-module-cache
 
       Rebuild the module cache for all the packages installed to
       ~/.pulsar/packages

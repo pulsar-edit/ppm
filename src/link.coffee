@@ -15,12 +15,12 @@ class Link extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
     options.usage """
 
-      Usage: apm link [<package_path>] [--name <package_name>]
+      Usage: ppm link [<package_path>] [--name <package_name>]
 
       Create a symlink for the package in ~/.pulsar/packages. The package in the
       current working directory is linked if no path is given.
 
-      Run `apm links` to view all the currently linked packages.
+      Run `ppm links` to view all the currently linked packages.
     """
     options.alias('h', 'help').describe('help', 'Print this usage message')
     options.alias('d', 'dev').boolean('dev').describe('dev', 'Link to ~/.pulsar/dev/packages')

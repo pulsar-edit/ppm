@@ -25,7 +25,7 @@ class Develop extends Command
     options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()))
 
     options.usage """
-      Usage: apm develop <package_name> [<directory>]
+      Usage: ppm develop <package_name> [<directory>]
 
       Clone the given package's Git repository to the directory specified,
       install its dependencies, and link it for development to
