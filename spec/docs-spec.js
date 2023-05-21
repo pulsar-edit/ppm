@@ -11,18 +11,23 @@ describe('apm docs', () => {
     silenceOutput();
     spyOnToken();
     const app = express();
+    
     app.get('/wrap-guide', (_request, response) => {
       response.sendFile(path.join(__dirname, 'fixtures', 'wrap-guide.json'));
     });
+    
     app.get('/install', (_request, response) => {
       response.sendFile(path.join(__dirname, 'fixtures', 'install.json'));
     });
+    
     server = http.createServer(app);
     let live = false;
+    
     server.listen(3000, '127.0.0.1', () => {
       process.env.ATOM_PACKAGES_URL = 'http://localhost:3000';
       live = true;
     });
+    
     waitsFor(() => live);
   });
 
@@ -38,6 +43,7 @@ describe('apm docs', () => {
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', 'install'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(console.error).toHaveBeenCalled();
       expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
@@ -48,6 +54,7 @@ describe('apm docs', () => {
     const callback = jasmine.createSpy('callback');
     apm.run(['docs'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(console.error).toHaveBeenCalled();
       expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
@@ -59,6 +66,7 @@ describe('apm docs', () => {
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', '--print', 'wrap-guide'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(Docs.prototype.openRepositoryUrl).not.toHaveBeenCalled();
       expect(console.log).toHaveBeenCalled();
@@ -72,6 +80,7 @@ describe('apm docs', () => {
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', '-p', 'wrap-guide'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(Docs.prototype.openRepositoryUrl).not.toHaveBeenCalled();
       expect(console.log).toHaveBeenCalled();
@@ -84,6 +93,7 @@ describe('apm docs', () => {
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', 'wrap-guide'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
+    
     runs(() => {
       expect(Docs.prototype.openRepositoryUrl).toHaveBeenCalled();
     });
