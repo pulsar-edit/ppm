@@ -16,6 +16,7 @@ describe('apm disable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
     const configFilePath = path.join(atomHome, 'config.cson');
+
     CSON.writeFileSync(configFilePath, {
       '*': {
         core: {
@@ -23,12 +24,14 @@ describe('apm disable', () => {
         }
       }
     });
+
     const packagesPath = path.join(atomHome, 'packages');
     const packageSrcPath = path.join(__dirname, 'fixtures');
     fs.makeTreeSync(packagesPath);
     wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module'), path.join(packagesPath, 'test-module'));
     wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module-two'), path.join(packagesPath, 'test-module-two'));
     wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module-three'), path.join(packagesPath, 'test-module-three'));
+
     runs(() => {
       apm.run(['disable', 'test-module-two', 'not-installed', 'test-module-three'], callback);
     });
@@ -53,6 +56,7 @@ describe('apm disable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
     const configFilePath = path.join(atomHome, 'config.cson');
+
     CSON.writeFileSync(configFilePath, {
       '*': {
         core: {
@@ -60,6 +64,7 @@ describe('apm disable', () => {
         }
       }
     });
+
     runs(() => {
       apm.run(['disable', 'vim-mode', 'metrics'], callback);
     });
@@ -80,6 +85,7 @@ describe('apm disable', () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
+
     runs(() => {
       apm.run(['disable', 'vim-mode'], callback);
     });
@@ -94,6 +100,7 @@ describe('apm disable', () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
+
     runs(() => {
       apm.run(['disable'], callback);
     });
