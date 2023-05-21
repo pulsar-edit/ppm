@@ -1,99 +1,101 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 const path = require('path');
 const express = require('express');
 const http = require('http');
 const apm = require('../lib/apm-cli');
 let Docs = require('../lib/docs');
 
-describe('apm docs', function() {
+describe('apm docs', () => {
   let server = null;
 
-  beforeEach(function() {
+  beforeEach(() => {
     silenceOutput();
     spyOnToken();
-
     const app = express();
-    app.get('/wrap-guide', (request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'wrap-guide.json')));
-    app.get('/install', (request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'install.json')));
-    server = http.createServer(app);
 
-    let live = false;
-    server.listen(3000, '127.0.0.1', function() {
-      process.env.ATOM_PACKAGES_URL = "http://localhost:3000";
-      return live = true;
+    app.get('/wrap-guide', (_request, response) => {
+      response.sendFile(path.join(__dirname, 'fixtures', 'wrap-guide.json'));
     });
-    return waitsFor(() => live);
+
+    app.get('/install', (_request, response) => {
+      response.sendFile(path.join(__dirname, 'fixtures', 'install.json'));
+    });
+
+    server = http.createServer(app);
+    let live = false;
+
+    server.listen(3000, '127.0.0.1', () => {
+      process.env.ATOM_PACKAGES_URL = 'http://localhost:3000';
+      live = true;
+    });
+
+    waitsFor(() => live);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     let done = false;
-    server.close(() => done = true);
-    return waitsFor(() => done);
+    server.close(() => {
+      done = true;
+    });
+    waitsFor(() => done);
   });
 
-  it('logs an error if the package has no URL', function() {
+  it('logs an error if the package has no URL', () => {
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', 'install'], callback);
-
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
-    return runs(function() {
+
+    runs(() => {
       expect(console.error).toHaveBeenCalled();
-      return expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
+      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
     });
   });
 
-  it("logs an error if the package name is missing or empty", function() {
+  it('logs an error if the package name is missing or empty', () => {
     const callback = jasmine.createSpy('callback');
     apm.run(['docs'], callback);
-
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
-    return runs(function() {
+    runs(() => {
       expect(console.error).toHaveBeenCalled();
-      return expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
+      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
     });
   });
 
-  it("prints the package URL if called with the --print option (and does not open it)", function() {
+  it('prints the package URL if called with the --print option (and does not open it)', () => {
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', '--print', 'wrap-guide'], callback);
-
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
-    return runs(function() {
+    runs(() => {
       expect(Docs.prototype.openRepositoryUrl).not.toHaveBeenCalled();
       expect(console.log).toHaveBeenCalled();
-      return expect(console.log.argsForCall[0][0]).toContain('https://github.com/atom/wrap-guide');
+      expect(console.log.argsForCall[0][0]).toContain('https://github.com/atom/wrap-guide');
     });
   });
 
-  it("prints the package URL if called with the -p short option (and does not open it)", function() {
+  it('prints the package URL if called with the -p short option (and does not open it)', () => {
     Docs = require('../lib/docs');
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', '-p', 'wrap-guide'], callback);
-
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
-    return runs(function() {
+    runs(() => {
       expect(Docs.prototype.openRepositoryUrl).not.toHaveBeenCalled();
       expect(console.log).toHaveBeenCalled();
-      return expect(console.log.argsForCall[0][0]).toContain('https://github.com/atom/wrap-guide');
+      expect(console.log.argsForCall[0][0]).toContain('https://github.com/atom/wrap-guide');
     });
   });
 
-  return it("opens the package URL", function() {
+  it('opens the package URL', () => {
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', 'wrap-guide'], callback);
-
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
-    return runs(() => expect(Docs.prototype.openRepositoryUrl).toHaveBeenCalled());
+    runs(() => {
+      expect(Docs.prototype.openRepositoryUrl).toHaveBeenCalled();
+    });
   });
 });
