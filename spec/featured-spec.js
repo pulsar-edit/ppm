@@ -10,18 +10,23 @@ describe('apm featured', () => {
     silenceOutput();
     spyOnToken();
     const app = express();
+    
     app.get('/packages/featured', (request, response) => {
       response.sendFile(path.join(__dirname, 'fixtures', 'packages.json'));
     });
+    
     app.get('/themes/featured', (request, response) => {
       response.sendFile(path.join(__dirname, 'fixtures', 'themes.json'));
     });
+    
     server = http.createServer(app);
     let live = false;
+    
     server.listen(3000, '127.0.0.1', () => {
       process.env.ATOM_API_URL = 'http://localhost:3000';
       live = true;
     });
+    
     waitsFor(() => live);
   });
 
