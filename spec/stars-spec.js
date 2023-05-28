@@ -1,20 +1,19 @@
-const path = require('path')
-const express = require('express')
-const fs = require('fs-plus')
-const http = require('http')
-const temp = require('temp')
-const apm = require('../lib/apm-cli')
-const {
-  nodeVersion
-} = require('./config.json');
+const path = require('path');
+const express = require('express');
+const fs = require('fs-plus');
+const http = require('http');
+const temp = require('temp');
+const apm = require('../lib/apm-cli');
+const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
 describe('apm stars', () => {
-  var atomHome, server
+  let atomHome, server;
 
   beforeEach(() => {
-    silenceOutput()
-    spyOnToken()
-    const app = express()
+    silenceOutput();
+    spyOnToken();
+
+    const app = express();
     app.get('/stars', (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'available.json')));
     app.get('/users/hubot/stars', (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'stars.json')));
     app.get(`/node/${nodeVersion}/node-${nodeVersion}-headers.tar.gz`, (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'node-dist', `node-${nodeVersion}-headers.tar.gz`)));
@@ -24,78 +23,84 @@ describe('apm stars', () => {
     app.get('/tarball/test-module-1.2.0.tgz', (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'test-module-1.2.0.tgz')));
     app.get('/tarball/test-module2-2.0.0.tgz', (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'test-module2-2.0.0.tgz')));
     app.get('/packages/test-module', (_request, response) => response.sendFile(path.join(__dirname, 'fixtures', 'install-test-module.json')));
-    server = http.createServer(app)
-    var live = false
+
+    server = http.createServer(app);
+
+    let live = false;
     server.listen(3000, '127.0.0.1', () => {
-      atomHome = temp.mkdirSync('apm-home-dir-')
-      process.env.ATOM_HOME = atomHome
-      process.env.ATOM_API_URL = 'http://localhost:3000'
-      process.env.ATOM_ELECTRON_URL = 'http://localhost:3000/node'
-      process.env.ATOM_PACKAGES_URL = 'http://localhost:3000/packages'
-      process.env.ATOM_ELECTRON_VERSION = nodeVersion
-      process.env.npm_config_registry = 'http://localhost:3000/'
-      live = true
-    })
-    waitsFor(() => live)
-  })
+      atomHome = temp.mkdirSync('apm-home-dir-');
+      process.env.ATOM_HOME = atomHome;
+      process.env.ATOM_API_URL = 'http://localhost:3000';
+      process.env.ATOM_ELECTRON_URL = 'http://localhost:3000/node';
+      process.env.ATOM_PACKAGES_URL = 'http://localhost:3000/packages';
+      process.env.ATOM_ELECTRON_VERSION = nodeVersion;
+      process.env.npm_config_registry = 'http://localhost:3000/';
+      live = true;
+    });
+    waitsFor(() => live);
+  });
 
   afterEach(() => {
-    var closed = false
+    let closed = false;
     server.close(() => {
-      closed = true
-    })
-    waitsFor(() => closed)
-  })
+      closed = true;
+    });
+    waitsFor(() => closed);
+  });
 
   describe('when no user flag is specified', () => {
     it('lists your starred packages', () => {
-      const callback = jasmine.createSpy('callback')
-      apm.run(['stars'], callback)
-      waitsFor('waiting for command to complete', () => callback.callCount > 0)
+      const callback = jasmine.createSpy('callback');
+      apm.run(['stars'], callback);
+
+      waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
-        expect(console.log).toHaveBeenCalled()
-        expect(console.log.argsForCall[1][0]).toContain('beverly-hills')
-      })
-    })
-  })
+        expect(console.log).toHaveBeenCalled();
+        expect(console.log.argsForCall[1][0]).toContain('beverly-hills');
+      });
+    });
+  });
 
   describe('when a user flag is specified', () => {
     it('lists their starred packages', () => {
-      const callback = jasmine.createSpy('callback')
-      apm.run(['stars', '--user', 'hubot'], callback)
-      waitsFor('waiting for command to complete', () => callback.callCount > 0)
+      const callback = jasmine.createSpy('callback');
+      apm.run(['stars', '--user', 'hubot'], callback);
+
+      waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
-        expect(console.log).toHaveBeenCalled()
-        expect(console.log.argsForCall[1][0]).toContain('test-module')
-      })
-    })
-  })
+        expect(console.log).toHaveBeenCalled();
+        expect(console.log.argsForCall[1][0]).toContain('test-module');
+      });
+    });
+  });
 
   describe('when the install flag is specified', () => {
     it('installs all of the stars', () => {
-      const testModuleDirectory = path.join(atomHome, 'packages', 'test-module')
-      expect(fs.existsSync(testModuleDirectory)).toBeFalsy()
-      const callback = jasmine.createSpy('callback')
-      apm.run(['stars', '--user', 'hubot', '--install'], callback)
-      waitsFor('waiting for command to complete', () => callback.callCount > 0)
+      const testModuleDirectory = path.join(atomHome, 'packages', 'test-module');
+      expect(fs.existsSync(testModuleDirectory)).toBeFalsy();
+      const callback = jasmine.createSpy('callback');
+      apm.run(['stars', '--user', 'hubot', '--install'], callback);
+
+      waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
-        expect(callback.mostRecentCall.args[0]).toBeNull()
-        expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy()
-        expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy()
-      })
-    })
-  })
+        expect(callback.mostRecentCall.args[0]).toBeNull();
+        expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy();
+        expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy();
+      });
+    });
+  });
 
   describe('when the theme flag is specified', () => {
     it('only lists themes', () => {
-      const callback = jasmine.createSpy('callback')
-      apm.run(['stars', '--themes'], callback)
-      waitsFor('waiting for command to complete', () => callback.callCount > 0)
+      const callback = jasmine.createSpy('callback');
+      apm.run(['stars', '--themes'], callback);
+
+      waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
-        expect(console.log).toHaveBeenCalled()
-        expect(console.log.argsForCall[1][0]).toContain('duckblur')
-        expect(console.log.argsForCall[1][0]).not.toContain('beverly-hills')
-      })
-    })
-  })
-})
+        expect(console.log).toHaveBeenCalled();
+        expect(console.log.argsForCall[1][0]).toContain('duckblur');
+        expect(console.log.argsForCall[1][0]).not.toContain('beverly-hills');
+      });
+    });
+  });
+});
