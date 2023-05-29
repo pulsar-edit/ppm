@@ -162,7 +162,7 @@ describe('apm list', () => {
     expect(json.dev).toEqual([{name: 'dev-package', version: '1.0.0'}]);
     expect(json.git).toEqual([{name: 'git-package', version: '1.0.0', apmInstallSource}]);
     expect(json.user).toEqual([{name: 'user-package', version: '1.0.0'}]);
-}));
+});
 
   it('lists packages in bare format when --bare is passed', () => {
     listPackages(['--bare'], () => {
