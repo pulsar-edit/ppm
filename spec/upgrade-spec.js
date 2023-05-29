@@ -80,7 +80,7 @@ describe('apm upgrade', () => {
     fs.writeFileSync(path.join(packagesDir, 'test-module', 'package.json'), JSON.stringify({
       name: 'test-module',
       version: '0.3.0',
-      repository: 'https://github.com/a/b';
+      repository: 'https://github.com/a/b'
     }));
 
     const callback = jasmine.createSpy('callback');
