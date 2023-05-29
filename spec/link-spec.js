@@ -119,7 +119,7 @@ describe('apm link/unlink', () => {
 
       runs(() => {
         callback.reset();
-        apm.run(['link', ;packageToLink2], callback);
+        apm.run(['link', packageToLink2], callback);
         apm.run(['link', packageToLink3], callback);
       });
 
