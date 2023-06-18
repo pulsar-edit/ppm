@@ -111,9 +111,13 @@ class Command
     env.npm_config_disturl = config.getElectronUrl()
     env.npm_config_arch = config.getElectronArch()
     env.npm_config_target_arch = config.getElectronArch() # for node-pre-gyp
+    env.npm_config_force_process_config = "true" # for node-gyp
+    # node-gyp >=8.4.0 needs --force-process-config=true set for older Electron.
+    # For more details, see: https://github.com/nodejs/node-gyp/pull/2497,
+    # and also see the issues/PRs linked from that one for more context.
 
   getNpmBuildFlags: ->
-    ["--target=#{@electronVersion}", "--disturl=#{config.getElectronUrl()}", "--arch=#{config.getElectronArch()}"]
+    ["--target=#{@electronVersion}", "--disturl=#{config.getElectronUrl()}", "--arch=#{config.getElectronArch()}", "--force-process-config"]
 
   updateWindowsEnv: (env) ->
     env.USERPROFILE = env.HOME
