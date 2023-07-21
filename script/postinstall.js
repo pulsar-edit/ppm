@@ -16,6 +16,7 @@ if (process.platform === 'win32') {
 // so this is especially needed to allow apm to be published successfully on Windows)
 fs.chmodSync(script, 0o755)
 fs.chmodSync(path.join(__dirname, '..', 'bin', 'apm'), 0o755)
+fs.chmodSync(path.join(__dirname, '..', 'bin', 'ppm'), 0o755)
 fs.chmodSync(path.join(__dirname, '..', 'bin', 'npm'), 0o755)
 
 const child = cp.spawn(script, [], { stdio: ['pipe', 'pipe', 'pipe'], shell: true })
