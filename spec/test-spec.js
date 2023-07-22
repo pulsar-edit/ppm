@@ -1,28 +1,21 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 const child_process = require('child_process');
-const fs = require('fs');
 const path = require('path');
 const temp = require('temp');
 const apm = require('../lib/apm-cli');
 
-describe("apm test", function() {
-  let [specPath] = Array.from([]);
+describe('apm test', () => {
+  let specPath;
 
-  beforeEach(function() {
+  beforeEach(() => {
     silenceOutput();
     spyOnToken();
 
     const currentDir = temp.mkdirSync('apm-init-');
     spyOn(process, 'cwd').andReturn(currentDir);
-    return specPath = path.join(currentDir, 'spec');
+    specPath = path.join(currentDir, 'spec');
   });
 
-  it("calls atom to test", function() {
+  it('calls atom to test', () => {
     const atomSpawn = spyOn(child_process, 'spawn').andReturn({
       stdout: {
         on() {}
@@ -36,24 +29,24 @@ describe("apm test", function() {
 
     waitsFor('waiting for test to complete', () => atomSpawn.callCount === 1);
 
-    return runs(function() {
+    runs(() => {
       // On Windows, there's a suffix (atom.cmd), so we only check that atom is _included_ in the path
       expect(atomSpawn.mostRecentCall.args[0].indexOf('atom')).not.toBe(-1);
       expect(atomSpawn.mostRecentCall.args[1][0]).toEqual('--dev');
       expect(atomSpawn.mostRecentCall.args[1][1]).toEqual('--test');
       expect(atomSpawn.mostRecentCall.args[1][2]).toEqual(specPath);
       if (process.platform !== 'win32') {
-        return expect(atomSpawn.mostRecentCall.args[2].streaming).toBeTruthy();
+        expect(atomSpawn.mostRecentCall.args[2].streaming).toBeTruthy();
       }
     });
   });
 
-  return describe('returning', function() {
-    let [callback] = Array.from([]);
+  describe('returning', () => {
+    let callback;
 
-    const returnWithCode = function(type, code) {
+    const returnWithCode = (type, code) => {
       callback = jasmine.createSpy('callback');
-      const atomReturnFn = function(e, fn) { if (e === type) { return fn(code); } };
+      const pulsarReturnFn = (e, fn) => e === type && fn(code);
       spyOn(child_process, 'spawn').andReturn({
         stdout: {
           on() {}
@@ -61,37 +54,37 @@ describe("apm test", function() {
         stderr: {
           on() {}
         },
-        on: atomReturnFn,
+        on: pulsarReturnFn,
         removeListener() {}
       }); // no op
-      return apm.run(['test'], callback);
+      apm.run(['test'], callback);
     };
 
-    describe('successfully', function() {
+    describe('successfully', () => {
       beforeEach(() => returnWithCode('close', 0));
 
-      return it("prints success", function() {
+      it('prints success', () => {
         expect(callback).toHaveBeenCalled();
         expect(callback.mostRecentCall.args[0]).toBeUndefined();
-        return expect(process.stdout.write.mostRecentCall.args[0]).toEqual('Tests passed\n'.green);
+        expect(process.stdout.write.mostRecentCall.args[0]).toEqual('Tests passed\n'.green);
       });
     });
 
-    describe('with a failure', function() {
+    describe('with a failure', () => {
       beforeEach(() => returnWithCode('close', 1));
 
-      return it("prints failure", function() {
+      it('prints failure', () => {
         expect(callback).toHaveBeenCalled();
-        return expect(callback.mostRecentCall.args[0]).toEqual('Tests failed');
+        expect(callback.mostRecentCall.args[0]).toEqual('Tests failed');
       });
     });
 
-    return describe('with an error', function() {
+    describe('with an error', () => {
       beforeEach(() => returnWithCode('error'));
 
-      return it("prints failure", function() {
+      it('prints failure', () => {
         expect(callback).toHaveBeenCalled();
-        return expect(callback.mostRecentCall.args[0]).toEqual('Tests failed');
+        expect(callback.mostRecentCall.args[0]).toEqual('Tests failed');
       });
     });
   });
