@@ -5,7 +5,7 @@ zlib = require 'zlib'
 _ = require 'underscore-plus'
 CSON = require 'season'
 plist = require '@atom/plist'
-{ScopeSelector} = require 'first-mate'
+{ScopeSelector, ready} = require 'second-mate'
 tar = require 'tar'
 temp = require 'temp'
 
@@ -163,6 +163,7 @@ class PackageConverter
         name = path.basename(child, extension)
 
       try
+        await ready
         selector = new ScopeSelector(scope).toCssSelector() if scope
       catch e
         e.message = "In file #{e.fileName} at #{JSON.stringify(scope)}: #{e.message}"
@@ -189,6 +190,7 @@ class PackageConverter
 
       if properties = @convertSettings(settings)
         try
+          await ready
           selector = new ScopeSelector(scope).toCssSelector()
         catch e
           e.message = "In file #{e.fileName} at #{JSON.stringify(scope)}: #{e.message}"

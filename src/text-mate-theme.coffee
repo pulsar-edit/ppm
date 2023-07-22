@@ -1,6 +1,6 @@
 _ = require 'underscore-plus'
 plist = require '@atom/plist'
-{ScopeSelector} = require 'first-mate'
+{ScopeSelector, ready} = require 'second-mate'
 
 module.exports =
 class TextMateTheme
@@ -126,6 +126,7 @@ class TextMateTheme
         properties: @translateScopeSelectorSettings(settings)
 
   translateScopeSelector: (textmateScopeSelector) ->
+    await ready
     new ScopeSelector(textmateScopeSelector).toCssSyntaxSelector()
 
   translateScopeSelectorSettings: ({foreground, background, fontStyle}) ->
