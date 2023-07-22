@@ -1,11 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 const {spawn} = require('child_process');
 const path = require('path');
 
@@ -163,8 +155,7 @@ ${'git'.magenta} ${gitVersion.magenta}\
 var getAtomVersion = callback => config.getResourcePath(function(resourcePath) {
   const unknownVersion = 'unknown';
   try {
-    let left;
-    const {version} = (left = require(path.join(resourcePath, 'package.json'))) != null ? left : unknownVersion;
+    const { version } = require(path.join(resourcePath, "package.json")) ?? unknownVersion;
     return callback(version);
   } catch (error) {
     return callback(unknownVersion);
@@ -177,8 +168,7 @@ var getPythonVersion = function(callback) {
     globalconfig: config.getGlobalConfigPath()
   };
   return npm.load(npmOptions, function() {
-    let left;
-    let python = (left = npm.config.get('python')) != null ? left : process.env.PYTHON;
+    let python = npm.config.get("python") ?? process.env.PYTHON;
     if (config.isWin32() && !python) {
       let rootDir = process.env.SystemDrive != null ? process.env.SystemDrive : 'C:\\';
       if (rootDir[rootDir.length - 1] !== '\\') { rootDir += '\\'; }
