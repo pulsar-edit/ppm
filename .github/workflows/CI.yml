@@ -34,7 +34,7 @@ jobs:
           check-latest: true
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - if: "!contains(matrix.os, 'windows')"
         name: Run tests 👩🏾‍💻
