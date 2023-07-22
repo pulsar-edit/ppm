@@ -1,8 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
+
 let keytar;
 try {
   keytar = require('keytar');
@@ -26,7 +22,7 @@ module.exports = {
   // callback - A function to call with an error as the first argument and a
   //            string token as the second argument.
   getToken(callback) {
-    return keytar.findPassword(tokenName)
+    keytar.findPassword(tokenName)
       .then(function(token) {
         if (token) {
           return callback(null, token);
