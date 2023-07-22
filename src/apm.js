@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 const child_process = require('child_process');
 const fs = require('./fs');
 const path = require('path');
@@ -17,7 +11,7 @@ module.exports = {
   },
 
   getAtomDirectory() {
-    return process.env.ATOM_HOME != null ? process.env.ATOM_HOME : path.join(this.getHomeDirectory(), '.pulsar');
+    return process.env.ATOM_HOME ?? path.join(this.getHomeDirectory(), ".pulsar");
   },
 
   getRustupHomeDirPath() {
@@ -84,25 +78,27 @@ module.exports = {
   },
 
   getReposDirectory() {
-    return process.env.ATOM_REPOS_HOME != null ? process.env.ATOM_REPOS_HOME : path.join(this.getHomeDirectory(), 'github');
+    return process.env.ATOM_REPOS_HOME ?? path.join(this.getHomeDirectory(), "github");
   },
 
   getElectronUrl() {
-    return process.env.ATOM_ELECTRON_URL != null ? process.env.ATOM_ELECTRON_URL : 'https://artifacts.electronjs.org/headers/dist';
+    return process.env.ATOM_ELECTRON_URL ?? "https://artifacts.electronjs.org/headers/dist";
   },
 
   getAtomPackagesUrl() {
-    return process.env.ATOM_PACKAGES_URL != null ? process.env.ATOM_PACKAGES_URL : `${this.getAtomApiUrl()}/packages`;
+    return process.env.ATOM_PACKAGES_URL ?? `${this.getAtomApiUrl()}/packages`;
   },
 
   getAtomApiUrl() {
-    return process.env.ATOM_API_URL != null ? process.env.ATOM_API_URL : 'https://api.pulsar-edit.dev/api';
+    return process.env.ATOM_API_URL ?? "https://api.pulsar-edit.dev/api";
   },
 
   getElectronArch() {
     switch (process.platform) {
-      case 'darwin': return 'x64';
-      default: return process.env.ATOM_ARCH != null ? process.env.ATOM_ARCH : process.arch;
+      case 'darwin':
+        return 'x64';
+      default:
+        return process.env.ATOM_ARCH ?? process.arch;
     }
   },
 
@@ -123,20 +119,31 @@ module.exports = {
   },
 
   getInstalledVisualStudioFlag() {
-    if (!this.isWin32()) { return null; }
+    if (!this.isWin32()) {
+      return null;
+    }
 
     // Use the explictly-configured version when set
-    if (process.env.GYP_MSVS_VERSION) { return process.env.GYP_MSVS_VERSION; }
+    if (process.env.GYP_MSVS_VERSION) {
+      return process.env.GYP_MSVS_VERSION;
+    }
 
-    if (this.visualStudioIsInstalled("2019")) { return '2019'; }
-    if (this.visualStudioIsInstalled("2017")) { return '2017'; }
-    if (this.visualStudioIsInstalled("14.0")) { return '2015'; }
+    if (this.visualStudioIsInstalled("2019")) {
+      return '2019';
+    }
+    if (this.visualStudioIsInstalled("2017")) {
+      return '2017';
+    }
+    if (this.visualStudioIsInstalled("14.0")) {
+      return '2015';
+    }
   },
 
   visualStudioIsInstalled(version) {
     if (version < 2017) {
       return fs.existsSync(path.join(this.x86ProgramFilesDirectory(), `Microsoft Visual Studio ${version}`, "Common7", "IDE"));
     } else {
+      // TODO Clean up this mess, https://github.com/pulsar-edit/pulsar/blob/master/packages/autocomplete-html/update/update.js#L216
       return fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "BuildTools", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Community", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Enterprise", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Professional", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "WDExpress", "Common7", "IDE"));
     }
   },
