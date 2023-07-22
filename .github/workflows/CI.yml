@@ -16,7 +16,7 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-          - windows-latest
+          - windows-2019
         node_version:
           - 14
           - 16
