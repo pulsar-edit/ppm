@@ -2,7 +2,6 @@
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
  * DS104: Avoid inline assignments
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
@@ -201,7 +200,7 @@ var getPythonVersion = function(callback) {
       let version;
       if (code === 0) {
         [name, version] = Buffer.concat(outputChunks).toString().split(' ');
-        version = version != null ? version.trim() : undefined;
+        version = version?.trim();
       }
       return callback(version);
     });
@@ -237,7 +236,7 @@ module.exports = {
           console.error(message.red);
         }
       }
-      return (typeof callback === 'function' ? callback(error) : undefined);
+      return callback?.(error);
     };
 
     args = options.argv;
@@ -248,7 +247,7 @@ module.exports = {
       return printVersions(args, options.callback);
     } else if (args.help) {
       if ((Command = commands[options.command])) {
-        showHelp(__guardMethod__(new Command(), 'parseOptions', o => o.parseOptions(options.command)));
+        showHelp(new Command().parseOptions?.(options.command));
       } else {
         showHelp(options);
       }
@@ -256,7 +255,7 @@ module.exports = {
     } else if (command) {
       if (command === 'help') {
         if ((Command = commands[options.commandArgs])) {
-          showHelp(__guardMethod__(new Command(), 'parseOptions', o1 => o1.parseOptions(options.commandArgs)));
+          showHelp(new Command().parseOptions?.(options.commandArgs));
         } else {
           showHelp(options);
         }
@@ -272,11 +271,3 @@ module.exports = {
     }
   }
 };
-
-function __guardMethod__(obj, methodName, transform) {
-  if (typeof obj !== 'undefined' && obj !== null && typeof obj[methodName] === 'function') {
-    return transform(obj, methodName);
-  } else {
-    return undefined;
-  }
-}
