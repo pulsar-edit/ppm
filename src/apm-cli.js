@@ -6,7 +6,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-let name;
 const {spawn} = require('child_process');
 const path = require('path');
 
@@ -19,9 +18,9 @@ const wordwrap = require('wordwrap');
 // Enable "require" scripts in asar archives
 require('asar-require');
 
-const config = require('./apm');
-const fs = require('./fs');
-const git = require('./git');
+const config = require('./apm.js');
+const fs = require('./fs.js');
+const git = require('./git.js');
 
 const setupTempDirectory = function() {
   const temp = require('temp');
@@ -38,39 +37,39 @@ const setupTempDirectory = function() {
 setupTempDirectory();
 
 const commandClasses = [
-  require('./ci'),
-  require('./clean'),
-  require('./config'),
-  require('./dedupe'),
-  require('./develop'),
-  require('./disable'),
-  require('./docs'),
-  require('./enable'),
-  require('./featured'),
-  require('./init'),
-  require('./install'),
-  require('./links'),
-  require('./link'),
-  require('./list'),
-  require('./login'),
-  require('./publish'),
-  require('./rebuild'),
-  require('./rebuild-module-cache'),
-  require('./search'),
-  require('./star'),
-  require('./stars'),
-  require('./test'),
-  require('./uninstall'),
-  require('./unlink'),
-  require('./unpublish'),
-  require('./unstar'),
-  require('./upgrade'),
-  require('./view')
+  require('./ci.js'),
+  require('./clean.js'),
+  require('./config.js'),
+  require('./dedupe.js'),
+  require('./develop.js'),
+  require('./disable.js'),
+  require('./docs.js'),
+  require('./enable.js'),
+  require('./featured.js'),
+  require('./init.js'),
+  require('./install.js'),
+  require('./links.js'),
+  require('./link.js'),
+  require('./list.js'),
+  require('./login.js'),
+  require('./publish.js'),
+  require('./rebuild.js'),
+  require('./rebuild-module-cache.js'),
+  require('./search.js'),
+  require('./star.js'),
+  require('./stars.js'),
+  require('./test.js'),
+  require('./uninstall.js'),
+  require('./unlink.js'),
+  require('./unpublish.js'),
+  require('./unstar.js'),
+  require('./upgrade.js'),
+  require('./view.js')
 ];
 
 const commands = {};
-for (let commandClass of Array.from(commandClasses)) {
-  for (name of Array.from(commandClass.commandNames != null ? commandClass.commandNames : [])) {
+for (let commandClass of commandClasses) {
+  for (let name of commandClass.commandNames != null ? commandClass.commandNames : []) {
     commands[name] = commandClass;
   }
 }
@@ -117,10 +116,9 @@ const showHelp = function(options) {
 };
 
 const printVersions = function(args, callback) {
-  let left, left1;
-  const apmVersion =  (left = require('../package.json').version) != null ? left : '';
-  const npmVersion = (left1 = require('npm/package.json').version) != null ? left1 : '';
-  const nodeVersion = process.versions.node != null ? process.versions.node : '';
+  const apmVersion = require("../package.json").version ?? "";
+  const npmVersion = require("npm/package.json").version ?? "";
+  const nodeVersion = process.versions.node ?? "";
 
   return getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion(function(atomVersion) {
     let versions;
@@ -152,8 +150,7 @@ ${'git'.magenta} ${gitVersion.magenta}\
 `;
 
       if (config.isWin32()) {
-        let left2;
-        const visualStudioVersion = (left2 = config.getInstalledVisualStudioFlag()) != null ? left2 : '';
+        const visualStudioVersion = config.getInstalledVisualStudioFlag() ?? "";
         versions += `\n${'visual studio'.cyan} ${visualStudioVersion.cyan}`;
       }
 
@@ -197,7 +194,7 @@ var getPythonVersion = function(callback) {
     spawned.stdout.on('data', chunk => outputChunks.push(chunk));
     spawned.on('error', function() {});
     return spawned.on('close', function(code) {
-      let version;
+      let version, name;
       if (code === 0) {
         [name, version] = Buffer.concat(outputChunks).toString().split(' ');
         version = version?.trim();
