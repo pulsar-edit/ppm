@@ -1,13 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Install;
+
 const assert = require('assert');
 const path = require('path');
 
@@ -28,11 +19,8 @@ const request = require('./request');
 const {isDeprecatedPackage} = require('./deprecated-packages');
 
 module.exports =
-(Install = (function() {
-  Install = class Install extends Command {
-    static initClass() {
-      this.commandNames = ['install', 'i'];
-    }
+class Install extends Command {
+  static commandNames = [ "install", "i" ];
 
     constructor() {
       super();
@@ -49,22 +37,22 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: ppm install [<package_name>...]
-       ppm install <package_name>@<package_version>
-       ppm install <git_remote> [-b <branch_or_tag_or_commit>]
-       ppm install <github_username>/<github_project> [-b <branch_or_tag_or_commit>]
-       ppm install --packages-file my-packages.txt
-       ppm i (with any of the previous argument usage)
+      Usage: ppm install [<package_name>...]
+             ppm install <package_name>@<package_version>
+             ppm install <git_remote> [-b <branch_or_tag_or_commit>]
+             ppm install <github_username>/<github_project> [-b <branch_or_tag_or_commit>]
+             ppm install --packages-file my-packages.txt
+             ppm i (with any of the previous argument usage)
 
-Install the given Pulsar package to ~/.pulsar/packages/<package_name>.
+      Install the given Pulsar package to ~/.pulsar/packages/<package_name>.
 
-If no package name is given then all the dependencies in the package.json
-file are installed to the node_modules folder in the current working
-directory.
+      If no package name is given then all the dependencies in the package.json
+      file are installed to the node_modules folder in the current working
+      directory.
 
-A packages file can be specified that is a newline separated list of
-package names to install with optional versions using the
-\`package-name@version\` syntax.\
+      A packages file can be specified that is a newline separated list of
+      package names to install with optional versions using the
+      \`package-name@version\` syntax.\
 `
       );
       options.alias('c', 'compatible').string('compatible').describe('compatible', 'Only install packages/themes compatible with this Pulsar version');
@@ -150,11 +138,11 @@ package names to install with optional versions using the
 
     getGitErrorMessage(pack) {
       let message = `\
-Failed to install ${pack.name} because Git was not found.
+      Failed to install ${pack.name} because Git was not found.
 
-The ${pack.name} package has module dependencies that cannot be installed without Git.
+      The ${pack.name} package has module dependencies that cannot be installed without Git.
 
-You need to install Git and add it to your path environment variable in order to install this package.
+      You need to install Git and add it to your path environment variable in order to install this package.
 \
 `;
 
@@ -162,14 +150,14 @@ You need to install Git and add it to your path environment variable in order to
         case 'win32':
           message += `\
 
-You can install Git by downloading, installing, and launching GitHub for Windows: https://windows.github.com
+          You can install Git by downloading, installing, and launching GitHub for Windows: https://windows.github.com
 \
 `;
           break;
         case 'linux':
           message += `\
 
-You can install Git from your OS package manager.
+          You can install Git from your OS package manager.
 \
 `;
           break;
@@ -177,7 +165,7 @@ You can install Git from your OS package manager.
 
       message += `\
 
-Run ppm -v after installing Git to see what version has been detected.\
+          Run ppm -v after installing Git to see what version has been detected.\
 `;
 
       return message;
@@ -300,7 +288,7 @@ Run ppm -v after installing Git to see what version has been detected.\
             return;
           }
 
-          const {tarball} = (pack.versions[packageVersion] != null ? pack.versions[packageVersion].dist : undefined) != null ? (pack.versions[packageVersion] != null ? pack.versions[packageVersion].dist : undefined) : {};
+          const {tarball} = pack.versions[packageVersion]?.dist != null ? pack.versions[packageVersion]?.dist : {};
           if (!tarball) {
             this.logFailure();
             callback(`Package version: ${packageVersion} not found`);
@@ -527,7 +515,7 @@ Run ppm -v after installing Git to see what version has been detected.\
           return callback(false);
         }
 
-        return callback(__guard__(atomMetadata != null ? atomMetadata.packageDependencies : undefined, x => x.hasOwnProperty(packageName)));
+        return callback(atomMetadata?.packageDependencies?.hasOwnProperty(packageName));
       });
     }
 
@@ -551,7 +539,7 @@ Run ppm -v after installing Git to see what version has been detected.\
         const {
           engines
         } = metadata;
-        const engine = (engines != null ? engines.pulsar : undefined) || (engines != null ? engines.atom : undefined) || '*';
+        const engine = engines?.pulsar || engines?.atom || '*';
         if (!semver.validRange(engine)) { continue; }
         if (!semver.satisfies(this.installedAtomVersion, engine)) { continue; }
 
@@ -731,9 +719,9 @@ Run ppm -v after installing Git to see what version has been detected.\
           return this.isBundledPackage(name, isBundledPackage => {
             if (isBundledPackage) {
               console.error(`\
-The ${name} package is bundled with Atom and should not be explicitly installed.
-You can run \`ppm uninstall ${name}\` to uninstall it and then the version bundled
-with Atom will be used.\
+              The ${name} package is bundled with Atom and should not be explicitly installed.
+              You can run \`ppm uninstall ${name}\` to uninstall it and then the version bundled
+              with Atom will be used.\
 `.yellow
               );
             }
@@ -767,11 +755,4 @@ with Atom will be used.\
         return callback(null);
       });
     }
-  };
-  Install.initClass();
-  return Install;
-})());
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
+  }
