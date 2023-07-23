@@ -1,12 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Develop;
+
 const fs = require('fs');
 const path = require('path');
 
@@ -22,11 +14,8 @@ const Link = require('./link');
 const request = require('./request');
 
 module.exports =
-(Develop = (function() {
-  Develop = class Develop extends Command {
-    static initClass() {
-      this.commandNames = ['dev', 'develop'];
-    }
+class Develop extends Command {
+  static commandNames = [ "dev", "develop" ];
 
     constructor() {
       super();
@@ -38,18 +27,18 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
       options.usage(`\
-Usage: ppm develop <package_name> [<directory>]
+      Usage: ppm develop <package_name> [<directory>]
 
-Clone the given package's Git repository to the directory specified,
-install its dependencies, and link it for development to
-~/.pulsar/dev/packages/<package_name>.
+      Clone the given package's Git repository to the directory specified,
+      install its dependencies, and link it for development to
+      ~/.pulsar/dev/packages/<package_name>.
 
-If no directory is specified then the repository is cloned to
-~/github/<package_name>. The default folder to clone packages into can
-be overridden using the ATOM_REPOS_HOME environment variable.
+      If no directory is specified then the repository is cloned to
+      ~/github/<package_name>. The default folder to clone packages into can
+      be overridden using the ATOM_REPOS_HOME environment variable.
 
-Once this command completes you can open a dev window from atom using
-cmd-shift-o to run the package out of the newly cloned repository.\
+      Once this command completes you can open a dev window from atom using
+      cmd-shift-o to run the package out of the newly cloned repository.\
 `
       );
       return options.alias('h', 'help').describe('help', 'Print this usage message');
@@ -114,14 +103,13 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     }
 
     run(options) {
-      let left;
       const packageName = options.commandArgs.shift();
 
       if (!((packageName != null ? packageName.length : undefined) > 0)) {
         return options.callback("Missing required package name");
       }
 
-      let packageDirectory = (left = options.commandArgs.shift()) != null ? left : path.join(config.getReposDirectory(), packageName);
+      let packageDirectory = options.commandArgs.shift() ?? path.join(config.getReposDirectory(), packageName);
       packageDirectory = path.resolve(packageDirectory);
 
       if (fs.existsSync(packageDirectory)) {
@@ -143,7 +131,4 @@ cmd-shift-o to run the package out of the newly cloned repository.\
         });
       }
     }
-  };
-  Develop.initClass();
-  return Develop;
-})());
+}
