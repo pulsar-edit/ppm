@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let RebuildModuleCache;
+
 const path = require('path');
 const async = require('async');
 const yargs = require('yargs');
@@ -14,11 +7,8 @@ const config = require('./apm');
 const fs = require('./fs');
 
 module.exports =
-(RebuildModuleCache = (function() {
-  RebuildModuleCache = class RebuildModuleCache extends Command {
-    static initClass() {
-      this.commandNames = ['rebuild-module-cache'];
-    }
+class RebuildModuleCache extends Command {
+  static commandNames = [ "rebuild-module-cache" ];
 
     constructor() {
       super();
@@ -40,7 +30,7 @@ at the _atomModuleCache property in the package's package.json file.
 This command skips all linked packages.\
 `
       );
-      return options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     getResourcePath(callback) {
@@ -88,7 +78,4 @@ This command skips all linked packages.\
 
       return async.waterfall(commands, callback);
     }
-  };
-  RebuildModuleCache.initClass();
-  return RebuildModuleCache;
-})());
+  }
