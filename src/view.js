@@ -23,7 +23,7 @@ View information about a package/theme.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.boolean('json').describe('json', 'Output featured packages as JSON array');
-      options.string('compatible').describe('compatible', 'Show the latest version compatible with this Atom version');
+      return options.string('compatible').describe('compatible', 'Show the latest version compatible with this Atom version');
     }
 
     loadInstalledAtomVersion(options, callback) {

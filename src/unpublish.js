@@ -28,7 +28,7 @@ name is specified.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      options.alias('f', 'force').boolean('force').describe('force', 'Do not prompt for confirmation');
+      return options.alias('f', 'force').boolean('force').describe('force', 'Do not prompt for confirmation');
     }
 
     unpublishPackage(packageName, packageVersion, callback) {

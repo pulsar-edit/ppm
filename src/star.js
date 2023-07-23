@@ -29,7 +29,7 @@ Run \`ppm stars\` to see all your starred packages.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages');
+      return options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages');
     }
 
     starPackage(packageName, param, callback) {

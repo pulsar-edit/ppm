@@ -30,7 +30,7 @@ Deletes all packages in the node_modules folder that are not referenced
 as a dependency in the package.json file.\
 `
     );
-    options.alias('h', 'help').describe('help', 'Print this usage message');
+    return options.alias('h', 'help').describe('help', 'Print this usage message');
   }
 
   run(options) {

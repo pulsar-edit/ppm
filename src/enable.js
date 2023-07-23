@@ -20,7 +20,7 @@ Usage: ppm enable [<package_name>]...
 Enables the named package(s).\
 `
       );
-      options.alias('h', 'help').describe('help', 'Print this usage message');
+      return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     run(options) {

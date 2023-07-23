@@ -26,7 +26,7 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('d', 'dev').boolean('dev').describe('dev', 'Uninstall from ~/.pulsar/dev/packages');
-      options.boolean('hard').describe('hard', 'Uninstall from ~/.pulsar/packages and ~/.pulsar/dev/packages');
+      return options.boolean('hard').describe('hard', 'Uninstall from ~/.pulsar/packages and ~/.pulsar/dev/packages');
     }
 
     getPackageVersion(packageDirectory) {

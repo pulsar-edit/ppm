@@ -32,7 +32,7 @@ in the current working directory.
 All the modules will be rebuilt if no module names are specified.\
 `
       );
-      options.alias('h', 'help').describe('help', 'Print this usage message');
+      return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     forkNpmRebuild(options, callback) {

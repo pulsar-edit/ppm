@@ -23,7 +23,7 @@ to the current working directory).\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      options.alias('p', 'path').string('path').describe('path', 'Path to atom command');
+      return options.alias('p', 'path').string('path').describe('path', 'Path to atom command');
     }
 
     run(options) {

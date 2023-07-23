@@ -30,7 +30,7 @@ at the _atomModuleCache property in the package's package.json file.
 This command skips all linked packages.\
 `
       );
-      options.alias('h', 'help').describe('help', 'Print this usage message');
+      return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     getResourcePath(callback) {

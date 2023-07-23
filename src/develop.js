@@ -41,7 +41,7 @@ Once this command completes you can open a dev window from atom using
 cmd-shift-o to run the package out of the newly cloned repository.\
 `
       );
-      options.alias('h', 'help').describe('help', 'Print this usage message');
+      return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     getRepositoryUrl(packageName, callback) {

@@ -46,7 +46,7 @@ available updates.\
       options.alias('l', 'list').boolean('list').describe('list', 'List but don\'t install the outdated packages');
       options.boolean('json').describe('json', 'Output outdated packages as a JSON array');
       options.string('compatible').describe('compatible', 'Only list packages/themes compatible with this Atom version');
-      options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
+      return options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
     }
 
     getInstalledPackages(options) {

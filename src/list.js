@@ -53,7 +53,7 @@ List all the installed packages and also the packages bundled with Atom.\
       options.alias('l', 'links').boolean('links').default('links', true).describe('links', 'Include linked packages');
       options.alias('t', 'themes').boolean('themes').describe('themes', 'Only list themes');
       options.alias('p', 'packages').boolean('packages').describe('packages', 'Only list packages');
-      options.alias('v', 'versions').boolean('versions').default('versions', true).describe('versions', 'Include version of each package');
+      return options.alias('v', 'versions').boolean('versions').default('versions', true).describe('versions', 'Include version of each package');
     }
 
     isPackageDisabled(name) {

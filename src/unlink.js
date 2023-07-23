@@ -33,7 +33,7 @@ Run \`ppm links\` to view all the currently linked packages.\
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('d', 'dev').boolean('dev').describe('dev', 'Unlink package from ~/.pulsar/dev/packages');
       options.boolean('hard').describe('hard', 'Unlink package from ~/.pulsar/packages and ~/.pulsar/dev/packages');
-      options.alias('a', 'all').boolean('all').describe('all', 'Unlink all packages in ~/.pulsar/packages and ~/.pulsar/dev/packages');
+      return options.alias('a', 'all').boolean('all').describe('all', 'Unlink all packages in ~/.pulsar/packages and ~/.pulsar/dev/packages');
     }
 
     getDevPackagePath(packageName) { return path.join(this.devPackagesPath, packageName); }

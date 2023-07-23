@@ -40,7 +40,7 @@ be used to identify you when publishing packages.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      options.string('token').describe('token', 'Package API token');
+      return options.string('token').describe('token', 'Package API token');
     }
 
     run(options) {

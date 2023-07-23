@@ -25,7 +25,7 @@ Search for packages/themes.\
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.boolean('json').describe('json', 'Output matching packages as JSON array');
       options.boolean('packages').describe('packages', 'Search only non-theme packages').alias('p', 'packages');
-      options.boolean('themes').describe('themes', 'Search only themes').alias('t', 'themes');
+      return options.boolean('themes').describe('themes', 'Search only themes').alias('t', 'themes');
     }
 
     searchPackages(query, opts, callback) {

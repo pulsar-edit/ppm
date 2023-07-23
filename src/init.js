@@ -39,7 +39,7 @@ on the option selected.\
       options.alias('l', 'language').string('language').describe('language', 'Generates a basic language package');
       options.alias('c', 'convert').string('convert').describe('convert', 'Path or URL to TextMate bundle/theme to convert');
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      options.string('template').describe('template', 'Path to the package or theme template');
+      return options.string('template').describe('template', 'Path to the package or theme template');
     }
 
     run(options) {

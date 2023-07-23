@@ -32,7 +32,7 @@ Reduce duplication in the node_modules folder in the current directory.
 This command is experimental.\
 `
       );
-      soptions.alias('h', 'help').describe('help', 'Print this usage message');
+      return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     dedupeModules(options, callback) {

@@ -28,7 +28,7 @@ Usage: ppm config set <key> <value>
 \
 `
     );
-    options.alias('h', 'help').describe('help', 'Print this usage message');
+    return options.alias('h', 'help').describe('help', 'Print this usage message');
   }
 
   run(options) {

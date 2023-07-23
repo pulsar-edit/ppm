@@ -29,7 +29,7 @@ List or install starred Atom packages and themes.\
       options.alias('i', 'install').boolean('install').describe('install', 'Install the starred packages');
       options.alias('t', 'themes').boolean('themes').describe('themes', 'Only list themes');
       options.alias('u', 'user').string('user').describe('user', 'GitHub username to show starred packages for');
-      options.boolean('json').describe('json', 'Output packages as a JSON array');
+      return options.boolean('json').describe('json', 'Output packages as a JSON array');
     }
 
     getStarredPackages(user, atomVersion, callback) {

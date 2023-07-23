@@ -22,7 +22,7 @@ Unstar the given packages
 Run \`ppm stars\` to see all your starred packages.\
 `
       );
-      options.alias('h', 'help').describe('help', 'Print this usage message');
+      return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     starPackage(packageName, token, callback) {

@@ -51,7 +51,7 @@ have published it.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('t', 'tag').string('tag').describe('tag', 'Specify a tag to publish. Must be of the form vx.y.z');
-      options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
+      return options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
     }
 
     // Create a new version and tag use the `npm version` command.

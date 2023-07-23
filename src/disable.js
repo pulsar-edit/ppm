@@ -21,7 +21,7 @@ Usage: ppm disable [<package_name>]...
 Disables the named package(s).\
 `
       );
-      options.alias('h', 'help').describe('help', 'Print this usage message');
+      return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     getInstalledPackages(callback) {

@@ -25,7 +25,7 @@ Run \`ppm links\` to view all the currently linked packages.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      options.alias('d', 'dev').boolean('dev').describe('dev', 'Link to ~/.pulsar/dev/packages');
+      return options.alias('d', 'dev').boolean('dev').describe('dev', 'Link to ~/.pulsar/dev/packages');
     }
 
     run(options) {

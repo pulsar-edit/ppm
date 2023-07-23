@@ -64,7 +64,7 @@ package names to install with optional versions using the
       options.boolean('check').describe('check', 'Check that native build tools are installed');
       options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
       options.string('packages-file').describe('packages-file', 'A text file containing the packages to install');
-      options.boolean('production').describe('production', 'Do not install dev dependencies');
+      return options.boolean('production').describe('production', 'Do not install dev dependencies');
     }
 
     installModule(options, pack, moduleURI, callback) {
