@@ -1,10 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let ThemeConverter;
+
 const path = require('path');
 const url = require('url');
 const fs = require('./fs');
@@ -13,7 +7,7 @@ const TextMateTheme = require('./text-mate-theme');
 
 // Convert a TextMate theme to an Atom theme
 module.exports =
-(ThemeConverter = class ThemeConverter {
+class ThemeConverter {
   constructor(sourcePath, destinationPath) {
     this.sourcePath = sourcePath;
     this.destinationPath = path.resolve(destinationPath);
@@ -23,7 +17,7 @@ module.exports =
     const {protocol} = url.parse(this.sourcePath);
     if ((protocol === 'http:') || (protocol === 'https:')) {
       const requestOptions = {url: this.sourcePath};
-      return request.get(requestOptions, (error, response, body) => {
+      request.get(requestOptions, (error, response, body) => {
         if (error != null) {
           if (error.code === 'ENOTFOUND') {
             error = `Could not resolve URL: ${this.sourcePath}`;
@@ -46,14 +40,13 @@ module.exports =
   }
 
   convert(callback) {
-    return this.readTheme((error, themeContents) => {
+    this.readTheme((error, themeContents) => {
       let theme;
       if (error != null) { return callback(error); }
 
       try {
         theme = new TextMateTheme(themeContents);
-      } catch (error1) {
-        error = error1;
+      } catch (error) {
         return callback(error);
       }
 
@@ -62,4 +55,4 @@ module.exports =
       return callback();
     });
   }
-});
+};
