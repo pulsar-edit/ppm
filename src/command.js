@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Command;
+
 const child_process = require('child_process');
 const path = require('path');
 const _ = require('underscore-plus');
@@ -14,7 +7,7 @@ const config = require('./apm');
 const git = require('./git');
 
 module.exports =
-(Command = class Command {
+class Command {
   constructor() {
     this.logCommandResults = this.logCommandResults.bind(this);
     this.logCommandResultsIfFail = this.logCommandResultsIfFail.bind(this);
@@ -46,7 +39,7 @@ module.exports =
       }
     });
 
-    var onChildExit = function(errorOrExitCode) {
+    const onChildExit = function(errorOrExitCode) {
       spawned.removeListener('error', onChildExit);
       spawned.removeListener('close', onChildExit);
       return (typeof callback === 'function' ? callback(errorOrExitCode, Buffer.concat(errorChunks).toString(), Buffer.concat(outputChunks).toString()) : undefined);
@@ -122,16 +115,16 @@ module.exports =
   }
 
   loadInstalledAtomMetadata(callback) {
-    return this.getResourcePath(resourcePath => {
+    this.getResourcePath(resourcePath => {
       let electronVersion;
       try {
-        let left, version;
-        ({version, electronVersion} = (left = require(path.join(resourcePath, 'package.json'))) != null ? left : {});
+        let version;
+        ({ version, electronVersion } = require(path.join(resourcePath, "package.json")) ?? {});
         version = this.normalizeVersion(version);
         if (semver.valid(version)) { this.installedAtomVersion = version; }
       } catch (error) {}
 
-      this.electronVersion = process.env.ATOM_ELECTRON_VERSION != null ? process.env.ATOM_ELECTRON_VERSION : electronVersion;
+      this.electronVersion = process.env.ATOM_ELECTRON_VERSION ?? electronVersion;
       if (this.electronVersion == null) {
         throw new Error('Could not determine Electron version');
       }
@@ -157,7 +150,7 @@ module.exports =
     env.npm_config_disturl = config.getElectronUrl();
     env.npm_config_arch = config.getElectronArch();
     env.npm_config_target_arch = config.getElectronArch(); // for node-pre-gyp
-    return env.npm_config_force_process_config = "true"; // for node-gyp
+    env.npm_config_force_process_config = "true"; // for node-gyp
   }
     // node-gyp >=8.4.0 needs --force-process-config=true set for older Electron.
     // For more details, see: https://github.com/nodejs/node-gyp/pull/2497,
@@ -184,7 +177,6 @@ module.exports =
   }
 
   addProxyToEnv(env) {
-    let left;
     const httpProxy = this.npm.config.get('proxy');
     if (httpProxy) {
       if (env.HTTP_PROXY == null) { env.HTTP_PROXY = httpProxy; }
@@ -204,7 +196,7 @@ module.exports =
     // node-gyp doesn't currently have an option for this so just set the
     // environment variable to bypass strict SSL
     // https://github.com/nodejs/node-gyp/issues/448
-    const useStrictSsl = (left = this.npm.config.get('strict-ssl')) != null ? left : true;
+    const useStrictSsl = this.npm.config.get("strict-ssl") ?? true;
     if (!useStrictSsl) { return env.NODE_TLS_REJECT_UNAUTHORIZED = 0; }
   }
-});
+};
