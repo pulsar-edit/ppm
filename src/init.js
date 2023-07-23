@@ -1,13 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Init;
+
 const path = require('path');
 
 const yargs = require('yargs');
@@ -16,34 +7,30 @@ const Command = require('./command');
 const fs = require('./fs');
 
 module.exports =
-(Init = (function() {
-  Init = class Init extends Command {
-    static initClass() {
-      this.commandNames = ['init'];
-
-      this.prototype.supportedSyntaxes = ['coffeescript', 'javascript'];
-    }
+class Init extends Command {
+  static commandNames = [ "init" ];
+  static supportedSyntaxes = [ "coffeescript", "javascript" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
       options.usage(`\
-Usage:
-  ppm init -p <package-name>
-  ppm init -p <package-name> --syntax <javascript-or-coffeescript>
-  ppm init -p <package-name> -c ~/Downloads/r.tmbundle
-  ppm init -p <package-name> -c https://github.com/textmate/r.tmbundle
-  ppm init -p <package-name> --template /path/to/your/package/template
+      Usage:
+        ppm init -p <package-name>
+        ppm init -p <package-name> --syntax <javascript-or-coffeescript>
+        ppm init -p <package-name> -c ~/Downloads/r.tmbundle
+        ppm init -p <package-name> -c https://github.com/textmate/r.tmbundle
+        ppm init -p <package-name> --template /path/to/your/package/template
 
-  ppm init -t <theme-name>
-  ppm init -t <theme-name> -c ~/Downloads/Dawn.tmTheme
-  ppm init -t <theme-name> -c https://raw.github.com/chriskempson/tomorrow-theme/master/textmate/Tomorrow-Night-Eighties.tmTheme
-  ppm init -t <theme-name> --template /path/to/your/theme/template
+        ppm init -t <theme-name>
+        ppm init -t <theme-name> -c ~/Downloads/Dawn.tmTheme
+        ppm init -t <theme-name> -c https://raw.github.com/chriskempson/tomorrow-theme/master/textmate/Tomorrow-Night-Eighties.tmTheme
+        ppm init -t <theme-name> --template /path/to/your/theme/template
 
-  ppm init -l <language-name>
+        ppm init -l <language-name>
 
-Generates code scaffolding for either a theme or package depending
-on the option selected.\
+      Generates code scaffolding for either a theme or package depending
+      on the option selected.\
 `
       );
       options.alias('p', 'package').string('package').describe('package', 'Generates a basic package');
@@ -125,7 +112,7 @@ on the option selected.\
 
       const ThemeConverter = require('./theme-converter');
       const converter = new ThemeConverter(sourcePath, destinationPath);
-      return converter.convert(error => {
+      converter.convert(error => {
         if (error != null) {
           return callback(error);
         } else {
@@ -233,7 +220,4 @@ on the option selected.\
         }
       });
     }
-  };
-  Init.initClass();
-  return Init;
-})());
+  }
