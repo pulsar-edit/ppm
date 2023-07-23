@@ -1,14 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Upgrade;
+
 const path = require('path');
 
 const _ = require('underscore-plus');
@@ -28,11 +18,8 @@ const tree = require('./tree');
 const git = require('./git');
 
 module.exports =
-(Upgrade = (function() {
-  Upgrade = class Upgrade extends Command {
-    static initClass() {
-      this.commandNames = ['upgrade', 'outdated', 'update'];
-    }
+class Upgrade extends Command {
+  static commandNames = [ "upgrade", "outdated", "update" ];
 
     constructor() {
       super();
@@ -59,12 +46,12 @@ available updates.\
       options.alias('l', 'list').boolean('list').describe('list', 'List but don\'t install the outdated packages');
       options.boolean('json').describe('json', 'Output outdated packages as a JSON array');
       options.string('compatible').describe('compatible', 'Only list packages/themes compatible with this Atom version');
-      return options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
+      options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
     }
 
     getInstalledPackages(options) {
       let packages = [];
-      for (let name of Array.from(fs.list(this.atomPackagesDirectory))) {
+      for (let name of fs.list(this.atomPackagesDirectory)) {
         var pack;
         if (pack = this.getIntalledPackage(name)) {
           packages.push(pack);
@@ -84,13 +71,13 @@ available updates.\
       if (fs.isSymbolicLinkSync(packageDirectory)) { return; }
       try {
         const metadata = JSON.parse(fs.readFileSync(path.join(packageDirectory, 'package.json')));
-        if ((metadata != null ? metadata.name : undefined) && (metadata != null ? metadata.version : undefined)) { return metadata; }
+        if (metadata?.name && metadata?.version) { return metadata; }
       } catch (error) {}
     }
 
     loadInstalledAtomVersion(options, callback) {
       if (options.argv.compatible) {
-        return process.nextTick(() => {
+        process.nextTick(() => {
           const version = this.normalizeVersion(options.argv.compatible);
           if (semver.valid(version)) { this.installedAtomVersion = version; }
           return callback();
@@ -117,8 +104,7 @@ available updates.\
         } else if (response.statusCode === 404) {
           return callback();
         } else if (response.statusCode !== 200) {
-          let left;
-          const message = (left = body.message != null ? body.message : body.error) != null ? left : body;
+          const message = body.message ?? body.error ?? body;
           return callback(`Request for package information failed: ${message}`);
         } else {
           let version;
@@ -130,7 +116,7 @@ available updates.\
             if (!semver.valid(version)) { continue; }
             if (!metadata) { continue; }
 
-            const engine = (metadata.engines != null ? metadata.engines.pulsar : undefined) || (metadata.engines != null ? metadata.engines.atom : undefined) || '*';
+            const engine = metadata.engines?.pulsar || metadata.engines?.atom || '*';
             if (!semver.validRange(engine)) { continue; }
             if (!semver.satisfies(atomVersion, engine)) { continue; }
 
@@ -173,14 +159,14 @@ available updates.\
 
     getAvailableUpdates(packages, callback) {
       const getLatestVersionOrSha = (pack, done) => {
-        if (this.folderIsRepo(pack) && ((pack.apmInstallSource != null ? pack.apmInstallSource.type : undefined) === 'git')) {
+        if (this.folderIsRepo(pack) && (pack.apmInstallSource?.type === 'git')) {
           return this.getLatestSha(pack, (err, sha) => done(err, {pack, sha}));
         } else {
           return this.getLatestVersion(pack, (err, latestVersion) => done(err, {pack, latestVersion}));
         }
       };
 
-      return async.mapLimit(packages, 10, getLatestVersionOrSha, function(error, updates) {
+      async.mapLimit(packages, 10, getLatestVersionOrSha, function(error, updates) {
         if (error != null) { return callback(error); }
 
         updates = _.filter(updates, update => (update.latestVersion != null) || (update.sha != null));
@@ -191,7 +177,7 @@ available updates.\
     }
 
     promptForConfirmation(callback) {
-      return read({prompt: 'Would you like to install these updates? (yes)', edit: true}, function(error, answer) {
+      read({prompt: 'Would you like to install these updates? (yes)', edit: true}, function(error, answer) {
         answer = answer ? answer.trim().toLowerCase() : 'yes';
         return callback(error, (answer === 'y') || (answer === 'yes'));
       });
@@ -205,7 +191,7 @@ available updates.\
       for (let {pack, latestVersion} of Array.from(updates)) {
         (((pack, latestVersion) => installCommands.push(function(callback) {
           let commandArgs;
-          if ((pack.apmInstallSource != null ? pack.apmInstallSource.type : undefined) === 'git') {
+          if (pack.apmInstallSource?.type === 'git') {
             commandArgs = [pack.apmInstallSource.source];
           } else {
             commandArgs = [`${pack.name}@${latestVersion}`];
@@ -262,7 +248,7 @@ available updates.\
               version = version.red;
               latestVersion = latestVersion.green;
             }
-            latestVersion = (latestVersion != null ? latestVersion.green : undefined) || __guard__(apmInstallSource != null ? apmInstallSource.sha : undefined, x => x.green);
+            latestVersion = latestVersion?.green || apmInstallSource?.sha?.green;
             return `${name} ${version} -> ${latestVersion}`;
           });
         }
@@ -288,11 +274,4 @@ available updates.\
         }
       });
     }
-  };
-  Upgrade.initClass();
-  return Upgrade;
-})());
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
+  }
