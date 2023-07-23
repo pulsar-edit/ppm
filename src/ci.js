@@ -73,7 +73,6 @@ but cannot be used to install new packages or dependencies.\
     commands.push(callback => { return config.loadNpm((error, npm) => { this.npm = npm; return callback(error); }); });
     commands.push(cb => this.loadInstalledAtomMetadata(cb));
     commands.push(cb => this.installModules(opts, cb));
-    throw new Error(options.argv);
     const iteratee = (item, next) => item(next);
     return async.mapSeries(commands, iteratee, function(err) {
       if (err) { return callback(err); }
