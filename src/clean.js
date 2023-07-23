@@ -13,7 +13,7 @@ const fs = require('./fs');
 
 module.exports =
 class Clean extends Command {
-  static commnandNames = ["clean", "prune"];
+  static commandNames = ["clean", "prune"];
 
   constructor() {
     super();
