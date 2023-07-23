@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Rebuild;
+
 const path = require('path');
 
 const _ = require('underscore-plus');
@@ -17,11 +10,8 @@ const fs = require('./fs');
 const Install = require('./install');
 
 module.exports =
-(Rebuild = (function() {
-  Rebuild = class Rebuild extends Command {
-    static initClass() {
-      this.commandNames = ['rebuild'];
-    }
+class Rebuild extends Command {
+  static commandNames = [ "rebuild" ];
 
     constructor() {
       super();
@@ -42,7 +32,7 @@ in the current working directory.
 All the modules will be rebuilt if no module names are specified.\
 `
       );
-      return options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     forkNpmRebuild(options, callback) {
@@ -64,10 +54,10 @@ All the modules will be rebuilt if no module names are specified.\
       const {callback} = options;
       options = this.parseOptions(options.commandArgs);
 
-      return config.loadNpm((error, npm) => {
+      config.loadNpm((error, npm) => {
         this.npm = npm;
-        return this.loadInstalledAtomMetadata(() => {
-          return this.forkNpmRebuild(options, (code, stderr) => {
+        this.loadInstalledAtomMetadata(() => {
+          this.forkNpmRebuild(options, (code, stderr) => {
             if (stderr == null) { stderr = ''; }
             if (code === 0) {
               this.logSuccess();
@@ -80,7 +70,4 @@ All the modules will be rebuilt if no module names are specified.\
         });
       });
     }
-  };
-  Rebuild.initClass();
-  return Rebuild;
-})());
+  }
