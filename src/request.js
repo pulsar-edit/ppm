@@ -1,10 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
+
 const npm = require('npm');
 const request = require('request');
 
@@ -69,8 +63,7 @@ module.exports = {
     if ((response != null ? response.statusCode : undefined) === 503) {
       return `${response.host} is temporarily unavailable, please try again later.`;
     } else {
-      let left;
-      return (left = (body != null ? body.message : undefined) != null ? (body != null ? body.message : undefined) : (body != null ? body.error : undefined)) != null ? left : body;
+      return body?.message ?? body?.error ?? body;
     }
   },
 
