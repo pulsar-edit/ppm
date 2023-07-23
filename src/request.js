@@ -1,8 +1,9 @@
 
-const npm = require('npm');
-const request = require('request');
+const npm = require("npm");
+const superagent = require("superagent");
+require("superagent-proxy")(superagent);
 
-const config = require('./apm');
+const config = require("./apm.js");
 
 const loadNpm = function(callback) {
   const npmOptions = {
@@ -13,46 +14,76 @@ const loadNpm = function(callback) {
 };
 
 const configureRequest = (requestOptions, callback) => loadNpm(function() {
-  let left;
-  if (requestOptions.proxy == null) { requestOptions.proxy = npm.config.get('https-proxy') || npm.config.get('proxy') || process.env.HTTPS_PROXY || process.env.HTTP_PROXY; }
-  if (requestOptions.strictSSL == null) { requestOptions.strictSSL = npm.config.get('strict-ssl'); }
+  requestOptions.proxy ??= npm.config.get("https-proxy") ?? npm.config.get("proxy") ?? process.env.HTTP_PROXY ?? process.env.HTTP_PROXY;
+  requestOptions.strictSSL ??= npm.config.get("strict-ssl");
 
-  const userAgent = (left = npm.config.get('user-agent')) != null ? left : `AtomApm/${require('../package.json').version}`;
-  if (requestOptions.headers == null) { requestOptions.headers = {}; }
-  if (requestOptions.headers['User-Agent'] == null) { requestOptions.headers['User-Agent'] = userAgent; }
+  requestOptions.headers ??= {};
+  requestOptions.headers["User-Agent"] ??= npm.config.get("user-agent") ?? `PulsarPpm/${require("../package.json").version}`;
+
+  if (requestOptions.json) {
+    requestOptions.headers["Accept"] = "application/json";
+  }
+
+  requestOptions.qs ??= {};
+
   return callback();
 });
 
 module.exports = {
-  get(requestOptions, callback) {
-    return configureRequest(requestOptions, function() {
-      let retryCount = requestOptions.retries != null ? requestOptions.retries : 0;
-      let requestsMade = 0;
-      var tryRequest = function() {
-        requestsMade++;
-        return request.get(requestOptions, function(error, response, body) {
-          if ((retryCount > 0) && ['ETIMEDOUT', 'ECONNRESET'].includes(error != null ? error.code : undefined)) {
-            retryCount--;
-            return tryRequest();
-          } else {
-            if ((error != null ? error.message : undefined) && (requestsMade > 1)) {
-              error.message += ` (${requestsMade} attempts)`;
-            }
+  get(opts, callback) {
+    configureRequest(opts, () => {
+      let retryCount = opts.retries ?? 0;
 
-            return callback(error, response, body);
-          }
+      if (typeof opts.strictSSL === "boolean") {
+        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).disableTLSCerts().then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
         });
-      };
-      return tryRequest();
+      } else {
+        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      }
     });
   },
 
-  del(requestOptions, callback) {
-    return configureRequest(requestOptions, () => request.del(requestOptions, callback));
+  del(opts, callback) {
+    configureRequest(opts, () => {
+      if (typeof opts.strictSSL === "boolean") {
+        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      } else {
+        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      }
+    });
   },
 
-  post(requestOptions, callback) {
-    return configureRequest(requestOptions, () => request.post(requestOptions, callback));
+  post(opts, callback) {
+    configureRequest(opts, () => {
+      if (typeof opts.strictSSL === "boolean") {
+        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      } else {
+        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      }
+    });
   },
 
   createReadStream(requestOptions, callback) {
