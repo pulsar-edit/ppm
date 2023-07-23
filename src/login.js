@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Login;
+
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 const Q = require('q');
@@ -16,8 +9,9 @@ const auth = require('./auth');
 const Command = require('./command');
 
 module.exports =
-(Login = (function() {
-  Login = class Login extends Command {
+class Login extends Command {
+  static commandNames = [ "login" ];
+
     constructor(...args) {
       super(...args);
       this.welcomeMessage = this.welcomeMessage.bind(this);
@@ -25,10 +19,6 @@ module.exports =
       this.saveToken = this.saveToken.bind(this);
     }
 
-    static initClass() {
-
-      this.commandNames = ['login'];
-    }
     static getTokenOrLogin(callback) {
       return auth.getToken(function(error, token) {
         if (error != null) {
@@ -50,7 +40,7 @@ be used to identify you when publishing packages.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      return options.string('token').describe('token', 'Package API token');
+      options.string('token').describe('token', 'Package API token');
     }
 
     run(options) {
@@ -111,7 +101,4 @@ copy the token and paste it below when prompted.
       this.logSuccess();
       return Q(token);
     }
-  };
-  Login.initClass();
-  return Login;
-})());
+  }
