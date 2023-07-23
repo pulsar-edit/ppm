@@ -38,7 +38,7 @@ jobs:
 
       - if: "!contains(matrix.os, 'windows')"
         name: Run tests 👩🏾‍💻
-        run: ./bin/npm test --verbose
+        run: ./bin/npm test
         # Q: Why are we using some random test section when the package.json has a test script?
         # A: So that we ensure we use the bundled version of node to run our tests
 
