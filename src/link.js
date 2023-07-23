@@ -1,12 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Link;
+
 const path = require('path');
 
 const CSON = require('season');
@@ -17,11 +9,8 @@ const config = require('./apm');
 const fs = require('./fs');
 
 module.exports =
-(Link = (function() {
-  Link = class Link extends Command {
-    static initClass() {
-      this.commandNames = ['link', 'ln'];
-    }
+class Link extends Command {
+  static commandNames = [ "link", "ln" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
@@ -36,21 +25,21 @@ Run \`ppm links\` to view all the currently linked packages.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      return options.alias('d', 'dev').boolean('dev').describe('dev', 'Link to ~/.pulsar/dev/packages');
+      options.alias('d', 'dev').boolean('dev').describe('dev', 'Link to ~/.pulsar/dev/packages');
     }
 
     run(options) {
-      let left, targetPath;
+      let targetPath;
       const {callback} = options;
       options = this.parseOptions(options.commandArgs);
 
-      const packagePath = (left = (options.argv._[0] != null ? options.argv._[0].toString() : undefined)) != null ? left : '.';
+      const packagePath = options.argv._[0]?.toString() ?? ".";
       const linkPath = path.resolve(process.cwd(), packagePath);
 
       let packageName = options.argv.name;
       try {
         if (!packageName) { packageName = CSON.readFileSync(CSON.resolve(path.join(linkPath, 'package'))).name; }
-      } catch (error1) {}
+      } catch (error) {}
       if (!packageName) { packageName = path.basename(linkPath); }
 
       if (options.argv.dev) {
@@ -74,7 +63,4 @@ Run \`ppm links\` to view all the currently linked packages.\
         return callback(`Linking ${targetPath} to ${linkPath} failed: ${error.message}`);
       }
     }
-  };
-  Link.initClass();
-  return Link;
-})());
+  }
