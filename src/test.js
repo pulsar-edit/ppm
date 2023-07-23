@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Test;
+
 const path = require('path');
 
 const yargs = require('yargs');
@@ -15,11 +8,8 @@ const Command = require('./command');
 const fs = require('./fs');
 
 module.exports =
-(Test = (function() {
-  Test = class Test extends Command {
-    static initClass() {
-      this.commandNames = ['test'];
-    }
+class Test extends Command {
+  static commandNames = [ "test" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
@@ -33,7 +23,7 @@ to the current working directory).\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      return options.alias('p', 'path').string('path').describe('path', 'Path to atom command');
+      options.alias('p', 'path').string('path').describe('path', 'Path to atom command');
     }
 
     run(options) {
@@ -57,7 +47,7 @@ to the current working directory).\
         const logFilePath = logFile.path;
         testArgs.push(`--log-file=${logFilePath}`);
 
-        return this.spawn(atomCommand, testArgs, function(code) {
+        this.spawn(atomCommand, testArgs, function(code) {
           try {
             const loggedOutput = fs.readFileSync(logFilePath, 'utf8');
             if (loggedOutput) { process.stdout.write(`${loggedOutput}\n`); }
@@ -73,7 +63,7 @@ to the current working directory).\
           }
         });
       } else {
-        return this.spawn(atomCommand, testArgs, {env, streaming: true}, function(code) {
+        this.spawn(atomCommand, testArgs, {env, streaming: true}, function(code) {
           if (code === 0) {
             process.stdout.write('Tests passed\n'.green);
             return callback();
@@ -85,7 +75,4 @@ to the current working directory).\
         });
       }
     }
-  };
-  Test.initClass();
-  return Test;
-})());
+  }
