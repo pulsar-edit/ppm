@@ -1,12 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Enable;
+
 const _ = require('underscore-plus');
 const path = require('path');
 const CSON = require('season');
@@ -16,26 +8,23 @@ const config = require('./apm');
 const Command = require('./command');
 
 module.exports =
-(Enable = (function() {
-  Enable = class Enable extends Command {
-    static initClass() {
-      this.commandNames = ['enable'];
-    }
+class Enable extends Command {
+  static commandNames = [ "enable" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: ppm enable [<package_name>]...
+      Usage: ppm enable [<package_name>]...
 
-Enables the named package(s).\
+      Enables the named package(s).\
 `
       );
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     run(options) {
-      let error, left, settings;
+      let error, settings;
       const {callback} = options;
       options = this.parseOptions(options.commandArgs);
       let packageNames = this.packageNamesFromArgv(options.argv);
@@ -48,14 +37,13 @@ Enables the named package(s).\
 
       try {
         settings = CSON.readFileSync(configFilePath);
-      } catch (error1) {
-        error = error1;
+      } catch (error) {
         callback(`Failed to load \`${configFilePath}\`: ${error.message}`);
         return;
       }
 
       const keyPath = '*.core.disabledPackages';
-      const disabledPackages = (left = _.valueForKeyPath(settings, keyPath)) != null ? left : [];
+      const disabledPackages = _.valueForKeyPath(settings, keyPath) ?? [];
 
       const errorPackages = _.difference(packageNames, disabledPackages);
       if (errorPackages.length > 0) {
@@ -75,8 +63,7 @@ Enables the named package(s).\
 
       try {
         CSON.writeFileSync(configFilePath, settings);
-      } catch (error2) {
-        error = error2;
+      } catch (error) {
         callback(`Failed to save \`${configFilePath}\`: ${error.message}`);
         return;
       }
@@ -85,7 +72,4 @@ Enables the named package(s).\
       this.logSuccess();
       return callback();
     }
-  };
-  Enable.initClass();
-  return Enable;
-})());
+  }
