@@ -24,10 +24,10 @@ class Clean extends Command {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
     options.usage(`\
-Usage: ppm clean
+      Usage: ppm clean
 
-Deletes all packages in the node_modules folder that are not referenced
-as a dependency in the package.json file.\
+      Deletes all packages in the node_modules folder that are not referenced
+      as a dependency in the package.json file.\
 `
     );
     return options.alias('h', 'help').describe('help', 'Print this usage message');
