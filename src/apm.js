@@ -143,8 +143,13 @@ module.exports = {
     if (version < 2017) {
       return fs.existsSync(path.join(this.x86ProgramFilesDirectory(), `Microsoft Visual Studio ${version}`, "Common7", "IDE"));
     } else {
-      // TODO Clean up this mess, https://github.com/pulsar-edit/pulsar/blob/master/packages/autocomplete-html/update/update.js#L216
-      return fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "BuildTools", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Community", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Enterprise", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Professional", "Common7", "IDE")) || fs.existsSync(path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "WDExpress", "Common7", "IDE"));
+      return [
+        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "BuildTools", "Common7", "IDE"),
+        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Community", "Common7", "IDE"),
+        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Enterprise", "Common7", "IDE"),
+        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Professional", "Common7", "IDE"),
+        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "WDExpress", "Common7", "IDE")
+      ].find(f => fs.existsSync(f));
     }
   },
 
