@@ -1,5 +1,4 @@
 
-let Config;
 const path = require('path');
 const _ = require('underscore-plus');
 const yargs = require('yargs');
