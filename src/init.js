@@ -15,22 +15,22 @@ class Init extends Command {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
       options.usage(`\
-      Usage:
-        ppm init -p <package-name>
-        ppm init -p <package-name> --syntax <javascript-or-coffeescript>
-        ppm init -p <package-name> -c ~/Downloads/r.tmbundle
-        ppm init -p <package-name> -c https://github.com/textmate/r.tmbundle
-        ppm init -p <package-name> --template /path/to/your/package/template
+Usage:
+  ppm init -p <package-name>
+  ppm init -p <package-name> --syntax <javascript-or-coffeescript>
+  ppm init -p <package-name> -c ~/Downloads/r.tmbundle
+  ppm init -p <package-name> -c https://github.com/textmate/r.tmbundle
+  ppm init -p <package-name> --template /path/to/your/package/template
 
-        ppm init -t <theme-name>
-        ppm init -t <theme-name> -c ~/Downloads/Dawn.tmTheme
-        ppm init -t <theme-name> -c https://raw.github.com/chriskempson/tomorrow-theme/master/textmate/Tomorrow-Night-Eighties.tmTheme
-        ppm init -t <theme-name> --template /path/to/your/theme/template
+  ppm init -t <theme-name>
+  ppm init -t <theme-name> -c ~/Downloads/Dawn.tmTheme
+  ppm init -t <theme-name> -c https://raw.github.com/chriskempson/tomorrow-theme/master/textmate/Tomorrow-Night-Eighties.tmTheme
+  ppm init -t <theme-name> --template /path/to/your/theme/template
 
-        ppm init -l <language-name>
+  ppm init -l <language-name>
 
-      Generates code scaffolding for either a theme or package depending
-      on the option selected.\
+Generates code scaffolding for either a theme or package depending
+on the option selected.\
 `
       );
       options.alias('p', 'package').string('package').describe('package', 'Generates a basic package');
@@ -39,7 +39,7 @@ class Init extends Command {
       options.alias('l', 'language').string('language').describe('language', 'Generates a basic language package');
       options.alias('c', 'convert').string('convert').describe('convert', 'Path or URL to TextMate bundle/theme to convert');
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      return options.string('template').describe('template', 'Path to the package or theme template');
+      options.string('template').describe('template', 'Path to the package or theme template');
     }
 
     run(options) {

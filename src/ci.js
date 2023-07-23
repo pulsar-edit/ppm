@@ -22,19 +22,19 @@ class Ci extends Command {
   parseOptions(argv) {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
     options.usage(`\
-      Usage: ppm ci
+Usage: ppm ci
 
-      Install a package with a clean slate.
+Install a package with a clean slate.
 
-      If you have an up-to-date package-lock.json file created by ppm install,
-      ppm ci will install its locked contents exactly. It is substantially
-      faster than ppm install and produces consistently reproduceable builds,
-      but cannot be used to install new packages or dependencies.\
+If you have an up-to-date package-lock.json file created by ppm install,
+ppm ci will install its locked contents exactly. It is substantially
+faster than ppm install and produces consistently reproduceable builds,
+but cannot be used to install new packages or dependencies.\
 `
 );
 
     options.alias('h', 'help').describe('help', 'Print this usage message');
-    return options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
+    options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
   }
 
   installModules(options, callback) {

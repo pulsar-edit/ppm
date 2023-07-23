@@ -15,17 +15,17 @@ class Featured extends Command {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-      Usage: ppm featured
-             ppm featured --themes
-             ppm featured --compatible 0.49.0
+Usage: ppm featured
+       ppm featured --themes
+       ppm featured --compatible 0.49.0
 
-      List the Pulsar packages and themes that are currently featured.\
+List the Pulsar packages and themes that are currently featured.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('t', 'themes').boolean('themes').describe('themes', 'Only list themes');
       options.alias('c', 'compatible').string('compatible').describe('compatible', 'Only list packages/themes compatible with this Pulsar version');
-      return options.boolean('json').describe('json', 'Output featured packages as JSON array');
+      options.boolean('json').describe('json', 'Output featured packages as JSON array');
     }
 
     getFeaturedPackagesByType(atomVersion, packageType, callback) {

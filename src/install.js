@@ -37,22 +37,22 @@ class Install extends Command {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-      Usage: ppm install [<package_name>...]
-             ppm install <package_name>@<package_version>
-             ppm install <git_remote> [-b <branch_or_tag_or_commit>]
-             ppm install <github_username>/<github_project> [-b <branch_or_tag_or_commit>]
-             ppm install --packages-file my-packages.txt
-             ppm i (with any of the previous argument usage)
+Usage: ppm install [<package_name>...]
+       ppm install <package_name>@<package_version>
+       ppm install <git_remote> [-b <branch_or_tag_or_commit>]
+       ppm install <github_username>/<github_project> [-b <branch_or_tag_or_commit>]
+       ppm install --packages-file my-packages.txt
+       ppm i (with any of the previous argument usage)
 
-      Install the given Pulsar package to ~/.pulsar/packages/<package_name>.
+Install the given Pulsar package to ~/.pulsar/packages/<package_name>.
 
-      If no package name is given then all the dependencies in the package.json
-      file are installed to the node_modules folder in the current working
-      directory.
+If no package name is given then all the dependencies in the package.json
+file are installed to the node_modules folder in the current working
+directory.
 
-      A packages file can be specified that is a newline separated list of
-      package names to install with optional versions using the
-      \`package-name@version\` syntax.\
+A packages file can be specified that is a newline separated list of
+package names to install with optional versions using the
+\`package-name@version\` syntax.\
 `
       );
       options.alias('c', 'compatible').string('compatible').describe('compatible', 'Only install packages/themes compatible with this Pulsar version');
@@ -64,7 +64,7 @@ class Install extends Command {
       options.boolean('check').describe('check', 'Check that native build tools are installed');
       options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
       options.string('packages-file').describe('packages-file', 'A text file containing the packages to install');
-      return options.boolean('production').describe('production', 'Do not install dev dependencies');
+      options.boolean('production').describe('production', 'Do not install dev dependencies');
     }
 
     installModule(options, pack, moduleURI, callback) {
@@ -138,11 +138,11 @@ class Install extends Command {
 
     getGitErrorMessage(pack) {
       let message = `\
-      Failed to install ${pack.name} because Git was not found.
+Failed to install ${pack.name} because Git was not found.
 
-      The ${pack.name} package has module dependencies that cannot be installed without Git.
+The ${pack.name} package has module dependencies that cannot be installed without Git.
 
-      You need to install Git and add it to your path environment variable in order to install this package.
+You need to install Git and add it to your path environment variable in order to install this package.
 \
 `;
 
@@ -150,14 +150,14 @@ class Install extends Command {
         case 'win32':
           message += `\
 
-          You can install Git by downloading, installing, and launching GitHub for Windows: https://windows.github.com
+You can install Git by downloading, installing, and launching GitHub for Windows: https://windows.github.com
 \
 `;
           break;
         case 'linux':
           message += `\
 
-          You can install Git from your OS package manager.
+You can install Git from your OS package manager.
 \
 `;
           break;
@@ -165,7 +165,7 @@ class Install extends Command {
 
       message += `\
 
-          Run ppm -v after installing Git to see what version has been detected.\
+Run ppm -v after installing Git to see what version has been detected.\
 `;
 
       return message;
@@ -719,9 +719,9 @@ class Install extends Command {
           return this.isBundledPackage(name, isBundledPackage => {
             if (isBundledPackage) {
               console.error(`\
-              The ${name} package is bundled with Atom and should not be explicitly installed.
-              You can run \`ppm uninstall ${name}\` to uninstall it and then the version bundled
-              with Atom will be used.\
+The ${name} package is bundled with Pulsar and should not be explicitly installed.
+You can run \`ppm uninstall ${name}\` to uninstall it and then the version bundled
+with Pulsar will be used.\
 `.yellow
               );
             }

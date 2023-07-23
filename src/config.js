@@ -20,15 +20,15 @@ class Config extends Command {
     const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
     options.usage(`\
 
-      Usage: ppm config set <key> <value>
-             ppm config get <key>
-             ppm config delete <key>
-             ppm config list
-             ppm config edit
+Usage: ppm config set <key> <value>
+       ppm config get <key>
+       ppm config delete <key>
+       ppm config list
+       ppm config edit
 \
 `
     );
-    return options.alias('h', 'help').describe('help', 'Print this usage message');
+    options.alias('h', 'help').describe('help', 'Print this usage message');
   }
 
   run(options) {

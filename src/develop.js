@@ -27,21 +27,21 @@ class Develop extends Command {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
 
       options.usage(`\
-      Usage: ppm develop <package_name> [<directory>]
+Usage: ppm develop <package_name> [<directory>]
 
-      Clone the given package's Git repository to the directory specified,
-      install its dependencies, and link it for development to
-      ~/.pulsar/dev/packages/<package_name>.
+Clone the given package's Git repository to the directory specified,
+install its dependencies, and link it for development to
+~/.pulsar/dev/packages/<package_name>.
 
-      If no directory is specified then the repository is cloned to
-      ~/github/<package_name>. The default folder to clone packages into can
-      be overridden using the ATOM_REPOS_HOME environment variable.
+If no directory is specified then the repository is cloned to
+~/github/<package_name>. The default folder to clone packages into can
+be overridden using the ATOM_REPOS_HOME environment variable.
 
-      Once this command completes you can open a dev window from atom using
-      cmd-shift-o to run the package out of the newly cloned repository.\
+Once this command completes you can open a dev window from atom using
+cmd-shift-o to run the package out of the newly cloned repository.\
 `
       );
-      return options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     getRepositoryUrl(packageName, callback) {

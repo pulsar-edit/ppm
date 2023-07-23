@@ -25,14 +25,14 @@ class Dedupe extends Command {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-      Usage: ppm dedupe [<package_name>...]
+Usage: ppm dedupe [<package_name>...]
 
-      Reduce duplication in the node_modules folder in the current directory.
+Reduce duplication in the node_modules folder in the current directory.
 
-      This command is experimental.\
+This command is experimental.\
 `
       );
-      return options.alias('h', 'help').describe('help', 'Print this usage message');
+      soptions.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     dedupeModules(options, callback) {

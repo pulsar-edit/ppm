@@ -13,13 +13,13 @@ class Docs extends View {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-      Usage: ppm docs [options] <package_name>
+Usage: ppm docs [options] <package_name>
 
-      Open a package's homepage in the default browser.\
+Open a package's homepage in the default browser.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      return options.boolean('p').alias('p', 'print').describe('print', 'Print the URL instead of opening it');
+      options.boolean('p').alias('p', 'print').describe('print', 'Print the URL instead of opening it');
     }
 
     openRepositoryUrl(repositoryUrl) {

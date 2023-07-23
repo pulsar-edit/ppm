@@ -16,12 +16,12 @@ class Disable extends Command {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-      Usage: ppm disable [<package_name>]...
+Usage: ppm disable [<package_name>]...
 
-      Disables the named package(s).\
+Disables the named package(s).\
 `
       );
-      return options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     getInstalledPackages(callback) {

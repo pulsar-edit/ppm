@@ -15,12 +15,12 @@ class Enable extends Command {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-      Usage: ppm enable [<package_name>]...
+Usage: ppm enable [<package_name>]...
 
-      Enables the named package(s).\
+Enables the named package(s).\
 `
       );
-      return options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     run(options) {
