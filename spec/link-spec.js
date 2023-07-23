@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const temp = require('temp');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm link/unlink', () => {
   beforeEach(() => {

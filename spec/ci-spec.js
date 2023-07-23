@@ -5,7 +5,7 @@ const temp = require('temp');
 const express = require('express');
 const wrench = require('wrench');
 const CSON = require('season');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
 describe('apm ci', () => {

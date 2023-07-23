@@ -1,4 +1,4 @@
-const Command = require('../lib/command');
+const Command = require('../src/command');
 
 describe('Command', () => {
   describe('::spawn', () => {

@@ -3,7 +3,7 @@ const fs = require('fs-plus');
 const temp = require('temp');
 const express = require('express');
 const http = require('http');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm publish', () => {
   let server;

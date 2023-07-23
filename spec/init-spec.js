@@ -1,8 +1,8 @@
 const path = require('path');
 const temp = require('temp');
 const CSON = require('season');
-const apm = require('../lib/apm-cli');
-const fs = require('../lib/fs');
+const apm = require('../src/apm-cli');
+const fs = require('../src/fs');
 
 describe('apm init', () => {
   let languagePath, packagePath, themePath;

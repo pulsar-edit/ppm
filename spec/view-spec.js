@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const http = require('http');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm view', () => {
   let server = null;

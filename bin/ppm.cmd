@@ -16,7 +16,7 @@ if not defined apm_git_path (
 set npm_config_node_gyp=
 
 if exist "%~dp0\node.exe" (
-  "%~dp0\node.exe" "%~dp0/../lib/cli.js" %*
+  "%~dp0\node.exe" "%~dp0/../src/cli.js" %*
 ) else (
-  node.exe "%~dp0/../lib/cli.js" %*
+  node.exe "%~dp0/../src/cli.js" %*
 )

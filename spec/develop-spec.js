@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs-plus');
 const temp = require('temp');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm develop', () => {
   let linkedRepoPath, repoPath;
@@ -19,7 +19,7 @@ describe('apm develop', () => {
 
   describe("when the package doesn't have a published repository url", () => {
     it('logs an error', () => {
-      const Develop = require('../lib/develop');
+      const Develop = require('../src/develop');
       spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake((packageName, callback) => {
         callback('Here is the error');
       });
@@ -36,7 +36,7 @@ describe('apm develop', () => {
 
   describe("when the repository hasn't been cloned", () => {
     it('clones the repository to ATOM_REPOS_HOME and links it to ATOM_HOME/dev/packages', () => {
-      const Develop = require('../lib/develop');
+      const Develop = require('../src/develop');
       spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake((packageName, callback) => {
         const repoUrl = path.join(__dirname, 'fixtures', 'repo.git');
         callback(null, repoUrl);

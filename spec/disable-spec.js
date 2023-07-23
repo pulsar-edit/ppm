@@ -3,7 +3,7 @@ const wrench = require('wrench');
 const path = require('path');
 const temp = require('temp');
 const CSON = require('season');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm disable', () => {
   beforeEach(() => {

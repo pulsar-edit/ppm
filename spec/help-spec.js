@@ -1,4 +1,4 @@
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('command help', () => {
   beforeEach(() => {

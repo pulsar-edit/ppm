@@ -1,7 +1,7 @@
 const path = require('path');
 const temp = require('temp');
 const fs = require('fs');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm command line interface', () => {
   beforeEach(() => {
