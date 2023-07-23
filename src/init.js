@@ -12,7 +12,7 @@ class Init extends Command {
 
   constructor() {
     super();
-    this.supportedSyntaxes = [ "coffeeScript", "javascript" ];
+    this.supportedSyntaxes = [ "coffeescript", "javascript" ];
   }
 
     parseOptions(argv) {
