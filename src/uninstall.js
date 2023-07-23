@@ -1,12 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Uninstall;
+
 const path = require('path');
 
 const async = require('async');
@@ -20,11 +12,8 @@ const fs = require('./fs');
 const request = require('./request');
 
 module.exports =
-(Uninstall = (function() {
-  Uninstall = class Uninstall extends Command {
-    static initClass() {
-      this.commandNames = ['deinstall', 'delete', 'erase', 'remove', 'rm', 'uninstall'];
-    }
+class Uninstall extends Command {
+  static commandNames = [ "deinstall", "delete", "erase", "remove", "rm", "uninstall" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
@@ -37,12 +26,12 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('d', 'dev').boolean('dev').describe('dev', 'Uninstall from ~/.pulsar/dev/packages');
-      return options.boolean('hard').describe('hard', 'Uninstall from ~/.pulsar/packages and ~/.pulsar/dev/packages');
+      options.boolean('hard').describe('hard', 'Uninstall from ~/.pulsar/packages and ~/.pulsar/dev/packages');
     }
 
     getPackageVersion(packageDirectory) {
       try {
-        return __guard__(CSON.readFileSync(path.join(packageDirectory, 'package.json')), x => x.version);
+        return CSON.readFileSync(path.join(packageDirectory, 'package.json'))?.version;
       } catch (error) {
         return null;
       }
@@ -88,7 +77,7 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
         }
         process.stdout.write(`Uninstalling ${packageName} `);
         try {
-          var packageDirectory;
+          let packageDirectory;
           if (!options.argv.dev) {
             packageDirectory = path.join(packagesDirectory, packageName);
             const packageManifestPath = path.join(packageDirectory, 'package.json');
@@ -122,11 +111,4 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
 
       return async.eachSeries(uninstallsToRegister, this.registerUninstall.bind(this), () => callback(uninstallError));
     }
-  };
-  Uninstall.initClass();
-  return Uninstall;
-})());
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
+  }
