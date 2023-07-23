@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Dedupe;
+
 const path = require('path');
 
 const async = require('async');
@@ -17,11 +10,8 @@ const Command = require('./command');
 const fs = require('./fs');
 
 module.exports =
-(Dedupe = (function() {
-  Dedupe = class Dedupe extends Command {
-    static initClass() {
-      this.commandNames = ['dedupe'];
-    }
+class Dedupe extends Command {
+  static commandNames = [ "dedupe" ];
 
     constructor() {
       super();
@@ -35,11 +25,11 @@ module.exports =
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: ppm dedupe [<package_name>...]
+      Usage: ppm dedupe [<package_name>...]
 
-Reduce duplication in the node_modules folder in the current directory.
+      Reduce duplication in the node_modules folder in the current directory.
 
-This command is experimental.\
+      This command is experimental.\
 `
       );
       return options.alias('h', 'help').describe('help', 'Print this usage message');
@@ -48,8 +38,8 @@ This command is experimental.\
     dedupeModules(options, callback) {
       process.stdout.write('Deduping modules ');
 
-      return this.forkDedupeCommand(options, (...args) => {
-        return this.logCommandResults(callback, ...args);
+      this.forkDedupeCommand(options, (...args) => {
+        this.logCommandResults(callback, ...args);
       });
     }
 
@@ -89,7 +79,4 @@ This command is experimental.\
       commands.push(callback => this.dedupeModules(options, callback));
       return async.waterfall(commands, callback);
     }
-  };
-  Dedupe.initClass();
-  return Dedupe;
-})());
+}
