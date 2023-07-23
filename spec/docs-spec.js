@@ -75,7 +75,7 @@ describe('apm docs', () => {
   });
 
   it('prints the package URL if called with the -p short option (and does not open it)', () => {
-    Docs = require('../lib/docs');
+    Docs = require('../src/docs');
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
     apm.run(['docs', '-p', 'wrap-guide'], callback);
