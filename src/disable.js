@@ -1,13 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Disable;
+
 const _ = require('underscore-plus');
 const path = require('path');
 const CSON = require('season');
@@ -18,19 +9,16 @@ const Command = require('./command');
 const List = require('./list');
 
 module.exports =
-(Disable = (function() {
-  Disable = class Disable extends Command {
-    static initClass() {
-      this.commandNames = ['disable'];
-    }
+class Disable extends Command {
+  static commandNames = [ "disable" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: ppm disable [<package_name>]...
+      Usage: ppm disable [<package_name>]...
 
-Disables the named package(s).\
+      Disables the named package(s).\
 `
       );
       return options.alias('h', 'help').describe('help', 'Print this usage message');
@@ -63,14 +51,12 @@ Disables the named package(s).\
 
       try {
         settings = CSON.readFileSync(configFilePath);
-      } catch (error1) {
-        const error = error1;
+      } catch (error) {
         callback(`Failed to load \`${configFilePath}\`: ${error.message}`);
         return;
       }
 
       return this.getInstalledPackages((error, installedPackages) => {
-        let left;
         if (error) { return callback(error); }
 
         const installedPackageNames = (Array.from(installedPackages).map((pkg) => pkg.name));
@@ -90,14 +76,13 @@ Disables the named package(s).\
         }
 
         const keyPath = '*.core.disabledPackages';
-        const disabledPackages = (left = _.valueForKeyPath(settings, keyPath)) != null ? left : [];
+        const disabledPackages = _.valueForKeyPath(settings, keyPath) ?? [];
         const result = _.union(disabledPackages, packageNames);
         _.setValueForKeyPath(settings, keyPath, result);
 
         try {
           CSON.writeFileSync(configFilePath, settings);
-        } catch (error2) {
-          error = error2;
+        } catch (error) {
           callback(`Failed to save \`${configFilePath}\`: ${error.message}`);
           return;
         }
@@ -107,7 +92,4 @@ Disables the named package(s).\
         return callback();
       });
     }
-  };
-  Disable.initClass();
-  return Disable;
-})());
+  }
