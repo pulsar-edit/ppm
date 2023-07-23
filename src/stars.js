@@ -1,12 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Stars;
+
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 
@@ -18,11 +10,8 @@ const request = require('./request');
 const tree = require('./tree');
 
 module.exports =
-(Stars = (function() {
-  Stars = class Stars extends Command {
-    static initClass() {
-      this.commandNames = ['stars', 'starred'];
-    }
+class Stars extends Command {
+  static commandNames = [ "stars", "starred" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
@@ -40,7 +29,7 @@ List or install starred Atom packages and themes.\
       options.alias('i', 'install').boolean('install').describe('install', 'Install the starred packages');
       options.alias('t', 'themes').boolean('themes').describe('themes', 'Only list themes');
       options.alias('u', 'user').string('user').describe('user', 'GitHub username to show starred packages for');
-      return options.boolean('json').describe('json', 'Output packages as a JSON array');
+      options.boolean('json').describe('json', 'Output packages as a JSON array');
     }
 
     getStarredPackages(user, atomVersion, callback) {
@@ -67,7 +56,7 @@ List or install starred Atom packages and themes.\
         if (error != null) {
           return callback(error);
         } else if (response.statusCode === 200) {
-          let packages = body.filter(pack => __guard__(pack != null ? pack.releases : undefined, x => x.latest) != null);
+          let packages = body.filter(pack => pack?.releases?.latest != null);
           packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
           packages = _.sortBy(packages, 'name');
           return callback(null, packages);
@@ -117,7 +106,7 @@ List or install starred Atom packages and themes.\
     run(options) {
       const {callback} = options;
       options = this.parseOptions(options.commandArgs);
-      const user = options.argv.user != null ? options.argv.user.toString().trim() : undefined;
+      const user = options.argv.user?.toString().trim();
 
       return this.getStarredPackages(user, options.argv.compatible,  (error, packages) => {
         if (error != null) { return callback(error); }
@@ -135,11 +124,4 @@ List or install starred Atom packages and themes.\
         }
       });
     }
-  };
-  Stars.initClass();
-  return Stars;
-})());
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
+  }
