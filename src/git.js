@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
+
 const {spawn} = require('child_process');
 const path = require('path');
 const _ = require('underscore-plus');
@@ -26,7 +19,7 @@ const addPortableGitToEnv = function(env) {
     return;
   }
 
-  for (let child of Array.from(children)) {
+  for (let child of children) {
     if (child.indexOf('PortableGit_') === 0) {
       const cmdPath = path.join(githubPath, child, 'cmd');
       const binPath = path.join(githubPath, child, 'bin');
@@ -67,7 +60,7 @@ const addGitBashToEnv = function(env) {
 exports.addGitToEnv = function(env) {
   if (process.platform !== 'win32') { return; }
   addPortableGitToEnv(env);
-  return addGitBashToEnv(env);
+  addGitBashToEnv(env);
 };
 
 exports.getGitVersion = function(callback) {
@@ -75,7 +68,7 @@ exports.getGitVersion = function(callback) {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath()
   };
-  return npm.load(npmOptions, function() {
+  npm.load(npmOptions, function() {
     let left;
     const git = (left = npm.config.get('git')) != null ? left : 'git';
     exports.addGitToEnv(process.env);
