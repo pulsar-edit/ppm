@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Featured;
+
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 
@@ -15,21 +8,18 @@ const request = require('./request');
 const tree = require('./tree');
 
 module.exports =
-(Featured = (function() {
-  Featured = class Featured extends Command {
-    static initClass() {
-      this.commandNames = ['featured'];
-    }
+class Featured extends Command {
+  static commandNames = [ "featured" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: ppm featured
-       ppm featured --themes
-       ppm featured --compatible 0.49.0
+      Usage: ppm featured
+             ppm featured --themes
+             ppm featured --compatible 0.49.0
 
-List the Pulsar packages and themes that are currently featured.\
+      List the Pulsar packages and themes that are currently featured.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
@@ -64,10 +54,10 @@ List the Pulsar packages and themes that are currently featured.\
     }
 
     getAllFeaturedPackages(atomVersion, callback) {
-      return this.getFeaturedPackagesByType(atomVersion, 'packages', (error, packages) => {
+      this.getFeaturedPackagesByType(atomVersion, 'packages', (error, packages) => {
         if (error != null) { return callback(error); }
 
-        return this.getFeaturedPackagesByType(atomVersion, 'themes', function(error, themes) {
+        this.getFeaturedPackagesByType(atomVersion, 'themes', function(error, themes) {
           if (error != null) { return callback(error); }
           return callback(null, packages.concat(themes));
         });
@@ -111,7 +101,4 @@ List the Pulsar packages and themes that are currently featured.\
         return this.getAllFeaturedPackages(options.argv.compatible, listCallback);
       }
     }
-  };
-  Featured.initClass();
-  return Featured;
-})());
+  }
