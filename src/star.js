@@ -1,13 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Star;
+
 const path = require('path');
 
 const _ = require('underscore-plus');
@@ -23,11 +14,8 @@ const Packages = require('./packages');
 const request = require('./request');
 
 module.exports =
-(Star = (function() {
-  Star = class Star extends Command {
-    static initClass() {
-      this.commandNames = ['star'];
-    }
+class Star extends Command {
+  static commandNames = [ "star" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
@@ -41,7 +29,7 @@ Run \`ppm stars\` to see all your starred packages.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
-      return options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages');
+      options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages');
     }
 
     starPackage(packageName, param, callback) {
@@ -56,7 +44,7 @@ Run \`ppm stars\` to see all your starred packages.\
           authorization: token
         }
       };
-      return request.post(requestSettings, (error, response, body) => {
+      request.post(requestSettings, (error, response, body) => {
         if (body == null) { body = {}; }
         if (error != null) {
           this.logFailure();
@@ -78,14 +66,13 @@ Run \`ppm stars\` to see all your starred packages.\
     getInstalledPackageNames() {
       const installedPackages = [];
       const userPackagesDirectory = path.join(config.getAtomDirectory(), 'packages');
-      for (let child of Array.from(fs.list(userPackagesDirectory))) {
-        var manifestPath;
+      for (let child of fs.list(userPackagesDirectory)) {
         if (!fs.isDirectorySync(path.join(userPackagesDirectory, child))) { continue; }
 
-        if (manifestPath = CSON.resolve(path.join(userPackagesDirectory, child, 'package'))) {
+        let manifestPath = CSON.resolve(path.join(userPackagesDirectory, child, "package"));
+        if (manifestPath) {
           try {
-            var left;
-            const metadata = (left = CSON.readFileSync(manifestPath)) != null ? left : {};
+            const metadata = CSON.readFileSync(manifestPath) ?? {};
             if (metadata.name && Packages.getRepository(metadata)) {
               installedPackages.push(metadata.name);
             }
@@ -115,7 +102,7 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       }
 
-      return Login.getTokenOrLogin((error, token) => {
+      Login.getTokenOrLogin((error, token) => {
         if (error != null) { return callback(error); }
 
         const starOptions = {
@@ -129,7 +116,4 @@ Run \`ppm stars\` to see all your starred packages.\
         return async.waterfall(commands, callback);
       });
     }
-  };
-  Star.initClass();
-  return Star;
-})());
+  }
