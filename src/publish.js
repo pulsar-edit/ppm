@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Publish;
+
 const path = require('path');
 const url = require('url');
 
@@ -21,11 +14,8 @@ const Packages = require('./packages');
 const request = require('./request');
 
 module.exports =
-(Publish = (function() {
-  Publish = class Publish extends Command {
-    static initClass() {
-      this.commandNames = ['publish'];
-    }
+class Publish extends Command {
+  static commandNames = [ "publish" ];
 
     constructor() {
       super();
@@ -61,7 +51,7 @@ have published it.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('t', 'tag').string('tag').describe('tag', 'Specify a tag to publish. Must be of the form vx.y.z');
-      return options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
+      options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
     }
 
     // Create a new version and tag use the `npm version` command.
@@ -173,7 +163,7 @@ have published it.\
         return;
       }
 
-      return this.packageExists(pack.name, (error, exists) => {
+      this.packageExists(pack.name, (error, exists) => {
         let repository;
         if (error != null) { return callback(error); }
         if (exists) { return callback(); }
@@ -201,7 +191,7 @@ have published it.\
               authorization: token
             }
           };
-          return request.post(requestSettings, (error, response, body) => {
+          request.post(requestSettings, (error, response, body) => {
             if (body == null) { body = {}; }
             if (error != null) {
               return callback(error);
@@ -225,7 +215,7 @@ have published it.\
     // callback - The callback function to invoke with an error as the first
     //            argument.
     createPackageVersion(packageName, tag, options, callback) {
-      return Login.getTokenOrLogin(function(error, token) {
+      Login.getTokenOrLogin(function(error, token) {
         if (error != null) {
           callback(error);
           return;
@@ -242,7 +232,7 @@ have published it.\
             authorization: token
           }
         };
-        return request.post(requestSettings, function(error, response, body) {
+        request.post(requestSettings, function(error, response, body) {
           if (body == null) { body = {}; }
           if (error != null) {
             return callback(error);
@@ -270,7 +260,7 @@ have published it.\
       const callback = remaining.shift();
 
       process.stdout.write(`Publishing ${options.rename || pack.name}@${tag} `);
-      return this.createPackageVersion(pack.name, tag, options, error => {
+      this.createPackageVersion(pack.name, tag, options, error => {
         if (error != null) {
           this.logFailure();
           return callback(error);
@@ -298,8 +288,7 @@ have published it.\
       }
 
       try {
-        let pack;
-        return pack = JSON.parse(fs.readFileSync(metadataPath));
+        return JSON.parse(fs.readFileSync(metadataPath));
       } catch (error) {
         throw new Error(`Error parsing package.json file: ${error.message}`);
       }
@@ -398,7 +387,7 @@ have published it.\
         return semverRange === 'latest';
       };
 
-      const range = (pack.engines != null ? pack.engines.pulsar : undefined) || (pack.engines != null ? pack.engines.atom : undefined);
+      const range = pack.engines?.pulsar ?? pack.engines?.atom ?? undefined;
       if (range != null) {
         if (!semver.validRange(range)) {
           throw new Error(`The Pulsar or Atom engine range in the package.json file is invalid: ${range}`);
@@ -455,19 +444,19 @@ have published it.\
         if (!((version != null ? version.length : undefined) > 0)) { version = 'patch'; }
         if ((rename != null ? rename.length : undefined) > 0) { originalName = pack.name; }
 
-        return this.registerPackage(pack, (error, firstTimePublishing) => {
+        this.registerPackage(pack, (error, firstTimePublishing) => {
           if (error != null) { return callback(error); }
 
-          return this.renamePackage(pack, rename, error => {
+          this.renamePackage(pack, rename, error => {
             if (error != null) { return callback(error); }
 
-            return this.versionPackage(version, (error, tag) => {
+            this.versionPackage(version, (error, tag) => {
               if (error != null) { return callback(error); }
 
-              return this.pushVersion(tag, pack, error => {
+              this.pushVersion(tag, pack, error => {
                 if (error != null) { return callback(error); }
 
-                return this.waitForTagToBeAvailable(pack, tag, () => {
+                this.waitForTagToBeAvailable(pack, tag, () => {
 
                   if (originalName != null) {
                     // If we're renaming a package, we have to hit the API with the
@@ -475,7 +464,7 @@ have published it.\
                     rename = pack.name;
                     pack.name = originalName;
                   }
-                  return this.publishPackage(pack, tag, {rename},  error => {
+                  this.publishPackage(pack, tag, {rename},  error => {
                     if (firstTimePublishing && (error == null)) {
                       this.logFirstTimePublishMessage(pack);
                     }
@@ -487,10 +476,10 @@ have published it.\
           });
         });
       } else if ((tag != null ? tag.length : undefined) > 0) {
-        return this.registerPackage(pack, (error, firstTimePublishing) => {
+        this.registerPackage(pack, (error, firstTimePublishing) => {
           if (error != null) { return callback(error); }
 
-          return this.publishPackage(pack, tag, error => {
+          this.publishPackage(pack, tag, error => {
             if (firstTimePublishing && (error == null)) {
               this.logFirstTimePublishMessage(pack);
             }
@@ -501,7 +490,4 @@ have published it.\
         return callback('A version, tag, or new package name is required');
       }
     }
-  };
-  Publish.initClass();
-  return Publish;
-})());
+  }
