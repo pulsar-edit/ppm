@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Links;
+
 const path = require('path');
 
 const yargs = require('yargs');
@@ -16,11 +9,8 @@ const fs = require('./fs');
 const tree = require('./tree');
 
 module.exports =
-(Links = (function() {
-  Links = class Links extends Command {
-    static initClass() {
-      this.commandNames = ['linked', 'links', 'lns'];
-    }
+class Links extends Command {
+  static commandNames = [ "linked", "links", "lns" ];
 
     constructor() {
       super();
@@ -38,7 +28,7 @@ List all of the symlinked atom packages in ~/.atom/packages and
 ~/.pulsar/dev/packages.\
 `
       );
-      return options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
     getDevPackagePath(packageName) { return path.join(this.devPackagesPath, packageName); }
@@ -47,7 +37,7 @@ List all of the symlinked atom packages in ~/.atom/packages and
 
     getSymlinks(directoryPath) {
       const symlinks = [];
-      for (let directory of Array.from(fs.list(directoryPath))) {
+      for (let directory of fs.list(directoryPath)) {
         const symlinkPath = path.join(directoryPath, directory);
         if (fs.isSymbolicLinkSync(symlinkPath)) { symlinks.push(symlinkPath); }
       }
@@ -57,7 +47,7 @@ List all of the symlinked atom packages in ~/.atom/packages and
     logLinks(directoryPath) {
       const links = this.getSymlinks(directoryPath);
       console.log(`${directoryPath.cyan} (${links.length})`);
-      return tree(links, {emptyMessage: '(no links)'}, function(link) {
+      tree(links, {emptyMessage: '(no links)'}, function(link) {
         let realpath;
         try {
           realpath = fs.realpathSync(link);
@@ -75,7 +65,4 @@ List all of the symlinked atom packages in ~/.atom/packages and
       this.logLinks(this.packagesPath);
       return callback();
     }
-  };
-  Links.initClass();
-  return Links;
-})());
+  }
