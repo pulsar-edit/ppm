@@ -9,7 +9,11 @@ const fs = require('./fs');
 module.exports =
 class Init extends Command {
   static commandNames = [ "init" ];
-  static supportedSyntaxes = [ "coffeescript", "javascript" ];
+
+  constructor() {
+    super();
+    this.supportedSyntaxes = [ "coffeeScript", "javascript" ];
+  }
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
