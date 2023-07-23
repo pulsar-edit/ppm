@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Search;
+
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 
@@ -16,11 +9,9 @@ const tree = require('./tree');
 const {isDeprecatedPackage} = require('./deprecated-packages');
 
 module.exports =
-(Search = (function() {
-  Search = class Search extends Command {
-    static initClass() {
-      this.commandNames = ['search'];
-    }
+class Search extends Command {
+  static commandNames = [ "search" ];
+
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
@@ -34,7 +25,7 @@ Search for packages/themes.\
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.boolean('json').describe('json', 'Output matching packages as JSON array');
       options.boolean('packages').describe('packages', 'Search only non-theme packages').alias('p', 'packages');
-      return options.boolean('themes').describe('themes', 'Search only themes').alias('t', 'themes');
+      options.boolean('themes').describe('themes', 'Search only themes').alias('t', 'themes');
     }
 
     searchPackages(query, opts, callback) {
@@ -84,7 +75,7 @@ Search for packages/themes.\
         themes: options.argv.themes
       };
 
-      return this.searchPackages(query, searchOptions, function(error, packages) {
+      this.searchPackages(query, searchOptions, function(error, packages) {
         if (error != null) {
           callback(error);
           return;
@@ -111,7 +102,4 @@ Search for packages/themes.\
         return callback();
       });
     }
-  };
-  Search.initClass();
-  return Search;
-})());
+  }
