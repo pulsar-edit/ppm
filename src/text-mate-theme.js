@@ -1,19 +1,10 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let TextMateTheme;
+
 const _ = require('underscore-plus');
 const plist = require('@atom/plist');
 const {ScopeSelector} = require('first-mate');
 
 module.exports =
-(TextMateTheme = class TextMateTheme {
+class TextMateTheme {
   constructor(contents) {
     this.contents = contents;
     this.rulesets = [];
@@ -21,11 +12,11 @@ module.exports =
   }
 
   buildRulesets() {
-    let left, variableSettings;
-    let {settings} = (left = plist.parseStringSync(this.contents)) != null ? left : {};
+    let variableSettings;
+    let { settings } = plist.parseStringSync(this.contents) ?? {};
     if (settings == null) { settings = []; }
 
-    for (let setting of Array.from(settings)) {
+    for (let setting of settings) {
       const {scope, name} = setting.settings;
       if (scope || name) { continue; }
 
@@ -55,7 +46,7 @@ The theme being converted must contain a settings array with all of the followin
 
     this.buildSyntaxVariables(variableSettings);
     this.buildGlobalSettingsRulesets(variableSettings);
-    return this.buildScopeSelectorRulesets(settings);
+    this.buildScopeSelectorRulesets(settings);
   }
 
   getStylesheet() {
@@ -63,7 +54,7 @@ The theme being converted must contain a settings array with all of the followin
       '@import "syntax-variables";',
       ''
     ];
-    for (let {selector, properties} of Array.from(this.getRulesets())) {
+    for (let {selector, properties} of this.getRulesets()) {
       lines.push(`${selector} {`);
       for (let name in properties) { const value = properties[name]; lines.push(`  ${name}: ${value};`); }
       lines.push("}\n");
@@ -218,7 +209,7 @@ atom-text-editor.is-focused .line.cursor-line`,
       return parsed;
     }
   }
-});
+};
 
 var SyntaxVariablesTemplate = `\
 // This defines all syntax variables that syntax themes must implement when they
