@@ -1,12 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let View;
+
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 const semver = require('semver');
@@ -17,11 +9,8 @@ const request = require('./request');
 const tree = require('./tree');
 
 module.exports =
-(View = (function() {
-  View = class View extends Command {
-    static initClass() {
-      this.commandNames = ['view', 'show'];
-    }
+class View extends Command {
+  static commandNames = [ "view", "show" ];
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
@@ -34,7 +23,7 @@ View information about a package/theme.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.boolean('json').describe('json', 'Output featured packages as JSON array');
-      return options.string('compatible').describe('compatible', 'Show the latest version compatible with this Atom version');
+      options.string('compatible').describe('compatible', 'Show the latest version compatible with this Atom version');
     }
 
     loadInstalledAtomVersion(options, callback) {
@@ -59,7 +48,7 @@ View information about a package/theme.\
           if (!semver.valid(version)) { continue; }
           if (!metadata) { continue; }
 
-          const engine = (metadata.engines != null ? metadata.engines.pulsar : undefined) || (metadata.engines != null ? metadata.engines.atom : undefined) || '*';
+          const engine = metadata.engines?.pulsar ?? metadata.engines?.atom ?? "*";
           if (!semver.validRange(engine)) { continue; }
           if (!semver.satisfies(installedAtomVersion, engine)) { continue; }
 
@@ -72,8 +61,8 @@ View information about a package/theme.\
     }
 
     getRepository(pack) {
-      let repository;
-      if (repository = (pack.repository != null ? pack.repository.url : undefined) != null ? (pack.repository != null ? pack.repository.url : undefined) : pack.repository) {
+      let repository = pack.repository?.url ?? pack.repository;;
+      if (repository) {
         return repository.replace(/\.git$/, '');
       }
     }
@@ -95,8 +84,7 @@ View information about a package/theme.\
             return callback(null, pack);
           });
         } else {
-          let left;
-          const message = (left = body.message != null ? body.message : body.error) != null ? left : body;
+          const message = body.message ?? body.error ?? body;
           return callback(`Requesting package failed: ${message}`);
         }
       });
@@ -146,7 +134,4 @@ View information about a package/theme.\
         return callback();
       });
     }
-  };
-  View.initClass();
-  return View;
-})());
+  }
