@@ -1,14 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let List;
+
 const path = require('path');
 
 const _ = require('underscore-plus');
@@ -22,11 +12,8 @@ const tree = require('./tree');
 const {getRepository} = require("./packages");
 
 module.exports =
-(List = (function() {
-  List = class List extends Command {
-    static initClass() {
-      this.commandNames = ['list', 'ls'];
-    }
+class List extends Command {
+  static commandNames = [ "list", "ls" ];
 
     constructor() {
       let configPath;
@@ -35,7 +22,7 @@ module.exports =
       this.devPackagesDirectory = path.join(config.getAtomDirectory(), 'dev', 'packages');
       if (configPath = CSON.resolve(path.join(config.getAtomDirectory(), 'config'))) {
         try {
-          this.disabledPackages = __guard__(__guard__(__guard__(CSON.readFileSync(configPath), x2 => x2['*']), x1 => x1.core), x => x.disabledPackages);
+          this.disabledPackages = CSON.readFileSync(configPath)?.['*']?.core?.disabledPackages;
         } catch (error) {}
       }
       if (this.disabledPackages == null) { this.disabledPackages = []; }
@@ -66,7 +53,7 @@ List all the installed packages and also the packages bundled with Atom.\
       options.alias('l', 'links').boolean('links').default('links', true).describe('links', 'Include linked packages');
       options.alias('t', 'themes').boolean('themes').describe('themes', 'Only list themes');
       options.alias('p', 'packages').boolean('packages').describe('packages', 'Only list packages');
-      return options.alias('v', 'versions').boolean('versions').default('versions', true).describe('versions', 'Include version of each package');
+      options.alias('v', 'versions').boolean('versions').default('versions', true).describe('versions', 'Include version of each package');
     }
 
     isPackageDisabled(name) {
@@ -88,7 +75,7 @@ List all the installed packages and also the packages bundled with Atom.\
         tree(packages, pack => {
           let packageLine = pack.name;
           if ((pack.version != null) && options.argv.versions) { packageLine += `@${pack.version}`; }
-          if ((pack.apmInstallSource != null ? pack.apmInstallSource.type : undefined) === 'git') {
+          if (pack.apmInstallSource?.type === 'git') {
             const repo = getRepository(pack);
             let shaLine = `#${pack.apmInstallSource.sha.substr(0, 8)}`;
             if (repo != null) { shaLine = repo + shaLine; }
@@ -148,11 +135,11 @@ List all the installed packages and also the packages bundled with Atom.\
       if (!options.argv.bare && !options.argv.json) {
         console.log(`Community Packages (${userPackages.length})`.cyan, `${this.userPackagesDirectory}`);
       }
-      return (typeof callback === 'function' ? callback(null, userPackages) : undefined);
+      return callback?.(null, userPackages);
     }
 
     listDevPackages(options, callback) {
-      if (!options.argv.dev) { return (typeof callback === 'function' ? callback(null, []) : undefined); }
+      if (!options.argv.dev) { return callback?.(null, []); }
 
       const devPackages = this.listPackages(this.devPackagesDirectory, options);
       if (devPackages.length > 0) {
@@ -160,18 +147,18 @@ List all the installed packages and also the packages bundled with Atom.\
           console.log(`Dev Packages (${devPackages.length})`.cyan, `${this.devPackagesDirectory}`);
         }
       }
-      return (typeof callback === 'function' ? callback(null, devPackages) : undefined);
+      return callback?.(null, devPackages);
     }
 
     listGitPackages(options, callback) {
       const gitPackages = this.listPackages(this.userPackagesDirectory, options)
-        .filter(pack => (pack.apmInstallSource != null ? pack.apmInstallSource.type : undefined) === 'git');
+        .filter(pack => pack.apmInstallSource?.type === 'git');
       if (gitPackages.length > 0) {
         if (!options.argv.bare && !options.argv.json) {
           console.log(`Git Packages (${gitPackages.length})`.cyan, `${this.userPackagesDirectory}`);
         }
       }
-      return (typeof callback === 'function' ? callback(null, gitPackages) : undefined);
+      return callback?.(null, gitPackages);
     }
 
     listBundledPackages(options, callback) {
@@ -204,18 +191,18 @@ List all the installed packages and also the packages bundled with Atom.\
           }
         }
 
-        return (typeof callback === 'function' ? callback(null, packages) : undefined);
+        return callback?.(null, packages);
       });
     }
 
     listInstalledPackages(options) {
-      return this.listDevPackages(options, (error, packages) => {
+      this.listDevPackages(options, (error, packages) => {
         if (packages.length > 0) { this.logPackages(packages, options); }
 
-        return this.listUserPackages(options, (error, packages) => {
+        this.listUserPackages(options, (error, packages) => {
           this.logPackages(packages, options);
 
-          return this.listGitPackages(options, (error, packages) => {
+          this.listGitPackages(options, (error, packages) => {
             if (packages.length > 0) { return this.logPackages(packages, options); }
           });
         });
@@ -231,16 +218,16 @@ List all the installed packages and also the packages bundled with Atom.\
         user: []
       };
 
-      return this.listBundledPackages(options, (error, packages) => {
+      this.listBundledPackages(options, (error, packages) => {
         if (error) { return callback(error); }
         output.core = packages;
-        return this.listDevPackages(options, (error, packages) => {
+        this.listDevPackages(options, (error, packages) => {
           if (error) { return callback(error); }
           output.dev = packages;
-          return this.listUserPackages(options, (error, packages) => {
+          this.listUserPackages(options, (error, packages) => {
             if (error) { return callback(error); }
             output.user = packages;
-            return this.listGitPackages(options, function(error, packages) {
+            this.listGitPackages(options, function(error, packages) {
               if (error) { return callback(error); }
               output.git = packages;
               console.log(JSON.stringify(output));
@@ -261,18 +248,11 @@ List all the installed packages and also the packages bundled with Atom.\
         this.listInstalledPackages(options);
         return callback();
       } else {
-        return this.listBundledPackages(options, (error, packages) => {
+        this.listBundledPackages(options, (error, packages) => {
           this.logPackages(packages, options);
           this.listInstalledPackages(options);
           return callback();
         });
       }
     }
-  };
-  List.initClass();
-  return List;
-})());
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
+  }
