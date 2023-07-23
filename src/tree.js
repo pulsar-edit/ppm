@@ -1,10 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
+
 const _ = require('underscore-plus');
 
 module.exports = function(items, options, callback) {
@@ -17,7 +11,7 @@ module.exports = function(items, options, callback) {
 
   if (items.length === 0) {
     const emptyMessage = options.emptyMessage != null ? options.emptyMessage : '(empty)';
-    return console.log(`\u2514\u2500\u2500 ${emptyMessage}`);
+    console.log(`\u2514\u2500\u2500 ${emptyMessage}`);
   } else {
     return (() => {
       const result = [];
