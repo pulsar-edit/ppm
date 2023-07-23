@@ -1,13 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let Unlink;
+
 const path = require('path');
 
 const CSON = require('season');
@@ -18,11 +9,8 @@ const config = require('./apm');
 const fs = require('./fs');
 
 module.exports =
-(Unlink = (function() {
-  Unlink = class Unlink extends Command {
-    static initClass() {
-      this.commandNames = ['unlink'];
-    }
+class Unlink extends Command {
+  static commandNames = [ "unlink" ];
 
     constructor() {
       super();
@@ -45,7 +33,7 @@ Run \`ppm links\` to view all the currently linked packages.\
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('d', 'dev').boolean('dev').describe('dev', 'Unlink package from ~/.pulsar/dev/packages');
       options.boolean('hard').describe('hard', 'Unlink package from ~/.pulsar/packages and ~/.pulsar/dev/packages');
-      return options.alias('a', 'all').boolean('all').describe('all', 'Unlink all packages in ~/.pulsar/packages and ~/.pulsar/dev/packages');
+      options.alias('a', 'all').boolean('all').describe('all', 'Unlink all packages in ~/.pulsar/packages and ~/.pulsar/dev/packages');
     }
 
     getDevPackagePath(packageName) { return path.join(this.devPackagesPath, packageName); }
@@ -66,12 +54,12 @@ Run \`ppm links\` to view all the currently linked packages.\
     unlinkAll(options, callback) {
       try {
         let child, packagePath;
-        for (child of Array.from(fs.list(this.devPackagesPath))) {
+        for (child of fs.list(this.devPackagesPath)) {
           packagePath = path.join(this.devPackagesPath, child);
           if (fs.isSymbolicLinkSync(packagePath)) { this.unlinkPath(packagePath); }
         }
         if (!options.argv.dev) {
-          for (child of Array.from(fs.list(this.packagesPath))) {
+          for (child of fs.list(this.packagesPath)) {
             packagePath = path.join(this.packagesPath, child);
             if (fs.isSymbolicLinkSync(packagePath)) { this.unlinkPath(packagePath); }
           }
@@ -83,13 +71,13 @@ Run \`ppm links\` to view all the currently linked packages.\
     }
 
     unlinkPackage(options, callback) {
-      let error, left, packageName;
-      const packagePath = (left = (options.argv._[0] != null ? options.argv._[0].toString() : undefined)) != null ? left : '.';
+      let packageName;
+      const packagePath = options.argv._[0]?.toString() ?? ".";
       const linkPath = path.resolve(process.cwd(), packagePath);
 
       try {
         packageName = CSON.readFileSync(CSON.resolve(path.join(linkPath, 'package'))).name;
-      } catch (error3) {}
+      } catch (error) {}
       if (!packageName) { packageName = path.basename(linkPath); }
 
       if (options.argv.hard) {
@@ -97,8 +85,7 @@ Run \`ppm links\` to view all the currently linked packages.\
           this.unlinkPath(this.getDevPackagePath(packageName));
           this.unlinkPath(this.getPackagePath(packageName));
           return callback();
-        } catch (error1) {
-          error = error1;
+        } catch (error) {
           return callback(error);
         }
       } else {
@@ -111,8 +98,7 @@ Run \`ppm links\` to view all the currently linked packages.\
         try {
           this.unlinkPath(targetPath);
           return callback();
-        } catch (error2) {
-          error = error2;
+        } catch (error) {
           return callback(error);
         }
       }
@@ -128,7 +114,4 @@ Run \`ppm links\` to view all the currently linked packages.\
         return this.unlinkPackage(options, callback);
       }
     }
-  };
-  Unlink.initClass();
-  return Unlink;
-})());
+  }
