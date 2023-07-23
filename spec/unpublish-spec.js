@@ -1,8 +1,8 @@
 const express = require('express');
 const http = require('http');
 const temp = require('temp');
-const apm = require('../lib/apm-cli');
-const Unpublish = require('../lib/unpublish');
+const apm = require('../src/apm-cli');
+const Unpublish = require('../src/unpublish');
 
 describe('apm unpublish', () => {
   let server, unpublishPackageCallback, unpublishVersionCallback;

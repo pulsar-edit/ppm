@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs-plus');
 const temp = require('temp');
 const wrench = require('wrench');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 const CSON = require('season');
 
 const listPackages = (args, doneCallback) => {

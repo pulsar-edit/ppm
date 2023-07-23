@@ -31,7 +31,7 @@ binDir=`pwd -P`
 # Force npm to use its builtin node-gyp
 unset npm_config_node_gyp
 
-cliPath="$binDir/../lib/cli.js"
+cliPath="$binDir/../src/cli.js"
 if [[ $(uname -r) == *-Microsoft ]]; then
   cliPath="$(echo $cliPath | sed 's/\/mnt\/\([a-z]*\)\(.*\)/\1:\2/')"
   cliPath="${cliPath////\\}"

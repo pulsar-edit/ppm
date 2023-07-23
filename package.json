@@ -10,21 +10,16 @@
   "bugs": {
     "url": "https://github.com/pulsar-edit/ppm/issues"
   },
-  "main": "./lib/apm.js",
+  "main": "./src/apm.js",
   "bin": {
     "apm": "bin/apm"
   },
   "scripts": {
     "check-version": "node script/check-version.js",
     "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
-    "clean:lib": "shx rm -rf lib && shx mkdir -p lib",
-    "clean": "npm run clean:lib && npm run clean:bin",
-    "lint": "coffeelint src spec",
-    "coffee": "coffee --compile --output lib src",
-    "build": "npm run clean:lib && npm run coffee",
-    "prepare": "npm run build",
+    "clean": "npm run clean:bin",
     "postinstall": "node script/postinstall.js",
-    "test": "npm run check-version && npm run lint && jasmine-focused --captureExceptions --coffee spec"
+    "test": "npm run check-version && jasmine-focused --captureExceptions spec"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",

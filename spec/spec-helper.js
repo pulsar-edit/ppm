@@ -1,4 +1,4 @@
-const auth = require('../lib/auth');
+const auth = require('../src/auth');
 
 global.silenceOutput = (callThrough = false) => {
   spyOn(console, 'log');

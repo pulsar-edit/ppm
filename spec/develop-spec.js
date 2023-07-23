@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs-plus');
 const temp = require('temp');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm develop', () => {
   let linkedRepoPath, repoPath;

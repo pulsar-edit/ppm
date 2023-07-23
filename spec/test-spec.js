@@ -1,7 +1,7 @@
 const child_process = require('child_process');
 const path = require('path');
 const temp = require('temp');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 
 describe('apm test', () => {
   let specPath;

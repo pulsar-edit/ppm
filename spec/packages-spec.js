@@ -1,4 +1,4 @@
-const Packages = require('../lib/packages');
+const Packages = require('../src/packages');
 
 describe('getRemote', () => {
   it('returns origin if remote could not be determined', () => {

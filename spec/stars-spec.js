@@ -3,7 +3,7 @@ const express = require('express');
 const fs = require('fs-plus');
 const http = require('http');
 const temp = require('temp');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
 describe('apm stars', () => {

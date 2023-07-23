@@ -1,12 +1,12 @@
 const path = require('path');
 const CSON = require('season');
-const fs = require('../lib/fs');
+const fs = require('../src/fs');
 const temp = require('temp');
 const express = require('express');
 const http = require('http');
 const wrench = require('wrench');
-const apm = require('../lib/apm-cli');
-const Install = require('../lib/install');
+const apm = require('../src/apm-cli');
+const Install = require('../src/install');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
 describe('apm install', () => {
@@ -15,7 +15,7 @@ describe('apm install', () => {
   beforeEach(() => {
     spyOnToken();
     silenceOutput();
-    
+
     atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
 

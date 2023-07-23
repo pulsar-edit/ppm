@@ -2,7 +2,7 @@ const path = require('path');
 const temp = require('temp');
 const express = require('express');
 const http = require('http');
-const apm = require('../lib/apm-cli');
+const apm = require('../src/apm-cli');
 const fs = require('fs-plus');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
