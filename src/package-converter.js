@@ -1,14 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS104: Avoid inline assignments
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-let PackageConverter;
+
 const path = require('path');
 const url = require('url');
 const zlib = require('zlib');
@@ -25,7 +15,7 @@ const request = require('./request');
 
 // Convert a TextMate bundle to an Atom package
 module.exports =
-(PackageConverter = class PackageConverter {
+class PackageConverter {
   constructor(sourcePath, destinationPath) {
     this.sourcePath = sourcePath;
     this.destinationPath = path.resolve(destinationPath);
@@ -84,7 +74,7 @@ module.exports =
     let packageName;
     sourcePath = path.resolve(sourcePath);
     try {
-      packageName = __guard__(JSON.parse(fs.readFileSync(path.join(sourcePath, 'package.json'))), x => x.packageName);
+      packageName = JSON.parse(fs.readFileSync(path.join(sourcePath, 'package.json')))?.packageName;
     } catch (error) {}
     if (packageName == null) { packageName = path.basename(this.destinationPath); }
 
@@ -277,8 +267,4 @@ module.exports =
 
     return this.normalizeFilenames(destination);
   }
-});
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
+};
