@@ -195,7 +195,7 @@ var getPythonVersion = function(callback) {
 };
 
 module.exports = {
-  run(args, callback) {
+  async run(args, callback) {
     let Command;
     config.setupApmRcFile();
     const options = parseOptions(args);
@@ -223,7 +223,7 @@ module.exports = {
           console.error(message.red);
         }
       }
-      return callback?.(error);
+      return error;
     };
 
     args = options.argv;
