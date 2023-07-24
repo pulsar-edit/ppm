@@ -196,7 +196,7 @@ have published it.\
             if (error != null) {
               return callback(error);
             } else if (response.statusCode !== 201) {
-              const message = request.getErrorMessage(response, body);
+              const message = request.getErrorMessage(error);
               this.logFailure();
               return callback(`Registering package in ${repository} repository failed: ${message}`);
             } else {
@@ -237,7 +237,7 @@ have published it.\
           if (error != null) {
             return callback(error);
           } else if (response.statusCode !== 201) {
-            const message = request.getErrorMessage(response, body);
+            const message = request.getErrorMessage(error);
             return callback(`Creating new version failed: ${message}`);
           } else {
             return callback();

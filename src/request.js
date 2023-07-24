@@ -87,18 +87,25 @@ module.exports = {
   },
 
   createReadStream(requestOptions, callback) {
-    return configureRequest(requestOptions, () => callback(request.get(requestOptions)));
+    configureRequest(opts, () => {
+      if (typeof opts.strictSSL === "boolean") {
+        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts();
+      } else {
+        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs);
+      }
+    });
   },
 
-  getErrorMessage(response, body) {
-    if ((response != null ? response.statusCode : undefined) === 503) {
-      return `${response.host} is temporarily unavailable, please try again later.`;
+  getErrorMessage(err) {
+    if (err?.status === 503) {
+      return `${err.response.req.host} is temporarily unavailable, please try again later.`;
     } else {
-      return body?.message ?? body?.error ?? body;
+      return err?.response?.body ?? err?.response?.error ?? err;
     }
   },
 
   debug(debug) {
-    return request.debug = debug;
+    // Superagent does not support debug flags like request did
+    return;
   }
 };

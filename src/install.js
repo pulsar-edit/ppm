@@ -218,10 +218,10 @@ Run ppm -v after installing Git to see what version has been detected.\
         if (body == null) { body = {}; }
         if (error != null) {
           message = `Request for package information failed: ${error.message}`;
-          if (error.code) { message += ` (${error.code})`; }
+          if (error.status) { message += ` (${error.code})`; }
           return callback(message);
         } else if (response.statusCode !== 200) {
-          message = request.getErrorMessage(response, body);
+          message = request.getErrorMessage(error);
           return callback(`Request for package information failed: ${message}`);
         } else {
           if (body.releases.latest) {
@@ -697,7 +697,6 @@ Run ppm -v after installing Git to see what version has been detected.\
 
       this.verbose = options.argv.verbose;
       if (this.verbose) {
-        request.debug(true);
         process.env.NODE_DEBUG = 'request';
       }
 
