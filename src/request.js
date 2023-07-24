@@ -14,8 +14,8 @@ const loadNpm = function(callback) {
 };
 
 const configureRequest = (requestOptions, callback) => loadNpm(function() {
-  requestOptions.proxy ??= npm.config.get("https-proxy") ?? npm.config.get("proxy") ?? process.env.HTTP_PROXY ?? process.env.HTTP_PROXY;
-  requestOptions.strictSSL ??= npm.config.get("strict-ssl");
+  requestOptions.proxy ??= npm.config.get("https-proxy") ?? npm.config.get("proxy") ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY;
+  requestOptions.strictSSL ??= npm.config.get("strict-ssl") ?? true;
 
   requestOptions.headers ??= {};
   requestOptions.headers["User-Agent"] ??= npm.config.get("user-agent") ?? `PulsarPpm/${require("../package.json").version}`;
