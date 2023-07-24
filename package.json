@@ -19,7 +19,7 @@
     "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean": "npm run clean:bin",
     "postinstall": "node script/postinstall.js",
-    "test": "npm run check-version && jasmine-focused spec"
+    "test": "npm run check-version && jasmine-focused --captureExceptions spec"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",
