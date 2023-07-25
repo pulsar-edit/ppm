@@ -52,7 +52,7 @@ name is specified.\
           json: true
         };
 
-        if (packageVersion) { options.uri += `/versions/${packageVersion}`; }
+        if (packageVersion) { options.url += `/versions/${packageVersion}`; }
 
         request.del(options, (error, response, body) => {
           if (body == null) { body = {}; }
