@@ -41,6 +41,9 @@ jobs:
         run: ./bin/npm test
         # Q: Why are we using some random test section when the package.json has a test script?
         # A: So that we ensure we use the bundled version of node to run our tests
+      - if: failure()
+        name: Print Logs for exceptions
+        run: echo "$(cat ./script/log.txt)" >> $GITHUB_OUTPUT
 
   Skip:
     if: contains(github.event.head_commit.message, '[skip ci]')
