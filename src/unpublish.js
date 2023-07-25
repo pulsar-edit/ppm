@@ -45,7 +45,7 @@ name is specified.\
         }
 
         const options = {
-          uri: `${config.getAtomPackagesUrl()}/${packageName}`,
+          url: `${config.getAtomPackagesUrl()}/${packageName}`,
           headers: {
             authorization: token
           },
