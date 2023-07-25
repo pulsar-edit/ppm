@@ -5,6 +5,11 @@ require("superagent-proxy")(superagent);
 
 const config = require("./apm.js");
 
+// request would not error on valid status codes, leaving the implementer to deal
+// with specifics. But superagent will fail on anything 4xx, 5xx, and 3xx.
+// So we have to specifically say these are valid, or otherwise redo a lot of our logic
+const OK_STATUS_CODES = [200, 201, 404];
+
 const loadNpm = function(callback) {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
@@ -35,13 +40,13 @@ module.exports = {
       let retryCount = opts.retries ?? 0;
 
       if (typeof opts.strictSSL === "boolean") {
-        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).disableTLSCerts().then((res) => {
+        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
           return callback(null, res, res.body);
         }).catch((err) => {
           return callback(err, null, null);
         });
       } else {
-        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).then((res) => {
+        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
           return callback(null, res, res.body);
         }).catch((err) => {
           return callback(err, null, null);
@@ -53,13 +58,13 @@ module.exports = {
   del(opts, callback) {
     configureRequest(opts, () => {
       if (typeof opts.strictSSL === "boolean") {
-        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().then((res) => {
+        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
           return callback(null, res, res.body);
         }).catch((err) => {
           return callback(err, null, null);
         });
       } else {
-        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).then((res) => {
+        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
           return callback(null, res, res.body);
         }).catch((err) => {
           return callback(err, null, null);
@@ -71,13 +76,13 @@ module.exports = {
   post(opts, callback) {
     configureRequest(opts, () => {
       if (typeof opts.strictSSL === "boolean") {
-        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().then((res) => {
+        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
           return callback(null, res, res.body);
         }).catch((err) => {
           return callback(err, null, null);
         });
       } else {
-        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).then((res) => {
+        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
           return callback(null, res, res.body);
         }).catch((err) => {
           return callback(err, null, null);
@@ -89,9 +94,9 @@ module.exports = {
   createReadStream(opts, callback) {
     configureRequest(opts, () => {
       if (typeof opts.strictSSL === "boolean") {
-        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts();
+        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status));
       } else {
-        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs);
+        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
       }
     });
   },
