@@ -8,7 +8,7 @@ const config = require("./apm.js");
 // request would not error on valid status codes, leaving the implementer to deal
 // with specifics. But superagent will fail on anything 4xx, 5xx, and 3xx.
 // So we have to specifically say these are valid, or otherwise redo a lot of our logic
-const OK_STATUS_CODES = [200, 201, 404];
+const OK_STATUS_CODES = [200, 201, 204, 404];
 
 const loadNpm = function(callback) {
   const npmOptions = {
