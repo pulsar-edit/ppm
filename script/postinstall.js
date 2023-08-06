@@ -19,7 +19,7 @@ fs.chmodSync(path.join(__dirname, '..', 'bin', 'apm'), 0o755)
 fs.chmodSync(path.join(__dirname, '..', 'bin', 'ppm'), 0o755)
 fs.chmodSync(path.join(__dirname, '..', 'bin', 'npm'), 0o755)
 
-const child = cp.spawn(script, [], { stdio: ['pipe', 'pipe', 'pipe'], shell: true })
+const child = cp.spawn(`"${script}"`, [], { stdio: ['pipe', 'pipe', 'pipe'], shell: true })
 child.stderr.pipe(process.stderr)
 child.stdout.pipe(process.stdout)
 child.on('close', (code) => { process.exit(code) })
