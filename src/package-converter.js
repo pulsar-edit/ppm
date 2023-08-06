@@ -6,7 +6,7 @@ const zlib = require('zlib');
 const _ = require('underscore-plus');
 const CSON = require('season');
 const plist = require('@atom/plist');
-const {ScopeSelector} = require('first-mate');
+const {ScopeSelector, ready} = require('second-mate');
 const tar = require('tar');
 const temp = require('temp');
 
@@ -199,6 +199,9 @@ class PackageConverter {
       }
 
       try {
+        (async () => {
+          await ready;
+        })();
         if (scope) { selector = new ScopeSelector(scope).toCssSelector(); }
       } catch (e) {
         e.message = `In file ${e.fileName} at ${JSON.stringify(scope)}: ${e.message}`;
@@ -231,6 +234,9 @@ class PackageConverter {
       if (properties = this.convertSettings(settings)) {
         var selector;
         try {
+          (async () => {
+            await ready;
+          })();
           selector = new ScopeSelector(scope).toCssSelector();
         } catch (e) {
           e.message = `In file ${e.fileName} at ${JSON.stringify(scope)}: ${e.message}`;
