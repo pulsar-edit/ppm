@@ -1,7 +1,7 @@
 
 const _ = require('underscore-plus');
 const plist = require('@atom/plist');
-const {ScopeSelector} = require('first-mate');
+const {ScopeSelector, ready} = require('second-mate');
 
 module.exports =
 class TextMateTheme {
@@ -168,6 +168,9 @@ atom-text-editor.is-focused .line.cursor-line`,
   }
 
   translateScopeSelector(textmateScopeSelector) {
+    (async () => {
+      await ready;
+    })();
     return new ScopeSelector(textmateScopeSelector).toCssSyntaxSelector();
   }
 
