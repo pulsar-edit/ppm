@@ -81,7 +81,8 @@ name is specified.\
       } else {
         question = `Are you sure you want to unpublish ALL VERSIONS of '${packageLabel}'? ` +
                    "This will remove it from the ppm registry, including " +
-                   "download counts and stars, and this action is irreversible. (no)";
+                   "download counts and stars, and will render the package " +
+                   "name permanently unusable. This action is irreversible. (no)";
       }
 
       return this.prompt(question, answer => {
