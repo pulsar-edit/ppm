@@ -11,7 +11,7 @@ describe('apm command line interface', () => {
 
   describe('when no arguments are present', () => {
     it('prints a usage message', async () => {
-      await apm.run([]);
+      await apm.run([]).catch();
       expect(console.log).not.toHaveBeenCalled();
       expect(console.error).toHaveBeenCalled();
       expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
@@ -20,7 +20,7 @@ describe('apm command line interface', () => {
 
   describe('when the help flag is specified', () => {
     it('prints a usage message', async () => {
-      await apm.run(['-h']);
+      await apm.run(['-h']).catch();
       expect(console.log).not.toHaveBeenCalled();
       expect(console.error).toHaveBeenCalled();
       expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
@@ -30,7 +30,7 @@ describe('apm command line interface', () => {
   describe('when the version flag is specified', () => {
     it('prints the version', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['-v', '--no-color'], callback);
+      await apm.run(['-v', '--no-color']).then(callback, callback);
       const testAtomVersion = '0.0.0';
       const tempAtomResourcePath = temp.mkdirSync('apm-resource-dir-');
       fs.writeFileSync(path.join(tempAtomResourcePath, 'package.json'), JSON.stringify({
@@ -53,7 +53,7 @@ describe('apm command line interface', () => {
   describe('when the version flag is specified but env.ATOM_RESOURCE_PATH is not set', () => {
     it('finds the installed Atom and prints the version', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['-v', '--no-color'], callback);
+      await apm.run(['-v', '--no-color']).then(callback, callback);
       process.env.ATOM_RESOURCE_PATH = '';
       waitsFor(() => callback.callCount === 1);
       runs(() => {
@@ -69,7 +69,7 @@ describe('apm command line interface', () => {
     describe('when the version flag is specified and apm is unable find package.json on the resourcePath', () => {
       it('prints unknown atom version', async () => {
         const callback = jasmine.createSpy('callback');
-        await apm.run(['-v', '--no-color'], callback);
+        await apm.run(['-v', '--no-color']).then(callback, callback);
         const testAtomVersion = 'unknown';
         const tempAtomResourcePath = temp.mkdirSync('apm-resource-dir-');
         process.env.ATOM_RESOURCE_PATH = tempAtomResourcePath;
@@ -87,7 +87,7 @@ describe('apm command line interface', () => {
   describe('when an unrecognized command is specified', () => {
     it('prints an error message and exits', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['this-will-never-be-a-command'], callback);
+      await apm.run(['this-will-never-be-a-command']).then(callback, callback);
       expect(console.log).not.toHaveBeenCalled();
       expect(console.error).toHaveBeenCalled();
       expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);

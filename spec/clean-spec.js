@@ -56,7 +56,7 @@ describe('apm clean', () => {
     );
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['clean'], callback);
+    await apm.run(['clean']).then(callback, callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).toBeUndefined();
@@ -74,7 +74,7 @@ describe('apm clean', () => {
     );
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['clean'], callback);
+    await apm.run(['clean']).then(callback, callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).toBeUndefined();

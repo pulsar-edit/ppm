@@ -51,7 +51,7 @@ describe('apm stars', () => {
   describe('when no user flag is specified', () => {
     it('lists your starred packages', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['stars'], callback);
+      await apm.run(['stars']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
@@ -64,7 +64,7 @@ describe('apm stars', () => {
   describe('when a user flag is specified', () => {
     it('lists their starred packages', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['stars', '--user', 'hubot'], callback);
+      await apm.run(['stars', '--user', 'hubot']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
@@ -79,7 +79,7 @@ describe('apm stars', () => {
       const testModuleDirectory = path.join(atomHome, 'packages', 'test-module');
       expect(fs.existsSync(testModuleDirectory)).toBeFalsy();
       const callback = jasmine.createSpy('callback');
-      await apm.run(['stars', '--user', 'hubot', '--install'], callback);
+      await apm.run(['stars', '--user', 'hubot', '--install']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
@@ -93,7 +93,7 @@ describe('apm stars', () => {
   describe('when the theme flag is specified', () => {
     it('only lists themes', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['stars', '--themes'], callback);
+      await apm.run(['stars', '--themes']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {

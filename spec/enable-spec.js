@@ -25,7 +25,7 @@ describe('apm enable', () => {
     });
 
     runs(async () => {
-      await apm.run(['enable', 'vim-mode', 'not-installed', 'file-icons'], callback);
+      await apm.run(['enable', 'vim-mode', 'not-installed', 'file-icons']).then(callback, callback);
     });
 
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
@@ -61,7 +61,7 @@ describe('apm enable', () => {
     });
 
     runs(async () => {
-      await apm.run(['enable', 'vim-mode'], callback);
+      await apm.run(['enable', 'vim-mode']).then(callback, callback);
     });
 
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
@@ -87,7 +87,7 @@ describe('apm enable', () => {
     const callback = jasmine.createSpy('callback');
 
     runs(async () => {
-      await apm.run(['enable', 'vim-mode'], callback);
+      await apm.run(['enable', 'vim-mode']).then(callback, callback);
     });
 
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
@@ -104,7 +104,7 @@ describe('apm enable', () => {
     const callback = jasmine.createSpy('callback');
 
     runs(async () => {
-      await apm.run(['enable'], callback);
+      await apm.run(['enable']).then(callback, callback);
     });
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
     runs(() => {

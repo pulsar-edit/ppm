@@ -41,7 +41,7 @@ describe('apm docs', () => {
 
   it('logs an error if the package has no URL', async () => {
     const callback = jasmine.createSpy('callback');
-    await apm.run(['docs', 'install'], callback);
+    await apm.run(['docs', 'install']).then(callback, callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -52,7 +52,7 @@ describe('apm docs', () => {
 
   it('logs an error if the package name is missing or empty', async () => {
     const callback = jasmine.createSpy('callback');
-    await apm.run(['docs'], callback);
+    await apm.run(['docs']).then(callback, callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -64,7 +64,7 @@ describe('apm docs', () => {
   it('prints the package URL if called with the --print option (and does not open it)', async () => {
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
-    await apm.run(['docs', '--print', 'wrap-guide'], callback);
+    await apm.run(['docs', '--print', 'wrap-guide']).then(callback, callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -78,7 +78,7 @@ describe('apm docs', () => {
     Docs = require('../src/docs');
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
-    await apm.run(['docs', '-p', 'wrap-guide'], callback);
+    await apm.run(['docs', '-p', 'wrap-guide']).then(callback, callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -91,7 +91,7 @@ describe('apm docs', () => {
   it('opens the package URL', async () => {
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
-    await apm.run(['docs', 'wrap-guide'], callback);
+    await apm.run(['docs', 'wrap-guide']).then(callback, callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {

@@ -25,7 +25,7 @@ describe('apm test', () => {
       },
       on() {}
     });
-    await apm.run(['test']);
+    await apm.run(['test']).catch();
 
     waitsFor('waiting for test to complete', () => atomSpawn.callCount === 1);
 
@@ -57,7 +57,7 @@ describe('apm test', () => {
         on: pulsarReturnFn,
         removeListener() {}
       }); // no op
-      await apm.run(['test'], callback);
+      await apm.run(['test']).then(callback, callback);
     };
 
     describe('successfully', () => {

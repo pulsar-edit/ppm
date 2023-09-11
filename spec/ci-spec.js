@@ -54,7 +54,7 @@ describe('apm ci', () => {
     wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
     process.chdir(moduleDirectory);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['ci'], callback);
+    await apm.run(['ci']).then(callback, callback);
     waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).toBeNull();
@@ -75,11 +75,11 @@ describe('apm ci', () => {
     CSON.writeFileSync(pjsonPath, pjson);
     const callback0 = jasmine.createSpy('callback');
     const callback1 = jasmine.createSpy('callback');
-    await apm.run(['install'], callback0);
+    await apm.run(['install']).then(callback0, callback0);
     waitsFor('waiting for install to complete', 600000, () => callback0.callCount > 0);
     runs(async () => {
       expect(callback0.mostRecentCall.args[0]).toBeNull();
-      await apm.run(['ci'], callback1);
+      await apm.run(['ci']).then(callback1, callback1);
     });
     waitsFor('waiting for ci to complete', 600000, () => callback1.callCount > 0);
     runs(() => {
@@ -93,7 +93,7 @@ describe('apm ci', () => {
     wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module'), moduleDirectory);
     process.chdir(moduleDirectory);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['ci'], callback);
+    await apm.run(['ci']).then(callback, callback);
     waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).not.toBeNull();
@@ -109,7 +109,7 @@ describe('apm ci', () => {
     pjson.dependencies['test-module'] = '^1.2.0';
     CSON.writeFileSync(pjsonPath, pjson);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['ci'], callback);
+    await apm.run(['ci']).then(callback, callback);
     waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).not.toBeNull();

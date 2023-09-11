@@ -24,7 +24,7 @@ describe('apm develop', () => {
         callback('Here is the error');
       });
       const callback = jasmine.createSpy('callback');
-      await apm.run(['develop', 'fake-package'], callback);
+      await apm.run(['develop', 'fake-package']).then(callback, callback);
       waitsFor('waiting for develop to complete', () => callback.callCount === 1);
       runs(() => {
         expect(callback.mostRecentCall.args[0]).toBe('Here is the error');
@@ -45,7 +45,7 @@ describe('apm develop', () => {
         this.linkPackage(packageDirectory, options);
       });
       const callback = jasmine.createSpy('callback');
-      await apm.run(['develop', 'fake-package'], callback);
+      await apm.run(['develop', 'fake-package']).then(callback, callback);
       waitsFor('waiting for develop to complete', () => callback.callCount === 1);
       runs(() => {
         expect(callback.mostRecentCall.args[0]).toBeFalsy();
@@ -62,7 +62,7 @@ describe('apm develop', () => {
       fs.makeTreeSync(repoPath);
       fs.writeFileSync(path.join(repoPath, 'package.json'), '');
       const callback = jasmine.createSpy('callback');
-      await apm.run(['develop', 'fake-package'], callback);
+      await apm.run(['develop', 'fake-package']).then(callback, callback);
       waitsFor('waiting for develop to complete', () => callback.callCount === 1);
       runs(() => {
         expect(callback.mostRecentCall.args[0]).toBeFalsy();

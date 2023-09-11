@@ -9,7 +9,7 @@ describe('command help', () => {
   describe('apm help publish', () => {
     it('displays the help for the command', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['help', 'publish'], callback);
+      await apm.run(['help', 'publish']).then(callback, callback);
       waitsFor('waiting for help to complete', 60000, () => callback.callCount === 1);
       runs(() => {
         expect(console.error.callCount).toBeGreaterThan(0);
@@ -21,7 +21,7 @@ describe('command help', () => {
   describe('apm publish -h', () => {
     it('displays the help for the command', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['publish', '-h'], callback);
+      await apm.run(['publish', '-h']).then(callback, callback);
       waitsFor('waiting for help to complete', 60000, () => callback.callCount === 1);
       runs(() => {
         expect(console.error.callCount).toBeGreaterThan(0);
@@ -33,7 +33,7 @@ describe('command help', () => {
   describe('apm help', () => {
     it('displays the help for apm', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['help'], callback);
+      await apm.run(['help']).then(callback, callback);
       waitsFor('waiting for help to complete', 60000, () => callback.callCount === 1);
       runs(() => {
         expect(console.error.callCount).toBeGreaterThan(0);
@@ -45,7 +45,7 @@ describe('command help', () => {
   describe('apm', () => {
     it('displays the help for apm', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run([], callback);
+      await apm.run([]).then(callback, callback);
       waitsFor('waiting for help to complete', 60000, () => callback.callCount === 1);
       runs(() => {
         expect(console.error.callCount).toBeGreaterThan(0);

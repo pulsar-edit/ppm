@@ -36,7 +36,7 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), '}{');
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['publish'], callback);
+    await apm.run(['publish']).then(callback, callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('Error parsing package.json file: Unexpected token } in JSON at position 0');
@@ -52,7 +52,7 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['publish'], callback);
+    await apm.run(['publish']).then(callback, callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('Package must be in a Git repository before publishing: https://help.github.com/articles/create-a-repo');
@@ -71,7 +71,7 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['publish'], callback);
+    await apm.run(['publish']).then(callback, callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('The Pulsar or Atom engine range in the package.json file is invalid: ><>');
@@ -95,7 +95,7 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['publish'], callback);
+    await apm.run(['publish']).then(callback, callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('The foo dependency range in the package.json file is invalid: ^^');
@@ -122,7 +122,7 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['publish'], callback);
+    await apm.run(['publish']).then(callback, callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('The bar dev dependency range in the package.json file is invalid: 1,3');

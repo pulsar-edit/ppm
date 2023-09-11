@@ -31,7 +31,7 @@ describe('apm uninstall', () => {
   describe('when no package is specified', () => {
     it('logs an error and exits', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['uninstall'], callback);
+      await apm.run(['uninstall']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -45,7 +45,7 @@ describe('apm uninstall', () => {
   describe('when the package is not installed', () => {
     it('ignores the package', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['uninstall', 'a-package-that-does-not-exist'], callback);
+      await apm.run(['uninstall', 'a-package-that-does-not-exist']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -61,7 +61,7 @@ describe('apm uninstall', () => {
 
       expect(fs.existsSync(packagePath)).toBeTruthy();
       const callback = jasmine.createSpy('callback');
-      await apm.run(['uninstall', 'test-package'], callback);
+      await apm.run(['uninstall', 'test-package']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -77,7 +77,7 @@ describe('apm uninstall', () => {
       fs.unlinkSync(path.join(packagePath, 'package.json'));
 
       const callback = jasmine.createSpy('callback');
-      await apm.run(['uninstall', 'test-package'], callback);
+      await apm.run(['uninstall', 'test-package']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -94,7 +94,7 @@ describe('apm uninstall', () => {
         process.chdir(packagePath);
 
         const callback = jasmine.createSpy('callback');
-        await apm.run(['uninstall', '.'], callback);
+        await apm.run(['uninstall', '.']).then(callback, callback);
 
         waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -111,7 +111,7 @@ describe('apm uninstall', () => {
 
         expect(fs.existsSync(packagePath)).toBeTruthy();
         const callback = jasmine.createSpy('callback');
-        await apm.run(['uninstall', 'test-package', '--dev'], callback);
+        await apm.run(['uninstall', 'test-package', '--dev']).then(callback, callback);
 
         waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -135,7 +135,7 @@ describe('apm uninstall', () => {
 
         expect(fs.existsSync(packagePath)).toBeTruthy();
         const callback = jasmine.createSpy('callback');
-        await apm.run(['uninstall', 'test-package', '--hard'], callback);
+        await apm.run(['uninstall', 'test-package', '--hard']).then(callback, callback);
 
         waitsFor('waiting for command to complete', () => callback.callCount > 0);
 

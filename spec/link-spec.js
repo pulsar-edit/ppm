@@ -18,7 +18,7 @@ describe('apm link/unlink', () => {
       const callback = jasmine.createSpy('callback');
 
       runs(async () => {
-        await apm.run(['link'], callback);
+        await apm.run(['link']).then(callback, callback);
       });
 
       waitsFor('waiting for link to complete', () => callback.callCount > 0);
@@ -28,7 +28,7 @@ describe('apm link/unlink', () => {
         expect(fs.realpathSync(path.join(atomHome, 'packages', path.basename(packageToLink)))).toBe(fs.realpathSync(packageToLink));
 
         callback.reset();
-        await apm.run(['unlink'], callback);
+        await apm.run(['unlink']).then(callback, callback);
       });
 
       waitsFor('waiting for unlink to complete', () => callback.callCount > 0);
@@ -48,7 +48,7 @@ describe('apm link/unlink', () => {
       const callback = jasmine.createSpy('callback');
 
       runs(async () => {
-        await apm.run(['link', '--dev'], callback);
+        await apm.run(['link', '--dev']).then(callback, callback);
       });
 
       waitsFor('waiting for link to complete', () => callback.callCount > 0);
@@ -58,7 +58,7 @@ describe('apm link/unlink', () => {
         expect(fs.realpathSync(path.join(atomHome, 'dev', 'packages', path.basename(packageToLink)))).toBe(fs.realpathSync(packageToLink));
 
         callback.reset();
-        await apm.run(['unlink', '--dev'], callback);
+        await apm.run(['unlink', '--dev']).then(callback, callback);
       });
 
       waitsFor('waiting for unlink to complete', () => callback.callCount > 0);
@@ -78,19 +78,19 @@ describe('apm link/unlink', () => {
       const callback = jasmine.createSpy('callback');
 
       runs(async () => {
-        await apm.run(['link', '--dev'], callback);
+        await apm.run(['link', '--dev']).then(callback, callback);
       });
 
       waitsFor('link --dev to complete', () => callback.callCount === 1);
 
       runs(async () => {
-        await apm.run(['link'], callback);
+        await apm.run(['link']).then(callback, callback);
       });
 
       waitsFor('link to complete', () => callback.callCount === 2);
 
       runs(async () => {
-        await apm.run(['unlink', '--hard'], callback);
+        await apm.run(['unlink', '--hard']).then(callback, callback);
       });
 
       waitsFor('unlink --hard to complete', () => callback.callCount === 3);
@@ -112,15 +112,15 @@ describe('apm link/unlink', () => {
       const callback = jasmine.createSpy('callback');
 
       runs(async () => {
-        await apm.run(['link', '--dev', packageToLink1], callback);
+        await apm.run(['link', '--dev', packageToLink1]).then(callback, callback);
       });
 
       waitsFor('link --dev to complete', () => callback.callCount === 1);
 
       runs(async () => {
         callback.reset();
-        await apm.run(['link', packageToLink2], callback);
-        await apm.run(['link', packageToLink3], callback);
+        await apm.run(['link', packageToLink2]).then(callback, callback);
+        await apm.run(['link', packageToLink3]).then(callback, callback);
       });
 
       waitsFor('link to complee', () => callback.callCount === 2)
@@ -130,7 +130,7 @@ describe('apm link/unlink', () => {
         expect(fs.existsSync(path.join(atomHome, 'dev', 'packages', path.basename(packageToLink1)))).toBeTruthy();
         expect(fs.existsSync(path.join(atomHome, 'packages', path.basename(packageToLink2)))).toBeTruthy();
         expect(fs.existsSync(path.join(atomHome, 'packages', path.basename(packageToLink3)))).toBeTruthy();
-        await apm.run(['unlink', '--all'], callback);
+        await apm.run(['unlink', '--all']).then(callback, callback);
       })
 
       waitsFor('unlink --all to complete', () => callback.callCount === 1);
@@ -151,7 +151,7 @@ describe('apm link/unlink', () => {
       const callback = jasmine.createSpy('callback');
 
       runs(async () => {
-        await apm.run(['link', numericPackageName], callback);
+        await apm.run(['link', numericPackageName]).then(callback, callback);
       });
 
       waitsFor('link to complete', () => callback.callCount === 1);
@@ -161,7 +161,7 @@ describe('apm link/unlink', () => {
         expect(fs.realpathSync(path.join(atomHome, 'packages', path.basename(numericPackageName)))).toBe(fs.realpathSync(numericPackageName));
 
         callback.reset();
-        await apm.run(['unlink', numericPackageName], callback);
+        await apm.run(['unlink', numericPackageName]).then(callback, callback);
       });
 
       waitsFor('unlink to complete', () => callback.callCount === 1);
@@ -181,7 +181,7 @@ describe('apm link/unlink', () => {
       const callback = jasmine.createSpy('callback');
 
       runs(async () => {
-        await apm.run(['link', packagePath, '--name', packageName], callback);
+        await apm.run(['link', packagePath, '--name', packageName]).then(callback, callback);
       });
 
       waitsFor('link to complete', () => callback.callCount === 1);
@@ -191,7 +191,7 @@ describe('apm link/unlink', () => {
         expect(fs.realpathSync(path.join(atomHome, 'packages', packageName))).toBe(fs.realpathSync(packagePath));
 
         callback.reset();
-        await apm.run(['unlink', packageName], callback);
+        await apm.run(['unlink', packageName]).then(callback, callback);
       });
 
       waitsFor('unlink to complete', () => callback.callCount === 1);
@@ -206,7 +206,7 @@ describe('apm link/unlink', () => {
     it('logs an error and exits', async () => {
       const callback = jasmine.createSpy('callback');
       process.chdir(temp.mkdirSync('not-a-symlink'));
-      await apm.run(['unlink'], callback);
+      await apm.run(['unlink']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -220,7 +220,7 @@ describe('apm link/unlink', () => {
   describe('when unlinking a path that does not exist', () => {
     it('logs an error and exits', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['unlink', 'a-path-that-does-not-exist'], callback);
+      await apm.run(['unlink', 'a-path-that-does-not-exist']).then(callback, callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 

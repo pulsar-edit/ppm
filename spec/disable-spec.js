@@ -33,7 +33,7 @@ describe('apm disable', () => {
     wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module-three'), path.join(packagesPath, 'test-module-three'));
 
     runs(async () => {
-      await apm.run(['disable', 'test-module-two', 'not-installed', 'test-module-three'], callback);
+      await apm.run(['disable', 'test-module-two', 'not-installed', 'test-module-three']).then(callback, callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {
@@ -66,7 +66,7 @@ describe('apm disable', () => {
     });
 
     runs(async () => {
-      await apm.run(['disable', 'vim-mode', 'metrics'], callback);
+      await apm.run(['disable', 'vim-mode', 'metrics']).then(callback, callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {
@@ -87,7 +87,7 @@ describe('apm disable', () => {
     const callback = jasmine.createSpy('callback');
 
     runs(async () => {
-      await apm.run(['disable', 'vim-mode'], callback);
+      await apm.run(['disable', 'vim-mode']).then(callback, callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {
@@ -102,7 +102,7 @@ describe('apm disable', () => {
     const callback = jasmine.createSpy('callback');
 
     runs(async () => {
-      await apm.run(['disable'], callback);
+      await apm.run(['disable']).then(callback, callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {

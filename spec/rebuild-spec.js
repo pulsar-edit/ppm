@@ -51,7 +51,7 @@ describe('apm rebuild', () => {
 
     process.chdir(packageToRebuild);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['rebuild'], callback);
+    await apm.run(['rebuild']).then(callback, callback);
 
     waitsFor('waiting for rebuild to complete', 600000, () => callback.callCount === 1);
 
@@ -65,7 +65,7 @@ describe('apm rebuild', () => {
 
     process.chdir(packageToRebuild);
     const callback = jasmine.createSpy('callback');
-    await apm.run(['rebuild', 'native-dep'], callback);
+    await apm.run(['rebuild', 'native-dep']).then(callback, callback);
 
     waitsFor('waiting for rebuild to complete', 600000, () => callback.callCount === 1);
     runs(() => {

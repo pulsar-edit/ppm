@@ -34,7 +34,7 @@ describe('apm view', () => {
 
   it('displays information about the package', async () => {
     const callback = jasmine.createSpy('callback');
-    await apm.run(['view', 'wrap-guide'], callback);
+    await apm.run(['view', 'wrap-guide']).then(callback, callback);
 
     waitsFor('waiting for view to complete', () => callback.callCount > 0);
 
@@ -49,7 +49,7 @@ describe('apm view', () => {
 
   it('logs an error if the package name is missing or empty', async () => {
     const callback = jasmine.createSpy('callback');
-    await apm.run(['view'], callback);
+    await apm.run(['view']).then(callback, callback);
 
     waitsFor('waiting for view to complete', () => callback.callCount > 0);
 
@@ -62,7 +62,7 @@ describe('apm view', () => {
   describe('when a compatible Atom version is specified', () => {
     it('displays the latest compatible version of the package', async () => {
       const callback = jasmine.createSpy('callback');
-      await apm.run(['view', 'wrap-guide', '--compatible', '1.5.0'], callback);
+      await apm.run(['view', 'wrap-guide', '--compatible', '1.5.0']).then(callback, callback);
 
       waitsFor('waiting for view to complete', 600000, () => callback.callCount === 1);
 

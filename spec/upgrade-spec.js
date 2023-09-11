@@ -66,7 +66,7 @@ describe('apm upgrade', () => {
       repository: 'https://github.com/a/b'
     }));
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -83,7 +83,7 @@ describe('apm upgrade', () => {
       repository: 'https://github.com/pulsar-edit/pulsar'
     }));
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -101,7 +101,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -118,7 +118,7 @@ describe('apm upgrade', () => {
       repository: 'https://github.com/a/b'
     }));
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -136,7 +136,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -154,7 +154,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -177,7 +177,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color', 'different-repo'], callback);
+    await apm.run(['upgrade', '--list', '--no-color', 'different-repo']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -196,7 +196,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -209,7 +209,7 @@ describe('apm upgrade', () => {
   it('logs an error when the installed location of Atom cannot be found', async () => {
     process.env.ATOM_RESOURCE_PATH = '/tmp/atom/is/not/installed/here';
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -230,7 +230,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    await apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color']).then(callback, callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 

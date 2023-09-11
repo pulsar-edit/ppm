@@ -7,7 +7,7 @@ const CSON = require('season');
 
 const listPackages = async (args, doneCallback) => {
   const callback = jasmine.createSpy('callback');
-  await apm.run(['list'].concat(args), callback);
+  await apm.run(['list', ...args]).then(callback, callback);
   waitsFor(() => callback.callCount === 1);
   runs(doneCallback);
 };
