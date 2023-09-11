@@ -61,13 +61,13 @@ const commandClasses = [
 
 const commands = {};
 for (let commandClass of commandClasses) {
-  for (let name of commandClass.commandNames != null ? commandClass.commandNames : []) {
+  for (let name of commandClass.commandNames ?? []) {
     commands[name] = commandClass;
   }
 }
 
-const parseOptions = function(args) {
-  if (args == null) { args = []; }
+const parseOptions = args => {
+  args ??= [];
   const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()));
   options.usage(`\
 
@@ -95,7 +95,7 @@ Pulsar Package Manager powered by https://pulsar-edit.dev
   return options;
 };
 
-const showHelp = function(options) {
+const showHelp = options => {
   if (options == null) { return; }
 
   let help = options.help();
@@ -107,12 +107,12 @@ const showHelp = function(options) {
   return console.error(help);
 };
 
-const printVersions = function(args, callback) {
+const printVersions = (args, callback) => {
   const apmVersion = require("../package.json").version ?? "";
   const npmVersion = require("npm/package.json").version ?? "";
   const nodeVersion = process.versions.node ?? "";
 
-  return getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion(function(atomVersion) {
+  return getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion(atomVersion => {
     let versions;
     if (args.json) {
       versions = {
@@ -152,7 +152,7 @@ ${'git'.magenta} ${gitVersion.magenta}\
   })));
 };
 
-var getAtomVersion = callback => config.getResourcePath(function(resourcePath) {
+const getAtomVersion = callback => config.getResourcePath(function(resourcePath) {
   const unknownVersion = 'unknown';
   try {
     const { version } = require(path.join(resourcePath, "package.json")) ?? unknownVersion;
@@ -162,7 +162,7 @@ var getAtomVersion = callback => config.getResourcePath(function(resourcePath) {
   }
 });
 
-var getPythonVersion = function(callback) {
+const getPythonVersion = callback => {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath()
@@ -195,66 +195,69 @@ var getPythonVersion = function(callback) {
 };
 
 module.exports = {
-  run(args, callback) {
-    let Command;
-    config.setupApmRcFile();
-    const options = parseOptions(args);
+  run(args) {
+    return new Promise((resolve, reject) => {
+      let Command;
+      config.setupApmRcFile();
+      const options = parseOptions(args);
 
-    if (!options.argv.color) {
-      colors.disable();
-    }
-
-    let callbackCalled = false;
-    options.callback = function(error) {
-      if (callbackCalled) { return; }
-      callbackCalled = true;
-      if (error != null) {
-        let message;
-        if (_.isString(error)) {
-          message = error;
-        } else {
-          message = error.message != null ? error.message : error;
-        }
-
-        if (message === 'canceled') {
-          // A prompt was canceled so just log an empty line
-          console.log();
-        } else if (message) {
-          console.error(message.red);
-        }
+      if (!options.argv.color) {
+        colors.disable();
       }
-      return callback?.(error);
-    };
 
-    args = options.argv;
-    const {
-      command
-    } = options;
-    if (args.version) {
-      return printVersions(args, options.callback);
-    } else if (args.help) {
-      if ((Command = commands[options.command])) {
-        showHelp(new Command().parseOptions?.(options.command));
-      } else {
-        showHelp(options);
-      }
-      return options.callback();
-    } else if (command) {
-      if (command === 'help') {
-        if ((Command = commands[options.commandArgs])) {
-          showHelp(new Command().parseOptions?.(options.commandArgs));
+      let callbackCalled = false;
+      options.callback = function(error) {
+        if (callbackCalled) { return; }
+        callbackCalled = true;
+        if (error != null) {
+          let message;
+          if (_.isString(error)) {
+            message = error;
+          } else {
+            message = error.message != null ? error.message : error;
+          }
+
+          if (message === 'canceled') {
+            // A prompt was canceled so just log an empty line
+            console.log();
+          } else if (message) {
+            console.error(message.red);
+          }
+          return void reject(error);
+        }
+        resolve();
+      };
+
+      args = options.argv;
+      const {
+        command
+      } = options;
+      if (args.version) {
+        return printVersions(args, options.callback);
+      } else if (args.help) {
+        if ((Command = commands[options.command])) {
+          showHelp(new Command().parseOptions?.(options.command));
         } else {
           showHelp(options);
         }
         return options.callback();
-      } else if ((Command = commands[command])) {
-        return new Command().run(options);
+      } else if (command) {
+        if (command === 'help') {
+          if ((Command = commands[options.commandArgs])) {
+            showHelp(new Command().parseOptions?.(options.commandArgs));
+          } else {
+            showHelp(options);
+          }
+          return options.callback();
+        } else if ((Command = commands[command])) {
+          return new Command().run(options);
+        } else {
+          return options.callback(`Unrecognized command: ${command}`);
+        }
       } else {
-        return options.callback(`Unrecognized command: ${command}`);
+        showHelp(options);
+        return options.callback();
       }
-    } else {
-      showHelp(options);
-      return options.callback();
-    }
+    });
   }
 };
