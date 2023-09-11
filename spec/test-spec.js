@@ -15,7 +15,7 @@ describe('apm test', () => {
     specPath = path.join(currentDir, 'spec');
   });
 
-  it('calls atom to test', () => {
+  it('calls atom to test', async () => {
     const atomSpawn = spyOn(child_process, 'spawn').andReturn({
       stdout: {
         on() {}
@@ -25,7 +25,7 @@ describe('apm test', () => {
       },
       on() {}
     });
-    apm.run(['test']);
+    await apm.run(['test']);
 
     waitsFor('waiting for test to complete', () => atomSpawn.callCount === 1);
 
@@ -44,7 +44,7 @@ describe('apm test', () => {
   describe('returning', () => {
     let callback;
 
-    const returnWithCode = (type, code) => {
+    const returnWithCode = async (type, code) => {
       callback = jasmine.createSpy('callback');
       const pulsarReturnFn = (e, fn) => e === type && fn(code);
       spyOn(child_process, 'spawn').andReturn({
@@ -57,7 +57,7 @@ describe('apm test', () => {
         on: pulsarReturnFn,
         removeListener() {}
       }); // no op
-      apm.run(['test'], callback);
+      await apm.run(['test'], callback);
     };
 
     describe('successfully', () => {

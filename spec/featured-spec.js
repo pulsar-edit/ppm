@@ -38,9 +38,9 @@ describe('apm featured', () => {
     waitsFor(() => done);
   });
 
-  it('lists the featured packages and themes', () => {
+  it('lists the featured packages and themes', async () => {
     const callback = jasmine.createSpy('callback');
-    apm.run(['featured'], callback);
+    await apm.run(['featured'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
     runs(() => {
       expect(console.log).toHaveBeenCalled();
@@ -51,9 +51,9 @@ describe('apm featured', () => {
   });
 
   describe('when the theme flag is specified', () => {
-    it('lists the featured themes', () => {
+    it('lists the featured themes', async () => {
       const callback = jasmine.createSpy('callback');
-      apm.run(['featured', '--themes'], callback);
+      await apm.run(['featured', '--themes'], callback);
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
         expect(console.log).toHaveBeenCalled();

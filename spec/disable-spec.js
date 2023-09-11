@@ -32,8 +32,8 @@ describe('apm disable', () => {
     wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module-two'), path.join(packagesPath, 'test-module-two'));
     wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module-three'), path.join(packagesPath, 'test-module-three'));
 
-    runs(() => {
-      apm.run(['disable', 'test-module-two', 'not-installed', 'test-module-three'], callback);
+    runs(async () => {
+      await apm.run(['disable', 'test-module-two', 'not-installed', 'test-module-three'], callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {
@@ -65,8 +65,8 @@ describe('apm disable', () => {
       }
     });
 
-    runs(() => {
-      apm.run(['disable', 'vim-mode', 'metrics'], callback);
+    runs(async () => {
+      await apm.run(['disable', 'vim-mode', 'metrics'], callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {
@@ -86,8 +86,8 @@ describe('apm disable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
 
-    runs(() => {
-      apm.run(['disable', 'vim-mode'], callback);
+    runs(async () => {
+      await apm.run(['disable', 'vim-mode'], callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {
@@ -101,8 +101,8 @@ describe('apm disable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
 
-    runs(() => {
-      apm.run(['disable'], callback);
+    runs(async () => {
+      await apm.run(['disable'], callback);
     });
     waitsFor('waiting for disable to complete', () => callback.callCount > 0);
     runs(() => {

@@ -31,19 +31,19 @@ describe('apm publish', () => {
     waitsFor(() => done);
   });
 
-  it("validates the package's package.json file", () => {
+  it("validates the package's package.json file", async () => {
     const packageToPublish = temp.mkdirSync('apm-test-package-');
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), '}{');
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    apm.run(['publish'], callback);
+    await apm.run(['publish'], callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('Error parsing package.json file: Unexpected token } in JSON at position 0');
     });
   });
 
-  it('validates the package is in a Git repository', () => {
+  it('validates the package is in a Git repository', async () => {
     const packageToPublish = temp.mkdirSync('apm-test-package-');
     const metadata = {
       name: 'test',
@@ -52,14 +52,14 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    apm.run(['publish'], callback);
+    await apm.run(['publish'], callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('Package must be in a Git repository before publishing: https://help.github.com/articles/create-a-repo');
     });
   });
 
-  it('validates the engines.atom range in the package.json file', () => {
+  it('validates the engines.atom range in the package.json file', async () => {
     const packageToPublish = temp.mkdirSync('apm-test-package-');
     const metadata = {
       name: 'test',
@@ -71,14 +71,14 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    apm.run(['publish'], callback);
+    await apm.run(['publish'], callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('The Pulsar or Atom engine range in the package.json file is invalid: ><>');
     });
   });
 
-  it('validates the dependency semver ranges in the package.json file', () => {
+  it('validates the dependency semver ranges in the package.json file', async () => {
     const packageToPublish = temp.mkdirSync('apm-test-package-');
     const metadata = {
       name: 'test',
@@ -95,14 +95,14 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    apm.run(['publish'], callback);
+    await apm.run(['publish'], callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('The foo dependency range in the package.json file is invalid: ^^');
     });
   });
 
-  it('validates the dev dependency semver ranges in the package.json file', () => {
+  it('validates the dev dependency semver ranges in the package.json file', async () => {
     const packageToPublish = temp.mkdirSync('apm-test-package-');
     const metadata = {
       name: 'test',
@@ -122,7 +122,7 @@ describe('apm publish', () => {
     fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
     process.chdir(packageToPublish);
     const callback = jasmine.createSpy('callback');
-    apm.run(['publish'], callback);
+    await apm.run(['publish'], callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
       expect(callback.mostRecentCall.args[0].message).toBe('The bar dev dependency range in the package.json file is invalid: 1,3');

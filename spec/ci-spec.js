@@ -49,12 +49,12 @@ describe('apm ci', () => {
     waitsFor(() => done);
   });
 
-  it('installs dependency versions as specified by the lockfile', () => {
+  it('installs dependency versions as specified by the lockfile', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module-with-lockfile');
     wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
     process.chdir(moduleDirectory);
     const callback = jasmine.createSpy('callback');
-    apm.run(['ci'], callback);
+    await apm.run(['ci'], callback);
     waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).toBeNull();
@@ -65,7 +65,7 @@ describe('apm ci', () => {
     });
   });
 
-  it('builds a native dependency correctly', () => {
+  it('builds a native dependency correctly', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module-with-native');
     wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
     process.chdir(moduleDirectory);
@@ -75,11 +75,11 @@ describe('apm ci', () => {
     CSON.writeFileSync(pjsonPath, pjson);
     const callback0 = jasmine.createSpy('callback');
     const callback1 = jasmine.createSpy('callback');
-    apm.run(['install'], callback0);
+    await apm.run(['install'], callback0);
     waitsFor('waiting for install to complete', 600000, () => callback0.callCount > 0);
-    runs(() => {
+    runs(async () => {
       expect(callback0.mostRecentCall.args[0]).toBeNull();
-      apm.run(['ci'], callback1);
+      await apm.run(['ci'], callback1);
     });
     waitsFor('waiting for ci to complete', 600000, () => callback1.callCount > 0);
     runs(() => {
@@ -88,19 +88,19 @@ describe('apm ci', () => {
     });
   });
 
-  it('fails if the lockfile is not present', () => {
+  it('fails if the lockfile is not present', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module');
     wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module'), moduleDirectory);
     process.chdir(moduleDirectory);
     const callback = jasmine.createSpy('callback');
-    apm.run(['ci'], callback);
+    await apm.run(['ci'], callback);
     waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).not.toBeNull();
     });
   });
 
-  it('fails if the lockfile is out of date', () => {
+  it('fails if the lockfile is out of date', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module-with-lockfile');
     wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
     process.chdir(moduleDirectory);
@@ -109,7 +109,7 @@ describe('apm ci', () => {
     pjson.dependencies['test-module'] = '^1.2.0';
     CSON.writeFileSync(pjsonPath, pjson);
     const callback = jasmine.createSpy('callback');
-    apm.run(['ci'], callback);
+    await apm.run(['ci'], callback);
     waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).not.toBeNull();

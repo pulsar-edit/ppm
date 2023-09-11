@@ -8,9 +8,9 @@ const apm = require('../src/apm-cli');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
 
-const apmRun = (args, callback) => {
+const apmRun = async (args, callback) => {
   let ran = false;
-  apm.run(args, () => {
+  await apm.run(args, () => {
     ran = true;
   });
   waitsFor(`waiting for apm ${args.join(' ')}`, 60000, () => ran);
@@ -59,14 +59,14 @@ describe('apm upgrade', () => {
     waitsFor(() => done);
   });
 
-  it('does not display updates for unpublished packages', () => {
+  it('does not display updates for unpublished packages', async () => {
     fs.writeFileSync(path.join(packagesDir, 'not-published', 'package.json'), JSON.stringify({
       name: 'not-published',
       version: '1.0',
       repository: 'https://github.com/a/b'
     }));
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -76,14 +76,14 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('does not display updates for "core" packages', () => {
+  it('does not display updates for "core" packages', async () => {
     fs.writeFileSync(path.join(packagesDir, 'core-package', 'package.json'), JSON.stringify({
       name: 'core-package',
       version: '1.0',
       repository: 'https://github.com/pulsar-edit/pulsar'
     }));
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -93,7 +93,7 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('does not display updates for packages whose engine does not satisfy the installed Atom version', () => {
+  it('does not display updates for packages whose engine does not satisfy the installed Atom version', async () => {
     fs.writeFileSync(path.join(packagesDir, 'test-module', 'package.json'), JSON.stringify({
       name: 'test-module',
       version: '0.3.0',
@@ -101,7 +101,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -111,14 +111,14 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('displays the latest update that satisfies the installed Atom version', () => {
+  it('displays the latest update that satisfies the installed Atom version', async () => {
     fs.writeFileSync(path.join(packagesDir, 'multi-module', 'package.json'), JSON.stringify({
       name: 'multi-module',
       version: '0.1.0',
       repository: 'https://github.com/a/b'
     }));
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -128,7 +128,7 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('does not display updates for packages already up to date', () => {
+  it('does not display updates for packages already up to date', async () => {
     fs.writeFileSync(path.join(packagesDir, 'multi-module', 'package.json'), JSON.stringify({
       name: 'multi-module',
       version: '0.3.0',
@@ -136,7 +136,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -146,7 +146,7 @@ describe('apm upgrade', () => {
     });
   });
 
-  it("does display updates when the installed package's repository is not the same as the available package's repository", () => {
+  it("does display updates when the installed package's repository is not the same as the available package's repository", async () => {
     fs.writeFileSync(path.join(packagesDir, 'different-repo', 'package.json'), JSON.stringify({
       name: 'different-repo',
       version: '0.3.0',
@@ -154,7 +154,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -164,7 +164,7 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('allows the package names to upgrade to be specified', () => {
+  it('allows the package names to upgrade to be specified', async () => {
     fs.writeFileSync(path.join(packagesDir, 'multi-module', 'package.json'), JSON.stringify({
       name: 'multi-module',
       version: '0.1.0',
@@ -177,7 +177,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color', 'different-repo'], callback);
+    await apm.run(['upgrade', '--list', '--no-color', 'different-repo'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -189,14 +189,14 @@ describe('apm upgrade', () => {
     });
   });
 
-  it("does not display updates when the installed package's repository does not exist", () => {
+  it("does not display updates when the installed package's repository does not exist", async () => {
     fs.writeFileSync(path.join(packagesDir, 'different-repo', 'package.json'), JSON.stringify({
       name: 'different-repo',
       version: '0.3.0'
     }));
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -206,10 +206,10 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('logs an error when the installed location of Atom cannot be found', () => {
+  it('logs an error when the installed location of Atom cannot be found', async () => {
     process.env.ATOM_RESOURCE_PATH = '/tmp/atom/is/not/installed/here';
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 
@@ -219,7 +219,7 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('ignores the commit SHA suffix in the version', () => {
+  it('ignores the commit SHA suffix in the version', async () => {
     fs.writeFileSync(path.join(atomApp, 'package.json'), JSON.stringify({
       version: '0.10.0-deadbeef'
     }));
@@ -230,7 +230,7 @@ describe('apm upgrade', () => {
     }));
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
+    await apm.run(['upgrade', '--list', '--no-color'], callback);
 
     waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
 

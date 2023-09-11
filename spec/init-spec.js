@@ -20,9 +20,9 @@ describe('apm init', () => {
 
   describe('when creating a package', () => {
     describe('when package syntax is CoffeeScript', () => {
-      it('generates the proper file structure', () => {
+      it('generates the proper file structure', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['init', '--package', 'fake-package'], callback);
+        await apm.run(['init', '--package', 'fake-package'], callback);
         waitsFor('waiting for init to complete', () => callback.callCount === 1);
         runs(() => {
           expect(fs.existsSync(packagePath)).toBeTruthy();
@@ -44,9 +44,9 @@ describe('apm init', () => {
     });
 
     describe('when package syntax is JavaScript', () => {
-      it('generates the proper file structure', () => {
+      it('generates the proper file structure', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['init', '--syntax', 'javascript', '--package', 'fake-package'], callback);
+        await apm.run(['init', '--syntax', 'javascript', '--package', 'fake-package'], callback);
         waitsFor('waiting for init to complete', () => callback.callCount === 1);
         runs(() => {
           expect(fs.existsSync(packagePath)).toBeTruthy();
@@ -68,9 +68,9 @@ describe('apm init', () => {
     });
 
     describe('when package syntax is unsupported', () => {
-      it('logs an error', () => {
+      it('logs an error', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['init', '--syntax', 'something-unsupported', '--package', 'fake-package'], callback);
+        await apm.run(['init', '--syntax', 'something-unsupported', '--package', 'fake-package'], callback);
         waitsFor('waiting for init to complete', () => callback.callCount === 1);
         runs(() => {
           expect(callback.argsForCall[0][0].length).toBeGreaterThan(0);
@@ -79,10 +79,10 @@ describe('apm init', () => {
     });
 
     describe('when converting a TextMate bundle', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         const callback = jasmine.createSpy('callback');
         const textMateBundlePath = path.join(__dirname, 'fixtures', 'r.tmbundle');
-        apm.run(['init', '--package', 'fake-package', '--convert', textMateBundlePath], callback);
+        await apm.run(['init', '--package', 'fake-package', '--convert', textMateBundlePath], callback);
         waitsFor('waiting for init to complete', () => callback.callCount === 1);
       });
 
@@ -116,9 +116,9 @@ describe('apm init', () => {
   });
 
   describe('when creating a theme', () => {
-    it('generates the proper file structure', () => {
+    it('generates the proper file structure', async () => {
       const callback = jasmine.createSpy('callback');
-      apm.run(['init', '--theme', 'fake-theme'], callback);
+      await apm.run(['init', '--theme', 'fake-theme'], callback);
       waitsFor('waiting for init to complete', () => callback.callCount === 1);
       runs(() => {
         expect(fs.existsSync(themePath)).toBeTruthy();
@@ -136,10 +136,10 @@ describe('apm init', () => {
     });
 
     describe('when converting a TextMate theme', () => {
-      it('generates the proper file structure', () => {
+      it('generates the proper file structure', async () => {
         const callback = jasmine.createSpy('callback');
         const textMateThemePath = path.join(__dirname, 'fixtures', 'Dawn.tmTheme');
-        apm.run(['init', '--theme', 'fake-theme', '--convert', textMateThemePath], callback);
+        await apm.run(['init', '--theme', 'fake-theme', '--convert', textMateThemePath], callback);
         waitsFor('waiting for init to complete', () => callback.callCount === 1);
         runs(() => {
           expect(fs.existsSync(themePath)).toBeTruthy();
@@ -154,10 +154,10 @@ describe('apm init', () => {
         });
       });
 
-      it("logs an error if it doesn't have all the required color settings", () => {
+      it("logs an error if it doesn't have all the required color settings", async () => {
         const callback = jasmine.createSpy('callback');
         const textMateThemePath = path.join(__dirname, 'fixtures', 'Bad.tmTheme');
-        apm.run(['init', '--theme', 'fake-theme', '--convert', textMateThemePath], callback);
+        await apm.run(['init', '--theme', 'fake-theme', '--convert', textMateThemePath], callback);
         waitsFor('waiting for init to complete', () => callback.callCount === 1);
         runs(() => {
           expect(callback.argsForCall[0][0].message.length).toBeGreaterThan(0);
@@ -167,9 +167,9 @@ describe('apm init', () => {
   });
 
   describe('when creating a language', () => {
-    it('generates the proper file structure', () => {
+    it('generates the proper file structure', async () => {
       const callback = jasmine.createSpy('callback');
-      apm.run(['init', '--language', 'fake'], callback);
+      await apm.run(['init', '--language', 'fake'], callback);
       waitsFor('waiting for init to complete', () => callback.callCount === 1);
       runs(() => {
         expect(fs.existsSync(languagePath)).toBeTruthy()
@@ -183,9 +183,9 @@ describe('apm init', () => {
       });
     });
 
-    it('does not add language prefix to name if already present', () => {
+    it('does not add language prefix to name if already present', async () => {
       const callback = jasmine.createSpy('callback');
-      apm.run(['init', '--language', 'language-fake'], callback);
+      await apm.run(['init', '--language', 'language-fake'], callback);
       waitsFor('waiting for init to complete', () => callback.callCount === 1);
       runs(() => {
         expect(fs.existsSync(languagePath)).toBeTruthy();

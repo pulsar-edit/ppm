@@ -24,8 +24,8 @@ describe('apm enable', () => {
       }
     });
 
-    runs(() => {
-      apm.run(['enable', 'vim-mode', 'not-installed', 'file-icons'], callback);
+    runs(async () => {
+      await apm.run(['enable', 'vim-mode', 'not-installed', 'file-icons'], callback);
     });
 
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
@@ -60,8 +60,8 @@ describe('apm enable', () => {
       }
     });
 
-    runs(() => {
-      apm.run(['enable', 'vim-mode'], callback);
+    runs(async () => {
+      await apm.run(['enable', 'vim-mode'], callback);
     });
 
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
@@ -86,8 +86,8 @@ describe('apm enable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
 
-    runs(() => {
-      apm.run(['enable', 'vim-mode'], callback);
+    runs(async () => {
+      await apm.run(['enable', 'vim-mode'], callback);
     });
 
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
@@ -103,8 +103,8 @@ describe('apm enable', () => {
     process.env.ATOM_HOME = atomHome;
     const callback = jasmine.createSpy('callback');
 
-    runs(() => {
-      apm.run(['enable'], callback);
+    runs(async () => {
+      await apm.run(['enable'], callback);
     });
     waitsFor('waiting for enable to complete', () => callback.callCount > 0);
     runs(() => {

@@ -39,9 +39,9 @@ describe('apm docs', () => {
     waitsFor(() => done);
   });
 
-  it('logs an error if the package has no URL', () => {
+  it('logs an error if the package has no URL', async () => {
     const callback = jasmine.createSpy('callback');
-    apm.run(['docs', 'install'], callback);
+    await apm.run(['docs', 'install'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -50,9 +50,9 @@ describe('apm docs', () => {
     });
   });
 
-  it('logs an error if the package name is missing or empty', () => {
+  it('logs an error if the package name is missing or empty', async () => {
     const callback = jasmine.createSpy('callback');
-    apm.run(['docs'], callback);
+    await apm.run(['docs'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -61,10 +61,10 @@ describe('apm docs', () => {
     });
   });
 
-  it('prints the package URL if called with the --print option (and does not open it)', () => {
+  it('prints the package URL if called with the --print option (and does not open it)', async () => {
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
-    apm.run(['docs', '--print', 'wrap-guide'], callback);
+    await apm.run(['docs', '--print', 'wrap-guide'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -74,11 +74,11 @@ describe('apm docs', () => {
     });
   });
 
-  it('prints the package URL if called with the -p short option (and does not open it)', () => {
+  it('prints the package URL if called with the -p short option (and does not open it)', async () => {
     Docs = require('../src/docs');
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
-    apm.run(['docs', '-p', 'wrap-guide'], callback);
+    await apm.run(['docs', '-p', 'wrap-guide'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {
@@ -88,10 +88,10 @@ describe('apm docs', () => {
     });
   });
 
-  it('opens the package URL', () => {
+  it('opens the package URL', async () => {
     spyOn(Docs.prototype, 'openRepositoryUrl');
     const callback = jasmine.createSpy('callback');
-    apm.run(['docs', 'wrap-guide'], callback);
+    await apm.run(['docs', 'wrap-guide'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
     runs(() => {

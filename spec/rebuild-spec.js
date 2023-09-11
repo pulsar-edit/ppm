@@ -46,12 +46,12 @@ describe('apm rebuild', () => {
     waitsFor(() => done);
   });
 
-  it('rebuilds all modules when no module names are specified', () => {
+  it('rebuilds all modules when no module names are specified', async () => {
     const packageToRebuild = path.join(__dirname, 'fixtures/package-with-native-deps');
 
     process.chdir(packageToRebuild);
     const callback = jasmine.createSpy('callback');
-    apm.run(['rebuild'], callback);
+    await apm.run(['rebuild'], callback);
 
     waitsFor('waiting for rebuild to complete', 600000, () => callback.callCount === 1);
 
@@ -60,12 +60,12 @@ describe('apm rebuild', () => {
     });
   });
 
-  it('rebuilds the specified modules', () => {
+  it('rebuilds the specified modules', async () => {
     const packageToRebuild = path.join(__dirname, 'fixtures/package-with-native-deps');
 
     process.chdir(packageToRebuild);
     const callback = jasmine.createSpy('callback');
-    apm.run(['rebuild', 'native-dep'], callback);
+    await apm.run(['rebuild', 'native-dep'], callback);
 
     waitsFor('waiting for rebuild to complete', 600000, () => callback.callCount === 1);
     runs(() => {

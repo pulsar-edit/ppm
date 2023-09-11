@@ -18,13 +18,13 @@ describe('apm develop', () => {
   });
 
   describe("when the package doesn't have a published repository url", () => {
-    it('logs an error', () => {
+    it('logs an error', async () => {
       const Develop = require('../src/develop');
       spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake((packageName, callback) => {
         callback('Here is the error');
       });
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
+      await apm.run(['develop', 'fake-package'], callback);
       waitsFor('waiting for develop to complete', () => callback.callCount === 1);
       runs(() => {
         expect(callback.mostRecentCall.args[0]).toBe('Here is the error');
@@ -35,7 +35,7 @@ describe('apm develop', () => {
   });
 
   describe("when the repository hasn't been cloned", () => {
-    it('clones the repository to ATOM_REPOS_HOME and links it to ATOM_HOME/dev/packages', () => {
+    it('clones the repository to ATOM_REPOS_HOME and links it to ATOM_HOME/dev/packages', async () => {
       const Develop = require('../src/develop');
       spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake((packageName, callback) => {
         const repoUrl = path.join(__dirname, 'fixtures', 'repo.git');
@@ -45,7 +45,7 @@ describe('apm develop', () => {
         this.linkPackage(packageDirectory, options);
       });
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
+      await apm.run(['develop', 'fake-package'], callback);
       waitsFor('waiting for develop to complete', () => callback.callCount === 1);
       runs(() => {
         expect(callback.mostRecentCall.args[0]).toBeFalsy();
@@ -58,11 +58,11 @@ describe('apm develop', () => {
   });
 
   describe('when the repository has already been cloned', () => {
-    it('links it to ATOM_HOME/dev/packages', () => {
+    it('links it to ATOM_HOME/dev/packages', async () => {
       fs.makeTreeSync(repoPath);
       fs.writeFileSync(path.join(repoPath, 'package.json'), '');
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
+      await apm.run(['develop', 'fake-package'], callback);
       waitsFor('waiting for develop to complete', () => callback.callCount === 1);
       runs(() => {
         expect(callback.mostRecentCall.args[0]).toBeFalsy();

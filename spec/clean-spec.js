@@ -46,7 +46,7 @@ describe('apm clean', () => {
     waitsFor(() => done);
   });
 
-  it('uninstalls any packages not referenced in the package.json', () => {
+  it('uninstalls any packages not referenced in the package.json', async () => {
     const removedPath = path.join(moduleDirectory, 'node_modules', 'will-be-removed');
     fs.makeTreeSync(removedPath);
     fs.writeFileSync(
@@ -56,7 +56,7 @@ describe('apm clean', () => {
     );
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['clean'], callback);
+    await apm.run(['clean'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).toBeUndefined();
@@ -64,7 +64,7 @@ describe('apm clean', () => {
     });
   });
 
-  it('uninstalls a scoped package', () => {
+  it('uninstalls a scoped package', async () => {
     const removedPath = path.join(moduleDirectory, 'node_modules/@types/atom');
     fs.makeTreeSync(removedPath);
     fs.writeFileSync(
@@ -74,7 +74,7 @@ describe('apm clean', () => {
     );
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['clean'], callback);
+    await apm.run(['clean'], callback);
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
     runs(() => {
       expect(callback.mostRecentCall.args[0]).toBeUndefined();

@@ -17,18 +17,18 @@ describe('apm link/unlink', () => {
       process.chdir(packageToLink);
       const callback = jasmine.createSpy('callback');
 
-      runs(() => {
-        apm.run(['link'], callback);
+      runs(async () => {
+        await apm.run(['link'], callback);
       });
 
       waitsFor('waiting for link to complete', () => callback.callCount > 0);
 
-      runs(() => {
+      runs(async () => {
         expect(fs.existsSync(path.join(atomHome, 'packages', path.basename(packageToLink)))).toBeTruthy();
         expect(fs.realpathSync(path.join(atomHome, 'packages', path.basename(packageToLink)))).toBe(fs.realpathSync(packageToLink));
 
         callback.reset();
-        apm.run(['unlink'], callback);
+        await apm.run(['unlink'], callback);
       });
 
       waitsFor('waiting for unlink to complete', () => callback.callCount > 0);
@@ -47,18 +47,18 @@ describe('apm link/unlink', () => {
       process.chdir(packageToLink);
       const callback = jasmine.createSpy('callback');
 
-      runs(() => {
-        apm.run(['link', '--dev'], callback);
+      runs(async () => {
+        await apm.run(['link', '--dev'], callback);
       });
 
       waitsFor('waiting for link to complete', () => callback.callCount > 0);
 
-      runs(() => {
+      runs(async () => {
         expect(fs.existsSync(path.join(atomHome, 'dev', 'packages', path.basename(packageToLink)))).toBeTruthy();
         expect(fs.realpathSync(path.join(atomHome, 'dev', 'packages', path.basename(packageToLink)))).toBe(fs.realpathSync(packageToLink));
 
         callback.reset();
-        apm.run(['unlink', '--dev'], callback);
+        await apm.run(['unlink', '--dev'], callback);
       });
 
       waitsFor('waiting for unlink to complete', () => callback.callCount > 0);
@@ -77,20 +77,20 @@ describe('apm link/unlink', () => {
       process.chdir(packageToLink);
       const callback = jasmine.createSpy('callback');
 
-      runs(() => {
-        apm.run(['link', '--dev'], callback);
+      runs(async () => {
+        await apm.run(['link', '--dev'], callback);
       });
 
       waitsFor('link --dev to complete', () => callback.callCount === 1);
 
-      runs(() => {
-        apm.run(['link'], callback);
+      runs(async () => {
+        await apm.run(['link'], callback);
       });
 
       waitsFor('link to complete', () => callback.callCount === 2);
 
-      runs(() => {
-        apm.run(['unlink', '--hard'], callback);
+      runs(async () => {
+        await apm.run(['unlink', '--hard'], callback);
       });
 
       waitsFor('unlink --hard to complete', () => callback.callCount === 3);
@@ -111,26 +111,26 @@ describe('apm link/unlink', () => {
       const packageToLink3 = temp.mkdirSync('a-package-');
       const callback = jasmine.createSpy('callback');
 
-      runs(() => {
-        apm.run(['link', '--dev', packageToLink1], callback);
+      runs(async () => {
+        await apm.run(['link', '--dev', packageToLink1], callback);
       });
 
       waitsFor('link --dev to complete', () => callback.callCount === 1);
 
-      runs(() => {
+      runs(async () => {
         callback.reset();
-        apm.run(['link', packageToLink2], callback);
-        apm.run(['link', packageToLink3], callback);
+        await apm.run(['link', packageToLink2], callback);
+        await apm.run(['link', packageToLink3], callback);
       });
 
       waitsFor('link to complee', () => callback.callCount === 2)
 
-      runs(() => {
+      runs(async () => {
         callback.reset();
         expect(fs.existsSync(path.join(atomHome, 'dev', 'packages', path.basename(packageToLink1)))).toBeTruthy();
         expect(fs.existsSync(path.join(atomHome, 'packages', path.basename(packageToLink2)))).toBeTruthy();
         expect(fs.existsSync(path.join(atomHome, 'packages', path.basename(packageToLink3)))).toBeTruthy();
-        apm.run(['unlink', '--all'], callback);
+        await apm.run(['unlink', '--all'], callback);
       })
 
       waitsFor('unlink --all to complete', () => callback.callCount === 1);
@@ -150,18 +150,18 @@ describe('apm link/unlink', () => {
       const numericPackageName = temp.mkdirSync('42');
       const callback = jasmine.createSpy('callback');
 
-      runs(() => {
-        apm.run(['link', numericPackageName], callback);
+      runs(async () => {
+        await apm.run(['link', numericPackageName], callback);
       });
 
       waitsFor('link to complete', () => callback.callCount === 1);
 
-      runs(() => {
+      runs(async () => {
         expect(fs.existsSync(path.join(atomHome, 'packages', path.basename(numericPackageName)))).toBeTruthy();
         expect(fs.realpathSync(path.join(atomHome, 'packages', path.basename(numericPackageName)))).toBe(fs.realpathSync(numericPackageName));
 
         callback.reset();
-        apm.run(['unlink', numericPackageName], callback);
+        await apm.run(['unlink', numericPackageName], callback);
       });
 
       waitsFor('unlink to complete', () => callback.callCount === 1);
@@ -180,18 +180,18 @@ describe('apm link/unlink', () => {
       const packageName = 'new-package-name';
       const callback = jasmine.createSpy('callback');
 
-      runs(() => {
-        apm.run(['link', packagePath, '--name', packageName], callback);
+      runs(async () => {
+        await apm.run(['link', packagePath, '--name', packageName], callback);
       });
 
       waitsFor('link to complete', () => callback.callCount === 1);
 
-      runs(() => {
+      runs(async () => {
         expect(fs.existsSync(path.join(atomHome, 'packages', packageName))).toBeTruthy();
         expect(fs.realpathSync(path.join(atomHome, 'packages', packageName))).toBe(fs.realpathSync(packagePath));
 
         callback.reset();
-        apm.run(['unlink', packageName], callback);
+        await apm.run(['unlink', packageName], callback);
       });
 
       waitsFor('unlink to complete', () => callback.callCount === 1);
@@ -203,10 +203,10 @@ describe('apm link/unlink', () => {
   });
 
   describe('when unlinking a path that is not a symbolic link', () => {
-    it('logs an error and exits', () => {
+    it('logs an error and exits', async () => {
       const callback = jasmine.createSpy('callback');
       process.chdir(temp.mkdirSync('not-a-symlink'));
-      apm.run(['unlink'], callback);
+      await apm.run(['unlink'], callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
@@ -218,9 +218,9 @@ describe('apm link/unlink', () => {
   });
 
   describe('when unlinking a path that does not exist', () => {
-    it('logs an error and exits', () => {
+    it('logs an error and exits', async () => {
       const callback = jasmine.createSpy('callback');
-      apm.run(['unlink', 'a-path-that-does-not-exist'], callback);
+      await apm.run(['unlink', 'a-path-that-does-not-exist'], callback);
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
 

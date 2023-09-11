@@ -5,9 +5,9 @@ const wrench = require('wrench');
 const apm = require('../src/apm-cli');
 const CSON = require('season');
 
-const listPackages = (args, doneCallback) => {
+const listPackages = async (args, doneCallback) => {
   const callback = jasmine.createSpy('callback');
-  apm.run(['list'].concat(args), callback);
+  await apm.run(['list'].concat(args), callback);
   waitsFor(() => callback.callCount === 1);
   runs(doneCallback);
 };

@@ -75,9 +75,9 @@ describe('apm install', () => {
     });
 
     describe('when an invalid URL is specified', () => {
-      it('logs an error and exits', () => {
+      it('logs an error and exits', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'not-a-module'], callback);
+        await apm.run(['install', 'not-a-module'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -89,7 +89,7 @@ describe('apm install', () => {
     });
 
     describe('when a package name is specified', () => {
-      it('installs the package', () => {
+      it('installs the package', async () => {
         const testModuleDirectory = path.join(atomHome, 'packages', 'test-module');
         fs.makeTreeSync(testModuleDirectory);
         const existingTestModuleFile = path.join(testModuleDirectory, 'will-be-deleted.js');
@@ -97,7 +97,7 @@ describe('apm install', () => {
         expect(fs.existsSync(existingTestModuleFile)).toBeTruthy();
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module'], callback);
+        await apm.run(['install', 'test-module'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -110,12 +110,12 @@ describe('apm install', () => {
       });
 
       describe('when multiple releases are available', () => {
-        it('installs the latest compatible version', () => {
+        it('installs the latest compatible version', async () => {
           CSON.writeFileSync(path.join(resourcePath, 'package.json'), {version: '1.5.0'});
           const packageDirectory = path.join(atomHome, 'packages', 'test-module');
 
           const callback = jasmine.createSpy('callback');
-          apm.run(['install', 'multi-module'], callback);
+          await apm.run(['install', 'multi-module'], callback);
 
           waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -125,12 +125,12 @@ describe('apm install', () => {
           });
         });
 
-        it('ignores the commit SHA suffix in the version', () => {
+        it('ignores the commit SHA suffix in the version', async () => {
           CSON.writeFileSync(path.join(resourcePath, 'package.json'), {version: '1.5.0-deadbeef'});
           const packageDirectory = path.join(atomHome, 'packages', 'test-module');
 
           const callback = jasmine.createSpy('callback');
-          apm.run(['install', 'multi-module'], callback);
+          await apm.run(['install', 'multi-module'], callback);
 
           waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -140,12 +140,12 @@ describe('apm install', () => {
           });
         });
 
-        it('logs an error when no compatible versions are available', () => {
+        it('logs an error when no compatible versions are available', async () => {
           CSON.writeFileSync(path.join(resourcePath, 'package.json'), {version: '0.9.0'});
           const packageDirectory = path.join(atomHome, 'packages', 'test-module');
 
           const callback = jasmine.createSpy('callback');
-          apm.run(['install', 'multi-module'], callback);
+          await apm.run(['install', 'multi-module'], callback);
 
           waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -156,7 +156,7 @@ describe('apm install', () => {
         });
 
         describe('when the package has been renamed', () => {
-          it('installs the package with the new name and removes the old package', () => {
+          it('installs the package with the new name and removes the old package', async () => {
             const testRenameDirectory = path.join(atomHome, 'packages', 'test-rename');
             const testModuleDirectory = path.join(atomHome, 'packages', 'test-module');
             fs.makeTreeSync(testRenameDirectory);
@@ -164,7 +164,7 @@ describe('apm install', () => {
             expect(fs.existsSync(testModuleDirectory)).toBeFalsy();
 
             const callback = jasmine.createSpy('callback');
-            apm.run(['install', 'test-rename'], callback);
+            await apm.run(['install', 'test-rename'], callback);
 
             waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -181,12 +181,12 @@ describe('apm install', () => {
     });
 
     describe('when multiple package names are specified', () => {
-      it('installs all packages', () => {
+      it('installs all packages', async () => {
         const testModuleDirectory = path.join(atomHome, 'packages', 'test-module');
         const testModule2Directory = path.join(atomHome, 'packages', 'test-module2');
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module', 'test-module2', 'test-module'], callback);
+        await apm.run(['install', 'test-module', 'test-module2', 'test-module'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -199,12 +199,12 @@ describe('apm install', () => {
         });
       });
 
-      it('installs them in order and stops on the first failure', () => {
+      it('installs them in order and stops on the first failure', async () => {
         const testModuleDirectory = path.join(atomHome, 'packages', 'test-module');
         const testModule2Directory = path.join(atomHome, 'packages', 'test-module2');
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module', 'test-module-bad', 'test-module2'], callback);
+        await apm.run(['install', 'test-module', 'test-module-bad', 'test-module2'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -219,12 +219,12 @@ describe('apm install', () => {
     });
 
     describe('when no path is specified', () => {
-      it('installs all dependent modules', () => {
+      it('installs all dependent modules', async () => {
         const moduleDirectory = path.join(temp.mkdirSync('apm-test-module-'), 'test-module-with-dependencies');
         wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-dependencies'), moduleDirectory);
         process.chdir(moduleDirectory);
         const callback = jasmine.createSpy('callback');
-        apm.run(['install'], callback);
+        await apm.run(['install'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
 
@@ -237,13 +237,13 @@ describe('apm install', () => {
     });
 
     describe('when the packages directory does not exist', () => {
-      it('creates the packages directory and any intermediate directories that do not exist', () => {
+      it('creates the packages directory and any intermediate directories that do not exist', async () => {
         atomHome = temp.path('apm-home-dir-');
         process.env.ATOM_HOME = atomHome;
         expect(fs.existsSync(atomHome)).toBe(false);
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module'], callback);
+        await apm.run(['install', 'test-module'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
         runs(() => {
@@ -253,11 +253,11 @@ describe('apm install', () => {
     });
 
     describe('when the package contains symlinks', () => {
-      it('copies them correctly from the temp directory', () => {
+      it('copies them correctly from the temp directory', async () => {
         const testModuleDirectory = path.join(atomHome, 'packages', 'test-module-with-symlink');
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module-with-symlink'], callback);
+        await apm.run(['install', 'test-module-with-symlink'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -274,11 +274,11 @@ describe('apm install', () => {
     });
 
     describe('when the package installs binaries', () => { // regression: caused by the existence of `.bin` in the install folder
-      it('correctly installs the package ignoring any binaries', () => {
+      it('correctly installs the package ignoring any binaries', async () => {
         const testModuleDirectory = path.join(atomHome, 'packages', 'test-module-with-bin');
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module-with-bin'], callback);
+        await apm.run(['install', 'test-module-with-bin'], callback);
 
         waitsFor('waiting for install to complete', 60000, () => callback.callCount === 1);
 
@@ -290,13 +290,13 @@ describe('apm install', () => {
     });
 
     describe('when a packages file is specified', () => {
-      it('installs all the packages listed in the file', () => {
+      it('installs all the packages listed in the file', async () => {
         const testModuleDirectory = path.join(atomHome, 'packages', 'test-module');
         const testModule2Directory = path.join(atomHome, 'packages', 'test-module2');
         const packagesFilePath = path.join(__dirname, 'fixtures', 'packages.txt');
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', '--packages-file', packagesFilePath], callback);
+        await apm.run(['install', '--packages-file', packagesFilePath], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -309,11 +309,11 @@ describe('apm install', () => {
         });
       });
 
-      it('calls back with an error when the file does not exist', () => {
+      it('calls back with an error when the file does not exist', async () => {
         const badFilePath = path.join(__dirname, 'fixtures', 'not-packages.txt');
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', '--packages-file', badFilePath], callback);
+        await apm.run(['install', '--packages-file', badFilePath], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
 
@@ -324,7 +324,7 @@ describe('apm install', () => {
     });
 
     describe('when the package is bundled with Atom', () => {
-      it('installs from a repo-local package path', () => {
+      it('installs from a repo-local package path', async () => {
         const atomRepoPath = temp.mkdirSync('apm-repo-dir-');
         CSON.writeFileSync(path.join(atomRepoPath, 'package.json'), {
           packageDependencies: {
@@ -338,7 +338,7 @@ describe('apm install', () => {
         process.chdir(atomRepoPath);
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install'], callback);
+        await apm.run(['install'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
 
@@ -350,7 +350,7 @@ describe('apm install', () => {
         });
       });
 
-      it('logs a message to standard error', () => {
+      it('logs a message to standard error', async () => {
         CSON.writeFileSync(path.join(resourcePath, 'package.json'), {
           packageDependencies: {
             'test-module': '1.0'
@@ -358,7 +358,7 @@ describe('apm install', () => {
         });
 
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module'], callback);
+        await apm.run(['install', 'test-module'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
         runs(() => {
@@ -368,9 +368,9 @@ describe('apm install', () => {
     });
 
     describe('when --check is specified', () => {
-      it('compiles a sample native module', () => {
+      it('compiles a sample native module', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', '--check'], callback);
+        await apm.run(['install', '--check'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
         runs(() => {
@@ -380,9 +380,9 @@ describe('apm install', () => {
     });
 
     describe('when a deprecated package name is specified', () => {
-      it('does not install the package', () => {
+      it('does not install the package', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'atom-2048'], callback);
+        await apm.run(['install', 'atom-2048'], callback);
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
         runs(() => {
           expect(callback.mostRecentCall.args[0]).toBeTruthy();
@@ -491,11 +491,11 @@ describe('apm install', () => {
     describe('when installing a package from a git repository', () => {
       let cloneUrl, pkgJsonPath;
 
-      beforeEach(() => {
+      beforeEach(async () => {
         let count = 0;
         const gitRepo = path.join(__dirname, 'fixtures', 'test-git-repo.git');
         cloneUrl = `file://${gitRepo}`;
-        apm.run(['install', cloneUrl], () => {
+        await apm.run(['install', cloneUrl], () => {
           count++;
         });
 
@@ -536,12 +536,12 @@ describe('apm install', () => {
     describe('when installing a Git URL and --json is specified', () => {
       let cloneUrl, pkgJsonPath;
 
-      beforeEach(() => {
+      beforeEach(async () => {
         const callback = jasmine.createSpy('callback');
         const gitRepo = path.join(__dirname, 'fixtures', 'test-git-repo.git');
         cloneUrl = `file://${gitRepo}`;
 
-        apm.run(['install', cloneUrl, '--json'], callback);
+        await apm.run(['install', cloneUrl, '--json'], callback);
 
         waitsFor(10000, () => callback.callCount === 1);
 
@@ -566,9 +566,9 @@ describe('apm install', () => {
     });
 
     describe('when installing a registred package and --json is specified', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'test-module', 'test-module2', '--json'], callback);
+        await apm.run(['install', 'test-module', 'test-module2', '--json'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
       });
@@ -603,9 +603,9 @@ describe('apm install', () => {
         fs.removeSync(path.join(nodeModules, 'with a space'));
       });
 
-      it('builds native code successfully', () => {
+      it('builds native code successfully', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['install', 'native-package'], callback);
+        await apm.run(['install', 'native-package'], callback);
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
         runs(() => {

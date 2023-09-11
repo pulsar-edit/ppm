@@ -32,9 +32,9 @@ describe('apm search', () => {
     waitsFor(() => done);
   });
 
-  it('lists the matching packages and excludes deprecated packages', () => {
+  it('lists the matching packages and excludes deprecated packages', async () => {
     const callback = jasmine.createSpy('callback');
-    apm.run(['search', 'duck'], callback);
+    await apm.run(['search', 'duck'], callback);
 
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
     runs(() => {
@@ -46,9 +46,9 @@ describe('apm search', () => {
     });
   });
 
-  it('logs an error if the query is missing or empty', () => {
+  it('logs an error if the query is missing or empty', async () => {
     const callback = jasmine.createSpy('callback');
-    apm.run(['search'], callback);
+    await apm.run(['search'], callback);
 
     waitsFor('waiting for command to complete', () => callback.callCount > 0);
 
