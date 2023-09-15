@@ -113,7 +113,7 @@ function printVersions(args) {
     const npmVersion = require("npm/package.json").version ?? "";
     const nodeVersion = process.versions.node ?? "";
 
-    getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion().then(atomVersion => {
+    getPythonVersion().then(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion().then(atomVersion => {
       let versions;
       if (args.json) {
         versions = {
@@ -168,34 +168,36 @@ function getAtomVersion() {
   });
 }
 
-function getPythonVersion(callback) {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath()
-  };
-  return npm.load(npmOptions, () => {
-    let python = npm.config.get("python") ?? process.env.PYTHON;
-    if (config.isWin32() && !python) {
-      let rootDir = process.env.SystemDrive != null ? process.env.SystemDrive : 'C:\\';
-      if (rootDir[rootDir.length - 1] !== '\\') { rootDir += '\\'; }
-      const pythonExe = path.resolve(rootDir, 'Python27', 'python.exe');
-      if (fs.isFileSync(pythonExe)) { python = pythonExe; }
-    }
-
-    python ??= 'python';
-
-    const spawned = spawn(python, ['--version']);
-    const outputChunks = [];
-    spawned.stderr.on('data', chunk => outputChunks.push(chunk));
-    spawned.stdout.on('data', chunk => outputChunks.push(chunk));
-    spawned.on('error', () => {});
-    return spawned.on('close', (code) => {
-      let version, name;
-      if (code === 0) {
-        [name, version] = Buffer.concat(outputChunks).toString().split(' ');
-        version = version?.trim();
+function getPythonVersion() {
+  return new Promise((resolve, _reject) => {
+    const npmOptions = {
+      userconfig: config.getUserConfigPath(),
+      globalconfig: config.getGlobalConfigPath()
+    };
+    npm.load(npmOptions, () => {
+      let python = npm.config.get("python") ?? process.env.PYTHON;
+      if (config.isWin32() && !python) {
+        let rootDir = process.env.SystemDrive ??= 'C:\\';
+        if (rootDir[rootDir.length - 1] !== '\\') { rootDir += '\\'; }
+        const pythonExe = path.resolve(rootDir, 'Python27', 'python.exe');
+        if (fs.isFileSync(pythonExe)) { python = pythonExe; }
       }
-      return callback(version);
+  
+      python ??= 'python';
+  
+      const spawned = spawn(python, ['--version']);
+      const outputChunks = [];
+      spawned.stderr.on('data', chunk => outputChunks.push(chunk));
+      spawned.stdout.on('data', chunk => outputChunks.push(chunk));
+      spawned.on('error', () => {});
+      return spawned.on('close', code => {
+        let version, name;
+        if (code === 0) {
+          [name, version] = Buffer.concat(outputChunks).toString().split(' ');
+          version = version?.trim();
+        }
+        return resolve(version);
+      });
     });
   });
 };
