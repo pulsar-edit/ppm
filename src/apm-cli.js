@@ -113,7 +113,7 @@ function printVersions(args) {
     const npmVersion = require("npm/package.json").version ?? "";
     const nodeVersion = process.versions.node ?? "";
 
-    getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion(function(atomVersion) {
+    getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion().then(atomVersion => {
       let versions;
       if (args.json) {
         versions = {
@@ -130,9 +130,9 @@ function printVersions(args) {
         }
         console.log(JSON.stringify(versions));
       } else {
-        if (pythonVersion == null) { pythonVersion = ''; }
-        if (gitVersion == null) { gitVersion = ''; }
-        if (atomVersion == null) { atomVersion = ''; }
+        pythonVersion ??= '';
+        gitVersion ??= '';
+        atomVersion ??= '';
         versions =  `\
   ${'apm'.red}  ${apmVersion.red}
   ${'npm'.green}  ${npmVersion.green}
@@ -154,15 +154,17 @@ function printVersions(args) {
   });
 };
 
-function getAtomVersion(callback) {
-  return config.getResourcePath(function(resourcePath) {
-    const unknownVersion = 'unknown';
-    try {
-      const { version } = require(path.join(resourcePath, "package.json")) ?? unknownVersion;
-      return callback(version);
-    } catch (error) {
-      return callback(unknownVersion);
-    }
+function getAtomVersion() {
+  return new Promise((resolve, _reject) => {
+    config.getResourcePath((resourcePath) => {
+      const unknownVersion = 'unknown';
+      try {
+        const { version } = require(path.join(resourcePath, "package.json")) ?? unknownVersion;
+        resolve(version);
+      } catch (error) {
+        resolve(unknownVersion);
+      }
+    });
   });
 }
 
