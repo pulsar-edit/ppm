@@ -107,51 +107,53 @@ function showHelp(options) {
   console.error(help);
 };
 
-function printVersions(args, callback) {
-  const apmVersion = require("../package.json").version ?? "";
-  const npmVersion = require("npm/package.json").version ?? "";
-  const nodeVersion = process.versions.node ?? "";
+function printVersions(args) {
+  return new Promise((resolve, _reject) => {
+    const apmVersion = require("../package.json").version ?? "";
+    const npmVersion = require("npm/package.json").version ?? "";
+    const nodeVersion = process.versions.node ?? "";
 
-  return getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion(function(atomVersion) {
-    let versions;
-    if (args.json) {
-      versions = {
-        apm: apmVersion,
-        ppm: apmVersion,
-        npm: npmVersion,
-        node: nodeVersion,
-        atom: atomVersion,
-        pulsar: atomVersion,
-        python: pythonVersion,
-        git: gitVersion,
-        nodeArch: process.arch
-      };
-      if (config.isWin32()) {
-        versions.visualStudio = config.getInstalledVisualStudioFlag();
+    getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion(function(atomVersion) {
+      let versions;
+      if (args.json) {
+        versions = {
+          apm: apmVersion,
+          ppm: apmVersion,
+          npm: npmVersion,
+          node: nodeVersion,
+          atom: atomVersion,
+          pulsar: atomVersion,
+          python: pythonVersion,
+          git: gitVersion,
+          nodeArch: process.arch
+        };
+        if (config.isWin32()) {
+          versions.visualStudio = config.getInstalledVisualStudioFlag();
+        }
+        console.log(JSON.stringify(versions));
+      } else {
+        if (pythonVersion == null) { pythonVersion = ''; }
+        if (gitVersion == null) { gitVersion = ''; }
+        if (atomVersion == null) { atomVersion = ''; }
+        versions =  `\
+  ${'ppm'.red}  ${apmVersion.red}
+  ${'npm'.green}  ${npmVersion.green}
+  ${'node'.blue} ${nodeVersion.blue} ${process.arch.blue}
+  ${'pulsar'.cyan} ${atomVersion.cyan}
+  ${'python'.yellow} ${pythonVersion.yellow}
+  ${'git'.magenta} ${gitVersion.magenta}\
+  `;
+
+        if (config.isWin32()) {
+          const visualStudioVersion = config.getInstalledVisualStudioFlag() ?? "";
+          versions += `\n${'visual studio'.cyan} ${visualStudioVersion.cyan}`;
+        }
+
+        console.log(versions);
       }
-      console.log(JSON.stringify(versions));
-    } else {
-      if (pythonVersion == null) { pythonVersion = ''; }
-      if (gitVersion == null) { gitVersion = ''; }
-      if (atomVersion == null) { atomVersion = ''; }
-      versions =  `\
-${'ppm'.red}  ${apmVersion.red}
-${'npm'.green}  ${npmVersion.green}
-${'node'.blue} ${nodeVersion.blue} ${process.arch.blue}
-${'pulsar'.cyan} ${atomVersion.cyan}
-${'python'.yellow} ${pythonVersion.yellow}
-${'git'.magenta} ${gitVersion.magenta}\
-`;
-
-      if (config.isWin32()) {
-        const visualStudioVersion = config.getInstalledVisualStudioFlag() ?? "";
-        versions += `\n${'visual studio'.cyan} ${visualStudioVersion.cyan}`;
-      }
-
-      console.log(versions);
-    }
-    return callback();
-  })));
+      return resolve();
+    })));
+  });
 };
 
 function getAtomVersion(callback) {
@@ -235,7 +237,7 @@ module.exports = {
       command
     } = options;
     if (args.version) {
-      return printVersions(args, options.callback);
+      return printVersions(args).then(options.callback);
     } else if (args.help) {
       if ((Command = commands[options.command])) {
         showHelp(new Command().parseOptions?.(options.command));
