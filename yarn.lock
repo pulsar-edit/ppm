@@ -69,7 +69,7 @@ JSONStream@^1.3.4, JSONStream@^1.3.5:
     jsonparse "^1.2.0"
     through ">=2.2.7 <3"
 
-abbrev@1, abbrev@^1.0.0, abbrev@~1.1.1:
+abbrev@1, abbrev@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
@@ -213,7 +213,7 @@ aproba@^1.0.3, aproba@^1.1.1, aproba@^1.1.2:
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"
   integrity sha512-Y9J6ZjXtoYh8RnXVCMOU/ttDmk1aBjunq9vO0ta5x85WDQiQfUF9sIPBITdbiiIVcBo03Hi3jMxigBtsddlXRw==
 
-"aproba@^1.0.3 || ^2.0.0", "aproba@^1.1.2 || 2", aproba@^2.0.0:
+"aproba@^1.1.2 || 2", aproba@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-2.0.0.tgz#52520b8ae5b569215b354efc0caa3fe1e45a8adc"
   integrity sha512-lYe4Gx7QT+MKGbDsA+Z+he/Wtef0BiwDOlK/XkBrdfsh9J/jPPXbX0tE9x9cl27Tmu5gg3QUbUrQYa/y+KOHPQ==
@@ -222,14 +222,6 @@ archy@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/archy/-/archy-1.0.0.tgz#f9c8c13757cc1dd7bc379ac77b2c62a5c2868c40"
   integrity sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==
-
-are-we-there-yet@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/are-we-there-yet/-/are-we-there-yet-3.0.1.tgz#679df222b278c64f2cdba1175cdc00b0d96164bd"
-  integrity sha512-QZW4EDmGwlYur0Yyf/b2uGucHQMa8aFUP7eu9ddR73vvhFyt4V0Vl3QHPcTNJ8l6qYOBdxgXdnBXQrHilfRQBg==
-  dependencies:
-    delegates "^1.0.0"
-    readable-stream "^3.6.0"
 
 are-we-there-yet@~1.1.2:
   version "1.1.7"
@@ -703,11 +695,6 @@ color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
-
-color-support@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
-  integrity sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==
 
 colors@^1.1.2, colors@~1.4.0:
   version "1.4.0"
@@ -1554,20 +1541,6 @@ functions-have-names@^1.2.2:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
-gauge@^4.0.3:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/gauge/-/gauge-4.0.4.tgz#52ff0652f2bbf607a989793d53b751bef2328dce"
-  integrity sha512-f9m+BEN5jkg6a0fZjleidjN51VE1X+mPFQ2DJ0uv1V39oCLCbsGe6yjbBnp7eK7z/+GAon99a3nHuqbuuthyPg==
-  dependencies:
-    aproba "^1.0.3 || ^2.0.0"
-    color-support "^1.1.3"
-    console-control-strings "^1.1.0"
-    has-unicode "^2.0.1"
-    signal-exit "^3.0.7"
-    string-width "^4.2.3"
-    strip-ansi "^6.0.1"
-    wide-align "^1.1.5"
-
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
@@ -1807,7 +1780,7 @@ has-tostringtag@^1.0.0:
   dependencies:
     has-symbols "^1.0.2"
 
-has-unicode@^2.0.0, has-unicode@^2.0.1, has-unicode@~2.0.1:
+has-unicode@^2.0.0, has-unicode@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/has-unicode/-/has-unicode-2.0.1.tgz#e0e6fe6a28cf51138855e086d1691e771de2a8b9"
   integrity sha512-8Rf9Y83NBReMnx0gFzA8JImQACstCYWUplepDa9xprwwtmgEZUF0h/i5xSA625zB/I37EtrswSST6OXxwaaIJQ==
@@ -2358,9 +2331,9 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
-"libcipm@https://github.com/pulsar-edit/libcipm/releases/download/v4.0.9-pulsar/libcipm-4.0.9-pulsar.tgz":
-  version "4.0.9-pulsar"
-  resolved "https://github.com/pulsar-edit/libcipm/releases/download/v4.0.9-pulsar/libcipm-4.0.9-pulsar.tgz#efa0592ab721915b5d40ec5892435f751b3bd55e"
+"libcipm@https://github.com/pulsar-edit/libcipm/archive/39984e5996e5dd14773e3433cc9d8c28fcf2aafa.tar.gz":
+  version "4.0.9-pulsar1"
+  resolved "https://github.com/pulsar-edit/libcipm/archive/39984e5996e5dd14773e3433cc9d8c28fcf2aafa.tar.gz#8e8fdaef98d90bf5911e50bd7b685f4cdd7c09aa"
   dependencies:
     bin-links "^1.1.2"
     bluebird "^3.5.1"
@@ -2370,7 +2343,7 @@ lcid@^1.0.0:
     ini "^1.3.5"
     lock-verify "^2.1.0"
     mkdirp "^0.5.1"
-    npm-lifecycle "https://github.com/pulsar-edit/npm-lifecycle/releases/download/v3.1.6-pulsar/npm-lifecycle-3.1.6-pulsar.tgz"
+    npm-lifecycle "https://github.com/pulsar-edit/npm-lifecycle/archive/7d7d20ffbb596602c2ef6caaad9356413aa586ba.tar.gz"
     npm-logical-tree "^1.2.1"
     npm-package-arg "^6.1.0"
     pacote "^9.1.0"
@@ -2378,9 +2351,9 @@ lcid@^1.0.0:
     rimraf "^2.6.2"
     worker-farm "^1.6.0"
 
-"libnpm@https://github.com/pulsar-edit/libnpm/releases/download/v3.0.2-pulsar/libnpm-3.0.2-pulsar.tgz":
-  version "3.0.2-pulsar"
-  resolved "https://github.com/pulsar-edit/libnpm/releases/download/v3.0.2-pulsar/libnpm-3.0.2-pulsar.tgz#d79ed5662daf43d79dc8664358656a325294af4a"
+"libnpm@https://github.com/pulsar-edit/libnpm/archive/214ce1e19008636e9637ff461d24f221dbe74a09.tar.gz":
+  version "3.0.2-pulsar1"
+  resolved "https://github.com/pulsar-edit/libnpm/archive/214ce1e19008636e9637ff461d24f221dbe74a09.tar.gz#35f879e16dcc7b7f51e46550bffda90ac3c0eb8a"
   dependencies:
     bin-links "^1.1.2"
     bluebird "^3.5.3"
@@ -2393,7 +2366,7 @@ lcid@^1.0.0:
     libnpmsearch "^2.0.2"
     libnpmteam "^1.0.2"
     lock-verify "^2.0.2"
-    npm-lifecycle "https://github.com/pulsar-edit/npm-lifecycle/releases/download/v3.1.6-pulsar/npm-lifecycle-3.1.6-pulsar.tgz"
+    npm-lifecycle "https://github.com/pulsar-edit/npm-lifecycle/archive/7d7d20ffbb596602c2ef6caaad9356413aa586ba.tar.gz"
     npm-logical-tree "^1.2.1"
     npm-package-arg "^6.1.0"
     npm-profile "^4.0.2"
@@ -2998,23 +2971,6 @@ node-fetch-npm@^2.0.2:
     json-parse-better-errors "^1.0.0"
     safe-buffer "^5.1.1"
 
-node-gyp@^9.4.0:
-  version "9.4.0"
-  resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-9.4.0.tgz#2a7a91c7cba4eccfd95e949369f27c9ba704f369"
-  integrity sha512-dMXsYP6gc9rRbejLXmTbVRYjAHw7ppswsKyMxuxJxxOHzluIO1rGp9TOQgjFJ+2MCqcOcQTOPB/8Xwhr+7s4Eg==
-  dependencies:
-    env-paths "^2.2.0"
-    exponential-backoff "^3.1.1"
-    glob "^7.1.4"
-    graceful-fs "^4.2.6"
-    make-fetch-happen "^11.0.3"
-    nopt "^6.0.0"
-    npmlog "^6.0.0"
-    rimraf "^3.0.2"
-    semver "^7.3.5"
-    tar "^6.1.2"
-    which "^2.0.2"
-
 "node-gyp@https://github.com/nodejs/node-gyp/archive/d3615c66f7e7a65de48ce9860b1fe13710d20988.tar.gz":
   version "9.4.0"
   uid "42925551931cf5b511c0755b1ad1c5aa876d36d3"
@@ -3045,13 +3001,6 @@ nopt@^4.0.3:
   dependencies:
     abbrev "1"
     osenv "^0.1.4"
-
-nopt@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/nopt/-/nopt-6.0.0.tgz#245801d8ebf409c6df22ab9d95b65e1309cdb16d"
-  integrity sha512-ZwLpbTgdhuZUnZzjd7nb1ZV+4DoiC6/sfiVKok72ym/4Tlf+DFdlHYmT2JPmcNNWV6Pi3SDf1kT+A4r9RTuT9g==
-  dependencies:
-    abbrev "^1.0.0"
 
 nopt@^7.0.0:
   version "7.2.0"
@@ -3104,13 +3053,14 @@ npm-install-checks@^3.0.2:
   dependencies:
     semver "^2.3.0 || 3.x || 4 || 5"
 
-"npm-lifecycle@https://github.com/pulsar-edit/npm-lifecycle/releases/download/v3.1.6-pulsar/npm-lifecycle-3.1.6-pulsar.tgz":
-  version "3.1.6-pulsar"
-  resolved "https://github.com/pulsar-edit/npm-lifecycle/releases/download/v3.1.6-pulsar/npm-lifecycle-3.1.6-pulsar.tgz#af5e4b440656daeed01e10861460664c14b30d7b"
+"npm-lifecycle@https://github.com/pulsar-edit/npm-lifecycle/archive/7d7d20ffbb596602c2ef6caaad9356413aa586ba.tar.gz":
+  version "3.1.6-pulsar1"
+  uid a0162e7a6019a62c2c257249018cbbf0f3a342de
+  resolved "https://github.com/pulsar-edit/npm-lifecycle/archive/7d7d20ffbb596602c2ef6caaad9356413aa586ba.tar.gz#a0162e7a6019a62c2c257249018cbbf0f3a342de"
   dependencies:
     byline "^5.0.0"
     graceful-fs "^4.1.15"
-    node-gyp "^9.4.0"
+    node-gyp "https://github.com/nodejs/node-gyp/archive/d3615c66f7e7a65de48ce9860b1fe13710d20988.tar.gz"
     resolve-from "^4.0.0"
     slide "^1.1.6"
     uid-number "0.0.6"
@@ -3189,9 +3139,9 @@ npm-user-validate@^1.0.1:
   resolved "https://registry.yarnpkg.com/npm-user-validate/-/npm-user-validate-1.0.1.tgz#31428fc5475fe8416023f178c0ab47935ad8c561"
   integrity sha512-uQwcd/tY+h1jnEaze6cdX/LrhWhoBxfSknxentoqmIuStxUExxjWd3ULMLFPiFUrZKbOVMowH6Jq2FRWfmhcEw==
 
-"npm@https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar/npm-6.14.19-pulsar.tgz":
-  version "6.14.19-pulsar"
-  resolved "https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar/npm-6.14.19-pulsar.tgz#f7689fe88b46d6dc96f131641411669661eb8228"
+"npm@https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar1-1/npm-6.14.19-pulsar1-1.tgz":
+  version "6.14.19-pulsar1-1"
+  resolved "https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar1-1/npm-6.14.19-pulsar1-1.tgz#f4c29cfd8800c14ff5bba0c9316e3cdac655fbf6"
   dependencies:
     JSONStream "^1.3.5"
     abbrev "~1.1.1"
@@ -3233,8 +3183,8 @@ npm-user-validate@^1.0.1:
     is-cidr "^3.1.1"
     json-parse-better-errors "^1.0.2"
     lazy-property "~1.0.0"
-    libcipm "https://github.com/pulsar-edit/libcipm/releases/download/v4.0.9-pulsar/libcipm-4.0.9-pulsar.tgz"
-    libnpm "https://github.com/pulsar-edit/libnpm/releases/download/v3.0.2-pulsar/libnpm-3.0.2-pulsar.tgz"
+    libcipm "https://github.com/pulsar-edit/libcipm/archive/39984e5996e5dd14773e3433cc9d8c28fcf2aafa.tar.gz"
+    libnpm "https://github.com/pulsar-edit/libnpm/archive/214ce1e19008636e9637ff461d24f221dbe74a09.tar.gz"
     libnpmaccess "^3.0.2"
     libnpmhook "^5.0.3"
     libnpmorg "^1.0.1"
@@ -3253,13 +3203,13 @@ npm-user-validate@^1.0.1:
     mississippi "^3.0.0"
     mkdirp "^0.5.6"
     move-concurrently "^1.0.1"
-    node-gyp "^9.4.0"
+    node-gyp "https://github.com/nodejs/node-gyp/archive/d3615c66f7e7a65de48ce9860b1fe13710d20988.tar.gz"
     nopt "^4.0.3"
     normalize-package-data "^2.5.0"
     npm-audit-report "^1.3.3"
     npm-cache-filename "~1.0.2"
     npm-install-checks "^3.0.2"
-    npm-lifecycle "https://github.com/pulsar-edit/npm-lifecycle/releases/download/v3.1.6-pulsar/npm-lifecycle-3.1.6-pulsar.tgz"
+    npm-lifecycle "https://github.com/pulsar-edit/npm-lifecycle/archive/7d7d20ffbb596602c2ef6caaad9356413aa586ba.tar.gz"
     npm-package-arg "^6.1.1"
     npm-packlist "^1.4.8"
     npm-pick-manifest "^3.0.2"
@@ -3318,16 +3268,6 @@ npmlog@^4.1.2, npmlog@~4.1.2:
     console-control-strings "~1.1.0"
     gauge "~2.7.3"
     set-blocking "~2.0.0"
-
-npmlog@^6.0.0:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/npmlog/-/npmlog-6.0.2.tgz#c8166017a42f2dea92d6453168dd865186a70830"
-  integrity sha512-/vBvz5Jfr9dT/aFWd0FIRf+T/Q2WBsLENygUaFUqstqsycmZAP/t5BvFJTK0viFmSUxiUKTUplWy5vt+rvKIxg==
-  dependencies:
-    are-we-there-yet "^3.0.0"
-    console-control-strings "^1.1.0"
-    gauge "^4.0.3"
-    set-blocking "^2.0.0"
 
 number-is-nan@^1.0.0:
   version "1.0.1"
@@ -4233,7 +4173,7 @@ sigmund@~1.0.0:
   resolved "https://registry.yarnpkg.com/sigmund/-/sigmund-1.0.1.tgz#3ff21f198cad2175f9f3b781853fd94d0d19b590"
   integrity sha512-fCvEXfh6NWpm+YSuY2bpXb/VIihqWA6hLsgboC+0nl71Q7N7o2eaCW8mJa/NLvQhs6jpd3VZV4UiUQlV6+lc8g==
 
-signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.7:
+signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
@@ -4411,7 +4351,7 @@ strict-uri-encode@^2.0.0:
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-2.0.0.tgz#b9c7330c7042862f6b142dc274bbcc5866ce3546"
   integrity sha512-QwiXZgpRcKkhTj2Scnn++4PKtWsH0kpzZ62L2R6c/LUVYv7hVnZqcg2+sMuT6R7Jusu1vviK/MFsu6kNJfWlEQ==
 
-"string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -4940,7 +4880,7 @@ which@^1.2.9, which@^1.3.0, which@^1.3.1:
   dependencies:
     isexe "^2.0.0"
 
-which@^2.0.1, which@^2.0.2:
+which@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/which/-/which-2.0.2.tgz#7c6a8dd0a636a0327e10b59c9286eee93f3f51b1"
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
@@ -4954,7 +4894,7 @@ which@^3.0.0:
   dependencies:
     isexe "^2.0.0"
 
-wide-align@^1.1.0, wide-align@^1.1.5:
+wide-align@^1.1.0:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.5.tgz#df1d4c206854369ecf3c9a4898f1b23fbd9d15d3"
   integrity sha512-eDMORYaPNZ4sQIuuYPDHdQvf4gyCF9rEEV/yPxGfwPkRodwEgiMUUXTx/dex+Me0wxx53S+NgUHaP7y3MGlDmg==
