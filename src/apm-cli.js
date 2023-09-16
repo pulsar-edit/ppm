@@ -61,9 +61,20 @@ const commandClasses = [
 
 const commands = {};
 for (let commandClass of commandClasses) {
+  const originalRun = commandClass.prototype.run;
+  commandClass.prototype.run = promisifiedRun(originalRun);
   for (let name of commandClass.commandNames ?? []) {
     commands[name] = commandClass;
   }
+}
+
+function promisifiedRun(commandRun) {
+  return function(options) {
+    return new Promise((resolve, _reject) => {
+      options.callback = resolve;
+      commandRun.call(this, options);
+    });
+  };
 }
 
 function parseOptions(args) {
@@ -215,7 +226,7 @@ module.exports = {
     }
 
     let callbackCalled = false;
-    options.callback = function(error) {
+    const errorHandler = error => {
       if (callbackCalled) { return; }
       callbackCalled = true;
       if (error != null) {
@@ -241,14 +252,14 @@ module.exports = {
       command
     } = options;
     if (args.version) {
-      return printVersions(args).then(options.callback);
+      return printVersions(args).then(errorHandler);
     } else if (args.help) {
       if ((Command = commands[options.command])) {
         showHelp(new Command().parseOptions?.(options.command));
       } else {
         showHelp(options);
       }
-      return options.callback();
+      return errorHandler();
     } else if (command) {
       if (command === 'help') {
         if ((Command = commands[options.commandArgs])) {
@@ -256,15 +267,15 @@ module.exports = {
         } else {
           showHelp(options);
         }
-        return options.callback();
+        return errorHandler();
       } else if ((Command = commands[command])) {
-        return new Command().run(options);
+        return new Command().run(options).then(errorHandler);
       } else {
-        return options.callback(`Unrecognized command: ${command}`);
+        return errorHandler(`Unrecognized command: ${command}`);
       }
     } else {
       showHelp(options);
-      return options.callback();
+      return errorHandler();
     }
   }
 };
