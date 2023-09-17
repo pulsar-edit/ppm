@@ -93,12 +93,6 @@ available updates.\
     }
 
     getLatestVersion(pack, callback) {
-      // We want to bail on checking for updates of any packages that come with the editor
-      // This can generally be detected by checking if the repository is that of Pulsar itself
-      if (pack.repository === "https://github.com/pulsar-edit/pulsar") {
-        return callback();
-      }
-      
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${pack.name}`,
         json: true
