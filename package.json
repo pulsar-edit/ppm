@@ -33,7 +33,7 @@
     "keytar": "^7.7.0",
     "mv": "2.1.1",
     "ncp": "~2.0.0",
-    "npm": "https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar/npm-6.14.19-pulsar.tgz",
+    "npm": "https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar1-1/npm-6.14.19-pulsar1-1.tgz",
     "open": "7.3.0",
     "q": "~1.5.1",
     "read": "~1.0.7",
@@ -54,7 +54,7 @@
     "coffeelint": "<2.0",
     "express": "^4.17.1",
     "jasmine-focused": ">=1.0.7 <2.0",
-    "node-gyp": "^9.4.0",
+    "node-gyp": "https://github.com/nodejs/node-gyp/archive/d3615c66f7e7a65de48ce9860b1fe13710d20988.tar.gz",
     "shx": "^0.3.3"
   }
 }
