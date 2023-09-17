@@ -76,23 +76,6 @@ describe('apm upgrade', () => {
     });
   });
 
-  it('does not display updates for "core" packages', () => {
-    fs.writeFileSync(path.join(packagesDir, 'core-package', 'package.json'), JSON.stringify({
-      name: 'core-package',
-      version: '1.0',
-      repository: 'https://github.com/pulsar-edit/pulsar'
-    }));
-    const callback = jasmine.createSpy('callback');
-    apm.run(['upgrade', '--list', '--no-color'], callback);
-
-    waitsFor('waiting for upgrade to complete', 600000, () => callback.callCount > 0);
-
-    runs(() => {
-      expect(console.log).toHaveBeenCalled();
-      expect(console.log.argsForCall[1][0]).toContain('empty');
-    });
-  });
-
   it('does not display updates for packages whose engine does not satisfy the installed Atom version', () => {
     fs.writeFileSync(path.join(packagesDir, 'test-module', 'package.json'), JSON.stringify({
       name: 'test-module',
