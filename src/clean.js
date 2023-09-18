@@ -13,6 +13,7 @@ const fs = require('./fs');
 
 module.exports =
 class Clean extends Command {
+  static promiseBased = true;
   static commandNames = ["clean", "prune"];
 
   constructor() {
@@ -33,10 +34,12 @@ as a dependency in the package.json file.\
     return options.alias('h', 'help').describe('help', 'Print this usage message');
   }
 
-  run(options) {
+  run(_options) {
     process.stdout.write("Removing extraneous modules ");
-    return this.fork(this.atomNpmPath, ['prune'], (...args) => {
-      return this.logCommandResults(options.callback, ...args);
-    });
+    return new Promise((resolve, _reject) => 
+      void this.fork(this.atomNpmPath, ['prune'], (...args) =>
+        void this.logCommandResults(resolve, ...args)
+      )
+    );
   }
 };
