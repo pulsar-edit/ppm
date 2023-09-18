@@ -7,6 +7,7 @@ const Command = require('./command');
 
 module.exports =
 class Config extends Command {
+  static promiseBased = true;
   static commandNames = [ "config" ];
 
   constructor() {
@@ -32,7 +33,6 @@ Usage: ppm config set <key> <value>
   }
 
   run(options) {
-    const {callback} = options;
     options = this.parseOptions(options.commandArgs);
 
     let configArgs = ['--globalconfig', apm.getGlobalConfigPath(), '--userconfig', apm.getUserConfigPath(), 'config'];
@@ -41,16 +41,17 @@ Usage: ppm config set <key> <value>
     const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: apm.getRustupHomeDirPath()});
     const configOptions = {env};
 
-    return this.fork(this.atomNpmPath, configArgs, configOptions, function(code, stderr, stdout) {
-      if (stderr == null) { stderr = ''; }
-      if (stdout == null) { stdout = ''; }
-      if (code === 0) {
-        if (stdout) { process.stdout.write(stdout); }
-        return callback();
-      } else {
+    return new Promise((resolve, _reject) => 
+      void this.fork(this.atomNpmPath, configArgs, configOptions, (code, stderr, stdout) => {
+        stderr ??= '';
+        stdout ??= '';
+        if (code === 0) {
+          if (stdout) { process.stdout.write(stdout); }
+          return void resolve();
+        } 
         if (stderr) { process.stdout.write(stderr); }
-        return callback(new Error(`npm config failed: ${code}`));
-      }
-    });
+        return void resolve(new Error(`npm config failed: ${code}`));
+      })
+    );
   }
 }
