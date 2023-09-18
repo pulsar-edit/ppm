@@ -7,6 +7,7 @@ const config = require('./apm');
 
 module.exports =
 class Docs extends View {
+  static promiseBased = true;
   static commandNames = [ "docs", "home", "open" ];
 
     parseOptions(argv) {
@@ -27,29 +28,30 @@ Open a package's homepage in the default browser.\
     }
 
     run(options) {
-      const {callback} = options;
-      options = this.parseOptions(options.commandArgs);
-      const [packageName] = options.argv._;
+      return new Promise((resolve, _reject) => {
+        options = this.parseOptions(options.commandArgs);
+        const [packageName] = options.argv._;
 
-      if (!packageName) {
-        callback("Missing required package name");
-        return;
-      }
-
-      this.getPackage(packageName, options, (error, pack) => {
-        let repository;
-        if (error != null) { return callback(error); }
-
-        if (repository = this.getRepository(pack)) {
-          if (options.argv.print) {
-            console.log(repository);
-          } else {
-            this.openRepositoryUrl(repository);
-          }
-          return callback();
-        } else {
-          return callback(`Package \"${packageName}\" does not contain a repository URL`);
+        if (!packageName) {
+          resolve("Missing required package name");
+          return;
         }
+
+        this.getPackage(packageName, options, (error, pack) => {
+          let repository;
+          if (error != null) { return void resolve(error); }
+
+          if (repository = this.getRepository(pack)) {
+            if (options.argv.print) {
+              console.log(repository);
+            } else {
+              this.openRepositoryUrl(repository);
+            }
+            return void resolve();
+          } else {
+            return void resolve(`Package \"${packageName}\" does not contain a repository URL`);
+          }
+        });
       });
     }
   }
