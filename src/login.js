@@ -20,13 +20,7 @@ class Login extends Command {
     }
 
     static getTokenOrLogin(callback) {
-      return auth.getToken(function(error, token) {
-        if (error != null) {
-          return new Login().run({callback, commandArgs: []});
-        } else {
-          return callback(null, token);
-        }
-      });
+      return void auth.getToken().then(token => void callback(null, token), _error => new Login().run({callback, commandArgs: []}));
     }
 
     parseOptions(argv) {
