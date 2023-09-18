@@ -10,6 +10,7 @@ const Command = require('./command');
 
 module.exports =
 class Ci extends Command {
+  static promiseBased = true;
   static commandNames = ["ci"];
 
   constructor() {
@@ -37,7 +38,7 @@ but cannot be used to install new packages or dependencies.\
     return options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
   }
 
-  installModules(options, callback) {
+  installModules(options) {
     process.stdout.write('Installing locked modules');
     if (options.argv.verbose) {
       process.stdout.write('\n');
@@ -60,23 +61,25 @@ but cannot be used to install new packages or dependencies.\
 
     const installOptions = {env, streaming: options.argv.verbose};
 
-    return this.fork(this.atomNpmPath, installArgs, installOptions, (...args) => {
-      return this.logCommandResults(callback, ...args);
-    });
+    return new Promise((resolve, _reject) =>
+      void this.fork(this.atomNpmPath, installArgs, installOptions, (...args) =>
+        void this.logCommandResults(resolve, ...args)
+      )
+    )
   }
 
   run(options) {
-    const {callback} = options;
     const opts = this.parseOptions(options.commandArgs);
 
     const commands = [];
-    commands.push(callback => { return config.loadNpm((error, npm) => { this.npm = npm; return callback(error); }); });
+    commands.push(callback => config.loadNpm((error, npm) => { this.npm = npm; callback(error); }));
     commands.push(cb => this.loadInstalledAtomMetadata(cb));
-    commands.push(cb => this.installModules(opts, cb));
+    commands.push(cb => this.installModules(opts).then(cb));
     const iteratee = (item, next) => item(next);
-    return async.mapSeries(commands, iteratee, function(err) {
-      if (err) { return callback(err); }
-      return callback(null);
-    });
+    return new Promise((resolve, _reject) =>
+      void async.mapSeries(commands, iteratee, err =>
+        resolve(err || null)
+      )
+    );
   }
 };
