@@ -15,6 +15,7 @@ const request = require('./request');
 
 module.exports =
 class Develop extends Command {
+  static promiseBased = true;
   static commandNames = [ "dev", "develop" ];
 
     constructor() {
@@ -44,69 +45,76 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    getRepositoryUrl(packageName, callback) {
-      const requestSettings = {
-        url: `${config.getAtomPackagesUrl()}/${packageName}`,
-        json: true
-      };
-      return request.get(requestSettings, function(error, response, body) {
-        if (body == null) { body = {}; }
-        if (error != null) {
-          return callback(`Request for package information failed: ${error.message}`);
-        } else if (response.statusCode === 200) {
-          let repositoryUrl;
-          if ((repositoryUrl = body.repository.url)) {
-            return callback(null, repositoryUrl);
-          } else {
-            return callback(`No repository URL found for package: ${packageName}`);
+    getRepositoryUrl(packageName) {
+      return new Promise((resolve, reject) => {
+        const requestSettings = {
+          url: `${config.getAtomPackagesUrl()}/${packageName}`,
+          json: true
+        };
+        return request.get(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            return void reject(`Request for package information failed: ${error.message}`);
           }
-        } else {
-          const message = request.getErrorMessage(body, error);
-          return callback(`Request for package information failed: ${message}`);
-        }
-      });
-    }
 
-    cloneRepository(repoUrl, packageDirectory, options, callback) {
-      if (callback == null) { callback = function() {}; }
-      return config.getSetting('git', command => {
-        if (command == null) { command = 'git'; }
-        const args = ['clone', '--recursive', repoUrl, packageDirectory];
-        if (!options.argv.json) { process.stdout.write(`Cloning ${repoUrl} `); }
-        git.addGitToEnv(process.env);
-        return this.spawn(command, args, (...args) => {
-          if (options.argv.json) {
-            return this.logCommandResultsIfFail(callback, ...args);
-          } else {
-            return this.logCommandResults(callback, ...args);
+          if (response.statusCode === 200) {
+            const repositoryUrl = body.repository.url;
+            if (repositoryUrl) {
+              return void resolve(repositoryUrl);
+            }
+
+            return void reject(`No repository URL found for package: ${packageName}`);
           }
+          
+          const message = request.getErrorMessage(body, error);
+          return void reject(`Request for package information failed: ${message}`);
         });
       });
     }
 
-    installDependencies(packageDirectory, options, callback) {
-      if (callback == null) { callback = function() {}; }
-      process.chdir(packageDirectory);
-      const installOptions = _.clone(options);
-      installOptions.callback = callback;
+    cloneRepository(repoUrl, packageDirectory, options) {
+      return new Promise((resolve, _reject) => {
+        return config.getSetting('git', command => {
+          if (command == null) { command = 'git'; }
+          const args = ['clone', '--recursive', repoUrl, packageDirectory];
+          if (!options.argv.json) { process.stdout.write(`Cloning ${repoUrl} `); }
+          git.addGitToEnv(process.env);
+          return this.spawn(command, args, (...args) => {
+            if (options.argv.json) {
+              return void this.logCommandResultsIfFail(resolve, ...args);
+            }
 
-      return new Install().run(installOptions);
+             return void this.logCommandResults(resolve, ...args);
+          });
+        });
+      });
     }
 
-    linkPackage(packageDirectory, options, callback) {
-      const linkOptions = _.clone(options);
-      if (callback) {
-        linkOptions.callback = callback;
-      }
-      linkOptions.commandArgs = [packageDirectory, '--dev'];
-      return new Link().run(linkOptions);
+    installDependencies(packageDirectory, options) {
+      return new Promise((resolve, _reject) => {
+        process.chdir(packageDirectory);
+        const installOptions = _.clone(options);
+        installOptions.callback = resolve;
+  
+        return void new Install().run(installOptions);
+      });
+    }
+
+    linkPackage(packageDirectory, options) {
+      return new Promise((resolve, _reject) => {
+        const linkOptions = _.clone(options);
+        linkOptions.callback = resolve;
+
+        linkOptions.commandArgs = [packageDirectory, '--dev'];
+        return void new Link().run(linkOptions);
+      });
     }
 
     run(options) {
       const packageName = options.commandArgs.shift();
 
       if (!((packageName != null ? packageName.length : undefined) > 0)) {
-        return options.callback("Missing required package name");
+        return Promise.resolve("Missing required package name");
       }
 
       let packageDirectory = options.commandArgs.shift() ?? path.join(config.getReposDirectory(), packageName);
@@ -114,21 +122,19 @@ cmd-shift-o to run the package out of the newly cloned repository.\
 
       if (fs.existsSync(packageDirectory)) {
         return this.linkPackage(packageDirectory, options);
-      } else {
-        return this.getRepositoryUrl(packageName, (error, repoUrl) => {
-          if (error != null) {
-            return options.callback(error);
-          } else {
-            const tasks = [];
-            tasks.push(callback => this.cloneRepository(repoUrl, packageDirectory, options, callback));
-
-            tasks.push(callback => this.installDependencies(packageDirectory, options, callback));
-
-            tasks.push(callback => this.linkPackage(packageDirectory, options, callback));
-
-            return async.waterfall(tasks, options.callback);
-          }
-        });
       }
+
+      return new Promise((resolve, _reject) => {
+        this.getRepositoryUrl(packageName).then(repoUrl => { 
+          const tasks = [];
+          tasks.push(callback => this.cloneRepository(repoUrl, packageDirectory, options).then(callback));
+  
+          tasks.push(callback => this.installDependencies(packageDirectory, options).then(callback));
+  
+          tasks.push(callback => this.linkPackage(packageDirectory, options).then(callback));
+  
+          return async.waterfall(tasks, resolve);
+        }, resolve);
+      });
     }
 }
