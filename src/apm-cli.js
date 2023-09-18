@@ -61,8 +61,6 @@ const commandClasses = [
 
 const commands = {};
 for (let commandClass of commandClasses) {
-  const originalRun = commandClass.prototype.run;
-  commandClass.prototype.run = promisifiedRun(originalRun);
   for (let name of commandClass.commandNames ?? []) {
     commands[name] = commandClass;
   }
@@ -269,7 +267,11 @@ module.exports = {
         }
         return errorHandler();
       } else if ((Command = commands[command])) {
-        return new Command().run(options).then(errorHandler);
+        const command = new Command();
+        if (!Command.promiseBased) {
+          command.run = promisifiedRun(command.run);
+        }
+        return command.run(options).then(errorHandler);
       } else {
         return errorHandler(`Unrecognized command: ${command}`);
       }
