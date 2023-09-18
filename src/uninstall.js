@@ -40,9 +40,7 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
     registerUninstall({packageName, packageVersion}, callback) {
       if (!packageVersion) { return callback(); }
 
-      return auth.getToken(function(error, token) {
-        if (!token) { return callback(); }
-
+      return void auth.getToken().then(token => {
         const requestOptions = {
           url: `${config.getAtomPackagesUrl()}/${packageName}/versions/${packageVersion}/events/uninstall`,
           json: true,
@@ -51,8 +49,8 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
           }
         };
 
-        return request.post(requestOptions, (error, response, body) => callback());
-      });
+        return request.post(requestOptions, (_error, _response, _body) => callback());
+      }, callback);
     }
 
     run(options) {

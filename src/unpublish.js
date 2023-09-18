@@ -37,13 +37,7 @@ name is specified.\
 
       process.stdout.write(`Unpublishing ${packageLabel} `);
 
-      auth.getToken((error, token) => {
-        if (error != null) {
-          this.logFailure();
-          callback(error);
-          return;
-        }
-
+      auth.getToken().then(token => {
         const options = {
           url: `${config.getAtomPackagesUrl()}/${packageName}`,
           headers: {
@@ -58,17 +52,20 @@ name is specified.\
           if (body == null) { body = {}; }
           if (error != null) {
             this.logFailure();
-            return callback(error);
+            return void callback(error);
           } else if (response.statusCode !== 204) {
             this.logFailure();
             const message = body.message ?? body.error ?? body;
-            return callback(`Unpublishing failed: ${message}`);
+            return void callback(`Unpublishing failed: ${message}`);
           } else {
             this.logSuccess();
-            return callback();
+            return void callback();
           }
         });
-      });
+      }, error => {
+          this.logFailure();
+          callback(error);
+        });
     }
 
     promptForConfirmation(packageName, packageVersion, callback) {
