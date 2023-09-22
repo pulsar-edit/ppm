@@ -116,51 +116,50 @@ function showHelp(options) {
   console.error(help);
 };
 
-function printVersions(args) {
-  return new Promise((resolve, _reject) => {
+async function printVersions(args) {
     const apmVersion = require("../package.json").version ?? "";
     const npmVersion = require("npm/package.json").version ?? "";
     const nodeVersion = process.versions.node ?? "";
 
-    getPythonVersion().then(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion().then(atomVersion => {
-      let versions;
-      if (args.json) {
-        versions = {
-          apm: apmVersion,
-          npm: npmVersion,
-          node: nodeVersion,
-          atom: atomVersion,
-          python: pythonVersion,
-          git: gitVersion,
-          nodeArch: process.arch
-        };
-        if (config.isWin32()) {
-          versions.visualStudio = config.getInstalledVisualStudioFlag();
-        }
-        console.log(JSON.stringify(versions));
-      } else {
-        pythonVersion ??= '';
-        gitVersion ??= '';
-        atomVersion ??= '';
-        versions =  `\
-  ${'apm'.red}  ${apmVersion.red}
-  ${'npm'.green}  ${npmVersion.green}
-  ${'node'.blue} ${nodeVersion.blue} ${process.arch.blue}
-  ${'atom'.cyan} ${atomVersion.cyan}
-  ${'python'.yellow} ${pythonVersion.yellow}
-  ${'git'.magenta} ${gitVersion.magenta}\
-  `;
-
-        if (config.isWin32()) {
-          const visualStudioVersion = config.getInstalledVisualStudioFlag() ?? "";
-          versions += `\n${'visual studio'.cyan} ${visualStudioVersion.cyan}`;
-        }
-
-        console.log(versions);
+    const pythonVersion = await getPythonVersion();
+    const gitVersion = await git.getGitVersion();
+    const atomVersion = await getAtomVersion();
+    let versions;
+    if (args.json) {
+      versions = {
+        apm: apmVersion,
+        npm: npmVersion,
+        node: nodeVersion,
+        atom: atomVersion,
+        python: pythonVersion,
+        git: gitVersion,
+        nodeArch: process.arch
+      };
+      if (config.isWin32()) {
+        versions.visualStudio = config.getInstalledVisualStudioFlag();
       }
-      return resolve();
-    })));
-  });
+      console.log(JSON.stringify(versions));
+      return;
+    }
+    
+    pythonVersion ??= '';
+    gitVersion ??= '';
+    atomVersion ??= '';
+    versions =  `\
+${'apm'.red}  ${apmVersion.red}
+${'npm'.green}  ${npmVersion.green}
+${'node'.blue} ${nodeVersion.blue} ${process.arch.blue}
+${'atom'.cyan} ${atomVersion.cyan}
+${'python'.yellow} ${pythonVersion.yellow}
+${'git'.magenta} ${gitVersion.magenta}\
+`;
+
+    if (config.isWin32()) {
+      const visualStudioVersion = config.getInstalledVisualStudioFlag() ?? "";
+      versions += `\n${'visual studio'.cyan} ${visualStudioVersion.cyan}`;
+    }
+
+    console.log(versions);
 };
 
 function getAtomVersion() {
