@@ -34,7 +34,7 @@ const addPortableGitToEnv = function(env) {
 
 };
 
-const addGitBashToEnv = function(env) {
+const addGitBashToEnv = env => {
   let gitPath;
   if (env.ProgramFiles) {
     gitPath = path.join(env.ProgramFiles, 'Git');
@@ -63,28 +63,29 @@ exports.addGitToEnv = function(env) {
   addGitBashToEnv(env);
 };
 
-exports.getGitVersion = function(callback) {
+exports.getGitVersion = () => {
   const npmOptions = {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath()
   };
-  npm.load(npmOptions, function() {
-    let left;
-    const git = (left = npm.config.get('git')) != null ? left : 'git';
-    exports.addGitToEnv(process.env);
-    const spawned = spawn(git, ['--version']);
-    const outputChunks = [];
-    spawned.stderr.on('data', chunk => outputChunks.push(chunk));
-    spawned.stdout.on('data', chunk => outputChunks.push(chunk));
-    spawned.on('error', function() {});
-    return spawned.on('close', function(code) {
-      let version;
-      if (code === 0) {
-        let gitName, versionName;
-        [gitName, versionName, version] = Buffer.concat(outputChunks).toString().split(' ');
-        version = version != null ? version.trim() : undefined;
-      }
-      return callback(version);
+  return new Promise((resolve, _reject => {
+    npm.load(npmOptions, () => {
+      const git = npm.config.get('git') ?? 'git';
+      exports.addGitToEnv(process.env);
+      const spawned = spawn(git, ['--version']);
+      const outputChunks = [];
+      spawned.stderr.on('data', chunk => void outputChunks.push(chunk));
+      spawned.stdout.on('data', chunk => void outputChunks.push(chunk));
+      spawned.on('error', () => {});
+      spawned.on('close', code => {
+        let version;
+        if (code === 0) {
+          let gitName, versionName;
+          [gitName, versionName, version] = Buffer.concat(outputChunks).toString().split(' ');
+          version = version?.trim();
+        }
+        resolve(version);
+      });
     });
-  });
+  }));
 };
