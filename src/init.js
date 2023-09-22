@@ -50,7 +50,7 @@ on the option selected.\
     async run(options) {
       let templatePath;
       options = this.parseOptions(options.commandArgs);
-      if ((options.argv.package != null ? options.argv.package.length : undefined) > 0) {
+      if (options.argv.package?.length > 0) {
         if (options.argv.convert) {
           return this.convertPackage(options.argv.convert, options.argv.package).catch(error => error); // rewire the error as a value for te time being
         }
@@ -72,7 +72,7 @@ on the option selected.\
         this.generateFromTemplate(themePath, templatePath);
         return;
       }
-      if ((options.argv.language != null ? options.argv.language.length : undefined) > 0) {
+      if (options.argv.language?.length > 0) {
         let languagePath = path.resolve(options.argv.language);
         const languageName = path.basename(languagePath).replace(/^language-/, '');
         languagePath = path.join(path.dirname(languagePath), `language-${languageName}`);
@@ -89,25 +89,17 @@ on the option selected.\
       return 'You must specify either --package, --theme or --language to `ppm init`'; // errors as values...
     }
 
-    convertPackage(sourcePath, destinationPath) {
+    async convertPackage(sourcePath, destinationPath) {
       if (!destinationPath) {
-        return Promise.reject("Specify directory to create package in using --package");
+        throw "Specify directory to create package in using --package";
       }
 
       const PackageConverter = require('./package-converter');
       const converter = new PackageConverter(sourcePath, destinationPath);
-      return new Promise((resolve, reject) => {
-        converter.convert(error => {
-          if (error != null) {
-            return void reject(error);
-          }
-
-          destinationPath = path.resolve(destinationPath);
-          const templatePath = path.resolve(__dirname, '..', 'templates', 'bundle');
-          this.generateFromTemplate(destinationPath, templatePath);
-          resolve();
-        });
-      });
+      await converter.convert();
+      destinationPath = path.resolve(destinationPath);
+      const templatePath = path.resolve(__dirname, '..', 'templates', 'bundle');
+      this.generateFromTemplate(destinationPath, templatePath);
     }
 
     convertTheme(sourcePath, destinationPath) {
