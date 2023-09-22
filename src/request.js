@@ -1,8 +1,14 @@
 
-const npm = require('npm');
-const request = require('request');
+const npm = require("npm");
+const superagent = require("superagent");
+require("superagent-proxy")(superagent);
 
-const config = require('./apm');
+const config = require("./apm.js");
+
+// request would not error on valid status codes, leaving the implementer to deal
+// with specifics. But superagent will fail on anything 4xx, 5xx, and 3xx.
+// So we have to specifically say these are valid, or otherwise redo a lot of our logic
+const OK_STATUS_CODES = [200, 201, 204, 404];
 
 const loadNpm = function(callback) {
   const npmOptions = {
@@ -13,61 +19,98 @@ const loadNpm = function(callback) {
 };
 
 const configureRequest = (requestOptions, callback) => loadNpm(function() {
-  let left;
-  if (requestOptions.proxy == null) { requestOptions.proxy = npm.config.get('https-proxy') || npm.config.get('proxy') || process.env.HTTPS_PROXY || process.env.HTTP_PROXY; }
-  if (requestOptions.strictSSL == null) { requestOptions.strictSSL = npm.config.get('strict-ssl'); }
+  requestOptions.proxy ??= npm.config.get("https-proxy") ?? npm.config.get("proxy") ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY;
+  requestOptions.strictSSL ??= npm.config.get("strict-ssl") ?? true;
 
-  const userAgent = (left = npm.config.get('user-agent')) != null ? left : `AtomApm/${require('../package.json').version}`;
-  if (requestOptions.headers == null) { requestOptions.headers = {}; }
-  if (requestOptions.headers['User-Agent'] == null) { requestOptions.headers['User-Agent'] = userAgent; }
+  requestOptions.headers ??= {};
+  requestOptions.headers["User-Agent"] ??= npm.config.get("user-agent") ?? `PulsarPpm/${require("../package.json").version}`;
+
+  if (requestOptions.json) {
+    requestOptions.headers["Accept"] = "application/json";
+  }
+
+  requestOptions.qs ??= {};
+
   return callback();
 });
 
 module.exports = {
-  get(requestOptions, callback) {
-    return configureRequest(requestOptions, function() {
-      let retryCount = requestOptions.retries != null ? requestOptions.retries : 0;
-      let requestsMade = 0;
-      var tryRequest = function() {
-        requestsMade++;
-        return request.get(requestOptions, function(error, response, body) {
-          if ((retryCount > 0) && ['ETIMEDOUT', 'ECONNRESET'].includes(error != null ? error.code : undefined)) {
-            retryCount--;
-            return tryRequest();
-          } else {
-            if ((error != null ? error.message : undefined) && (requestsMade > 1)) {
-              error.message += ` (${requestsMade} attempts)`;
-            }
+  get(opts, callback) {
+    configureRequest(opts, () => {
+      let retryCount = opts.retries ?? 0;
 
-            return callback(error, response, body);
-          }
+      if (typeof opts.strictSSL === "boolean") {
+        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
         });
-      };
-      return tryRequest();
+      } else {
+        superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).retry(retryCount).ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      }
     });
   },
 
-  del(requestOptions, callback) {
-    return configureRequest(requestOptions, () => request.del(requestOptions, callback));
+  del(opts, callback) {
+    configureRequest(opts, () => {
+      if (typeof opts.strictSSL === "boolean") {
+        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      } else {
+        superagent.delete(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      }
+    });
   },
 
-  post(requestOptions, callback) {
-    return configureRequest(requestOptions, () => request.post(requestOptions, callback));
+  post(opts, callback) {
+    configureRequest(opts, () => {
+      if (typeof opts.strictSSL === "boolean") {
+        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      } else {
+        superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status)).then((res) => {
+          return callback(null, res, res.body);
+        }).catch((err) => {
+          return callback(err, null, null);
+        });
+      }
+    });
   },
 
-  createReadStream(requestOptions, callback) {
-    return configureRequest(requestOptions, () => callback(request.get(requestOptions)));
+  createReadStream(opts) {
+    configureRequest(opts, () => {
+      if (typeof opts.strictSSL === "boolean") {
+        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status));
+      } else {
+        return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
+      }
+    });
   },
 
-  getErrorMessage(response, body) {
-    if ((response != null ? response.statusCode : undefined) === 503) {
-      return `${response.host} is temporarily unavailable, please try again later.`;
+  getErrorMessage(err) {
+    if (err?.status === 503) {
+      return `${err.response.req.host} is temporarily unavailable, please try again later.`;
     } else {
-      return body?.message ?? body?.error ?? body;
+      return err?.response?.body ?? err?.response?.error ?? err;
     }
   },
 
   debug(debug) {
-    return request.debug = debug;
+    // Superagent does not support debug flags like request did
+    return;
   }
 };

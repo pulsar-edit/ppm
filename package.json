@@ -19,7 +19,7 @@
     "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean": "npm run clean:bin",
     "postinstall": "node script/postinstall.js",
-    "test": "npm run check-version && jasmine-focused --captureExceptions spec"
+    "test": "npm run check-version && node ./script/local-jasmine.js --captureExceptions spec"
   },
   "dependencies": {
     "@atom/plist": "0.4.4",
@@ -42,6 +42,8 @@
     "second-mate": "https://github.com/pulsar-edit/second-mate.git#9686771",
     "season": "^6.0.2",
     "semver": "^7.3.4",
+    "superagent": "^8.0.9",
+    "superagent-proxy": "^3.0.0",
     "tar": "^6.0.5",
     "temp": "^0.9.4",
     "underscore-plus": "1.x",

@@ -45,14 +45,14 @@ name is specified.\
         }
 
         const options = {
-          uri: `${config.getAtomPackagesUrl()}/${packageName}`,
+          url: `${config.getAtomPackagesUrl()}/${packageName}`,
           headers: {
             authorization: token
           },
           json: true
         };
 
-        if (packageVersion) { options.uri += `/versions/${packageVersion}`; }
+        if (packageVersion) { options.url += `/versions/${packageVersion}`; }
 
         request.del(options, (error, response, body) => {
           if (body == null) { body = {}; }

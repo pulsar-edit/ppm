@@ -47,7 +47,7 @@ List the Pulsar packages and themes that are currently featured.\
           packages = _.sortBy(packages, 'name');
           return callback(null, packages);
         } else {
-          const message = request.getErrorMessage(response, body);
+          const message = request.getErrorMessage(error);
           return callback(`Requesting packages failed: ${message}`);
         }
       });

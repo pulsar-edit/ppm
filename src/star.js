@@ -54,7 +54,7 @@ Run \`ppm stars\` to see all your starred packages.\
           return callback();
         } else if (response.statusCode !== 200) {
           this.logFailure();
-          const message = request.getErrorMessage(response, body);
+          const message = request.getErrorMessage(error);
           return callback(`Starring package failed: ${message}`);
         } else {
           this.logSuccess();

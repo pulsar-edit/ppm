@@ -19,7 +19,7 @@ class ThemeConverter {
       const requestOptions = {url: this.sourcePath};
       request.get(requestOptions, (error, response, body) => {
         if (error != null) {
-          if (error.code === 'ENOTFOUND') {
+          if (error?.code === 'ENOTFOUND') {
             error = `Could not resolve URL: ${this.sourcePath}`;
           }
           return callback(error);

@@ -54,7 +54,7 @@ Search for packages/themes.\
           packages = packages.filter(({name, version}) => !isDeprecatedPackage(name, version));
           return callback(null, packages);
         } else {
-          const message = request.getErrorMessage(response, body);
+          const message = request.getErrorMessage(error);
           return callback(`Searching packages failed: ${message}`);
         }
       });

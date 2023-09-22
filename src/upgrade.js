@@ -211,7 +211,6 @@ available updates.\
 
       this.verbose = options.argv.verbose;
       if (this.verbose) {
-        request.debug(true);
         process.env.NODE_DEBUG = 'request';
       }
 
