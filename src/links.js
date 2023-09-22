@@ -10,6 +10,7 @@ const tree = require('./tree');
 
 module.exports =
 class Links extends Command {
+  static promiseBased = true;
   static commandNames = [ "linked", "links", "lns" ];
 
     constructor() {
@@ -58,11 +59,8 @@ List all of the symlinked atom packages in ~/.atom/packages and
       });
     }
 
-    run(options) {
-      const {callback} = options;
-
+    async run(_options) {
       this.logLinks(this.devPackagesPath);
       this.logLinks(this.packagesPath);
-      return callback();
     }
   }
