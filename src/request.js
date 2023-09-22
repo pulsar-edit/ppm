@@ -91,7 +91,7 @@ module.exports = {
     });
   },
 
-  createReadStream(opts, callback) {
+  createReadStream(opts) {
     configureRequest(opts, () => {
       if (typeof opts.strictSSL === "boolean") {
         return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status));
