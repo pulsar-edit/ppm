@@ -25,7 +25,7 @@ Disables the named package(s).\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    getInstalledPackages() {
+    async getInstalledPackages() {
       const options = {
         argv: {
           theme: false,
@@ -34,15 +34,10 @@ Disables the named package(s).\
       };
 
       const lister = new List();
-      return new Promise((resolve, _reject) => 
-        void lister.listBundledPackages(options, (_error, core_packages) => 
-          void lister.listDevPackages(options, (_error, dev_packages) =>
-            void lister.listUserPackages(options, (_error, user_packages) =>
-              void resolve(core_packages.concat(dev_packages, user_packages))
-            )
-          )
-        )
-      );
+      const corePackages = await lister.listBundledPackages(options);
+      const devPackages = lister.listDevPackages(options);
+      const userPackages = lister.listUserPackages(options);
+      return corePackages.concat(devPackages, userPackages);
     }
 
     run(options) {
