@@ -134,37 +134,35 @@ on the option selected.\
     }
 
     generateFromTemplate(packagePath, templatePath, packageName) {
-      if (packageName == null) { packageName = path.basename(packagePath); }
+      packageName ??= path.basename(packagePath);
       const packageAuthor = process.env.GITHUB_USER || 'atom';
 
       fs.makeTreeSync(packagePath);
 
-      return (() => {
-        const result = [];
-        for (let childPath of Array.from(fs.listRecursive(templatePath))) {
-          const templateChildPath = path.resolve(templatePath, childPath);
-          let relativePath = templateChildPath.replace(templatePath, "");
-          relativePath = relativePath.replace(/^\//, '');
-          relativePath = relativePath.replace(/\.template$/, '');
-          relativePath = this.replacePackageNamePlaceholders(relativePath, packageName);
+      const result = [];
+      for (let childPath of Array.from(fs.listRecursive(templatePath))) {
+        const templateChildPath = path.resolve(templatePath, childPath);
+        let relativePath = templateChildPath.replace(templatePath, "");
+        relativePath = relativePath.replace(/^\//, '');
+        relativePath = relativePath.replace(/\.template$/, '');
+        relativePath = this.replacePackageNamePlaceholders(relativePath, packageName);
 
-          const sourcePath = path.join(packagePath, relativePath);
-          if (fs.existsSync(sourcePath)) { continue; }
-          if (fs.isDirectorySync(templateChildPath)) {
-            result.push(fs.makeTreeSync(sourcePath));
-          } else if (fs.isFileSync(templateChildPath)) {
-            fs.makeTreeSync(path.dirname(sourcePath));
-            let contents = fs.readFileSync(templateChildPath).toString();
-            contents = this.replacePackageNamePlaceholders(contents, packageName);
-            contents = this.replacePackageAuthorPlaceholders(contents, packageAuthor);
-            contents = this.replaceCurrentYearPlaceholders(contents);
-            result.push(fs.writeFileSync(sourcePath, contents));
-          } else {
-            result.push(undefined);
-          }
+        const sourcePath = path.join(packagePath, relativePath);
+        if (fs.existsSync(sourcePath)) { continue; }
+        if (fs.isDirectorySync(templateChildPath)) {
+          result.push(fs.makeTreeSync(sourcePath));
+        } else if (fs.isFileSync(templateChildPath)) {
+          fs.makeTreeSync(path.dirname(sourcePath));
+          let contents = fs.readFileSync(templateChildPath).toString();
+          contents = this.replacePackageNamePlaceholders(contents, packageName);
+          contents = this.replacePackageAuthorPlaceholders(contents, packageAuthor);
+          contents = this.replaceCurrentYearPlaceholders(contents);
+          result.push(fs.writeFileSync(sourcePath, contents));
+        } else {
+          result.push(undefined);
         }
-        return result;
-      })();
+      }
+      return result;
     }
 
     replacePackageAuthorPlaceholders(string, packageAuthor) {
