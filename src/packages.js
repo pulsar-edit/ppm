@@ -9,7 +9,7 @@ module.exports = {
   //
   // Returns a name/owner string or null if not parseable.
   getRepository(pack) {
-    if (pack == null) { pack = {}; }
+    pack ??= {};
     let repository = pack.repository?.url ?? pack.repository;
     if (repository) {
       const repoPath = url.parse(repository.replace(/\.git$/, '')).pathname;
@@ -24,7 +24,7 @@ module.exports = {
   // pack - The package metadata object.
   // Returns a the remote or 'origin' if not parseable.
   getRemote(pack) {
-    if (pack == null) { pack = {}; }
+    pack ??= {};
     return pack.repository?.url ?? pack.repository ?? "origin";
   }
 };
