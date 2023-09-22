@@ -108,7 +108,7 @@ package names to install with optional versions using the
             child = children[0];
             const source = path.join(nodeModulesDirectory, child);
             destination = path.join(this.atomPackagesDirectory, child);
-            commands.push(next => fs.cp(source, destination, next));
+            commands.push(next => fs.cp(source, destination).then(next, next));
             commands.push(next => this.buildModuleCache(pack.name, next));
             commands.push(next => this.warmCompileCache(pack.name, next));
 
@@ -607,15 +607,11 @@ Run ppm -v after installing Git to see what version has been detected.\
         const {name} = data.metadata;
         const targetDir = path.join(this.atomPackagesDirectory, name);
         if (!options.argv.json) { process.stdout.write(`Moving ${name} to ${targetDir} `); }
-        return fs.cp(cloneDir, targetDir, err => {
-          if (err) {
-            return next(err);
-          } else {
-            if (!options.argv.json) { this.logSuccess(); }
-            const json = {installPath: targetDir, metadata: data.metadata};
-            return next(null, json);
-          }
-        });
+        return fs.cp(cloneDir, targetDir).then(_value => {
+          if (!options.argv.json) { this.logSuccess(); }
+          const json = {installPath: targetDir, metadata: data.metadata};
+          next(null, json);
+        }, next);
       });
 
       const iteratee = (currentData, task, next) => task(currentData, next);
