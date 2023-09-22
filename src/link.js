@@ -10,6 +10,7 @@ const fs = require('./fs');
 
 module.exports =
 class Link extends Command {
+  static promiseBased = true;
   static commandNames = [ "link", "ln" ];
 
     parseOptions(argv) {
@@ -28,9 +29,7 @@ Run \`ppm links\` to view all the currently linked packages.\
       return options.alias('d', 'dev').boolean('dev').describe('dev', 'Link to ~/.pulsar/dev/packages');
     }
 
-    run(options) {
-      let targetPath;
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
 
       const packagePath = options.argv._[0]?.toString() ?? ".";
@@ -38,19 +37,16 @@ Run \`ppm links\` to view all the currently linked packages.\
 
       let packageName = options.argv.name;
       try {
-        if (!packageName) { packageName = CSON.readFileSync(CSON.resolve(path.join(linkPath, 'package'))).name; }
+        packageName ||= CSON.readFileSync(CSON.resolve(path.join(linkPath, 'package'))).name;
       } catch (error) {}
-      if (!packageName) { packageName = path.basename(linkPath); }
+      packageName ||= path.basename(linkPath);
 
-      if (options.argv.dev) {
-        targetPath = path.join(config.getAtomDirectory(), 'dev', 'packages', packageName);
-      } else {
-        targetPath = path.join(config.getAtomDirectory(), 'packages', packageName);
-      }
+      const targetPath = options.argv.dev
+        ? path.join(config.getAtomDirectory(), 'dev', 'packages', packageName)
+        : path.join(config.getAtomDirectory(), 'packages', packageName);
 
       if (!fs.existsSync(linkPath)) {
-        callback(`Package directory does not exist: ${linkPath}`);
-        return;
+        return `Package directory does not exist: ${linkPath}`; // error as value for now
       }
 
       try {
@@ -58,9 +54,8 @@ Run \`ppm links\` to view all the currently linked packages.\
         fs.makeTreeSync(path.dirname(targetPath));
         fs.symlinkSync(linkPath, targetPath, 'junction');
         console.log(`${targetPath} -> ${linkPath}`);
-        return callback();
       } catch (error) {
-        return callback(`Linking ${targetPath} to ${linkPath} failed: ${error.message}`);
+        return `Linking ${targetPath} to ${linkPath} failed: ${error.message}`; // error as value for now
       }
     }
   }

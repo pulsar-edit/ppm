@@ -101,13 +101,10 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     }
 
     linkPackage(packageDirectory, options) {
-      return new Promise((resolve, _reject) => {
-        const linkOptions = _.clone(options);
-        linkOptions.callback = resolve;
+      const linkOptions = _.clone(options);
 
-        linkOptions.commandArgs = [packageDirectory, '--dev'];
-        return void new Link().run(linkOptions);
-      });
+      linkOptions.commandArgs = [packageDirectory, '--dev'];
+      return new Link().run(linkOptions);
     }
 
     run(options) {
