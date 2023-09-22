@@ -8,6 +8,7 @@ const fs = require('./fs');
 
 module.exports =
 class Init extends Command {
+  static promiseBased = true;
   static commandNames = [ "init" ];
 
   constructor() {
@@ -46,87 +47,89 @@ on the option selected.\
       return options.string('template').describe('template', 'Path to the package or theme template');
     }
 
-    run(options) {
+    async run(options) {
       let templatePath;
-      const {callback} = options;
       options = this.parseOptions(options.commandArgs);
       if ((options.argv.package != null ? options.argv.package.length : undefined) > 0) {
         if (options.argv.convert) {
-          return this.convertPackage(options.argv.convert, options.argv.package, callback);
-        } else {
-          const packagePath = path.resolve(options.argv.package);
-          const syntax = options.argv.syntax || this.supportedSyntaxes[0];
-          if (!Array.from(this.supportedSyntaxes).includes(syntax)) {
-            return callback(`You must specify one of ${this.supportedSyntaxes.join(', ')} after the --syntax argument`);
-          }
-          templatePath = this.getTemplatePath(options.argv, `package-${syntax}`);
-          this.generateFromTemplate(packagePath, templatePath);
-          return callback();
+          return this.convertPackage(options.argv.convert, options.argv.package).catch(error => error); // rewire the error as a value for te time being
         }
-      } else if ((options.argv.theme != null ? options.argv.theme.length : undefined) > 0) {
+        const packagePath = path.resolve(options.argv.package);
+        const syntax = options.argv.syntax || this.supportedSyntaxes[0];
+        if (!Array.from(this.supportedSyntaxes).includes(syntax)) {
+          return `You must specify one of ${this.supportedSyntaxes.join(', ')} after the --syntax argument`; // expose the error value as a value for now
+        }
+        templatePath = this.getTemplatePath(options.argv, `package-${syntax}`);
+        this.generateFromTemplate(packagePath, templatePath);
+        return;
+      } 
+      if (options.argv.theme?.length > 0) {
         if (options.argv.convert) {
-          return this.convertTheme(options.argv.convert, options.argv.theme, callback);
-        } else {
-          const themePath = path.resolve(options.argv.theme);
-          templatePath = this.getTemplatePath(options.argv, 'theme');
-          this.generateFromTemplate(themePath, templatePath);
-          return callback();
+          return this.convertTheme(options.argv.convert, options.argv.theme).catch(error => error); // rewiring errors...
         }
-      } else if ((options.argv.language != null ? options.argv.language.length : undefined) > 0) {
+        const themePath = path.resolve(options.argv.theme);
+        templatePath = this.getTemplatePath(options.argv, 'theme');
+        this.generateFromTemplate(themePath, templatePath);
+        return;
+      }
+      if ((options.argv.language != null ? options.argv.language.length : undefined) > 0) {
         let languagePath = path.resolve(options.argv.language);
         const languageName = path.basename(languagePath).replace(/^language-/, '');
         languagePath = path.join(path.dirname(languagePath), `language-${languageName}`);
         templatePath = this.getTemplatePath(options.argv, 'language');
         this.generateFromTemplate(languagePath, templatePath, languageName);
-        return callback();
-      } else if (options.argv.package != null) {
-        return callback('You must specify a path after the --package argument');
-      } else if (options.argv.theme != null) {
-        return callback('You must specify a path after the --theme argument');
-      } else {
-        return callback('You must specify either --package, --theme or --language to `ppm init`');
+        return;
       }
+      if (options.argv.package != null) {
+        return 'You must specify a path after the --package argument'; // errors as values...
+      }
+      if (options.argv.theme != null) {
+        return 'You must specify a path after the --theme argument'; // errors as values...
+      }
+      return 'You must specify either --package, --theme or --language to `ppm init`'; // errors as values...
     }
 
-    convertPackage(sourcePath, destinationPath, callback) {
+    convertPackage(sourcePath, destinationPath) {
       if (!destinationPath) {
-        callback("Specify directory to create package in using --package");
-        return;
+        return Promise.reject("Specify directory to create package in using --package");
       }
 
       const PackageConverter = require('./package-converter');
       const converter = new PackageConverter(sourcePath, destinationPath);
-      return converter.convert(error => {
-        if (error != null) {
-          return callback(error);
-        } else {
+      return new Promise((resolve, reject) => {
+        converter.convert(error => {
+          if (error != null) {
+            return void reject(error);
+          }
+
           destinationPath = path.resolve(destinationPath);
           const templatePath = path.resolve(__dirname, '..', 'templates', 'bundle');
           this.generateFromTemplate(destinationPath, templatePath);
-          return callback();
-        }
+          resolve();
+        });
       });
     }
 
-    convertTheme(sourcePath, destinationPath, callback) {
+    convertTheme(sourcePath, destinationPath) {
       if (!destinationPath) {
-        callback("Specify directory to create theme in using --theme");
-        return;
+        return void Promise.reject("Specify directory to create theme in using --theme");
       }
 
       const ThemeConverter = require('./theme-converter');
       const converter = new ThemeConverter(sourcePath, destinationPath);
-      converter.convert(error => {
-        if (error != null) {
-          return callback(error);
-        } else {
+      return new Promise((resolve, reject) => {
+        converter.convert(error => {
+          if (error != null) {
+            return void reject(error);
+          }
+
           destinationPath = path.resolve(destinationPath);
           const templatePath = path.resolve(__dirname, '..', 'templates', 'theme');
           this.generateFromTemplate(destinationPath, templatePath);
           fs.removeSync(path.join(destinationPath, 'styles', 'colors.less'));
           fs.removeSync(path.join(destinationPath, 'LICENSE.md'));
-          return callback();
-        }
+          resolve();
+        });
       });
     }
 
@@ -170,18 +173,19 @@ on the option selected.\
 
     replacePackageNamePlaceholders(string, packageName) {
       const placeholderRegex = /__(?:(package-name)|([pP]ackageName)|(package_name))__/g;
-      return string = string.replace(placeholderRegex, (match, dash, camel, underscore) => {
+      return string = string.replace(placeholderRegex, (_match, dash, camel, underscore) => {
         if (dash) {
           return this.dasherize(packageName);
-        } else if (camel) {
+        }
+        if (camel) {
           if (/[a-z]/.test(camel[0])) {
             packageName = packageName[0].toLowerCase() + packageName.slice(1);
           } else if (/[A-Z]/.test(camel[0])) {
             packageName = packageName[0].toUpperCase() + packageName.slice(1);
           }
           return this.camelize(packageName);
-
-        } else if (underscore) {
+        }
+        if (underscore) {
           return this.underscore(packageName);
         }
       });
@@ -192,22 +196,12 @@ on the option selected.\
     }
 
     getTemplatePath(argv, templateType) {
-      if (argv.template != null) {
-        return path.resolve(argv.template);
-      } else {
-        return path.resolve(__dirname, '..', 'templates', templateType);
-      }
+      return argv.template != null ? path.resolve(argv.template) : path.resolve(__dirname, '..', 'templates', templateType);
     }
 
     dasherize(string) {
       string = string[0].toLowerCase() + string.slice(1);
-      return string.replace(/([A-Z])|(_)/g, function(m, letter, underscore) {
-        if (letter) {
-          return "-" + letter.toLowerCase();
-        } else {
-          return "-";
-        }
-      });
+      return string.replace(/([A-Z])|(_)/g, (_m, letter, _underscore) => letter ? "-" + letter.toLowerCase() : "-");
     }
 
     camelize(string) {
@@ -216,12 +210,6 @@ on the option selected.\
 
     underscore(string) {
       string = string[0].toLowerCase() + string.slice(1);
-      return string.replace(/([A-Z])|(-)/g, function(m, letter, dash) {
-        if (letter) {
-          return "_" + letter.toLowerCase();
-        } else {
-          return "_";
-        }
-      });
+      return string.replace(/([A-Z])|(-)/g, (_m, letter, _dash) => letter ? "_" + letter.toLowerCase() : "_");
     }
   }
