@@ -36,13 +36,14 @@ class PackageConverter {
     };
   }
 
-  convert(callback) {
+  async convert() {
     const {protocol} = url.parse(this.sourcePath);
     if ((protocol === 'http:') || (protocol === 'https:')) {
-      return this.downloadBundle(callback);
-    } else {
-      return this.copyDirectories(this.sourcePath, callback);
+      await this.downloadBundle();
+      return;
     }
+
+    await this.copyDirectories(this.sourcePath);
   }
 
   getDownloadUrl() {
@@ -51,42 +52,44 @@ class PackageConverter {
     return downloadUrl += '/archive/master.tar.gz';
   }
 
-  downloadBundle(callback) {
-    const tempPath = temp.mkdirSync('atom-bundle-');
-    const requestOptions = {url: this.getDownloadUrl()};
-    return request.createReadStream(requestOptions, readStream => {
-      readStream.on('response', function({headers, statusCode}) {
-        if (statusCode !== 200) {
-          return callback(`Download failed (${headers.status})`);
-        }
-      });
+  downloadBundle() {
+    return new Promise((resolve, reject) => {
+      const tempPath = temp.mkdirSync('atom-bundle-');
+      const requestOptions = {url: this.getDownloadUrl()};
+      return request.createReadStream(requestOptions, readStream => {
+        readStream.on('response', ({headers, statusCode}) => {
+          if (statusCode !== 200) {
+            reject(`Download failed (${headers.status})`);
+          }
+        });
 
-      return readStream.pipe(zlib.createGunzip()).pipe(tar.extract({cwd: tempPath}))
-        .on('error', error => callback(error))
-        .on('end', () => {
-          const sourcePath = path.join(tempPath, fs.readdirSync(tempPath)[0]);
-          return this.copyDirectories(sourcePath, callback);
+        return readStream.pipe(zlib.createGunzip()).pipe(tar.extract({cwd: tempPath}))
+          .on('error', error => reject(error))
+          .on('end', async () => {
+            const sourcePath = path.join(tempPath, fs.readdirSync(tempPath)[0]);
+            await this.copyDirectories(sourcePath);
+            resolve();
+        });
       });
     });
   }
 
-  copyDirectories(sourcePath, callback) {
+  async copyDirectories(sourcePath) {
     let packageName;
     sourcePath = path.resolve(sourcePath);
     try {
       packageName = JSON.parse(fs.readFileSync(path.join(sourcePath, 'package.json')))?.packageName;
     } catch (error) {}
-    if (packageName == null) { packageName = path.basename(this.destinationPath); }
+    packageName ??= path.basename(this.destinationPath);
 
-    this.convertSnippets(packageName, sourcePath);
-    this.convertPreferences(packageName, sourcePath);
+    await this.convertSnippets(packageName, sourcePath);
+    await this.convertPreferences(packageName, sourcePath);
     this.convertGrammars(sourcePath);
-    return callback();
   }
 
   filterObject(object) {
     delete object.uuid;
-    return delete object.keyEquivalent;
+    delete object.keyEquivalent;
   }
 
   convertSettings(settings) {
@@ -118,57 +121,55 @@ class PackageConverter {
   }
 
   writeFileSync(filePath, object) {
-    if (object == null) { object = {}; }
+    object ??= {};
     this.filterObject(object);
     if (Object.keys(object).length > 0) {
-      return CSON.writeFileSync(filePath, object);
+      CSON.writeFileSync(filePath, object);
     }
   }
 
   convertFile(sourcePath, destinationDir) {
-    let contents;
     const extension = path.extname(sourcePath);
     let destinationName = `${path.basename(sourcePath, extension)}.cson`;
     destinationName = destinationName.toLowerCase();
     const destinationPath = path.join(destinationDir, destinationName);
 
+    let contents;
     if (_.contains(this.plistExtensions, path.extname(sourcePath))) {
       contents = plist.parseFileSync(sourcePath);
     } else if (_.contains(['.json', '.cson'], path.extname(sourcePath))) {
       contents = CSON.readFileSync(sourcePath);
     }
 
-    return this.writeFileSync(destinationPath, contents);
+    this.writeFileSync(destinationPath, contents);
   }
 
   normalizeFilenames(directoryPath) {
     if (!fs.isDirectorySync(directoryPath)) { return; }
 
-    return (() => {
-      const result = [];
-      for (let child of Array.from(fs.readdirSync(directoryPath))) {
-        const childPath = path.join(directoryPath, child);
+    const result = [];
+    for (let child of Array.from(fs.readdirSync(directoryPath))) {
+      const childPath = path.join(directoryPath, child);
 
-        // Invalid characters taken from http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
-        let convertedFileName = child.replace(/[|?*<>:"\\\/]+/g, '-');
-        if (child === convertedFileName) { continue; }
+      // Invalid characters taken from http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
+      let convertedFileName = child.replace(/[|?*<>:"\\\/]+/g, '-');
+      if (child === convertedFileName) { continue; }
 
-        convertedFileName = convertedFileName.replace(/[\s-]+/g, '-');
-        let convertedPath = path.join(directoryPath, convertedFileName);
-        let suffix = 1;
-        while (fs.existsSync(convertedPath) || fs.existsSync(convertedPath.toLowerCase())) {
-          const extension = path.extname(convertedFileName);
-          convertedFileName = `${path.basename(convertedFileName, extension)}-${suffix}${extension}`;
-          convertedPath = path.join(directoryPath, convertedFileName);
-          suffix++;
-        }
-        result.push(fs.renameSync(childPath, convertedPath));
+      convertedFileName = convertedFileName.replace(/[\s-]+/g, '-');
+      let convertedPath = path.join(directoryPath, convertedFileName);
+      let suffix = 1;
+      while (fs.existsSync(convertedPath) || fs.existsSync(convertedPath.toLowerCase())) {
+        const extension = path.extname(convertedFileName);
+        convertedFileName = `${path.basename(convertedFileName, extension)}-${suffix}${extension}`;
+        convertedPath = path.join(directoryPath, convertedFileName);
+        suffix++;
       }
-      return result;
-    })();
+      result.push(fs.renameSync(childPath, convertedPath));
+    }
+    return result;
   }
 
-  convertSnippets(packageName, source) {
+  async convertSnippets(packageName, source) {
     let sourceSnippets = path.join(source, 'snippets');
     if (!fs.isDirectorySync(sourceSnippets)) {
       sourceSnippets = path.join(source, 'Snippets');
@@ -176,10 +177,8 @@ class PackageConverter {
     if (!fs.isDirectorySync(sourceSnippets)) { return; }
 
     const snippetsBySelector = {};
-    const destination = path.join(this.destinationPath, 'snippets');
     for (let child of Array.from(fs.readdirSync(sourceSnippets))) {
-      var left, selector;
-      const snippet = (left = this.readFileSync(path.join(sourceSnippets, child))) != null ? left : {};
+      const snippet = this.readFileSync(path.join(sourceSnippets, child)) ?? {};
       let {scope, name, content, tabTrigger} = snippet;
       if (!tabTrigger || !content) { continue; }
 
@@ -198,26 +197,26 @@ class PackageConverter {
         name = path.basename(child, extension);
       }
 
+      let selector;
       try {
-        (async () => {
-          await ready;
-        })();
+        await ready;
         if (scope) { selector = new ScopeSelector(scope).toCssSelector(); }
       } catch (e) {
         e.message = `In file ${e.fileName} at ${JSON.stringify(scope)}: ${e.message}`;
         throw e;
       }
-      if (selector == null) { selector = '*'; }
+      selector ??= '*';
 
-      if (snippetsBySelector[selector] == null) { snippetsBySelector[selector] = {}; }
+      snippetsBySelector[selector] ??= {};
       snippetsBySelector[selector][name] = {prefix: tabTrigger, body: content};
     }
 
+    const destination = path.join(this.destinationPath, 'snippets');
     this.writeFileSync(path.join(destination, `${packageName}.cson`), snippetsBySelector);
     return this.normalizeFilenames(destination);
   }
 
-  convertPreferences(packageName, source) {
+  async convertPreferences(packageName, source) {
     let sourcePreferences = path.join(source, 'preferences');
     if (!fs.isDirectorySync(sourcePreferences)) {
       sourcePreferences = path.join(source, 'Preferences');
@@ -227,30 +226,27 @@ class PackageConverter {
     const preferencesBySelector = {};
     const destination = path.join(this.destinationPath, 'settings');
     for (let child of Array.from(fs.readdirSync(sourcePreferences))) {
-      var left, properties;
-      const {scope, settings} = (left = this.readFileSync(path.join(sourcePreferences, child))) != null ? left : {};
+      const {scope, settings} = this.readFileSync(path.join(sourcePreferences, child)) ?? {};
       if (!scope || !settings) { continue; }
 
-      if (properties = this.convertSettings(settings)) {
-        var selector;
-        try {
-          (async () => {
-            await ready;
-          })();
-          selector = new ScopeSelector(scope).toCssSelector();
-        } catch (e) {
-          e.message = `In file ${e.fileName} at ${JSON.stringify(scope)}: ${e.message}`;
-          throw e;
-        }
-        for (let key in properties) {
-          const value = properties[key];
-          if (preferencesBySelector[selector] == null) { preferencesBySelector[selector] = {}; }
-          if (preferencesBySelector[selector][key] != null) {
-            preferencesBySelector[selector][key] = _.extend(value, preferencesBySelector[selector][key]);
-          } else {
-            preferencesBySelector[selector][key] = value;
-          }
-        }
+      const properties = this.convertSettings(settings);
+      if (!properties) {
+        continue;
+      }
+      let selector;
+      try {
+        await ready;
+        selector = new ScopeSelector(scope).toCssSelector();
+      } catch (e) {
+        e.message = `In file ${e.fileName} at ${JSON.stringify(scope)}: ${e.message}`;
+        throw e;
+      }
+      for (let key in properties) {
+        const value = properties[key];
+        preferencesBySelector[selector] ??= {};
+        preferencesBySelector[selector][key] = preferencesBySelector[selector][key] != null 
+          ? _.extend(value, preferencesBySelector[selector][key])
+          : value;
       }
     }
 
