@@ -22,11 +22,11 @@ module.exports = {
   async getToken() {
     try {
       const token = await keytar.findPassword(tokenName);
-      if (token) {
-        return token;
+      if (!token) {
+        throw 'Missing token in keytar.';
       }
       
-      return Promise.reject();
+      return token;
     } catch {
       const token = process.env.ATOM_ACCESS_TOKEN;
       if (token) {
@@ -43,7 +43,7 @@ Run \`ppm login\` or set the \`ATOM_ACCESS_TOKEN\` environment variable.\
   // Save the given token to the keychain.
   //
   // token - A string token to save.
-  saveToken(token) {
-    return keytar.setPassword(tokenName, 'pulsar-edit.dev', token);
+  async saveToken(token) {
+    await keytar.setPassword(tokenName, 'pulsar-edit.dev', token);
   }
 };
