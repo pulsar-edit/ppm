@@ -11,6 +11,7 @@ const tree = require('./tree');
 
 module.exports =
 class Stars extends Command {
+  static promiseBased = true;
   static commandNames = [ "stars", "starred" ];
 
     parseOptions(argv) {
@@ -32,64 +33,65 @@ List or install starred Atom packages and themes.\
       return options.boolean('json').describe('json', 'Output packages as a JSON array');
     }
 
-    getStarredPackages(user, atomVersion, callback) {
+    getStarredPackages(user, atomVersion) {
       const requestSettings = {json: true};
       if (atomVersion) { requestSettings.qs = {engine: atomVersion}; }
 
       if (user) {
         requestSettings.url = `${config.getAtomApiUrl()}/users/${user}/stars`;
-        return this.requestStarredPackages(requestSettings, callback);
-      } else {
-        requestSettings.url = `${config.getAtomApiUrl()}/stars`;
-        return Login.getTokenOrLogin((error, token) => {
-          if (error != null) { return callback(error); }
+        return this.requestStarredPackages(requestSettings);
+      }
+
+      requestSettings.url = `${config.getAtomApiUrl()}/stars`;
+      return new Promise((resolve, reject) => {
+        Login.getTokenOrLogin((error, token) => {
+          if (error != null) { return void reject(error); }
 
           requestSettings.headers = {authorization: token};
-          return this.requestStarredPackages(requestSettings, callback);
+          resolve(this.requestStarredPackages(requestSettings));
         });
-      }
-    }
-
-    requestStarredPackages(requestSettings, callback) {
-      return request.get(requestSettings, function(error, response, body) {
-        if (body == null) { body = []; }
-        if (error != null) {
-          return callback(error);
-        } else if (response.statusCode === 200) {
-          let packages = body.filter(pack => pack?.releases?.latest != null);
-          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-          packages = _.sortBy(packages, 'name');
-          return callback(null, packages);
-        } else {
-          const message = request.getErrorMessage(body, error);
-          return callback(`Requesting packages failed: ${message}`);
-        }
       });
     }
 
-    installPackages(packages, callback) {
-      if (packages.length === 0) { return callback(); }
+    requestStarredPackages(requestSettings) {
+      return new Promise((resolve, reject) => {
+        request.get(requestSettings, (error, response, body) => {
+          body ??= [];
+          if (error != null) {
+            return void reject(error);
+          }
+          if (response.statusCode === 200) {
+            let packages = body.filter(pack => pack?.releases?.latest != null);
+            packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
+            packages = _.sortBy(packages, 'name');
+            return void resolve(packages);
+          }
+
+          const message = request.getErrorMessage(body, error);
+          reject(`Requesting packages failed: ${message}`);
+        });
+      });
+    }
+
+    async installPackages(packages) {
+      if (packages.length === 0) { return; }
 
       const commandArgs = packages.map(({name}) => name);
-      return new Install().run({commandArgs, callback});
+      return new Promise((resolve, _reject) =>
+        void new Install().run({commandArgs, callback: resolve})
+      );
     }
 
-    logPackagesAsJson(packages, callback) {
+    logPackagesAsJson(packages) {
       console.log(JSON.stringify(packages));
-      return callback();
     }
 
-    logPackagesAsText(user, packagesAreThemes, packages, callback) {
-      let label;
-      const userLabel = user != null ? user : 'you';
-      if (packagesAreThemes) {
-        label = `Themes starred by ${userLabel}`;
-      } else {
-        label = `Packages starred by ${userLabel}`;
-      }
+    logPackagesAsText(user, packagesAreThemes, packages) {
+      const userLabel = user ?? 'you';
+      let label = `${packagesAreThemes ? 'Themes' : 'Packages'} starred by ${userLabel}`;
       console.log(`${label.cyan} (${packages.length})`);
 
-      tree(packages, function({name, version, description, downloads, stargazers_count}) {
+      tree(packages, ({name, description, downloads, stargazers_count}) => {
         label = name.yellow;
         if (process.platform === 'darwin') { label = `\u2B50  ${label}`; }
         if (description) { label += ` ${description.replace(/\s+/g, ' ')}`; }
@@ -100,28 +102,29 @@ List or install starred Atom packages and themes.\
       console.log();
       console.log(`Use \`ppm stars --install\` to install them all or visit ${'https://web.pulsar-edit.dev'.underline} to read more about them.`);
       console.log();
-      return callback();
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
       const user = options.argv.user?.toString().trim();
 
-      return this.getStarredPackages(user, options.argv.compatible,  (error, packages) => {
-        if (error != null) { return callback(error); }
+      let packages;
+      try {
+        packages = await this.getStarredPackages(user, options.argv.compatible);
+      } catch (error) {
+        return error; //errors as values for now
+      }
+      if (options.argv.themes) {
+        packages = packages.filter(({theme}) => theme);
+      }
 
-        if (options.argv.themes) {
-          packages = packages.filter(({theme}) => theme);
-        }
+      if (options.argv.install) {
+        return await this.installPackages(packages);
+      }
+      if (options.argv.json) {
+        return void this.logPackagesAsJson(packages);
+      }
 
-        if (options.argv.install) {
-          return this.installPackages(packages, callback);
-        } else if (options.argv.json) {
-          return this.logPackagesAsJson(packages, callback);
-        } else {
-          return this.logPackagesAsText(user, options.argv.themes, packages, callback);
-        }
-      });
+      this.logPackagesAsText(user, options.argv.themes, packages);
     }
   }
