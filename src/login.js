@@ -87,11 +87,11 @@ copy the token and paste it below when prompted.
       });
     }
 
-    saveToken({token}) {
+    async saveToken({token}) {
       if (!token) { throw new Error("Token is required"); }
 
       process.stdout.write('Saving token to Keychain ');
-      auth.saveToken(token);
+      await auth.saveToken(token);
       this.logSuccess();
       return Q(token);
     }
