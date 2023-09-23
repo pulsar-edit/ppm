@@ -15,6 +15,7 @@ const request = require('./request');
 
 module.exports =
 class Publish extends Command {
+  static promiseBased = true;
   static commandNames = [ "publish" ];
 
     constructor() {
@@ -57,21 +58,24 @@ have published it.\
     // Create a new version and tag use the `npm version` command.
     //
     // version  - The new version or version increment.
-    // callback - The callback function to invoke with an error as the first
-    //            argument and a the generated tag string as the second argument.
-    versionPackage(version, callback) {
+    //
+    // return value - A Promise that can reject with an error string
+    //                or resolve to the generated tag string.
+    versionPackage(version) {
       process.stdout.write('Preparing and tagging a new version ');
       const versionArgs = ['version', version, '-m', 'Prepare v%s release'];
-      return this.fork(this.atomNpmPath, versionArgs, (code, stderr, stdout) => {
-        if (stderr == null) { stderr = ''; }
-        if (stdout == null) { stdout = ''; }
-        if (code === 0) {
-          this.logSuccess();
-          return callback(null, stdout.trim());
-        } else {
-          this.logFailure();
-          return callback(`${stdout}\n${stderr}`.trim());
-        }
+      return new Promise((resolve, reject) => {
+        this.fork(this.atomNpmPath, versionArgs, (code, stderr, stdout) => {
+          stderr ??= '';
+          stdout ??= ''; 
+          if (code === 0) {
+            this.logSuccess();
+            resolve(stdout.trim());
+          } else {
+            this.logFailure();
+            reject(`${stdout}\n${stderr}`.trim());
+          }
+        });
       });
     }
 
@@ -79,13 +83,16 @@ have published it.\
     //
     //  tag - The tag to push.
     //  pack - The package metadata.
-    //  callback - The callback function to invoke with an error as the first
-    //             argument.
-    pushVersion(tag, pack, callback) {
+    //
+    //  return value - A Promise that resolves to whatever error logCommandResults
+    //                 can produce.
+    pushVersion(tag, pack) {
       process.stdout.write(`Pushing ${tag} tag `);
       const pushArgs = ['push', Packages.getRemote(pack), 'HEAD', tag];
-      return this.spawn('git', pushArgs, (...args) => {
-        return this.logCommandResults(callback, ...args);
+      return new Promise((resolve, _reject) => {
+        this.spawn('git', pushArgs, (...args) => {
+          this.logCommandResults(resolve, ...args);
+        });
       });
     }
 
@@ -96,10 +103,11 @@ have published it.\
     //
     // pack - The package metadata.
     // tag - The tag that was pushed.
-    // callback - The callback function to invoke when either the tag is available
-    //            or the maximum numbers of requests for the tag have been made.
-    //            No arguments are passed to the callback when it is invoked.
-    waitForTagToBeAvailable(pack, tag, callback) {
+    //
+    // return value - A Promise that resolves (without a value) when either the
+    //                number of max retries have been reached or the tag could
+    //                actually be retrieved.
+    waitForTagToBeAvailable(pack, tag) {
       let retryCount = 5;
       const interval = 1000;
       const requestSettings = {
@@ -107,48 +115,49 @@ have published it.\
         json: true
       };
 
-      var requestTags = () => request.get(requestSettings, function(error, response, tags) {
-        if (tags == null) { tags = []; }
-        if ((response != null ? response.statusCode : undefined) === 200) {
-          for (let index = 0; index < tags.length; index++) {
-            const {name} = tags[index];
-            if (name === tag) {
-              return callback();
+      return new Promise((resolve, _reject) => {
+        const requestTags = () => void request.get(requestSettings, (_error, response, tags) => {
+          tags ??= [];
+          if (response?.statusCode === 200) {
+            if (tags.find(elem => elem.name === tag) != null) {
+              resolve();
+              return;
             }
           }
-        }
-        if (--retryCount <= 0) {
-          return callback();
-        } else {
-          return setTimeout(requestTags, interval);
-        }
+          if (--retryCount <= 0) {
+            return void resolve();
+          }
+
+          setTimeout(requestTags, interval);
+        });
       });
-      return requestTags();
     }
 
     // Does the given package already exist in the registry?
     //
     // packageName - The string package name to check.
-    // callback    - The callback function invoke with an error as the first
-    //               argument and true/false as the second argument.
-    packageExists(packageName, callback) {
-      return Login.getTokenOrLogin(function(error, token) {
-        if (error != null) { return callback(error); }
+    //
+    // return value - A Promise that can reject with an error or resolve to 
+    //                a boolean value.
+    packageExists(packageName) {
+      return new Promise((resolve, reject) => {
+        Login.getTokenOrLogin((error, token) => {
+          if (error != null) { return void reject(error); }
 
-        const requestSettings = {
-          url: `${config.getAtomPackagesUrl()}/${packageName}`,
-          json: true,
-          headers: {
-            authorization: token
-          }
-        };
-        return request.get(requestSettings, function(error, response, body) {
-          if (body == null) { body = {}; }
-          if (error != null) {
-            return callback(error);
-          } else {
-            return callback(null, response.statusCode === 200);
-          }
+          const requestSettings = {
+            url: `${config.getAtomPackagesUrl()}/${packageName}`,
+            json: true,
+            headers: {
+              authorization: token
+            }
+          };
+          request.get(requestSettings, (error, response, body) => {
+            body ??= {};
+            if (error != null) {
+              return void reject(error);
+            }
+            resolve(response.statusCode === 200);
+          });
         });
       });
     }
@@ -156,28 +165,29 @@ have published it.\
     // Register the current repository with the package registry.
     //
     // pack - The package metadata.
-    // callback - The callback function.
-    registerPackage(pack, callback) {
+    //
+    // return value - A Promise that can reject with various errors (even without a value)
+    //                or resolve with true value.
+    async registerPackage(pack) {
       if (!pack.name) {
-        callback('Required name field in package.json not found');
-        return;
+        throw 'Required name field in package.json not found';
       }
 
-      this.packageExists(pack.name, (error, exists) => {
-        let repository;
-        if (error != null) { return callback(error); }
-        if (exists) { return callback(); }
+      const exists = await this.packageExists(pack.name);
+      if (exists) { return Promise.reject(); }
 
-        if (!(repository = Packages.getRepository(pack))) {
-          callback('Unable to parse repository name/owner from package.json repository field');
-          return;
-        }
+      const repository = Packages.getRepository(pack);
 
-        process.stdout.write(`Registering ${pack.name} `);
-        return Login.getTokenOrLogin((error, token) => {
+      if (!repository) {
+        throw 'Unable to parse repository name/owner from package.json repository field';
+      }
+
+      process.stdout.write(`Registering ${pack.name} `);
+      return new Promise((resolve, reject) => {
+        Login.getTokenOrLogin((error, token) => {
           if (error != null) {
             this.logFailure();
-            callback(error);
+            reject(error);
             return;
           }
 
@@ -192,17 +202,18 @@ have published it.\
             }
           };
           request.post(requestSettings, (error, response, body) => {
-            if (body == null) { body = {}; }
+            body ??= {};
             if (error != null) {
-              return callback(error);
-            } else if (response.statusCode !== 201) {
+              return void reject(error);
+            }
+            if (response.statusCode !== 201) {
               const message = request.getErrorMessage(body, error);
               this.logFailure();
-              return callback(`Registering package in ${repository} repository failed: ${message}`);
-            } else {
-              this.logSuccess();
-              return callback(null, true);
+              return void reject(`Registering package in ${repository} repository failed: ${message}`);
             }
+
+            this.logSuccess();
+            return resolve(true);
           });
         });
       });
@@ -212,36 +223,39 @@ have published it.\
     //
     // packageName - The string name of the package.
     // tag - The string Git tag of the new version.
-    // callback - The callback function to invoke with an error as the first
-    //            argument.
-    createPackageVersion(packageName, tag, options, callback) {
-      Login.getTokenOrLogin(function(error, token) {
-        if (error != null) {
-          callback(error);
-          return;
-        }
-
-        const requestSettings = {
-          url: `${config.getAtomPackagesUrl()}/${packageName}/versions`,
-          json: true,
-          qs: {
-            tag,
-            rename: options.rename
-          },
-          headers: {
-            authorization: token
-          }
-        };
-        request.post(requestSettings, function(error, response, body) {
-          if (body == null) { body = {}; }
+    //
+    // return value - A Promise that rejects with an error or resolves without a value.
+    createPackageVersion(packageName, tag, options) {
+      return new Promise((resolve, reject) => {
+        Login.getTokenOrLogin((error, token) => {
           if (error != null) {
-            return callback(error);
-          } else if (response.statusCode !== 201) {
-            const message = request.getErrorMessage(body, error);
-            return callback(`Creating new version failed: ${message}`);
-          } else {
-            return callback();
+            reject(error);
+            return;
           }
+  
+          const requestSettings = {
+            url: `${config.getAtomPackagesUrl()}/${packageName}/versions`,
+            json: true,
+            qs: {
+              tag,
+              rename: options.rename
+            },
+            headers: {
+              authorization: token
+            }
+          };
+          request.post(requestSettings, (error, response, body) => {
+            body ??= {};
+            if (error != null) {
+              return void reject(error);
+            }
+            if (response.statusCode !== 201) {
+              const message = request.getErrorMessage(body, error);
+              return void reject(`Creating new version failed: ${message}`);
+            }
+
+            resolve();
+          });
         });
       });
     }
@@ -251,24 +265,20 @@ have published it.\
     // pack - The package metadata.
     // tag - The Git tag string of the package version to publish.
     // options - An options Object (optional).
-    // callback - The callback function to invoke when done with an error as the
-    //            first argument.
-    publishPackage(pack, tag, ...remaining) {
-      let options;
-      if (remaining.length >= 2) { options = remaining.shift(); }
-      if (options == null) { options = {}; }
-      const callback = remaining.shift();
+    //
+    // return value - A Promise that rejects with an error or resolves without a value.
+    async publishPackage(pack, tag, options) {
+      options ??= {};
 
       process.stdout.write(`Publishing ${options.rename || pack.name}@${tag} `);
-      this.createPackageVersion(pack.name, tag, options, error => {
-        if (error != null) {
-          this.logFailure();
-          return callback(error);
-        } else {
-          this.logSuccess();
-          return callback();
-        }
-      });
+      try {
+        await this.createPackageVersion(pack.name, tag, options);
+      } catch (error) {
+        this.logFailure();
+        throw error;
+      }
+
+      this.logSuccess();
     }
 
     logFirstTimePublishMessage(pack) {
@@ -278,7 +288,7 @@ have published it.\
         process.stdout.write(' \uD83D\uDC4D  \uD83D\uDCE6  \uD83C\uDF89');
       }
 
-      return process.stdout.write(`\nCheck it out at https://web.pulsar-edit.dev/packages/${pack.name}\n`);
+      process.stdout.write(`\nCheck it out at https://web.pulsar-edit.dev/packages/${pack.name}\n`);
     }
 
     loadMetadata() {
@@ -294,10 +304,10 @@ have published it.\
       }
     }
 
-    saveMetadata(pack, callback) {
+    saveMetadata(pack) {
       const metadataPath = path.resolve('package.json');
       const metadataJson = JSON.stringify(pack, null, 2);
-      return fs.writeFile(metadataPath, `${metadataJson}\n`, callback);
+      fs.writeFileSync(metadataPath, `${metadataJson}\n`);
     }
 
     loadRepository() {
@@ -324,53 +334,54 @@ have published it.\
     }
 
     // Rename package if necessary
-    renamePackage(pack, name, callback) {
-      if ((name != null ? name.length : undefined) > 0) {
-        if (pack.name === name) { return callback('The new package name must be different than the name in the package.json file'); }
+    async renamePackage(pack, name) {
+      if (name?.length <= 0) {
+        // Just fall through if the name is empty
+        return; // error or return value?
+      }
+      if (pack.name === name) { throw 'The new package name must be different than the name in the package.json file'; }
 
-        const message = `Renaming ${pack.name} to ${name} `;
-        process.stdout.write(message);
-        return this.setPackageName(pack, name, error => {
-          if (error != null) {
-            this.logFailure();
-            return callback(error);
-          }
+      const message = `Renaming ${pack.name} to ${name} `;
+      process.stdout.write(message);
+      try {
+        this.setPackageName(pack, name);
+      } catch (error) {
+        this.logFailure();
+        throw error;
+      }
 
-          return config.getSetting('git', gitCommand => {
-            if (gitCommand == null) { gitCommand = 'git'; }
-            return this.spawn(gitCommand, ['add', 'package.json'], (code, stderr, stdout) => {
-              if (stderr == null) { stderr = ''; }
-              if (stdout == null) { stdout = ''; }
-              if (code !== 0) {
+      return new Promise((resolve, reject) => {
+        config.getSetting('git', gitCommand => {
+          gitCommand ??= 'git';
+          return this.spawn(gitCommand, ['add', 'package.json'], (code, stderr, stdout) => {
+            stderr ??= '';
+            stdout ??= '';
+            if (code !== 0) {
+              this.logFailure();
+              const addOutput = `${stdout}\n${stderr}`.trim();
+              return void reject(`\`git add package.json\` failed: ${addOutput}`);
+            }
+  
+            this.spawn(gitCommand, ['commit', '-m', message], (code, stderr, stdout) => {
+              stderr ??= '';
+              stdout ??= '';
+              if (code === 0) {
+                this.logSuccess();
+                resolve();
+              } else {
                 this.logFailure();
-                const addOutput = `${stdout}\n${stderr}`.trim();
-                return callback(`\`git add package.json\` failed: ${addOutput}`);
+                const commitOutput = `${stdout}\n${stderr}`.trim();
+                reject(`Failed to commit package.json: ${commitOutput}`);
               }
-
-              return this.spawn(gitCommand, ['commit', '-m', message], (code, stderr, stdout) => {
-                if (stderr == null) { stderr = ''; }
-                if (stdout == null) { stdout = ''; }
-                if (code === 0) {
-                  this.logSuccess();
-                  return callback();
-                } else {
-                  this.logFailure();
-                  const commitOutput = `${stdout}\n${stderr}`.trim();
-                  return callback(`Failed to commit package.json: ${commitOutput}`);
-                }
-              });
             });
           });
         });
-      } else {
-        // Just fall through if the name is empty
-        return callback();
-      }
+      });
     }
 
-    setPackageName(pack, name, callback) {
+    setPackageName(pack, name) {
       pack.name = name;
-      return this.saveMetadata(pack, callback);
+      this.saveMetadata(pack);
     }
 
     validateSemverRanges(pack) {
@@ -411,83 +422,79 @@ have published it.\
     }
 
     // Run the publish command with the given options
-    run(options) {
-      let error, pack;
-      const {callback} = options;
+    async run(options) {
+      let pack;
       options = this.parseOptions(options.commandArgs);
       let {tag, rename} = options.argv;
       let [version] = options.argv._;
 
       try {
         pack = this.loadMetadata();
-      } catch (error1) {
-        error = error1;
-        return callback(error);
+      } catch (error) {
+        return error;
       }
 
       try {
         this.validateSemverRanges(pack);
-      } catch (error2) {
-        error = error2;
-        return callback(error);
+      } catch (error) {
+        return error;
       }
 
       try {
         this.loadRepository();
-      } catch (error3) {
-        error = error3;
-        return callback(error);
+      } catch (error) {
+        return error;
       }
 
-      if (((version != null ? version.length : undefined) > 0) || ((rename != null ? rename.length : undefined) > 0)) {
+      if ((version?.length > 0) || (rename?.length > 0)) {
         let originalName;
-        if (!((version != null ? version.length : undefined) > 0)) { version = 'patch'; }
-        if ((rename != null ? rename.length : undefined) > 0) { originalName = pack.name; }
+        if (version?.length <= 0) { version = 'patch'; }
+        if (rename?.length > 0) { originalName = pack.name; }
 
-        this.registerPackage(pack, (error, firstTimePublishing) => {
-          if (error != null) { return callback(error); }
+        let firstTimePublishing;
+        try {
+          firstTimePublishing = await this.registerPackage(pack);
+          await this.renamePackage(pack, rename);
+          const tag = await this.versionPackage(version);
+          await this.pushVersion(tag, pack);
+        } catch (error) {
+          return error;
+        }
 
-          this.renamePackage(pack, rename, error => {
-            if (error != null) { return callback(error); }
-
-            this.versionPackage(version, (error, tag) => {
-              if (error != null) { return callback(error); }
-
-              this.pushVersion(tag, pack, error => {
-                if (error != null) { return callback(error); }
-
-                this.waitForTagToBeAvailable(pack, tag, () => {
-
-                  if (originalName != null) {
-                    // If we're renaming a package, we have to hit the API with the
-                    // current name, not the new one, or it will 404.
-                    rename = pack.name;
-                    pack.name = originalName;
-                  }
-                  this.publishPackage(pack, tag, {rename},  error => {
-                    if (firstTimePublishing && (error == null)) {
-                      this.logFirstTimePublishMessage(pack);
-                    }
-                    return callback(error);
-                  });
-                });
-              });
-            });
-          });
-        });
-      } else if ((tag != null ? tag.length : undefined) > 0) {
-        this.registerPackage(pack, (error, firstTimePublishing) => {
-          if (error != null) { return callback(error); }
-
-          this.publishPackage(pack, tag, error => {
-            if (firstTimePublishing && (error == null)) {
-              this.logFirstTimePublishMessage(pack);
-            }
-            return callback(error);
-          });
-        });
+        await this.waitForTagToBeAvailable(pack, tag);
+        if (originalName != null) {
+          // If we're renaming a package, we have to hit the API with the
+          // current name, not the new one, or it will 404.
+          rename = pack.name;
+          pack.name = originalName;
+        }
+        
+        try {
+          await this.publishPackage(pack, tag, {rename});
+        } catch (error) {
+          if (firstTimePublishing) {
+            this.logFirstTimePublishMessage(pack);
+          }
+          return error;
+        }
+      } else if (tag?.length > 0) {
+        let firstTimePublishing;
+        try {
+          firstTimePublishing = await this.registerPackage(pack);
+        } catch (error) {
+          return error;
+        }
+        
+        try {
+          await this.publishPackage(pack, tag);
+        } catch (error) {
+          if (firstTimePublishing) {
+            this.logFirstTimePublishMessage(pack);
+          }
+          return error;
+        }
       } else {
-        return callback('A version, tag, or new package name is required');
+        return 'A version, tag, or new package name is required';
       }
     }
   }
