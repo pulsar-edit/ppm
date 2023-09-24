@@ -61,7 +61,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
             return callback(`No repository URL found for package: ${packageName}`);
           }
         } else {
-          const message = request.getErrorMessage(error);
+          const message = request.getErrorMessage(body, error);
           return callback(`Request for package information failed: ${message}`);
         }
       });

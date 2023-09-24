@@ -42,7 +42,7 @@ Run \`ppm stars\` to see all your starred packages.\
           return callback(error);
         } else if (response.statusCode !== 204) {
           this.logFailure();
-          const message = body.message ?? body.error ?? body;
+          const message = request.getErrorMessage(body, error);
           return callback(`Unstarring package failed: ${message}`);
         } else {
           this.logSuccess();

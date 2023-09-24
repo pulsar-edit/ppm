@@ -61,7 +61,7 @@ List or install starred Atom packages and themes.\
           packages = _.sortBy(packages, 'name');
           return callback(null, packages);
         } else {
-          const message = request.getErrorMessage(error);
+          const message = request.getErrorMessage(body, error);
           return callback(`Requesting packages failed: ${message}`);
         }
       });
