@@ -102,27 +102,19 @@ on the option selected.\
       this.generateFromTemplate(destinationPath, templatePath);
     }
 
-    convertTheme(sourcePath, destinationPath) {
+    async convertTheme(sourcePath, destinationPath) {
       if (!destinationPath) {
-        return void Promise.reject("Specify directory to create theme in using --theme");
+        throw "Specify directory to create theme in using --theme";
       }
 
       const ThemeConverter = require('./theme-converter');
       const converter = new ThemeConverter(sourcePath, destinationPath);
-      return new Promise((resolve, reject) => {
-        converter.convert(error => {
-          if (error != null) {
-            return void reject(error);
-          }
-
-          destinationPath = path.resolve(destinationPath);
-          const templatePath = path.resolve(__dirname, '..', 'templates', 'theme');
-          this.generateFromTemplate(destinationPath, templatePath);
-          fs.removeSync(path.join(destinationPath, 'styles', 'colors.less'));
-          fs.removeSync(path.join(destinationPath, 'LICENSE.md'));
-          resolve();
-        });
-      });
+      await converter.convert();
+      destinationPath = path.resolve(destinationPath);
+      const templatePath = path.resolve(__dirname, '..', 'templates', 'theme');
+      this.generateFromTemplate(destinationPath, templatePath);
+      fs.removeSync(path.join(destinationPath, 'styles', 'colors.less'));
+      fs.removeSync(path.join(destinationPath, 'LICENSE.md'));
     }
 
     generateFromTemplate(packagePath, templatePath, packageName) {
