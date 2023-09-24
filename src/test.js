@@ -9,6 +9,7 @@ const fs = require('./fs');
 
 module.exports =
 class Test extends Command {
+  static promiseBased = true;
   static commandNames = [ "test" ];
 
     parseOptions(argv) {
@@ -28,7 +29,6 @@ to the current working directory).\
 
     run(options) {
       let atomCommand;
-      const {callback} = options;
       options = this.parseOptions(options.commandArgs);
       const {env} = process;
 
@@ -41,38 +41,42 @@ to the current working directory).\
       const packagePath = process.cwd();
       const testArgs = ['--dev', '--test', path.join(packagePath, 'spec')];
 
-      if (process.platform === 'win32') {
-        const logFile = temp.openSync({suffix: '.log', prefix: `${path.basename(packagePath)}-`});
-        fs.closeSync(logFile.fd);
-        const logFilePath = logFile.path;
-        testArgs.push(`--log-file=${logFilePath}`);
+      return new Promise((resolve, _reject) => {
+        if (process.platform === 'win32') {
+          const logFile = temp.openSync({suffix: '.log', prefix: `${path.basename(packagePath)}-`});
+          fs.closeSync(logFile.fd);
+          const logFilePath = logFile.path;
+          testArgs.push(`--log-file=${logFilePath}`);
+  
+          this.spawn(atomCommand, testArgs, code => {
+            try {
+              const loggedOutput = fs.readFileSync(logFilePath, 'utf8');
+              if (loggedOutput) { process.stdout.write(`${loggedOutput}\n`); }
+            } catch (error) {}
+  
+            if (code === 0) {
+              process.stdout.write('Tests passed\n'.green);
+              return void resolve();
+            }
+            if (code?.message) {
+              return void resolve(`Error spawning Atom: ${code.message}`); // errors as return value atm
+            }
+  
+            resolve('Tests failed'); // errors as return value atm
+          });
+        } else {
+          this.spawn(atomCommand, testArgs, {env, streaming: true}, code => {
+            if (code === 0) {
+              process.stdout.write('Tests passed\n'.green);
+              return void resolve();
+            }
+            if (code?.message) {
+              return void resolve(`Error spawning ${atomCommand}: ${code.message}`); // errors as return value
+            }
 
-        this.spawn(atomCommand, testArgs, function(code) {
-          try {
-            const loggedOutput = fs.readFileSync(logFilePath, 'utf8');
-            if (loggedOutput) { process.stdout.write(`${loggedOutput}\n`); }
-          } catch (error) {}
-
-          if (code === 0) {
-            process.stdout.write('Tests passed\n'.green);
-            return callback();
-          } else if ((code != null ? code.message : undefined)) {
-            return callback(`Error spawning Atom: ${code.message}`);
-          } else {
-            return callback('Tests failed');
-          }
-        });
-      } else {
-        this.spawn(atomCommand, testArgs, {env, streaming: true}, function(code) {
-          if (code === 0) {
-            process.stdout.write('Tests passed\n'.green);
-            return callback();
-          } else if ((code != null ? code.message : undefined)) {
-            return callback(`Error spawning ${atomCommand}: ${code.message}`);
-          } else {
-            return callback('Tests failed');
-          }
-        });
-      }
+            resolve('Tests failed'); // errors as return value
+          });
+        }
+      });
     }
   }
