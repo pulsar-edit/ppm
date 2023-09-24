@@ -58,6 +58,7 @@ describe('apm test', () => {
         removeListener() {}
       }); // no op
       apm.run(['test'], callback);
+      waitsFor('waiting for command to complete', () => callback.callCount > 0);
     };
 
     describe('successfully', () => {
