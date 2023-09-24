@@ -12,6 +12,7 @@ const request = require('./request');
 
 module.exports =
 class Unpublish extends Command {
+  static promiseBased = true;
   static commandNames = [ "unpublish" ];
 
     parseOptions(argv) {
@@ -31,13 +32,14 @@ name is specified.\
       return options.alias('f', 'force').boolean('force').describe('force', 'Do not prompt for confirmation');
     }
 
-    unpublishPackage(packageName, packageVersion, callback) {
+    async unpublishPackage(packageName, packageVersion) {
       let packageLabel = packageName;
       if (packageVersion) { packageLabel += `@${packageVersion}`; }
 
       process.stdout.write(`Unpublishing ${packageLabel} `);
 
-      auth.getToken().then(token => {
+      try {
+        const token = await auth.getToken();
         const options = {
           url: `${config.getAtomPackagesUrl()}/${packageName}`,
           headers: {
@@ -48,62 +50,62 @@ name is specified.\
 
         if (packageVersion) { options.url += `/versions/${packageVersion}`; }
 
-        request.del(options, (error, response, body) => {
-          if (body == null) { body = {}; }
-          if (error != null) {
-            this.logFailure();
-            return void callback(error);
-          } else if (response.statusCode !== 204) {
-            this.logFailure();
-            const message = body.message ?? body.error ?? body;
-            return void callback(`Unpublishing failed: ${message}`);
-          } else {
+        return new Promise((resolve, reject) =>{
+          request.del(options, (error, response, body) => {
+            body ??= {};
+            if (error != null) {
+              this.logFailure();
+              return void reject(error);
+            }
+            if (response.statusCode !== 204) {
+              this.logFailure();
+              const message = body.message ?? body.error ?? body;
+              return void reject(`Unpublishing failed: ${message}`);
+            }
+
             this.logSuccess();
-            return void callback();
-          }
+            resolve();
+          });
         });
-      }, error => {
+      } catch (error) {
           this.logFailure();
-          callback(error);
-        });
+          throw error;
+      }
     }
 
-    promptForConfirmation(packageName, packageVersion, callback) {
-      let question;
+    async promptForConfirmation(packageName, packageVersion) {
       let packageLabel = packageName;
       if (packageVersion) { packageLabel += `@${packageVersion}`; }
 
-      if (packageVersion) {
-        question = `Are you sure you want to unpublish '${packageLabel}'? (no) `;
-      } else {
-        question = `Are you sure you want to unpublish ALL VERSIONS of '${packageLabel}'? ` +
-                   "This will remove it from the ppm registry, including " +
-                   "download counts and stars, and will render the package " +
-                   "name permanently unusable. This action is irreversible. (no)";
-      }
+      const question = packageVersion
+        ? `Are you sure you want to unpublish '${packageLabel}'? (no) `
+        : `Are you sure you want to unpublish ALL VERSIONS of '${packageLabel}'? ` +
+          "This will remove it from the ppm registry, including " +
+          "download counts and stars, and will render the package " +
+          "name permanently unusable. This action is irreversible. (no)";
 
-      return this.prompt(question, answer => {
-        answer = answer ? answer.trim().toLowerCase() : 'no';
-        if (['y', 'yes'].includes(answer)) {
-          return this.unpublishPackage(packageName, packageVersion, callback);
-        } else {
-          return callback(`Cancelled unpublishing ${packageLabel}`);
-        }
-      });
+      let answer = await this.prompt(question);
+      answer = answer ? answer.trim().toLowerCase() : 'no';
+      if (['y', 'yes'].includes(answer)) {
+        await this.unpublishPackage(packageName, packageVersion);
+      } else {
+        return `Cancelled unpublishing ${packageLabel}`;
+      }
     }
 
-    prompt(question, callback) {
+    prompt(question) {
       const prompt = readline.createInterface(process.stdin, process.stdout);
 
-      prompt.question(question, function(answer) {
-        prompt.close();
-        return callback(answer);
+      return new Promise((resolve, _reject) => {
+        prompt.question(question, answer => {
+          prompt.close();
+          resolve(answer);
+        });
       });
     }
 
-    run(options) {
+    async run(options) {
       let version;
-      const {callback} = options;
       options = this.parseOptions(options.commandArgs);
       let [name] = options.argv._;
 
@@ -120,15 +122,12 @@ name is specified.\
           name = JSON.parse(fs.readFileSync('package.json'))?.name;
         } catch (error) {}
       }
-
-      if (!name) {
-        name = path.basename(process.cwd());
-      }
+      name ||= path.basename(process.cwd());
 
       if (options.argv.force) {
-        return this.unpublishPackage(name, version, callback);
-      } else {
-        return this.promptForConfirmation(name, version, callback);
+        return await this.unpublishPackage(name, version).catch(error => error); //errors as values atm
       }
+
+      return await this.promptForConfirmation(name, version).catch(error => error); //errors as values atm
     }
   }

@@ -70,10 +70,7 @@ describe('apm unpublish', () => {
       describe('when the user accepts the default answer', () => {
         it('does not unpublish the package', () => {
           const callback = jasmine.createSpy('callback');
-          spyOn(Unpublish.prototype, 'prompt').andCallFake((...args) => {
-            const cb = args.pop();
-            cb('');
-          });
+          spyOn(Unpublish.prototype, 'prompt').andCallFake(_question => Promise.resolve(''));
           spyOn(Unpublish.prototype, 'unpublishPackage');
           apm.run(['unpublish', 'test-package'], callback);
 
@@ -129,10 +126,7 @@ describe('apm unpublish', () => {
       describe('when the user accepts the default answer', () => {
         it('does not unpublish the package', () => {
           const callback = jasmine.createSpy('callback');
-          spyOn(Unpublish.prototype, 'prompt').andCallFake((...args) => {
-            const cb = args.pop();
-            cb('');
-          });
+          spyOn(Unpublish.prototype, 'prompt').andCallFake(_question => Promise.resolve(''));
           spyOn(Unpublish.prototype, 'unpublishPackage');
           apm.run(['unpublish', 'test-package'], callback);
 
