@@ -7,10 +7,10 @@ const yargs = require('yargs');
 const config = require('./apm');
 const Command = require('./command');
 const fs = require('./fs');
-const Install = require('./install');
 
 module.exports =
 class Rebuild extends Command {
+  static promiseBased = true;
   static commandNames = [ "rebuild" ];
 
     constructor() {
@@ -35,7 +35,7 @@ All the modules will be rebuilt if no module names are specified.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    forkNpmRebuild(options, callback) {
+    forkNpmRebuild(options) {
       process.stdout.write('Rebuilding modules ');
 
       const rebuildArgs = ['--globalconfig', config.getGlobalConfigPath(), '--userconfig', config.getUserConfigPath(), 'rebuild'];
@@ -47,25 +47,32 @@ All the modules will be rebuilt if no module names are specified.\
       const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath()});
       this.addBuildEnvVars(env);
 
-      return this.fork(this.atomNpmPath, rebuildArgs, {env}, callback);
+      return new Promise((resolve, reject) =>
+        void this.fork(this.atomNpmPath, rebuildArgs, {env}, (code, stderr) => {
+          if (code !== 0) {
+            reject(stderr ?? '');
+            return;
+          }
+
+          resolve();
+        })
+      );
     }
 
     run(options) {
-      const {callback} = options;
       options = this.parseOptions(options.commandArgs);
 
-      config.loadNpm((error, npm) => {
-        this.npm = npm;
-        this.loadInstalledAtomMetadata(() => {
-          this.forkNpmRebuild(options, (code, stderr) => {
-            if (stderr == null) { stderr = ''; }
-            if (code === 0) {
+      return new Promise((resolve, _reject) => {
+        config.loadNpm((_error, npm) => {
+          this.npm = npm;
+          this.loadInstalledAtomMetadata(() => {
+            this.forkNpmRebuild(options).then(() => {
               this.logSuccess();
-              return callback();
-            } else {
+              resolve();
+            }, stderr => {
               this.logFailure();
-              return callback(stderr);
-            }
+              resolve(stderr); //errors as return values atm
+            });
           });
         });
       });
