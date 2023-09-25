@@ -101,11 +101,11 @@ module.exports = {
     });
   },
 
-  getErrorMessage(err) {
+  getErrorMessage(body, err) {
     if (err?.status === 503) {
       return `${err.response.req.host} is temporarily unavailable, please try again later.`;
     } else {
-      return err?.response?.body ?? err?.response?.error ?? err;
+      return err?.response?.body ?? err?.response?.error ?? err ?? body.message ?? body.error ?? body;
     }
   },
 

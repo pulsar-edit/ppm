@@ -221,7 +221,7 @@ Run ppm -v after installing Git to see what version has been detected.\
           if (error.status) { message += ` (${error.status})`; }
           return callback(message);
         } else if (response.statusCode !== 200) {
-          message = request.getErrorMessage(error);
+          message = request.getErrorMessage(body, error);
           return callback(`Request for package information failed: ${message}`);
         } else {
           if (body.releases.latest) {
