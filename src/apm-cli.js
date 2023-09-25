@@ -116,7 +116,7 @@ const printVersions = function(args, callback) {
     let versions;
     if (args.json) {
       versions = {
-        apm: apmVersion,
+        ppm: apmVersion,
         npm: npmVersion,
         node: nodeVersion,
         pulsar: atomVersion,
@@ -133,7 +133,7 @@ const printVersions = function(args, callback) {
       if (gitVersion == null) { gitVersion = ''; }
       if (atomVersion == null) { atomVersion = ''; }
       versions =  `\
-${'apm'.red}  ${apmVersion.red}
+${'ppm'.red}  ${apmVersion.red}
 ${'npm'.green}  ${npmVersion.green}
 ${'node'.blue} ${nodeVersion.blue} ${process.arch.blue}
 ${'pulsar'.cyan} ${atomVersion.cyan}
