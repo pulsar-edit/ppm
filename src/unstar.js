@@ -9,6 +9,7 @@ const request = require('./request');
 
 module.exports =
 class Unstar extends Command {
+  static promiseBased = true;
   static commandNames = [ "unstar" ];
 
     parseOptions(argv) {
@@ -25,7 +26,7 @@ Run \`ppm stars\` to see all your starred packages.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    starPackage(packageName, token, callback) {
+    starPackage(packageName, token) {
       if (process.platform === 'darwin') { process.stdout.write('\uD83D\uDC5F \u2B50  '); }
       process.stdout.write(`Unstarring ${packageName} `);
       const requestSettings = {
@@ -35,39 +36,42 @@ Run \`ppm stars\` to see all your starred packages.\
           authorization: token
         }
       };
-      request.del(requestSettings, (error, response, body) => {
-        if (body == null) { body = {}; }
-        if (error != null) {
-          this.logFailure();
-          return callback(error);
-        } else if (response.statusCode !== 204) {
-          this.logFailure();
-          const message = request.getErrorMessage(body, error);
-          return callback(`Unstarring package failed: ${message}`);
-        } else {
+      return new Promise((resolve, reject) => {
+        request.del(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            this.logFailure();
+            return void reject(error);
+          }
+          if (response.statusCode !== 204) {
+            this.logFailure();
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Unstarring package failed: ${message}`);
+          }
+
           this.logSuccess();
-          return callback();
-        }
+          resolve();
+        });
       });
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
       const packageNames = this.packageNamesFromArgv(options.argv);
 
       if (packageNames.length === 0) {
-        callback("Please specify a package name to unstar");
-        return;
+        return "Please specify a package name to unstar"; // error as return value atm
       }
 
-      Login.getTokenOrLogin((error, token) => {
-        if (error != null) { return callback(error); }
+      return new Promise((resolve, _reject) => {
+        Login.getTokenOrLogin((error, token) => {
+          if (error != null) { return void resolve(error); } // error as return value atm
 
-        const commands = packageNames.map(packageName => {
-          return callback => this.starPackage(packageName, token, callback);
+          const commands = packageNames.map(packageName => {
+            return callback => this.starPackage(packageName, token).then(callback, callback);
+          });
+          return async.waterfall(commands, resolve);
         });
-        return async.waterfall(commands, callback);
       });
     }
   }
