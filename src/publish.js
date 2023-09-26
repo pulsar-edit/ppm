@@ -84,14 +84,13 @@ have published it.\
     //  tag - The tag to push.
     //  pack - The package metadata.
     //
-    //  return value - A Promise that resolves to whatever error logCommandResults
-    //                 can produce.
+    //  return value - A Promise that delegates the result of the logCommandResults call.
     pushVersion(tag, pack) {
       process.stdout.write(`Pushing ${tag} tag `);
       const pushArgs = ['push', Packages.getRemote(pack), 'HEAD', tag];
-      return new Promise((resolve, _reject) => {
+      return new Promise((resolve, reject) => {
         this.spawn('git', pushArgs, (...args) => {
-          this.logCommandResults(resolve, ...args);
+          this.logCommandResults(...args).then(resolve, reject);
         });
       });
     }

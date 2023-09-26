@@ -176,9 +176,9 @@ Run ppm -v after installing Git to see what version has been detected.\
 
       return this.forkInstallCommand(options, (...args) => {
         if (options.argv.json) {
-          return this.logCommandResultsIfFail(callback, ...args);
+          return this.logCommandResultsIfFail(...args).then(callback, callback);
         } else {
-          return this.logCommandResults(callback, ...args);
+          return this.logCommandResults(...args).then(callback, callback);
         }
       });
     }
@@ -463,7 +463,7 @@ Run ppm -v after installing Git to see what version has been detected.\
       fs.removeSync(path.resolve(__dirname, '..', 'native-module', 'build'));
 
       return this.fork(this.atomNpmPath, buildArgs, buildOptions, (...args) => {
-        return this.logCommandResults(callback, ...args);
+        return this.logCommandResults(...args).then(callback, callback);
       });
     }
 
@@ -488,7 +488,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     warmCompileCache(packageName, callback) {
       const packageDirectory = path.join(this.atomPackagesDirectory, packageName);
 
-      return this.getResourcePath(resourcePath => {
+      return this.getResourcePath().then(resourcePath => {
         try {
           const CompileCache = require(path.join(resourcePath, 'src', 'compile-cache'));
 
@@ -507,7 +507,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     }
 
     isBundledPackage(packageName, callback) {
-      return this.getResourcePath(function(resourcePath) {
+      return this.getResourcePath().then(resourcePath => {
         let atomMetadata;
         try {
           atomMetadata = JSON.parse(fs.readFileSync(path.join(resourcePath, 'package.json')));
@@ -655,7 +655,7 @@ Run ppm -v after installing Git to see what version has been detected.\
       const Develop = require('./develop');
       const develop = new Develop();
 
-      return develop.cloneRepository(url, cloneDir, options, err => callback(err));
+      return develop.cloneRepository(url, cloneDir, options).then(callback, callback);
     }
 
     installGitPackageDependencies(directory, options, callback) {
@@ -684,9 +684,10 @@ Run ppm -v after installing Git to see what version has been detected.\
       if (options.argv.check) {
         config.loadNpm((error, npm) => {
           this.npm = npm;
-          return this.loadInstalledAtomMetadata(() => {
+          const cb = () => {
             return this.checkNativeBuildTools(callback);
-          });
+          };
+          return this.loadInstalledAtomMetadata().then(cb, cb);
         });
         return;
       }
@@ -739,7 +740,7 @@ with Pulsar will be used.\
 
       const commands = [];
       commands.push(callback => { return config.loadNpm((error, npm) => { this.npm = npm; return callback(error); }); });
-      commands.push(callback => this.loadInstalledAtomMetadata(() => callback()));
+      commands.push(callback => this.loadInstalledAtomMetadata().then(() => callback(), () => callback()));
       packageNames.forEach(packageName => commands.push(callback => installPackage(packageName, callback)));
       const iteratee = (item, next) => item(next);
       return async.mapSeries(commands, iteratee, function(err, installedPackagesInfo) {

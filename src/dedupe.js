@@ -39,7 +39,7 @@ This command is experimental.\
       process.stdout.write('Deduping modules ');
 
       this.forkDedupeCommand(options, (...args) => {
-        this.logCommandResults(callback, ...args);
+        this.logCommandResults(...args).then(callback, callback);
       });
     }
 
@@ -75,7 +75,7 @@ This command is experimental.\
       this.createAtomDirectories();
 
       const commands = [];
-      commands.push(callback => this.loadInstalledAtomMetadata(callback));
+      commands.push(callback => this.loadInstalledAtomMetadata().then(callback, callback));
       commands.push(callback => this.dedupeModules(options, callback));
       return async.waterfall(commands, callback);
     }

@@ -73,7 +73,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     }
 
     cloneRepository(repoUrl, packageDirectory, options) {
-      return new Promise((resolve, _reject) => {
+      return new Promise((resolve, reject) => {
         return config.getSetting('git', command => {
           if (command == null) { command = 'git'; }
           const args = ['clone', '--recursive', repoUrl, packageDirectory];
@@ -81,10 +81,10 @@ cmd-shift-o to run the package out of the newly cloned repository.\
           git.addGitToEnv(process.env);
           return this.spawn(command, args, (...args) => {
             if (options.argv.json) {
-              return void this.logCommandResultsIfFail(resolve, ...args);
+              return void this.logCommandResultsIfFail(...args).then(resolve, reject);
             }
 
-             return void this.logCommandResults(resolve, ...args);
+            this.logCommandResults(...args).then(resolve, reject);
           });
         });
       });
@@ -124,7 +124,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       return new Promise((resolve, _reject) => {
         this.getRepositoryUrl(packageName).then(repoUrl => { 
           const tasks = [];
-          tasks.push(callback => this.cloneRepository(repoUrl, packageDirectory, options).then(callback));
+          tasks.push(callback => this.cloneRepository(repoUrl, packageDirectory, options).then(callback, callback));
   
           tasks.push(callback => this.installDependencies(packageDirectory, options).then(callback));
   

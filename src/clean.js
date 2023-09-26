@@ -36,9 +36,9 @@ as a dependency in the package.json file.\
 
   run(_options) {
     process.stdout.write("Removing extraneous modules ");
-    return new Promise((resolve, _reject) => 
+    return new Promise((resolve, reject) => 
       void this.fork(this.atomNpmPath, ['prune'], (...args) =>
-        void this.logCommandResults(resolve, ...args)
+        void this.logCommandResults(...args).then(resolve, reject)
       )
     );
   }
