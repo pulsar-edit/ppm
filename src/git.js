@@ -6,13 +6,13 @@ const npm = require('npm');
 const config = require('./apm');
 const fs = require('./fs');
 
-const addPortableGitToEnv = function(env) {
-  let children;
+function addPortableGitToEnv(env) {
   const localAppData = env.LOCALAPPDATA;
   if (!localAppData) { return; }
 
   const githubPath = path.join(localAppData, 'GitHub');
 
+  let children;
   try {
     children = fs.readdirSync(githubPath);
   } catch (error) {
@@ -24,17 +24,16 @@ const addPortableGitToEnv = function(env) {
       const cmdPath = path.join(githubPath, child, 'cmd');
       const binPath = path.join(githubPath, child, 'bin');
       if (env.Path) {
-        env.Path += `${path.delimiter}${cmdPath}${path.delimiter}${binPath}`;
-      } else {
-        env.Path = `${cmdPath}${path.delimiter}${binPath}`;
+        env.Path += path.delimiter;
       }
+      env.Path += `${cmdPath}${path.delimiter}${binPath}`;
       break;
     }
   }
 
-};
+}
 
-const addGitBashToEnv = env => {
+function addGitBashToEnv(env) {
   let gitPath;
   if (env.ProgramFiles) {
     gitPath = path.join(env.ProgramFiles, 'Git');
@@ -51,13 +50,12 @@ const addGitBashToEnv = env => {
   const cmdPath = path.join(gitPath, 'cmd');
   const binPath = path.join(gitPath, 'bin');
   if (env.Path) {
-    return env.Path += `${path.delimiter}${cmdPath}${path.delimiter}${binPath}`;
-  } else {
-    return env.Path = `${cmdPath}${path.delimiter}${binPath}`;
+    env.Path += path.delimiter;
   }
-};
+  env.Path += `${cmdPath}${path.delimiter}${binPath}`;
+}
 
-exports.addGitToEnv = function(env) {
+exports.addGitToEnv = env => {
   if (process.platform !== 'win32') { return; }
   addPortableGitToEnv(env);
   addGitBashToEnv(env);
@@ -80,8 +78,8 @@ exports.getGitVersion = () => {
       spawned.on('close', code => {
         let version;
         if (code === 0) {
-          let gitName, versionName;
-          [gitName, versionName, version] = Buffer.concat(outputChunks).toString().split(' ');
+          let _gitName, _versionName;
+          [_gitName, _versionName, version] = Buffer.concat(outputChunks).toString().split(' ');
           version = version?.trim();
         }
         resolve(version);
