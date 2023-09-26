@@ -61,9 +61,9 @@ but cannot be used to install new packages or dependencies.\
 
     const installOptions = {env, streaming: options.argv.verbose};
 
-    return new Promise((resolve, _reject) =>
+    return new Promise((resolve, reject) =>
       void this.fork(this.atomNpmPath, installArgs, installOptions, (...args) =>
-        void this.logCommandResults(resolve, ...args)
+        void this.logCommandResults(...args).then(resolve, reject)
       )
     )
   }
@@ -73,8 +73,8 @@ but cannot be used to install new packages or dependencies.\
 
     const commands = [];
     commands.push(callback => config.loadNpm((error, npm) => { this.npm = npm; callback(error); }));
-    commands.push(cb => this.loadInstalledAtomMetadata(cb));
-    commands.push(cb => this.installModules(opts).then(cb));
+    commands.push(cb => this.loadInstalledAtomMetadata().then(cb, cb));
+    commands.push(cb => this.installModules(opts).then(cb, cb));
     const iteratee = (item, next) => item(next);
     return new Promise((resolve, _reject) =>
       void async.mapSeries(commands, iteratee, err =>

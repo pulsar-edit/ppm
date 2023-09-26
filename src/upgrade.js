@@ -83,7 +83,7 @@ available updates.\
           return callback();
         });
       } else {
-        return this.loadInstalledAtomMetadata(callback);
+        return this.loadInstalledAtomMetadata().then(callback, callback);
       }
     }
 

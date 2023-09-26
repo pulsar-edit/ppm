@@ -65,7 +65,7 @@ All the modules will be rebuilt if no module names are specified.\
       return new Promise((resolve, _reject) => {
         config.loadNpm((_error, npm) => {
           this.npm = npm;
-          this.loadInstalledAtomMetadata(() => {
+          this.loadInstalledAtomMetadata().then(() => {
             this.forkNpmRebuild(options).then(() => {
               this.logSuccess();
               resolve();

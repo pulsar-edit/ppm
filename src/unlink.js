@@ -45,7 +45,7 @@ Run \`ppm links\` to view all the currently linked packages.\
       try {
         process.stdout.write(`Unlinking ${pathToUnlink} `);
         fs.unlinkSync(pathToUnlink);
-        return this.logSuccess();
+        this.logSuccess();
       } catch (error) {
         this.logFailure();
         throw error;
