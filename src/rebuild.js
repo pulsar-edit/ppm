@@ -59,22 +59,18 @@ All the modules will be rebuilt if no module names are specified.\
       );
     }
 
-    run(options) {
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
 
-      return new Promise((resolve, _reject) => {
-        config.loadNpm((_error, npm) => {
-          this.npm = npm;
-          this.loadInstalledAtomMetadata().then(() => {
-            this.forkNpmRebuild(options).then(() => {
-              this.logSuccess();
-              resolve();
-            }, stderr => {
-              this.logFailure();
-              resolve(stderr); //errors as return values atm
-            });
-          });
-        });
-      });
+      const npm = await config.loadNpm();
+      this.npm = npm;
+      try {
+        await this.loadInstalledAtomMetadata();
+        await this.forkNpmRebuild(options);
+        this.logSuccess();
+      } catch (error) {
+        this.logFailure();
+        return stderr; //errors as return values atm
+      }
     }
   }

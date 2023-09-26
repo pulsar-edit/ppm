@@ -682,7 +682,7 @@ Run ppm -v after installing Git to see what version has been detected.\
       this.createAtomDirectories();
 
       if (options.argv.check) {
-        config.loadNpm((error, npm) => {
+        config.loadNpm().then(npm => {
           this.npm = npm;
           const cb = () => {
             return this.checkNativeBuildTools(callback);
@@ -739,7 +739,7 @@ with Pulsar will be used.\
       }
 
       const commands = [];
-      commands.push(callback => { return config.loadNpm((error, npm) => { this.npm = npm; return callback(error); }); });
+      commands.push(callback => void config.loadNpm().then(npm => { this.npm = npm; return callback(); }));
       commands.push(callback => this.loadInstalledAtomMetadata().then(() => callback(), () => callback()));
       packageNames.forEach(packageName => commands.push(callback => installPackage(packageName, callback)));
       const iteratee = (item, next) => item(next);

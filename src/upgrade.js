@@ -135,7 +135,7 @@ available updates.\
     getLatestSha(pack, callback) {
       const repoPath = path.join(this.atomPackagesDirectory, pack.name);
       const repo = Git.open(repoPath);
-      return config.getSetting('git', command => {
+      return config.getSetting('git').then(command => {
         if (command == null) { command = 'git'; }
         const args = ['fetch', 'origin', repo.getShortHead()];
         git.addGitToEnv(process.env);

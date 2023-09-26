@@ -72,20 +72,18 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       });
     }
 
-    cloneRepository(repoUrl, packageDirectory, options) {
+    async cloneRepository(repoUrl, packageDirectory, options) {
+      const command = await config.getSetting('git') ?? 'git';
+      const args = ['clone', '--recursive', repoUrl, packageDirectory];
+      if (!options.argv.json) { process.stdout.write(`Cloning ${repoUrl} `); }
+      git.addGitToEnv(process.env);
       return new Promise((resolve, reject) => {
-        return config.getSetting('git', command => {
-          if (command == null) { command = 'git'; }
-          const args = ['clone', '--recursive', repoUrl, packageDirectory];
-          if (!options.argv.json) { process.stdout.write(`Cloning ${repoUrl} `); }
-          git.addGitToEnv(process.env);
-          return this.spawn(command, args, (...args) => {
-            if (options.argv.json) {
-              return void this.logCommandResultsIfFail(...args).then(resolve, reject);
-            }
+        this.spawn(command, args, (...args) => {
+          if (options.argv.json) {
+            return void this.logCommandResultsIfFail(...args).then(resolve, reject);
+          }
 
-            this.logCommandResults(...args).then(resolve, reject);
-          });
+          this.logCommandResults(...args).then(resolve, reject);
         });
       });
     }
