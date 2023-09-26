@@ -162,18 +162,15 @@ ${'git'.magenta} ${gitVersion.magenta}\
     console.log(versions);
 };
 
-function getAtomVersion() {
-  return new Promise((resolve, _reject) => {
-    config.getResourcePath((resourcePath) => {
-      const unknownVersion = 'unknown';
-      try {
-        const { version } = require(path.join(resourcePath, "package.json")) ?? unknownVersion;
-        resolve(version);
-      } catch (error) {
-        resolve(unknownVersion);
-      }
-    });
-  });
+async function getAtomVersion() {
+  const resourcePath = await config.getResourcePath();
+  const unknownVersion = 'unknown';
+  try {
+    const { version } = require(path.join(resourcePath, "package.json")) ?? unknownVersion;
+    return version;
+  } catch (error) {
+    return unknownVersion;
+  }
 }
 
 function getPythonVersion() {

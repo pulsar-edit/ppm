@@ -164,26 +164,23 @@ List all the installed packages and also the packages bundled with Atom.\
       return gitPackages;
     }
 
-    listBundledPackages(options) {
-      return new Promise((resolve, _reject) => {
-        config.getResourcePath(resourcePath => {
-          let atomPackages;
-          try {
-            const metadataPath = path.join(resourcePath, 'package.json');
-            ({_atomPackages: atomPackages} = JSON.parse(fs.readFileSync(metadataPath)));
-          } catch (error) {}
-          atomPackages ??= {};
-          const packagesMeta = Object.values(atomPackages)
-            .map(packageValue => packageValue.metadata)
-            .filter(metadata => this.isPackageVisible(options, metadata));
-  
-          if (!options.argv.bare && !options.argv.json) {
-            console.log(`${`Built-in Atom ${options.argv.themes ? 'Themes' : 'Packages'}`.cyan} (${packagesMeta.length})`);
-          }
-  
-          resolve(packagesMeta);
-        });
-      });
+    async listBundledPackages(options) {
+      const resourcePath = await config.getResourcePath();
+      let atomPackages;
+      try {
+        const metadataPath = path.join(resourcePath, 'package.json');
+        ({_atomPackages: atomPackages} = JSON.parse(fs.readFileSync(metadataPath)));
+      } catch (error) {}
+      atomPackages ??= {};
+      const packagesMeta = Object.values(atomPackages)
+        .map(packageValue => packageValue.metadata)
+        .filter(metadata => this.isPackageVisible(options, metadata));
+
+      if (!options.argv.bare && !options.argv.json) {
+        console.log(`${`Built-in Atom ${options.argv.themes ? 'Themes' : 'Packages'}`.cyan} (${packagesMeta.length})`);
+      }
+
+      return packagesMeta;
     }
 
     listInstalledPackages(options) {

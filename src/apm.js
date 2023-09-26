@@ -2,7 +2,6 @@ const child_process = require('child_process');
 const fs = require('./fs');
 const path = require('path');
 const npm = require('npm');
-const semver = require('semver');
 let asarPath = null;
 
 module.exports = {
@@ -26,55 +25,57 @@ module.exports = {
     return path.join(this.getAtomDirectory(), '.apm');
   },
 
-  getResourcePath(callback) {
-    if (process.env.ATOM_RESOURCE_PATH) {
-      return process.nextTick(() => callback(process.env.ATOM_RESOURCE_PATH));
-    }
-
-    if (asarPath) { // already calculated
-      return process.nextTick(() => callback(asarPath));
-    }
-
-    let apmFolder = path.resolve(__dirname, '..');
-    let appFolder = path.dirname(apmFolder);
-    if ((path.basename(apmFolder) === 'ppm') && (path.basename(appFolder) === 'app')) {
-      asarPath = `${appFolder}.asar`;
-      if (fs.existsSync(asarPath)) {
-        return process.nextTick(() => callback(asarPath));
+  getResourcePath() {
+    return new Promise((resolve, _reject) => {
+      if (process.env.ATOM_RESOURCE_PATH) {
+        return void process.nextTick(() => resolve(process.env.ATOM_RESOURCE_PATH));
       }
-    }
-
-    apmFolder = path.resolve(__dirname, '..', '..', '..');
-    appFolder = path.dirname(apmFolder);
-    if ((path.basename(apmFolder) === 'ppm') && (path.basename(appFolder) === 'app')) {
-      asarPath = `${appFolder}.asar`;
-      if (fs.existsSync(asarPath)) {
-        return process.nextTick(() => callback(asarPath));
+  
+      if (asarPath) { // already calculated
+        return void process.nextTick(() => resolve(asarPath));
       }
-    }
-
-    switch (process.platform) {
-      case 'darwin':
-        return child_process.exec('mdfind "kMDItemCFBundleIdentifier == \'dev.pulsar-edit.pulsar\'"', function(error, stdout, stderr) {
-          let appLocation;
-          if (stdout == null) { stdout = ''; }
-          if (!error) { [appLocation] = stdout.split('\n'); }
-          if (!appLocation) { appLocation = '/Applications/Pulsar.app'; }
-          asarPath = `${appLocation}/Contents/Resources/app.asar`;
-          return process.nextTick(() => callback(asarPath));
-        });
-      case 'linux':
-        asarPath = '/opt/Pulsar/resources/app.asar';
-        return process.nextTick(() => callback(asarPath));
-      case 'win32':
-        asarPath = `/Users/${process.env.USERNAME}/AppData/Local/Programs/Pulsar/resources/app.asar`;
-        if (!fs.existsSync(asarPath)) {
-          asarPath = "/Program Files/Pulsar/resources/app.asar";
+  
+      let apmFolder = path.resolve(__dirname, '..');
+      let appFolder = path.dirname(apmFolder);
+      if ((path.basename(apmFolder) === 'ppm') && (path.basename(appFolder) === 'app')) {
+        asarPath = `${appFolder}.asar`;
+        if (fs.existsSync(asarPath)) {
+          return void process.nextTick(() => resolve(asarPath));
         }
-        return process.nextTick(() => callback(asarPath));
-      default:
-        return process.nextTick(() => callback(''));
-    }
+      }
+  
+      apmFolder = path.resolve(__dirname, '..', '..', '..');
+      appFolder = path.dirname(apmFolder);
+      if ((path.basename(apmFolder) === 'ppm') && (path.basename(appFolder) === 'app')) {
+        asarPath = `${appFolder}.asar`;
+        if (fs.existsSync(asarPath)) {
+          return process.nextTick(() => resolve(asarPath));
+        }
+      }
+  
+      switch (process.platform) {
+        case 'darwin':
+          return child_process.exec('mdfind "kMDItemCFBundleIdentifier == \'dev.pulsar-edit.pulsar\'"', (error, stdout, _stderr) => {
+            let appLocation;
+            stdout ??= '';
+            if (!error) { [appLocation] = stdout.split('\n'); }
+            appLocation ||= '/Applications/Pulsar.app';
+            asarPath = `${appLocation}/Contents/Resources/app.asar`;
+            return void process.nextTick(() => resolve(asarPath));
+          });
+        case 'linux':
+          asarPath = '/opt/Pulsar/resources/app.asar';
+          return void process.nextTick(() => resolve(asarPath));
+        case 'win32':
+          asarPath = `/Users/${process.env.USERNAME}/AppData/Local/Programs/Pulsar/resources/app.asar`;
+          if (!fs.existsSync(asarPath)) {
+            asarPath = "/Program Files/Pulsar/resources/app.asar";
+          }
+          return void process.nextTick(() => resolve(asarPath));
+        default:
+          return void process.nextTick(() => resolve(''));
+      }
+    });
   },
 
   getReposDirectory() {
@@ -142,27 +143,31 @@ module.exports = {
   visualStudioIsInstalled(version) {
     if (version < 2017) {
       return fs.existsSync(path.join(this.x86ProgramFilesDirectory(), `Microsoft Visual Studio ${version}`, "Common7", "IDE"));
-    } else {
-      return [
-        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "BuildTools", "Common7", "IDE"),
-        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Community", "Common7", "IDE"),
-        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Enterprise", "Common7", "IDE"),
-        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "Professional", "Common7", "IDE"),
-        path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, "WDExpress", "Common7", "IDE")
-      ].find(f => fs.existsSync(f));
     }
+
+    return [
+        "BuildTools",
+        "Community",
+        "Enterprise",
+        "Professional",
+        "WDExpress"
+      ].map(releaseType => path.join(this.x86ProgramFilesDirectory(), "Microsoft Visual Studio", `${version}`, releaseType, "Common7", "IDE"))
+      .find(f => fs.existsSync(f));
   },
 
-  loadNpm(callback) {
-    const npmOptions = {
-      userconfig: this.getUserConfigPath(),
-      globalconfig: this.getGlobalConfigPath()
-    };
-    return npm.load(npmOptions, () => callback(null, npm));
+  loadNpm() {
+    return new Promise((resolve, _reject) => {
+      const npmOptions = {
+        userconfig: this.getUserConfigPath(),
+        globalconfig: this.getGlobalConfigPath()
+      };
+      npm.load(npmOptions, () => resolve(npm));
+    });
   },
 
-  getSetting(key, callback) {
-    return this.loadNpm(() => callback(npm.config.get(key)));
+  async getSetting(key) {
+    await this.loadNpm();
+    return npm.config.get(key);
   },
 
   setupApmRcFile() {

@@ -123,7 +123,7 @@ class Command {
       if (this.resourcePath) {
         process.nextTick(() => void resolve(this.resourcePath));
       } else {
-        config.getResourcePath(resourcePath => { this.resourcePath = resourcePath; resolve(this.resourcePath); });
+        config.getResourcePath().then(resourcePath => { this.resourcePath = resourcePath; resolve(this.resourcePath); });
       }
     });
   }

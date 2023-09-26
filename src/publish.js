@@ -349,30 +349,29 @@ have published it.\
         throw error;
       }
 
+      const gitCommand = await config.getSetting('git') ?? 'git';
       return new Promise((resolve, reject) => {
-        config.getSetting('git', gitCommand => {
-          gitCommand ??= 'git';
-          return this.spawn(gitCommand, ['add', 'package.json'], (code, stderr, stdout) => {
+        this.spawn(gitCommand, ['add', 'package.json'], (code, stderr, stdout) => {
+          stderr ??= '';
+          stdout ??= '';
+          if (code !== 0) {
+            this.logFailure();
+            const addOutput = `${stdout}\n${stderr}`.trim();
+            return void reject(`\`git add package.json\` failed: ${addOutput}`);
+          }
+
+          this.spawn(gitCommand, ['commit', '-m', message], (code, stderr, stdout) => {
             stderr ??= '';
             stdout ??= '';
-            if (code !== 0) {
+            if (code === 0) {
               this.logFailure();
-              const addOutput = `${stdout}\n${stderr}`.trim();
-              return void reject(`\`git add package.json\` failed: ${addOutput}`);
+              const commitOutput = `${stdout}\n${stderr}`.trim();
+              reject(`Failed to commit package.json: ${commitOutput}`);
+              return;
             }
-  
-            this.spawn(gitCommand, ['commit', '-m', message], (code, stderr, stdout) => {
-              stderr ??= '';
-              stdout ??= '';
-              if (code === 0) {
-                this.logSuccess();
-                resolve();
-              } else {
-                this.logFailure();
-                const commitOutput = `${stdout}\n${stderr}`.trim();
-                reject(`Failed to commit package.json: ${commitOutput}`);
-              }
-            });
+
+            this.logSuccess();
+            resolve();
           });
         });
       });

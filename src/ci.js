@@ -72,7 +72,7 @@ but cannot be used to install new packages or dependencies.\
     const opts = this.parseOptions(options.commandArgs);
 
     const commands = [];
-    commands.push(callback => config.loadNpm((error, npm) => { this.npm = npm; callback(error); }));
+    commands.push(callback => config.loadNpm().then(npm => { this.npm = npm; callback(); }));
     commands.push(cb => this.loadInstalledAtomMetadata().then(cb, cb));
     commands.push(cb => this.installModules(opts).then(cb, cb));
     const iteratee = (item, next) => item(next);

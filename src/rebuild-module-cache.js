@@ -37,7 +37,7 @@ This command skips all linked packages.\
       if (this.resourcePath) {
         return process.nextTick(() => callback(this.resourcePath));
       } else {
-        return config.getResourcePath(resourcePath => { this.resourcePath = resourcePath; return callback(this.resourcePath); });
+        return void config.getResourcePath().then(resourcePath => { this.resourcePath = resourcePath; return callback(this.resourcePath); });
       }
     }
 
