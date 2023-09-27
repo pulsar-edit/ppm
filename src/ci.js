@@ -68,7 +68,7 @@ but cannot be used to install new packages or dependencies.\
     )
   }
 
-  run(options) {
+  async run(options) {
     const opts = this.parseOptions(options.commandArgs);
 
     const commands = [];
@@ -76,10 +76,10 @@ but cannot be used to install new packages or dependencies.\
     commands.push(cb => this.loadInstalledAtomMetadata().then(cb, cb));
     commands.push(cb => this.installModules(opts).then(cb, cb));
     const iteratee = (item, next) => item(next);
-    return new Promise((resolve, _reject) =>
-      void async.mapSeries(commands, iteratee, err =>
-        resolve(err || null)
-      )
-    );
+    try {
+      await async.mapSeries(commands, iteratee);
+    } catch (error) {
+      return error; // errors as return values atm
+    }
   }
 };

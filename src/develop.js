@@ -105,7 +105,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       return new Link().run(linkOptions);
     }
 
-    run(options) {
+    async run(options) {
       const packageName = options.commandArgs.shift();
 
       if (!((packageName != null ? packageName.length : undefined) > 0)) {
@@ -119,17 +119,16 @@ cmd-shift-o to run the package out of the newly cloned repository.\
         return this.linkPackage(packageDirectory, options);
       }
 
-      return new Promise((resolve, _reject) => {
-        this.getRepositoryUrl(packageName).then(repoUrl => { 
-          const tasks = [];
-          tasks.push(callback => this.cloneRepository(repoUrl, packageDirectory, options).then(callback, callback));
-  
-          tasks.push(callback => this.installDependencies(packageDirectory, options).then(callback));
-  
-          tasks.push(callback => this.linkPackage(packageDirectory, options).then(callback));
-  
-          return async.waterfall(tasks, resolve);
-        }, resolve);
-      });
+      try {
+        const repoUrl = await this.getRepositoryUrl(packageName);
+        const tasks = [];
+        tasks.push(callback => this.cloneRepository(repoUrl, packageDirectory, options).then(callback, callback));
+        tasks.push(callback => this.installDependencies(packageDirectory, options).then(callback));
+        tasks.push(callback => this.linkPackage(packageDirectory, options).then(callback));
+
+        await async.waterfall(tasks);
+      } catch (error) {
+        return error; //errors as return values atm
+      }
     }
 }
