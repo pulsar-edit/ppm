@@ -108,10 +108,7 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
         }
       }
 
-      return new Promise((resolve, _reject) =>
-        void async.eachSeries(uninstallsToRegister, (data, errorHandler) =>
-          void this.registerUninstall(data).then(errorHandler), () => resolve(uninstallError)
-        )
-      );
+      await async.eachSeries(uninstallsToRegister, (data, errorHandler) =>void this.registerUninstall(data).then(errorHandler));
+      return uninstallError; // both error and lack of error, as return value atm
     }
   }

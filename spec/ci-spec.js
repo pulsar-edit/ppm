@@ -57,7 +57,7 @@ describe('apm ci', () => {
     apm.run(['ci'], callback);
     waitsFor('waiting for install to complete', 600000, () => callback.callCount > 0);
     runs(() => {
-      expect(callback.mostRecentCall.args[0]).toBeNull();
+      expect(callback.mostRecentCall.args[0]).toBeUndefined();
       const pjson0 = CSON.readFileSync(path.join('node_modules', 'test-module-with-dependencies', 'package.json'));
       expect(pjson0.version).toBe('1.1.0');
       const pjson1 = CSON.readFileSync(path.join('node_modules', 'test-module', 'package.json'));
@@ -83,7 +83,7 @@ describe('apm ci', () => {
     });
     waitsFor('waiting for ci to complete', 600000, () => callback1.callCount > 0);
     runs(() => {
-      expect(callback1.mostRecentCall.args[0]).toBeNull();
+      expect(callback1.mostRecentCall.args[0]).toBeUndefined();
       expect(fs.existsSync(path.join(moduleDirectory, 'node_modules', 'native-module', 'build', 'Release', 'native.node'))).toBeTruthy();
     });
   });

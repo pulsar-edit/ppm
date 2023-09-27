@@ -70,7 +70,7 @@ Run \`ppm stars\` to see all your starred packages.\
           const commands = packageNames.map(packageName => {
             return callback => this.starPackage(packageName, token).then(callback, callback);
           });
-          return async.waterfall(commands, resolve);
+          return async.waterfall(commands).then(resolve);
         });
       });
     }
