@@ -63,15 +63,14 @@ Run \`ppm stars\` to see all your starred packages.\
         return "Please specify a package name to unstar"; // error as return value atm
       }
 
-      return new Promise((resolve, _reject) => {
-        Login.getTokenOrLogin((error, token) => {
-          if (error != null) { return void resolve(error); } // error as return value atm
-
-          const commands = packageNames.map(packageName => {
-            return async () => await this.starPackage(packageName, token);
-          });
-          return async.waterfall(commands).then(resolve);
+      try {
+        const token = await Login.getTokenOrLogin();
+        const commands = packageNames.map(packageName => {
+          return async () => await this.starPackage(packageName, token);
         });
-      });
+        return await async.waterfall(commands);
+      } catch (error) {
+        return error; // error as return value atm
+      }
     }
   }
