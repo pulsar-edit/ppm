@@ -105,20 +105,18 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       }
 
-      return new Promise((resolve, _reject) => {
-        Login.getTokenOrLogin((error, token) => {
-          if (error != null) { return void resolve(error); } // error as return value
-
-          const starOptions = {
-            ignoreUnpublishedPackages: options.argv.installed,
-            token
-          };
-
-          const commands = packageNames.map(packageName => {
-            return async () => await this.starPackage(packageName, starOptions);
-          });
-          async.waterfall(commands).then(resolve);
+      try {
+        const token = await Login.getTokenOrLogin();
+        const starOptions = {
+          ignoreUnpublishedPackages: options.argv.installed,
+          token
+        };
+        const commands = packageNames.map(packageName => {
+          return async () => await this.starPackage(packageName, starOptions);
         });
-      });
+        return await async.waterfall(commands);
+      } catch (error) {
+        return error; // error as return value
+      }
     }
   }

@@ -138,25 +138,22 @@ have published it.\
     //
     // return value - A Promise that can reject with an error or resolve to 
     //                a boolean value.
-    packageExists(packageName) {
+    async packageExists(packageName) {
+      const token = await Login.getTokenOrLogin();
+      const requestSettings = {
+        url: `${config.getAtomPackagesUrl()}/${packageName}`,
+        json: true,
+        headers: {
+          authorization: token
+        }
+      };
       return new Promise((resolve, reject) => {
-        Login.getTokenOrLogin((error, token) => {
-          if (error != null) { return void reject(error); }
-
-          const requestSettings = {
-            url: `${config.getAtomPackagesUrl()}/${packageName}`,
-            json: true,
-            headers: {
-              authorization: token
-            }
-          };
-          request.get(requestSettings, (error, response, body) => {
-            body ??= {};
-            if (error != null) {
-              return void reject(error);
-            }
-            resolve(response.statusCode === 200);
-          });
+        request.get(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            return void reject(error);
+          }
+          resolve(response.statusCode === 200);
         });
       });
     }
@@ -182,24 +179,21 @@ have published it.\
       }
 
       process.stdout.write(`Registering ${pack.name} `);
-      return new Promise((resolve, reject) => {
-        Login.getTokenOrLogin((error, token) => {
-          if (error != null) {
-            this.logFailure();
-            reject(error);
-            return;
-          }
 
-          const requestSettings = {
-            url: config.getAtomPackagesUrl(),
-            json: true,
-            qs: {
-              repository
-            },
-            headers: {
-              authorization: token
-            }
-          };
+      try {
+        const token = await Login.getTokenOrLogin();
+        
+        const requestSettings = {
+          url: config.getAtomPackagesUrl(),
+          json: true,
+          qs: {
+            repository
+          },
+          headers: {
+            authorization: token
+          }
+        };
+        return new Promise((resolve, reject) => {
           request.post(requestSettings, (error, response, body) => {
             body ??= {};
             if (error != null) {
@@ -215,7 +209,10 @@ have published it.\
             return resolve(true);
           });
         });
-      });
+      } catch (error) {
+        this.logFailure();
+        throw error;
+      }
     }
 
     // Create a new package version at the given Git tag.
@@ -224,37 +221,31 @@ have published it.\
     // tag - The string Git tag of the new version.
     //
     // return value - A Promise that rejects with an error or resolves without a value.
-    createPackageVersion(packageName, tag, options) {
+    async createPackageVersion(packageName, tag, options) {
+      const token = await Login.getTokenOrLogin();        
+      const requestSettings = {
+        url: `${config.getAtomPackagesUrl()}/${packageName}/versions`,
+        json: true,
+        qs: {
+          tag,
+          rename: options.rename
+        },
+        headers: {
+          authorization: token
+        }
+      };
       return new Promise((resolve, reject) => {
-        Login.getTokenOrLogin((error, token) => {
+        request.post(requestSettings, (error, response, body) => {
+          body ??= {};
           if (error != null) {
-            reject(error);
-            return;
+            return void reject(error);
           }
-  
-          const requestSettings = {
-            url: `${config.getAtomPackagesUrl()}/${packageName}/versions`,
-            json: true,
-            qs: {
-              tag,
-              rename: options.rename
-            },
-            headers: {
-              authorization: token
-            }
-          };
-          request.post(requestSettings, (error, response, body) => {
-            body ??= {};
-            if (error != null) {
-              return void reject(error);
-            }
-            if (response.statusCode !== 201) {
-              const message = request.getErrorMessage(body, error);
-              return void reject(`Creating new version failed: ${message}`);
-            }
+          if (response.statusCode !== 201) {
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Creating new version failed: ${message}`);
+          }
 
-            resolve();
-          });
+          resolve();
         });
       });
     }

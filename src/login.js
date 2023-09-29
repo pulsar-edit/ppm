@@ -19,8 +19,15 @@ class Login extends Command {
       this.saveToken = this.saveToken.bind(this);
     }
 
-    static getTokenOrLogin(callback) {
-      return void auth.getToken().then(token => void callback(null, token), _error => new Login().run({callback, commandArgs: []}));
+    static async getTokenOrLogin() {
+      try {
+        const token = await auth.getToken();
+        return token;
+      } catch (error) {
+        return new Promise((resolve, reject) => 
+          void new Login().run({callback: (error, value) => void(error != null ? reject(error) : resolve(value)), commandArgs: []})
+        );
+      }
     }
 
     parseOptions(argv) {

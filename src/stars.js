@@ -33,7 +33,7 @@ List or install starred Atom packages and themes.\
       return options.boolean('json').describe('json', 'Output packages as a JSON array');
     }
 
-    getStarredPackages(user, atomVersion) {
+    async getStarredPackages(user, atomVersion) {
       const requestSettings = {json: true};
       if (atomVersion) { requestSettings.qs = {engine: atomVersion}; }
 
@@ -43,14 +43,9 @@ List or install starred Atom packages and themes.\
       }
 
       requestSettings.url = `${config.getAtomApiUrl()}/stars`;
-      return new Promise((resolve, reject) => {
-        Login.getTokenOrLogin((error, token) => {
-          if (error != null) { return void reject(error); }
-
-          requestSettings.headers = {authorization: token};
-          resolve(this.requestStarredPackages(requestSettings));
-        });
-      });
+      const token = await Login.getTokenOrLogin();
+      requestSettings.headers = {authorization: token};
+      return this.requestStarredPackages(requestSettings);
     }
 
     requestStarredPackages(requestSettings) {
