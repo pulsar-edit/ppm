@@ -77,9 +77,7 @@ List or install starred Atom packages and themes.\
       if (packages.length === 0) { return; }
 
       const commandArgs = packages.map(({name}) => name);
-      return new Promise((resolve, _reject) =>
-        void new Install().run({commandArgs, callback: resolve})
-      );
+      return new Install().run({commandArgs});
     }
 
     logPackagesAsJson(packages) {

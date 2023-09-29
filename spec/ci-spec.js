@@ -78,7 +78,7 @@ describe('apm ci', () => {
     apm.run(['install'], callback0);
     waitsFor('waiting for install to complete', 600000, () => callback0.callCount > 0);
     runs(() => {
-      expect(callback0.mostRecentCall.args[0]).toBeNull();
+      expect(callback0.mostRecentCall.args[0]).toBeUndefined();
       apm.run(['ci'], callback1);
     });
     waitsFor('waiting for ci to complete', 600000, () => callback1.callCount > 0);

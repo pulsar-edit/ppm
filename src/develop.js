@@ -89,13 +89,10 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     }
 
     installDependencies(packageDirectory, options) {
-      return new Promise((resolve, _reject) => {
         process.chdir(packageDirectory);
         const installOptions = _.clone(options);
-        installOptions.callback = resolve;
   
-        return void new Install().run(installOptions);
-      });
+        return new Install().run(installOptions);
     }
 
     linkPackage(packageDirectory, options) {
