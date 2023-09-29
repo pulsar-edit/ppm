@@ -198,12 +198,12 @@ available updates.\
     async installUpdates(updates) {
       const installCommands = [];
       for (let {pack, latestVersion} of Array.from(updates)) {
-        installCommands.push(callback => {
+        installCommands.push(async () => {
           const commandArgs = pack.apmInstallSource?.type === 'git'
             ? [pack.apmInstallSource.source]
             : [`${pack.name}@${latestVersion}`];
           if (this.verbose) { commandArgs.unshift('--verbose'); }
-          new Install().run({commandArgs}).then(callback);
+          await new Install().run({commandArgs});
         });
       }
 
