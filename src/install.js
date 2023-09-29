@@ -676,8 +676,7 @@ Run ppm -v after installing Git to see what version has been detected.\
         const gitPackageInfo = this.getHostedGitInfo(name);
 
         if (gitPackageInfo || (name.indexOf('file://') === 0)) {
-          await this.installGitPackage(name, options, options.argv.branch || options.argv.tag);
-          return;
+          return await this.installGitPackage(name, options, options.argv.branch || options.argv.tag);
         }
         if (name === '.') {
           await this.installDependencies(options);
@@ -701,7 +700,7 @@ with Pulsar will be used.\
 `.yellow
           );
         }
-        await this.installRegisteredPackage({name, version}, options);
+        return await this.installRegisteredPackage({name, version}, options);
       };
 
       if (packagesFilePath) {
@@ -724,9 +723,7 @@ with Pulsar will be used.\
         await this.loadInstalledAtomMetadata();
       });
       packageNames.forEach(packageName =>
-        void commands.push(async () => {
-          await installPackage(packageName);
-        })
+        void commands.push(async () => await installPackage(packageName))
       );
       const iteratee = async fn => await fn();
       try {
