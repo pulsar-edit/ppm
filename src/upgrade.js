@@ -203,7 +203,7 @@ available updates.\
             ? [pack.apmInstallSource.source]
             : [`${pack.name}@${latestVersion}`];
           if (this.verbose) { commandArgs.unshift('--verbose'); }
-          return new Install().run({callback, commandArgs});
+          new Install().run({commandArgs}).then(callback);
         });
       }
 
