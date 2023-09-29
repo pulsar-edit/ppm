@@ -68,7 +68,7 @@ Run \`ppm stars\` to see all your starred packages.\
           if (error != null) { return void resolve(error); } // error as return value atm
 
           const commands = packageNames.map(packageName => {
-            return callback => this.starPackage(packageName, token).then(callback, callback);
+            return async () => await this.starPackage(packageName, token);
           });
           return async.waterfall(commands).then(resolve);
         });
