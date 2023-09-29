@@ -83,7 +83,7 @@ describe('apm stars', () => {
 
       waitsFor('waiting for command to complete', () => callback.callCount > 0);
       runs(() => {
-        expect(callback.mostRecentCall.args[0]).toBeNull();
+        expect(callback.mostRecentCall.args[0]).toBeUndefined();
         expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy();
         expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy();
       });
