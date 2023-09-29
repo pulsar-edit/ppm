@@ -52,24 +52,23 @@ class PackageConverter {
     return downloadUrl += '/archive/master.tar.gz';
   }
 
-  downloadBundle() {
+  async downloadBundle() {
+    const tempPath = temp.mkdirSync('atom-bundle-');
+    const requestOptions = {url: this.getDownloadUrl()};
+    const readStream = await request.createReadStream(requestOptions);
     return new Promise((resolve, reject) => {
-      const tempPath = temp.mkdirSync('atom-bundle-');
-      const requestOptions = {url: this.getDownloadUrl()};
-      return request.createReadStream(requestOptions, readStream => {
-        readStream.on('response', ({headers, statusCode}) => {
-          if (statusCode !== 200) {
-            reject(`Download failed (${headers.status})`);
-          }
-        });
-
-        return readStream.pipe(zlib.createGunzip()).pipe(tar.extract({cwd: tempPath}))
-          .on('error', error => reject(error))
-          .on('end', async () => {
-            const sourcePath = path.join(tempPath, fs.readdirSync(tempPath)[0]);
-            await this.copyDirectories(sourcePath);
-            resolve();
-        });
+      readStream.on('response', ({headers, statusCode}) => {
+        if (statusCode !== 200) {
+          reject(`Download failed (${headers.status})`);
+        }
+      });
+    
+      readStream.pipe(zlib.createGunzip()).pipe(tar.extract({cwd: tempPath}))
+        .on('error', error => reject(error))
+        .on('end', async () => {
+          const sourcePath = path.join(tempPath, fs.readdirSync(tempPath)[0]);
+          await this.copyDirectories(sourcePath);
+          resolve();
       });
     });
   }
