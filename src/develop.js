@@ -119,9 +119,9 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       try {
         const repoUrl = await this.getRepositoryUrl(packageName);
         const tasks = [];
-        tasks.push(callback => this.cloneRepository(repoUrl, packageDirectory, options).then(callback, callback));
-        tasks.push(callback => this.installDependencies(packageDirectory, options).then(callback));
-        tasks.push(callback => this.linkPackage(packageDirectory, options).then(callback));
+        tasks.push(async () => await this.cloneRepository(repoUrl, packageDirectory, options));
+        tasks.push(async () => await this.installDependencies(packageDirectory, options));
+        tasks.push(async () => await this.linkPackage(packageDirectory, options));
 
         await async.waterfall(tasks);
       } catch (error) {
