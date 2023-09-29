@@ -105,7 +105,7 @@ describe('apm install', () => {
           expect(fs.existsSync(existingTestModuleFile)).toBeFalsy();
           expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy();
           expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy();
-          expect(callback.mostRecentCall.args[0]).toBeNull();
+          expect(callback.mostRecentCall.args[0]).toBeUndefined();
         });
       });
 
@@ -121,7 +121,7 @@ describe('apm install', () => {
 
           runs(() => {
             expect(JSON.parse(fs.readFileSync(path.join(packageDirectory, 'package.json'))).version).toBe('1.1.0');
-            expect(callback.mostRecentCall.args[0]).toBeNull();
+            expect(callback.mostRecentCall.args[0]).toBeUndefined();
           });
         });
 
@@ -136,7 +136,7 @@ describe('apm install', () => {
 
           runs(() => {
             expect(JSON.parse(fs.readFileSync(path.join(packageDirectory, 'package.json'))).version).toBe('1.1.0');
-            expect(callback.mostRecentCall.args[0]).toBeNull();
+            expect(callback.mostRecentCall.args[0]).toBeUndefined();
           });
         });
 
@@ -173,7 +173,7 @@ describe('apm install', () => {
               expect(fs.existsSync(testModuleDirectory)).toBeTruthy();
               expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy();
               expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy();
-              expect(callback.mostRecentCall.args[0]).toBeNull();
+              expect(callback.mostRecentCall.args[0]).toBeUndefined();
             });
           });
         });
@@ -195,7 +195,7 @@ describe('apm install', () => {
           expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy();
           expect(fs.existsSync(path.join(testModule2Directory, 'index2.js'))).toBeTruthy();
           expect(fs.existsSync(path.join(testModule2Directory, 'package.json'))).toBeTruthy();
-          expect(callback.mostRecentCall.args[0]).toBeNull();
+          expect(callback.mostRecentCall.args[0]).toBeUndefined();
         });
       });
 
@@ -305,7 +305,7 @@ describe('apm install', () => {
           expect(fs.existsSync(path.join(testModuleDirectory, 'package.json'))).toBeTruthy();
           expect(fs.existsSync(path.join(testModule2Directory, 'index2.js'))).toBeTruthy();
           expect(fs.existsSync(path.join(testModule2Directory, 'package.json'))).toBeTruthy();
-          expect(callback.mostRecentCall.args[0]).toBeNull();
+          expect(callback.mostRecentCall.args[0]).toBeUndefined();
         });
       });
 
@@ -424,18 +424,17 @@ describe('apm install', () => {
         beforeEach(() => {
           install = new Install();
 
-          const fakeCloneRepository = (url, ...args) => {
-            const callback = args[args.length - 1];
+          const fakeCloneRepository = async (url, ..._rest) => {
             if (url !== urls[2]) {
-              callback(new Error('Failed to clone'));
+              throw new Error('Failed to clone');
             }
           };
 
           spyOn(install, 'cloneNormalizedUrl').andCallFake(fakeCloneRepository);
         });
 
-        it('tries cloning the next URL until one works', () => {
-          install.cloneFirstValidGitUrl(urls, {}, () => {});
+        it('tries cloning the next URL until one works', async () => {
+          await install.cloneFirstValidGitUrl(urls, {}, () => {});
           expect(install.cloneNormalizedUrl.calls.length).toBe(3);
           expect(install.cloneNormalizedUrl.argsForCall[0][0]).toBe(urls[0]);
           expect(install.cloneNormalizedUrl.argsForCall[1][0]).toBe(urls[1]);
@@ -565,7 +564,7 @@ describe('apm install', () => {
       });
     });
 
-    describe('when installing a registred package and --json is specified', () => {
+    describe('when installing a registered package and --json is specified', () => {
       beforeEach(() => {
         const callback = jasmine.createSpy('callback');
         apm.run(['install', 'test-module', 'test-module2', '--json'], callback);
@@ -609,7 +608,7 @@ describe('apm install', () => {
 
         waitsFor('waiting for install to complete', 600000, () => callback.callCount === 1);
         runs(() => {
-          expect(callback.mostRecentCall.args[0]).toBeNull();
+          expect(callback.mostRecentCall.args[0]).toBeUndefined();
 
           const testModuleDirectory = path.join(atomHome, 'packages', 'native-package');
           expect(fs.existsSync(path.join(testModuleDirectory, 'index.js'))).toBeTruthy();
@@ -624,5 +623,6 @@ describe('apm install', () => {
         });
       });
     });
+    
   });
 });
