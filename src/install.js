@@ -371,7 +371,6 @@ Run ppm -v after installing Git to see what version has been detected.\
     //
     // return value - A Promise that rejects with an error or resolves without a value
     async installPackageDependencies(options) {
-      console.trace('DEBUG');
       options = _.extend({}, options, {installGlobally: false});
       const commands = [];
       const object = this.getPackageDependencies(options.cwd);
@@ -561,63 +560,41 @@ Run ppm -v after installing Git to see what version has been detected.\
 
       const cloneDir = temp.mkdirSync("atom-git-package-clone-");
 
-      tasks.push((_data, next) => {
-        const urls = this.getNormalizedGitUrls(packageUrl);
-        this.cloneFirstValidGitUrl(urls, cloneDir, options).then(next, next);
-      });
+      const urls = this.getNormalizedGitUrls(packageUrl);
+      await this.cloneFirstValidGitUrl(urls, cloneDir, options);
 
-      tasks.push((data, next) => {
-        if (version) {
-          let error;
-          const repo = Git.open(cloneDir);
-          data.sha = version;
-          const checked = repo.checkoutRef(`refs/tags/${version}`, false) ||
-                    repo.checkoutReference(version, false);
-          if (!checked) { error = `Can't find the branch, tag, or commit referenced by ${version}`; }
-          return next(error, data);
-        } else {
-          return this.getRepositoryHeadSha(cloneDir, (err, sha) => {
-            data.sha = sha;
-            return next(err, data);
-          });
-        }
-      });
+      const data = {};
+      if (version) {
+        const repo = Git.open(cloneDir);
+        data.sha = version;
+        const checked = repo.checkoutRef(`refs/tags/${version}`, false) || repo.checkoutReference(version, false);
+        if (!checked) { throw `Can't find the branch, tag, or commit referenced by ${version}`; }
+      } else {
+        const sha = this.getRepositoryHeadSha(cloneDir);
+        data.sha = sha;
+      }
 
-      tasks.push((data, next) => {
-        return this.installGitPackageDependencies(cloneDir, options, err => next(err, data));
-      });
+      await this.installGitPackageDependencies(cloneDir, options);
 
-      tasks.push((data, next) => {
-        const metadataFilePath = CSON.resolve(path.join(cloneDir, 'package'));
-        return CSON.readFile(metadataFilePath, (err, metadata) => {
-          data.metadataFilePath = metadataFilePath;
-          data.metadata = metadata;
-          return next(err, data);
-        });
-      });
+      const metadataFilePath = CSON.resolve(path.join(cloneDir, 'package'));
+      const metadata = CSON.readFileSync(metadataFilePath);
+      data.metadataFilePath = metadataFilePath;
+      data.metadata = metadata;
 
-      tasks.push((data, next) => {
-        data.metadata.apmInstallSource = {
-          type: "git",
-          source: packageUrl,
-          sha: data.sha
-        };
-        return CSON.writeFile(data.metadataFilePath, data.metadata, err => next(err, data));
-      });
+      data.metadata.apmInstallSource = {
+        type: "git",
+        source: packageUrl,
+        sha: data.sha
+      };
+      CSON.writeFileSync(data.metadataFilePath, data.metadata);
 
-      tasks.push((data, next) => {
-        const {name} = data.metadata;
-        const targetDir = path.join(this.atomPackagesDirectory, name);
-        if (!options.argv.json) { process.stdout.write(`Moving ${name} to ${targetDir} `); }
-        return fs.cp(cloneDir, targetDir).then(_value => {
-          if (!options.argv.json) { this.logSuccess(); }
-          const json = {installPath: targetDir, metadata: data.metadata};
-          next(null, json);
-        }, next);
-      });
-
-      const iteratee = (currentData, task, next) => task(currentData, next);
-      return await async.reduce(tasks, {}, iteratee);
+      const {name} = data.metadata;
+      const targetDir = path.join(this.atomPackagesDirectory, name);
+      if (!options.argv.json) { process.stdout.write(`Moving ${name} to ${targetDir} `); }
+      await fs.cp(cloneDir, targetDir);
+      if (!options.argv.json) { this.logSuccess(); }
+      const json = {installPath: targetDir, metadata: data.metadata};
+      return json;
     }
 
     getNormalizedGitUrls(packageUrl) {
