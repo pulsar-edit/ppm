@@ -11,6 +11,7 @@ const fs = require('./fs');
 
 module.exports =
 class Dedupe extends Command {
+  static promiseBased = true;
   static commandNames = [ "dedupe" ];
 
     constructor() {
@@ -35,11 +36,13 @@ This command is experimental.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    dedupeModules(options, callback) {
+    dedupeModules(options) {
       process.stdout.write('Deduping modules ');
 
-      this.forkDedupeCommand(options, (...args) => {
-        this.logCommandResults(...args).then(callback, callback);
+      return new Promise((resolve, reject) => {
+        this.forkDedupeCommand(options, (...args) => {
+          this.logCommandResults(...args).then(resolve, reject);
+        });
       });
     }
 
@@ -67,16 +70,20 @@ This command is experimental.\
       return fs.makeTreeSync(this.atomNodeDirectory);
     }
 
-    run(options) {
-      const {callback, cwd} = options;
+    async run(options) {
+      const {cwd} = options;
       options = this.parseOptions(options.commandArgs);
       options.cwd = cwd;
 
       this.createAtomDirectories();
 
       const commands = [];
-      commands.push(callback => this.loadInstalledAtomMetadata().then(callback, callback));
-      commands.push(callback => this.dedupeModules(options, callback));
-      return async.waterfall(commands, callback);
+      commands.push(async () => await this.loadInstalledAtomMetadata());
+      commands.push(async () => await this.dedupeModules(options));
+      try {
+        await async.waterfall(commands);
+      } catch (error) {
+        return error; //errors as return values atm
+      }
     }
 }
