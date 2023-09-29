@@ -481,12 +481,10 @@ Run ppm -v after installing Git to see what version has been detected.\
       return this.sanitizePackageNames(packages.split(/\s/));
     }
 
-    buildModuleCache(packageName) {
+    async buildModuleCache(packageName) {
       const packageDirectory = path.join(this.atomPackagesDirectory, packageName);
       const rebuildCacheCommand = new RebuildModuleCache();
-      return new Promise((resolve, _reject) =>
-        void rebuildCacheCommand.rebuild(packageDirectory, () => resolve()) // Ignore cache errors and just finish the install
-      );
+      await rebuildCacheCommand.rebuild(packageDirectory).catch(_ => {}); // Ignore cache errors and just finish the install
     }
 
     async warmCompileCache(packageName) {

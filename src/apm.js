@@ -49,7 +49,7 @@ module.exports = {
       if ((path.basename(apmFolder) === 'ppm') && (path.basename(appFolder) === 'app')) {
         asarPath = `${appFolder}.asar`;
         if (fs.existsSync(asarPath)) {
-          return process.nextTick(() => resolve(asarPath));
+          return void process.nextTick(() => resolve(asarPath));
         }
       }
   
