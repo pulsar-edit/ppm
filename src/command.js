@@ -8,10 +8,6 @@ const git = require('./git');
 
 module.exports =
 class Command {
-  constructor() {
-    this.logCommandResults = this.logCommandResults.bind(this);
-    this.logCommandResultsIfFail = this.logCommandResultsIfFail.bind(this);
-  }
 
   spawn(command, args, optionsOrCallback, callbackOrMissing) {
     const [callback, options] = callbackOrMissing == null
