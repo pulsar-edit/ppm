@@ -9,20 +9,15 @@ const Command = require('./command');
 
 module.exports =
 class Login extends Command {
+  static promiseBased = true;
   static commandNames = [ "login" ];
-
-    constructor(...args) {
-      super(...args);
-    }
 
     static async getTokenOrLogin() {
       try {
         const token = await auth.getToken();
         return token;
       } catch (error) {
-        return new Promise((resolve, reject) => 
-          void new Login().run({callback: (error, value) => void(error != null ? reject(error) : resolve(value)), commandArgs: []})
-        );
+        return await new Login().obtainToken();
       }
     }
 
@@ -40,21 +35,23 @@ be used to identify you when publishing packages.\
       return options.string('token').describe('token', 'Package API token');
     }
 
-    async run(options) {
-      const {callback} = options;
-      options = this.parseOptions(options.commandArgs);
-      let token = options.argv.token;
+    async obtainToken(offeredToken) {
+      let token = offeredToken;
+      if (token == null) {
+        await this.welcomeMessage();
+        await this.openURL();
+        token = await this.getToken();
+      }
+      await this.saveToken(token);
+      return token;
+    }
 
+    async run(options) {
+      options = this.parseOptions(options.commandArgs);
       try {
-        if (token == null) {
-          await this.welcomeMessage();
-          await this.openURL();
-          token = await this.getToken();
-        }
-        await this.saveToken(token);
-        callback(null, token);
+        await this.obtainToken(options.argv.token);
       } catch (error) {
-        callback(error);
+        return error; //errors as return values atm
       }
     }
 
