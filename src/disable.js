@@ -39,32 +39,26 @@ Disables the named package(s).\
       return corePackages.concat(devPackages, userPackages);
     }
 
-    run(options) {
-      return new Promise((resolve, _reject) => {
-        let settings;
+    async run(options) {
         options = this.parseOptions(options.commandArgs);
 
         let packageNames = this.packageNamesFromArgv(options.argv);
 
         const configFilePath = CSON.resolve(path.join(config.getAtomDirectory(), 'config'));
         if (!configFilePath) {
-          resolve("Could not find config.cson. Run Atom first?");
-          return;
+          return 'Could not find config.cson. Run Atom first?'; //errors as return values atm
         }
 
+        let settings;
         try {
           settings = CSON.readFileSync(configFilePath);
         } catch (error) {
-          resolve(`Failed to load \`${configFilePath}\`: ${error.message}`);
-          return;
+          return `Failed to load \`${configFilePath}\`: ${error.message}`; //errors as return values atm
         }
 
-        return void this.getInstalledPackages().then(installedPackages => {
-          
-
-          const installedPackageNames = (Array.from(installedPackages).map((pkg) => pkg.name));
-
-          // uninstalledPackages = (name for name in packageNames when !installedPackageNames[name])
+        try {
+          const installedPackages = await this.getInstalledPackages();
+          const installedPackageNames = Array.from(installedPackages).map((pkg) => pkg.name);
           const uninstalledPackageNames = _.difference(packageNames, installedPackageNames);
           if (uninstalledPackageNames.length > 0) {
             console.log(`Not Installed:\n  ${uninstalledPackageNames.join('\n  ')}`);
@@ -74,8 +68,7 @@ Disables the named package(s).\
           packageNames = _.difference(packageNames, uninstalledPackageNames);
 
           if (packageNames.length === 0) {
-            resolve("Please specify a package to disable");
-            return;
+            return "Please specify a package to disable"; //errors as return values atm
           }
 
           const keyPath = '*.core.disabledPackages';
@@ -86,14 +79,13 @@ Disables the named package(s).\
           try {
             CSON.writeFileSync(configFilePath, settings);
           } catch (error) {
-            resolve(`Failed to save \`${configFilePath}\`: ${error.message}`);
-            return;
+            return `Failed to save \`${configFilePath}\`: ${error.message}`; //errors as return values atm
           }
 
           console.log(`Disabled:\n  ${packageNames.join('\n  ')}`);
           this.logSuccess();
-          resolve();
-        }, error => void resolve(error));
-      });
+        } catch (error) {
+          return error; //errors as return values atm
+        }
     }
   }

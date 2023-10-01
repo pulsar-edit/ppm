@@ -121,9 +121,9 @@ package names to install with optional versions using the
           const child = children[0];
           const source = path.join(nodeModulesDirectory, child);
           const destination = path.join(this.atomPackagesDirectory, child);
-          commands.push(next => fs.cp(source, destination).then(next, next));
-          commands.push(next => this.buildModuleCache(pack.name).then(next, next));
-          commands.push(next => this.warmCompileCache(pack.name).then(next, next));
+          commands.push(async () => await fs.cp(source, destination));
+          commands.push(async () => await this.buildModuleCache(pack.name));
+          commands.push(async () => await this.warmCompileCache(pack.name));
 
           async.waterfall(commands).then(() => {
             if (!options.argv.json) { this.logSuccess(); }
