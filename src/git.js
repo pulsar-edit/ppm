@@ -66,7 +66,7 @@ exports.getGitVersion = () => {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath()
   };
-  return new Promise((resolve, _reject => {
+  return new Promise((resolve, _reject) => {
     npm.load(npmOptions, () => {
       const git = npm.config.get('git') ?? 'git';
       exports.addGitToEnv(process.env);
@@ -85,5 +85,5 @@ exports.getGitVersion = () => {
         resolve(version);
       });
     });
-  }));
+  });
 };
