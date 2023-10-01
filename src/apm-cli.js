@@ -121,9 +121,9 @@ async function printVersions(args) {
     const npmVersion = require("npm/package.json").version ?? "";
     const nodeVersion = process.versions.node ?? "";
 
-    const pythonVersion = await getPythonVersion();
-    const gitVersion = await git.getGitVersion();
-    const atomVersion = await getAtomVersion();
+    let pythonVersion = await getPythonVersion();
+    let gitVersion = await git.getGitVersion();
+    let atomVersion = await getAtomVersion();
     let versions;
     if (args.json) {
       versions = {
