@@ -116,9 +116,11 @@ const printVersions = function(args, callback) {
     let versions;
     if (args.json) {
       versions = {
+        apm: apmVersion,
         ppm: apmVersion,
         npm: npmVersion,
         node: nodeVersion,
+        atom: atomVersion,
         pulsar: atomVersion,
         python: pythonVersion,
         git: gitVersion,
