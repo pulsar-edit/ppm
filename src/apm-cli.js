@@ -66,15 +66,6 @@ for (let commandClass of commandClasses) {
   }
 }
 
-function promisifiedRun(commandRun) {
-  return function(options) {
-    return new Promise((resolve, _reject) => {
-      options.callback = resolve;
-      commandRun.call(this, options);
-    });
-  };
-}
-
 function parseOptions(args) {
   args ??= [];
   const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()));
