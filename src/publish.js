@@ -15,7 +15,6 @@ const request = require('./request');
 
 module.exports =
 class Publish extends Command {
-  static promiseBased = true;
   static commandNames = [ "publish" ];
 
     constructor() {

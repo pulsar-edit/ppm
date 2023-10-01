@@ -9,7 +9,6 @@ const tree = require('./tree');
 
 module.exports =
 class Featured extends Command {
-  static promiseBased = true;
   static commandNames = [ "featured" ];
 
     parseOptions(argv) {

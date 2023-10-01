@@ -10,7 +10,6 @@ const List = require('./list');
 
 module.exports =
 class Disable extends Command {
-  static promiseBased = true;
   static commandNames = [ "disable" ];
 
     parseOptions(argv) {

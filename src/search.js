@@ -10,7 +10,6 @@ const {isDeprecatedPackage} = require('./deprecated-packages');
 
 module.exports =
 class Search extends Command {
-  static promiseBased = true;
   static commandNames = [ "search" ];
 
 

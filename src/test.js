@@ -9,7 +9,6 @@ const fs = require('./fs');
 
 module.exports =
 class Test extends Command {
-  static promiseBased = true;
   static commandNames = [ "test" ];
 
     parseOptions(argv) {

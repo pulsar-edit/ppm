@@ -10,7 +10,6 @@ const fs = require('./fs');
 
 module.exports =
 class Link extends Command {
-  static promiseBased = true;
   static commandNames = [ "link", "ln" ];
 
     parseOptions(argv) {

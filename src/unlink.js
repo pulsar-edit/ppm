@@ -10,7 +10,6 @@ const fs = require('./fs');
 
 module.exports =
 class Unlink extends Command {
-  static promiseBased = true;
   static commandNames = [ "unlink" ];
 
     constructor() {

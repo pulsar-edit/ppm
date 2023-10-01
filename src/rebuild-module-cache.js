@@ -8,7 +8,6 @@ const fs = require('./fs');
 
 module.exports =
 class RebuildModuleCache extends Command {
-  static promiseBased = true;
   static commandNames = [ "rebuild-module-cache" ];
 
     constructor() {

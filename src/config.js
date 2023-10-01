@@ -7,7 +7,6 @@ const Command = require('./command');
 
 module.exports =
 class Config extends Command {
-  static promiseBased = true;
   static commandNames = [ "config" ];
 
   constructor() {

@@ -10,7 +10,6 @@ const fs = require('./fs');
 
 module.exports =
 class Rebuild extends Command {
-  static promiseBased = true;
   static commandNames = [ "rebuild" ];
 
     constructor() {

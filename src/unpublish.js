@@ -12,7 +12,6 @@ const request = require('./request');
 
 module.exports =
 class Unpublish extends Command {
-  static promiseBased = true;
   static commandNames = [ "unpublish" ];
 
     parseOptions(argv) {
