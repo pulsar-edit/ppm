@@ -13,7 +13,6 @@ const fs = require('./fs');
 
 module.exports =
 class Clean extends Command {
-  static promiseBased = true;
   static commandNames = ["clean", "prune"];
 
   constructor() {

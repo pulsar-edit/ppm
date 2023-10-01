@@ -9,7 +9,6 @@ const Command = require('./command');
 
 module.exports =
 class Login extends Command {
-  static promiseBased = true;
   static commandNames = [ "login" ];
 
     static async getTokenOrLogin() {

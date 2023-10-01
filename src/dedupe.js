@@ -11,7 +11,6 @@ const fs = require('./fs');
 
 module.exports =
 class Dedupe extends Command {
-  static promiseBased = true;
   static commandNames = [ "dedupe" ];
 
     constructor() {

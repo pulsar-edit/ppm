@@ -264,9 +264,6 @@ module.exports = {
         return errorHandler();
       } else if ((Command = commands[command])) {
         const command = new Command();
-        if (!Command.promiseBased) {
-          command.run = promisifiedRun(command.run);
-        }
         return command.run(options).then(errorHandler);
       } else {
         return errorHandler(`Unrecognized command: ${command}`);

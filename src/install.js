@@ -20,7 +20,6 @@ const {isDeprecatedPackage} = require('./deprecated-packages');
 
 module.exports =
 class Install extends Command {
-  static promiseBased = true;
   static commandNames = [ "install", "i" ];
 
     constructor() {

@@ -11,7 +11,6 @@ const tree = require('./tree');
 
 module.exports =
 class Stars extends Command {
-  static promiseBased = true;
   static commandNames = [ "stars", "starred" ];
 
     parseOptions(argv) {

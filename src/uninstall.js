@@ -13,7 +13,6 @@ const request = require('./request');
 
 module.exports =
 class Uninstall extends Command {
-  static promiseBased = true;
   static commandNames = [ "deinstall", "delete", "erase", "remove", "rm", "uninstall" ];
 
     parseOptions(argv) {

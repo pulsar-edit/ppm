@@ -13,7 +13,6 @@ const {getRepository} = require("./packages");
 
 module.exports =
 class List extends Command {
-  static promiseBased = true;
   static commandNames = [ "list", "ls" ];
 
     constructor() {

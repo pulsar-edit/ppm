@@ -15,7 +15,6 @@ const request = require('./request');
 
 module.exports =
 class Develop extends Command {
-  static promiseBased = true;
   static commandNames = [ "dev", "develop" ];
 
     constructor() {

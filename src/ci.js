@@ -10,7 +10,6 @@ const Command = require('./command');
 
 module.exports =
 class Ci extends Command {
-  static promiseBased = true;
   static commandNames = ["ci"];
 
   constructor() {

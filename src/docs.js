@@ -7,7 +7,6 @@ const config = require('./apm');
 
 module.exports =
 class Docs extends View {
-  static promiseBased = true;
   static commandNames = [ "docs", "home", "open" ];
 
     parseOptions(argv) {

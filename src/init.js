@@ -8,7 +8,6 @@ const fs = require('./fs');
 
 module.exports =
 class Init extends Command {
-  static promiseBased = true;
   static commandNames = [ "init" ];
 
   constructor() {

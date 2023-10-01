@@ -9,7 +9,6 @@ const request = require('./request');
 
 module.exports =
 class Unstar extends Command {
-  static promiseBased = true;
   static commandNames = [ "unstar" ];
 
     parseOptions(argv) {

@@ -10,7 +10,6 @@ const tree = require('./tree');
 
 module.exports =
 class View extends Command {
-  static promiseBased = true;
   static commandNames = [ "view", "show" ];
 
     parseOptions(argv) {

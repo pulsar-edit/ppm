@@ -9,7 +9,6 @@ const Command = require('./command');
 
 module.exports =
 class Enable extends Command {
-  static promiseBased = true;
   static commandNames = [ "enable" ];
 
     parseOptions(argv) {

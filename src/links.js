@@ -10,7 +10,6 @@ const tree = require('./tree');
 
 module.exports =
 class Links extends Command {
-  static promiseBased = true;
   static commandNames = [ "linked", "links", "lns" ];
 
     constructor() {

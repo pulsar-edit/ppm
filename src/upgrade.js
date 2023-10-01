@@ -19,7 +19,6 @@ const git = require('./git');
 
 module.exports =
 class Upgrade extends Command {
-  static promiseBased = true;
   static commandNames = [ "upgrade", "outdated", "update" ];
 
     constructor() {
