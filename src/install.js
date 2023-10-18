@@ -285,7 +285,7 @@ Run ppm -v after installing Git to see what version has been detected.\
         const pack = await this.requestPackage(packageName);
         packageVersion ??= this.getLatestCompatibleVersion(pack);
         if (!packageVersion) {
-          throw `No available version compatible with the installed Atom version: ${this.installedAtomVersion}`;
+          throw `No available version compatible with the installed Pulsar version: ${this.installedAtomVersion}`;
         }
         const {tarball} = pack.versions[packageVersion]?.dist ?? {};
         if (!tarball) {
