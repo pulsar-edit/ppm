@@ -46,7 +46,7 @@ Disables the named package(s).\
 
         const configFilePath = CSON.resolve(path.join(config.getAtomDirectory(), 'config'));
         if (!configFilePath) {
-          return 'Could not find config.cson. Run Atom first?'; //errors as return values atm
+          return 'Could not find config.cson. Run Pulsar first?'; //errors as return values atm
         }
 
         let settings;
