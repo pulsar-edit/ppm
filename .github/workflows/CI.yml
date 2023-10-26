@@ -34,7 +34,11 @@ jobs:
           check-latest: true
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          # Yarn v1.x needs global node-gyp available if npm 9.7.2+ is the global npm version,
+          # or else postinstall scripts for this repo won't run. It's a long story. And it's a "won't fix" bug in Yarn v1.x.
+          yarn global add node-gyp@9.4.0
+          yarn install
 
       - if: "!contains(matrix.os, 'windows')"
         name: Run tests 👩🏾‍💻
