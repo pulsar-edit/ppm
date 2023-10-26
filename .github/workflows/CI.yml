@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - asyncify-without-top-node-18-CI-fix
 
 jobs:
   Test:
