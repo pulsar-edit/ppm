@@ -129,17 +129,18 @@ List all the installed packages and also the packages bundled with Atom.\
       return packages;
     }
 
-    listUserPackages(options, callback) {
-      const userPackages = this.listPackages(this.userPackagesDirectory, options)
+    listUserPackages(options) {
+      const userPackages = this
+        .listPackages(this.userPackagesDirectory, options)
         .filter(pack => !pack.apmInstallSource);
       if (!options.argv.bare && !options.argv.json) {
         console.log(`Community Packages (${userPackages.length})`.cyan, `${this.userPackagesDirectory}`);
       }
-      return callback?.(null, userPackages);
+      return userPackages;
     }
 
-    listDevPackages(options, callback) {
-      if (!options.argv.dev) { return callback?.(null, []); }
+    listDevPackages(options) {
+      if (!options.argv.dev) { return []; }
 
       const devPackages = this.listPackages(this.devPackagesDirectory, options);
       if (devPackages.length > 0) {
@@ -147,70 +148,52 @@ List all the installed packages and also the packages bundled with Atom.\
           console.log(`Dev Packages (${devPackages.length})`.cyan, `${this.devPackagesDirectory}`);
         }
       }
-      return callback?.(null, devPackages);
+      return devPackages;
     }
 
-    listGitPackages(options, callback) {
-      const gitPackages = this.listPackages(this.userPackagesDirectory, options)
+    listGitPackages(options) {
+      const gitPackages = this
+        .listPackages(this.userPackagesDirectory, options)
         .filter(pack => pack.apmInstallSource?.type === 'git');
       if (gitPackages.length > 0) {
         if (!options.argv.bare && !options.argv.json) {
           console.log(`Git Packages (${gitPackages.length})`.cyan, `${this.userPackagesDirectory}`);
         }
       }
-      return callback?.(null, gitPackages);
+      return gitPackages;
     }
 
-    listBundledPackages(options, callback) {
-      return config.getResourcePath(resourcePath => {
-        let _atomPackages;
-        let metadata;
-        try {
-          const metadataPath = path.join(resourcePath, 'package.json');
-          ({_atomPackages} = JSON.parse(fs.readFileSync(metadataPath)));
-        } catch (error) {}
-        if (_atomPackages == null) { _atomPackages = {}; }
-        let packages = ((() => {
-          const result = [];
-          for (let packageName in _atomPackages) {
-            ({metadata} = _atomPackages[packageName]);
-            result.push(metadata);
-          }
-          return result;
-        })());
+    async listBundledPackages(options) {
+      const resourcePath = await config.getResourcePath();
+      let atomPackages;
+      try {
+        const metadataPath = path.join(resourcePath, 'package.json');
+        ({_atomPackages: atomPackages} = JSON.parse(fs.readFileSync(metadataPath)));
+      } catch (error) {}
+      atomPackages ??= {};
+      const packagesMeta = Object.values(atomPackages)
+        .map(packageValue => packageValue.metadata)
+        .filter(metadata => this.isPackageVisible(options, metadata));
 
-        packages = packages.filter(metadata => {
-          return this.isPackageVisible(options, metadata);
-        });
+      if (!options.argv.bare && !options.argv.json) {
+        console.log(`${`Built-in Atom ${options.argv.themes ? 'Themes' : 'Packages'}`.cyan} (${packagesMeta.length})`);
+      }
 
-        if (!options.argv.bare && !options.argv.json) {
-          if (options.argv.themes) {
-            console.log(`${'Built-in Atom Themes'.cyan} (${packages.length})`);
-          } else {
-            console.log(`${'Built-in Atom Packages'.cyan} (${packages.length})`);
-          }
-        }
-
-        return callback?.(null, packages);
-      });
+      return packagesMeta;
     }
 
     listInstalledPackages(options) {
-      this.listDevPackages(options, (error, packages) => {
-        if (packages.length > 0) { this.logPackages(packages, options); }
+      const devPackages = this.listDevPackages(options);
+      if (devPackages.length > 0) { this.logPackages(devPackages, options); }
 
-        this.listUserPackages(options, (error, packages) => {
-          this.logPackages(packages, options);
+      const userPackages = this.listUserPackages(options);
+      this.logPackages(userPackages, options);
 
-          this.listGitPackages(options, (error, packages) => {
-            if (packages.length > 0) { return this.logPackages(packages, options); }
-          });
-        });
-      });
+      const gitPackages = this.listGitPackages(options)
+      if (gitPackages.length > 0) { this.logPackages(gitPackages, options); }
     }
 
-    listPackagesAsJson(options, callback) {
-      if (callback == null) { callback = function() {}; }
+    async listPackagesAsJson(options) {
       const output = {
         core: [],
         dev: [],
@@ -218,41 +201,28 @@ List all the installed packages and also the packages bundled with Atom.\
         user: []
       };
 
-      this.listBundledPackages(options, (error, packages) => {
-        if (error) { return callback(error); }
-        output.core = packages;
-        this.listDevPackages(options, (error, packages) => {
-          if (error) { return callback(error); }
-          output.dev = packages;
-          this.listUserPackages(options, (error, packages) => {
-            if (error) { return callback(error); }
-            output.user = packages;
-            this.listGitPackages(options, function(error, packages) {
-              if (error) { return callback(error); }
-              output.git = packages;
-              console.log(JSON.stringify(output));
-              return callback();
-            });
-          });
-        });
-      });
+      output.core = await this.listBundledPackages(options);
+      output.dev = this.listDevPackages(options);
+      output.user = this.listUserPackages(options);
+      output.git = this.listGitPackages(options);
+
+      console.log(JSON.stringify(output));
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
 
       if (options.argv.json) {
-        return this.listPackagesAsJson(options, callback);
-      } else if (options.argv.installed) {
-        this.listInstalledPackages(options);
-        return callback();
-      } else {
-        this.listBundledPackages(options, (error, packages) => {
-          this.logPackages(packages, options);
-          this.listInstalledPackages(options);
-          return callback();
-        });
+        await this.listPackagesAsJson(options);
+        return;
       }
+      if (options.argv.installed) {
+        this.listInstalledPackages(options);
+        return;
+      }
+
+      const bundledPackages = await this.listBundledPackages(options);
+      this.logPackages(bundledPackages, options);
+      this.listInstalledPackages(options);
     }
   }

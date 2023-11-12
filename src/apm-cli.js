@@ -14,7 +14,7 @@ const config = require('./apm.js');
 const fs = require('./fs.js');
 const git = require('./git.js');
 
-const setupTempDirectory = function() {
+function setupTempDirectory() {
   const temp = require('temp');
   let tempDirectory = require('os').tmpdir();
   // Resolve ~ in tmp dir atom/atom#2271
@@ -61,13 +61,13 @@ const commandClasses = [
 
 const commands = {};
 for (let commandClass of commandClasses) {
-  for (let name of commandClass.commandNames != null ? commandClass.commandNames : []) {
+  for (let name of commandClass.commandNames ?? []) {
     commands[name] = commandClass;
   }
 }
 
-const parseOptions = function(args) {
-  if (args == null) { args = []; }
+function parseOptions(args) {
+  args ??= [];
   const options = yargs(args).wrap(Math.min(100, yargs.terminalWidth()));
   options.usage(`\
 
@@ -95,7 +95,7 @@ Pulsar Package Manager powered by https://pulsar-edit.dev
   return options;
 };
 
-const showHelp = function(options) {
+function showHelp(options) {
   if (options == null) { return; }
 
   let help = options.help();
@@ -104,15 +104,17 @@ const showHelp = function(options) {
     help += "\n  colored output.";
   }
 
-  return console.error(help);
+  console.error(help);
 };
 
-const printVersions = function(args, callback) {
-  const apmVersion = require("../package.json").version ?? "";
-  const npmVersion = require("npm/package.json").version ?? "";
-  const nodeVersion = process.versions.node ?? "";
+async function printVersions(args) {
+    const apmVersion = require("../package.json").version ?? "";
+    const npmVersion = require("npm/package.json").version ?? "";
+    const nodeVersion = process.versions.node ?? "";
 
-  return getPythonVersion(pythonVersion => git.getGitVersion(gitVersion => getAtomVersion(function(atomVersion) {
+    let pythonVersion = await getPythonVersion();
+    let gitVersion = await git.getGitVersion();
+    let atomVersion = await getAtomVersion();
     let versions;
     if (args.json) {
       versions = {
@@ -130,11 +132,13 @@ const printVersions = function(args, callback) {
         versions.visualStudio = config.getInstalledVisualStudioFlag();
       }
       console.log(JSON.stringify(versions));
-    } else {
-      if (pythonVersion == null) { pythonVersion = ''; }
-      if (gitVersion == null) { gitVersion = ''; }
-      if (atomVersion == null) { atomVersion = ''; }
-      versions =  `\
+      return;
+    }
+
+    pythonVersion ??= '';
+    gitVersion ??= '';
+    atomVersion ??= '';
+    versions =  `\
 ${'ppm'.red}  ${apmVersion.red}
 ${'npm'.green}  ${npmVersion.green}
 ${'node'.blue} ${nodeVersion.blue} ${process.arch.blue}
@@ -143,55 +147,55 @@ ${'python'.yellow} ${pythonVersion.yellow}
 ${'git'.magenta} ${gitVersion.magenta}\
 `;
 
-      if (config.isWin32()) {
-        const visualStudioVersion = config.getInstalledVisualStudioFlag() ?? "";
-        versions += `\n${'visual studio'.cyan} ${visualStudioVersion.cyan}`;
-      }
-
-      console.log(versions);
+    if (config.isWin32()) {
+      const visualStudioVersion = config.getInstalledVisualStudioFlag() ?? "";
+      versions += `\n${'visual studio'.cyan} ${visualStudioVersion.cyan}`;
     }
-    return callback();
-  })));
+
+    console.log(versions);
 };
 
-var getAtomVersion = callback => config.getResourcePath(function(resourcePath) {
+async function getAtomVersion() {
+  const resourcePath = await config.getResourcePath();
   const unknownVersion = 'unknown';
   try {
     const { version } = require(path.join(resourcePath, "package.json")) ?? unknownVersion;
-    return callback(version);
+    return version;
   } catch (error) {
-    return callback(unknownVersion);
+    return unknownVersion;
   }
-});
+}
 
-var getPythonVersion = function(callback) {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath()
-  };
-  return npm.load(npmOptions, function() {
-    let python = npm.config.get("python") ?? process.env.PYTHON;
-    if (config.isWin32() && !python) {
-      let rootDir = process.env.SystemDrive != null ? process.env.SystemDrive : 'C:\\';
-      if (rootDir[rootDir.length - 1] !== '\\') { rootDir += '\\'; }
-      const pythonExe = path.resolve(rootDir, 'Python27', 'python.exe');
-      if (fs.isFileSync(pythonExe)) { python = pythonExe; }
-    }
-
-    if (python == null) { python = 'python'; }
-
-    const spawned = spawn(python, ['--version']);
-    const outputChunks = [];
-    spawned.stderr.on('data', chunk => outputChunks.push(chunk));
-    spawned.stdout.on('data', chunk => outputChunks.push(chunk));
-    spawned.on('error', function() {});
-    return spawned.on('close', function(code) {
-      let version, name;
-      if (code === 0) {
-        [name, version] = Buffer.concat(outputChunks).toString().split(' ');
-        version = version?.trim();
+function getPythonVersion() {
+  return new Promise((resolve, _reject) => {
+    const npmOptions = {
+      userconfig: config.getUserConfigPath(),
+      globalconfig: config.getGlobalConfigPath()
+    };
+    npm.load(npmOptions, () => {
+      let python = npm.config.get("python") ?? process.env.PYTHON;
+      if (config.isWin32() && !python) {
+        let rootDir = process.env.SystemDrive ??= 'C:\\';
+        if (rootDir[rootDir.length - 1] !== '\\') { rootDir += '\\'; }
+        const pythonExe = path.resolve(rootDir, 'Python27', 'python.exe');
+        if (fs.isFileSync(pythonExe)) { python = pythonExe; }
       }
-      return callback(version);
+  
+      python ??= 'python';
+  
+      const spawned = spawn(python, ['--version']);
+      const outputChunks = [];
+      spawned.stderr.on('data', chunk => outputChunks.push(chunk));
+      spawned.stdout.on('data', chunk => outputChunks.push(chunk));
+      spawned.on('error', () => {});
+      return spawned.on('close', code => {
+        let version, name;
+        if (code === 0) {
+          [name, version] = Buffer.concat(outputChunks).toString().split(' ');
+          version = version?.trim();
+        }
+        return resolve(version);
+      });
     });
   });
 };
@@ -207,7 +211,7 @@ module.exports = {
     }
 
     let callbackCalled = false;
-    options.callback = function(error) {
+    const errorHandler = error => {
       if (callbackCalled) { return; }
       callbackCalled = true;
       if (error != null) {
@@ -233,14 +237,14 @@ module.exports = {
       command
     } = options;
     if (args.version) {
-      return printVersions(args, options.callback);
+      return printVersions(args).then(errorHandler);
     } else if (args.help) {
       if ((Command = commands[options.command])) {
         showHelp(new Command().parseOptions?.(options.command));
       } else {
         showHelp(options);
       }
-      return options.callback();
+      return errorHandler();
     } else if (command) {
       if (command === 'help') {
         if ((Command = commands[options.commandArgs])) {
@@ -248,15 +252,16 @@ module.exports = {
         } else {
           showHelp(options);
         }
-        return options.callback();
+        return errorHandler();
       } else if ((Command = commands[command])) {
-        return new Command().run(options);
+        const command = new Command();
+        return command.run(options).then(errorHandler);
       } else {
-        return options.callback(`Unrecognized command: ${command}`);
+        return errorHandler(`Unrecognized command: ${command}`);
       }
     } else {
       showHelp(options);
-      return options.callback();
+      return errorHandler();
     }
   }
 };

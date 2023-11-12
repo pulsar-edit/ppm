@@ -26,38 +26,39 @@ View information about a package/theme.\
       return options.string('compatible').describe('compatible', 'Show the latest version compatible with this Atom version');
     }
 
-    loadInstalledAtomVersion(options, callback) {
-      return process.nextTick(() => {
-        let installedAtomVersion;
-        if (options.argv.compatible) {
-          const version = this.normalizeVersion(options.argv.compatible);
-          if (semver.valid(version)) { installedAtomVersion = version; }
-        }
-        return callback(installedAtomVersion);
+    loadInstalledAtomVersion(options) {
+      return new Promise((resolve, _reject) => {
+        process.nextTick(() => {
+          let installedAtomVersion;
+          if (options.argv.compatible) {
+            const version = this.normalizeVersion(options.argv.compatible);
+            if (semver.valid(version)) { installedAtomVersion = version; }
+          }
+          return resolve(installedAtomVersion);
+        });
       });
     }
 
-    getLatestCompatibleVersion(pack, options, callback) {
-      return this.loadInstalledAtomVersion(options, function(installedAtomVersion) {
-        if (!installedAtomVersion) { return callback(pack.releases.latest); }
+    async getLatestCompatibleVersion(pack, options) {
+      const installedAtomVersion = await this.loadInstalledAtomVersion(options);
+      if (!installedAtomVersion) { return pack.releases.latest; }
 
-        let latestVersion = null;
-        const object = pack.versions != null ? pack.versions : {};
-        for (let version in object) {
-          const metadata = object[version];
-          if (!semver.valid(version)) { continue; }
-          if (!metadata) { continue; }
+      let latestVersion = null;
+      const object = pack?.versions ?? {};
+      for (let version in object) {
+        const metadata = object[version];
+        if (!semver.valid(version)) { continue; }
+        if (!metadata) { continue; }
 
-          const engine = metadata.engines?.pulsar ?? metadata.engines?.atom ?? "*";
-          if (!semver.validRange(engine)) { continue; }
-          if (!semver.satisfies(installedAtomVersion, engine)) { continue; }
+        const engine = metadata.engines?.pulsar ?? metadata.engines?.atom ?? "*";
+        if (!semver.validRange(engine)) { continue; }
+        if (!semver.satisfies(installedAtomVersion, engine)) { continue; }
 
-          if (latestVersion == null) { latestVersion = version; }
-          if (semver.gt(version, latestVersion)) { latestVersion = version; }
-        }
+        latestVersion ??= version;
+        if (semver.gt(version, latestVersion)) { latestVersion = version; }
+      }
 
-        return callback(latestVersion);
-      });
+      return latestVersion;
     }
 
     getRepository(pack) {
@@ -67,71 +68,72 @@ View information about a package/theme.\
       }
     }
 
-    getPackage(packageName, options, callback) {
+    getPackage(packageName, options) {
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${packageName}`,
         json: true
       };
-      return request.get(requestSettings, (error, response, body) => {
-        if (body == null) { body = {}; }
-        if (error != null) {
-          return callback(error);
-        } else if (response.statusCode === 200) {
-          return this.getLatestCompatibleVersion(body, options, function(version) {
+      return new Promise((resolve, reject) => {
+        request.get(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            return void reject(error);
+          }
+          if (response.statusCode !== 200) {
+            const message = body.message ?? body.error ?? body;
+            return void reject(`Requesting package failed: ${message}`);
+          }
+
+          this.getLatestCompatibleVersion(body, options).then(version => {
             const {name, readme, downloads, stargazers_count} = body;
-            const metadata = (body.versions != null ? body.versions[version] : undefined) != null ? (body.versions != null ? body.versions[version] : undefined) : {name};
+            const metadata = body.versions?.[version] ?? {name};
             const pack = _.extend({}, metadata, {readme, downloads, stargazers_count});
-            return callback(null, pack);
+            resolve(pack);
           });
-        } else {
-          const message = body.message ?? body.error ?? body;
-          return callback(`Requesting package failed: ${message}`);
-        }
+        });
       });
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
       const [packageName] = options.argv._;
 
       if (!packageName) {
-        callback("Missing required package name");
+        return "Missing required package name"; //errors as return values atm
+      }
+
+      let pack;
+      try {
+        pack = await this.getPackage(packageName, options);
+      } catch (error) {
+        return error; //errors as return values atm
+      }
+
+      if (options.argv.json) {
+        console.log(JSON.stringify(pack, null, 2));
         return;
       }
 
-      return this.getPackage(packageName, options, (error, pack) => {
-        if (error != null) {
-          callback(error);
-          return;
-        }
 
-        if (options.argv.json) {
-          console.log(JSON.stringify(pack, null, 2));
-        } else {
-          let repository;
-          console.log(`${pack.name.cyan}`);
-          const items = [];
-          if (pack.version) { items.push(pack.version.yellow); }
-          if (repository = this.getRepository(pack)) {
-            items.push(repository.underline);
-          }
-          if (pack.description) { items.push(pack.description.replace(/\s+/g, ' ')); }
-          if (pack.downloads >= 0) {
-            items.push(_.pluralize(pack.downloads, 'download'));
-          }
-          if (pack.stargazers_count >= 0) {
-            items.push(_.pluralize(pack.stargazers_count, 'star'));
-          }
+      console.log(`${pack.name.cyan}`);
+      const items = [];
+      if (pack.version) { items.push(pack.version.yellow); }
+      const repository = this.getRepository(pack);
+      if (repository) {
+        items.push(repository.underline);
+      }
+      if (pack.description) { items.push(pack.description.replace(/\s+/g, ' ')); }
+      if (pack.downloads >= 0) {
+        items.push(_.pluralize(pack.downloads, 'download'));
+      }
+      if (pack.stargazers_count >= 0) {
+        items.push(_.pluralize(pack.stargazers_count, 'star'));
+      }
 
-          tree(items);
+      tree(items);
 
-          console.log();
-          console.log(`Run \`ppm install ${pack.name}\` to install this package.`);
-          console.log();
-        }
-
-        return callback();
-      });
+      console.log();
+      console.log(`Run \`ppm install ${pack.name}\` to install this package.`);
+      console.log();
     }
   }

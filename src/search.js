@@ -28,7 +28,7 @@ Search for packages/themes.\
       return options.boolean('themes').describe('themes', 'Search only themes').alias('t', 'themes');
     }
 
-    searchPackages(query, opts, callback) {
+    searchPackages(query, opts) {
       const qs =
         {q: query};
 
@@ -44,30 +44,31 @@ Search for packages/themes.\
         json: true
       };
 
-      return request.get(requestSettings, function(error, response, body) {
-        if (body == null) { body = {}; }
-        if (error != null) {
-          return callback(error);
-        } else if (response.statusCode === 200) {
-          let packages = body.filter(pack => (pack.releases != null ? pack.releases.latest : undefined) != null);
-          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-          packages = packages.filter(({name, version}) => !isDeprecatedPackage(name, version));
-          return callback(null, packages);
-        } else {
+      return new Promise((resolve, reject) => {
+        request.get(requestSettings, function(error, response, body) {
+          body ??= {};
+          if (error != null) {
+            return void reject(error);
+          }
+          if (response.statusCode === 200) {
+            let packages = body.filter(pack => (pack.releases != null ? pack.releases.latest : undefined) != null);
+            packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
+            packages = packages.filter(({name, version}) => !isDeprecatedPackage(name, version));
+            return void resolve(packages);
+          }
+
           const message = request.getErrorMessage(body, error);
-          return callback(`Searching packages failed: ${message}`);
-        }
+          reject(`Searching packages failed: ${message}`);
+        });
       });
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
       const [query] = options.argv._;
 
       if (!query) {
-        callback("Missing required search query");
-        return;
+        return "Missing required search query"; // error as return value on this layer atm
       }
 
       const searchOptions = {
@@ -75,31 +76,29 @@ Search for packages/themes.\
         themes: options.argv.themes
       };
 
-      this.searchPackages(query, searchOptions, function(error, packages) {
-        if (error != null) {
-          callback(error);
-          return;
-        }
+      let packages;
+      try {
+        packages = await this.searchPackages(query, searchOptions);
+      } catch (error) {
+        return error; // error as return value on this layer atm
+      }
 
-        if (options.argv.json) {
-          console.log(JSON.stringify(packages));
-        } else {
-          const heading = `Search Results For '${query}'`.cyan;
-          console.log(`${heading} (${packages.length})`);
+      if (options.argv.json) {
+        console.log(JSON.stringify(packages));
+      } else {
+        const heading = `Search Results For '${query}'`.cyan;
+        console.log(`${heading} (${packages.length})`);
 
-          tree(packages, function({name, version, description, downloads, stargazers_count}) {
-            let label = name.yellow;
-            if (description) { label += ` ${description.replace(/\s+/g, ' ')}`; }
-            if ((downloads >= 0) && (stargazers_count >= 0)) { label += ` (${_.pluralize(downloads, 'download')}, ${_.pluralize(stargazers_count, 'star')})`.grey; }
-            return label;
-          });
+        tree(packages, ({name, description, downloads, stargazers_count}) => {
+          let label = name.yellow;
+          if (description) { label += ` ${description.replace(/\s+/g, ' ')}`; }
+          if ((downloads >= 0) && (stargazers_count >= 0)) { label += ` (${_.pluralize(downloads, 'download')}, ${_.pluralize(stargazers_count, 'star')})`.grey; }
+          return label;
+        });
 
-          console.log();
-          console.log(`Use \`ppm install\` to install them or visit ${'https://web.pulsar-edit.dev'.underline} to read more about them.`);
-          console.log();
-        }
-
-        return callback();
-      });
+        console.log();
+        console.log(`Use \`ppm install\` to install them or visit ${'https://web.pulsar-edit.dev'.underline} to read more about them.`);
+        console.log();
+      }
     }
   }

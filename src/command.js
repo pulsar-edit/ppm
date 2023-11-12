@@ -8,38 +8,34 @@ const git = require('./git');
 
 module.exports =
 class Command {
-  constructor() {
-    this.logCommandResults = this.logCommandResults.bind(this);
-    this.logCommandResultsIfFail = this.logCommandResultsIfFail.bind(this);
-  }
 
-  spawn(command, args, ...remaining) {
-    let options;
-    if (remaining.length >= 2) { options = remaining.shift(); }
-    const callback = remaining.shift();
+  spawn(command, args, optionsOrCallback, callbackOrMissing) {
+    const [callback, options] = callbackOrMissing == null
+      ? [optionsOrCallback]
+      : [callbackOrMissing, optionsOrCallback];
 
     const spawned = child_process.spawn(command, args, options);
 
     const errorChunks = [];
     const outputChunks = [];
 
-    spawned.stdout.on('data', function(chunk) {
-      if ((options != null ? options.streaming : undefined)) {
-        return process.stdout.write(chunk);
+    spawned.stdout.on('data', chunk => {
+      if (options?.streaming) {
+        process.stdout.write(chunk);
       } else {
-        return outputChunks.push(chunk);
+        outputChunks.push(chunk);
       }
     });
 
-    spawned.stderr.on('data', function(chunk) {
-      if ((options != null ? options.streaming : undefined)) {
-        return process.stderr.write(chunk);
+    spawned.stderr.on('data', chunk => {
+      if (options?.streaming) {
+        process.stderr.write(chunk);
       } else {
-        return errorChunks.push(chunk);
+        errorChunks.push(chunk);
       }
     });
 
-    const onChildExit = function(errorOrExitCode) {
+    const onChildExit = errorOrExitCode => {
       spawned.removeListener('error', onChildExit);
       spawned.removeListener('close', onChildExit);
       return (typeof callback === 'function' ? callback(errorOrExitCode, Buffer.concat(errorChunks).toString(), Buffer.concat(outputChunks).toString()) : undefined);
@@ -52,8 +48,7 @@ class Command {
   }
 
   fork(script, args, ...remaining) {
-    args.unshift(script);
-    return this.spawn(process.execPath, args, ...remaining);
+    return this.spawn(process.execPath, [script, ...args], ...remaining);
   }
 
   packageNamesFromArgv(argv) {
@@ -61,47 +56,36 @@ class Command {
   }
 
   sanitizePackageNames(packageNames) {
-    if (packageNames == null) { packageNames = []; }
+    packageNames ??= [];
     packageNames = packageNames.map(packageName => packageName.trim());
     return _.compact(_.uniq(packageNames));
   }
 
   logSuccess() {
-    if (process.platform === 'win32') {
-      return process.stdout.write('done\n'.green);
-    } else {
-      return process.stdout.write('\u2713\n'.green);
-    }
+    process.stdout.write((process.platform === 'win32' ? 'done\n' : '\u2713\n').green);
   }
 
   logFailure() {
-    if (process.platform === 'win32') {
-      return process.stdout.write('failed\n'.red);
-    } else {
-      return process.stdout.write('\u2717\n'.red);
-    }
+    process.stdout.write((process.platform === 'win32' ? 'failed\n' : '\u2717\n').red);
   }
 
-  logCommandResults(callback, code, stderr, stdout) {
-    if (stderr == null) { stderr = ''; }
-    if (stdout == null) { stdout = ''; }
-    if (code === 0) {
-      this.logSuccess();
-      return callback();
-    } else {
+  async logCommandResults(code, stderr, stdout) {
+    stderr ??= '';
+    stdout ??= '';
+    if (code !== 0) {
       this.logFailure();
-      return callback(`${stdout}\n${stderr}`.trim());
+      throw `${stdout}\n${stderr}`.trim();
     }
+
+    this.logSuccess();
   }
 
-  logCommandResultsIfFail(callback, code, stderr, stdout) {
-    if (stderr == null) { stderr = ''; }
-    if (stdout == null) { stdout = ''; }
-    if (code === 0) {
-      return callback();
-    } else {
+  async logCommandResultsIfFail(code, stderr, stdout) {
+    stderr ??= '';
+    stdout ??= '';
+    if (code !== 0) {
       this.logFailure();
-      return callback(`${stdout}\n${stderr}`.trim());
+      throw `${stdout}\n${stderr}`.trim();
     }
   }
 
@@ -114,31 +98,30 @@ class Command {
     }
   }
 
-  loadInstalledAtomMetadata(callback) {
-    this.getResourcePath(resourcePath => {
-      let electronVersion;
-      try {
-        let version;
-        ({ version, electronVersion } = require(path.join(resourcePath, "package.json")) ?? {});
-        version = this.normalizeVersion(version);
-        if (semver.valid(version)) { this.installedAtomVersion = version; }
-      } catch (error) {}
+  async loadInstalledAtomMetadata() {
+    const resourcePath = await this.getResourcePath();
+    let electronVersion;
+    try {
+      let version;
+      ({ version, electronVersion } = require(path.join(resourcePath, "package.json")) ?? {});
+      version = this.normalizeVersion(version);
+      if (semver.valid(version)) { this.installedAtomVersion = version; }
+    } catch (error) {}
 
-      this.electronVersion = process.env.ATOM_ELECTRON_VERSION ?? electronVersion;
-      if (this.electronVersion == null) {
-        throw new Error('Could not determine Electron version');
-      }
-
-      return callback();
-    });
+    this.electronVersion = process.env.ATOM_ELECTRON_VERSION ?? electronVersion;
+    if (this.electronVersion == null) {
+      throw new Error('Could not determine Electron version');
+    }
   }
 
-  getResourcePath(callback) {
-    if (this.resourcePath) {
-      return process.nextTick(() => callback(this.resourcePath));
-    } else {
-      return config.getResourcePath(resourcePath => { this.resourcePath = resourcePath; return callback(this.resourcePath); });
-    }
+  getResourcePath() {
+    return new Promise((resolve, _reject) => {
+      if (this.resourcePath) {
+        process.nextTick(() => void resolve(this.resourcePath));
+      } else {
+        config.getResourcePath().then(resourcePath => { this.resourcePath = resourcePath; resolve(this.resourcePath); });
+      }
+    });
   }
 
   addBuildEnvVars(env) {
@@ -163,40 +146,36 @@ class Command {
   updateWindowsEnv(env) {
     env.USERPROFILE = env.HOME;
 
-    return git.addGitToEnv(env);
+    git.addGitToEnv(env);
   }
 
   addNodeBinToEnv(env) {
     const nodeBinFolder = path.resolve(__dirname, '..', 'bin');
     const pathKey = config.isWin32() ? 'Path' : 'PATH';
-    if (env[pathKey]) {
-      return env[pathKey] = `${nodeBinFolder}${path.delimiter}${env[pathKey]}`;
-    } else {
-      return env[pathKey]= nodeBinFolder;
-    }
+    env[pathKey] = env[pathKey] ? `${nodeBinFolder}${path.delimiter}${env[pathKey]}` : nodeBinFolder;
   }
 
   addProxyToEnv(env) {
     const httpProxy = this.npm.config.get('proxy');
     if (httpProxy) {
-      if (env.HTTP_PROXY == null) { env.HTTP_PROXY = httpProxy; }
-      if (env.http_proxy == null) { env.http_proxy = httpProxy; }
+      env.HTTP_PROXY ??= httpProxy;
+      env.http_proxy ??= httpProxy;
     }
 
     const httpsProxy = this.npm.config.get('https-proxy');
     if (httpsProxy) {
-      if (env.HTTPS_PROXY == null) { env.HTTPS_PROXY = httpsProxy; }
-      if (env.https_proxy == null) { env.https_proxy = httpsProxy; }
+      env.HTTPS_PROXY ??= httpsProxy;
+      env.https_proxy ??= httpsProxy;
 
       // node-gyp only checks HTTP_PROXY (as of node-gyp@4.0.0)
-      if (env.HTTP_PROXY == null) { env.HTTP_PROXY = httpsProxy; }
-      if (env.http_proxy == null) { env.http_proxy = httpsProxy; }
+      env.HTTP_PROXY ??= httpsProxy;
+      env.http_proxy ??= httpsProxy;
     }
 
     // node-gyp doesn't currently have an option for this so just set the
     // environment variable to bypass strict SSL
     // https://github.com/nodejs/node-gyp/issues/448
     const useStrictSsl = this.npm.config.get("strict-ssl") ?? true;
-    if (!useStrictSsl) { return env.NODE_TLS_REJECT_UNAUTHORIZED = 0; }
+    if (!useStrictSsl) { env.NODE_TLS_REJECT_UNAUTHORIZED = 0; }
   }
 };

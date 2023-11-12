@@ -37,12 +37,11 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       }
     }
 
-    registerUninstall({packageName, packageVersion}, callback) {
-      if (!packageVersion) { return callback(); }
+    async registerUninstall({packageName, packageVersion}) {
+      if (!packageVersion) { return; }
 
-      return auth.getToken(function(error, token) {
-        if (!token) { return callback(); }
-
+      try {
+        const token = await auth.getToken();
         const requestOptions = {
           url: `${config.getAtomPackagesUrl()}/${packageName}/versions/${packageVersion}/events/uninstall`,
           json: true,
@@ -50,19 +49,18 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
             authorization: token
           }
         };
-
-        return request.post(requestOptions, (error, response, body) => callback());
-      });
+        return new Promise((resolve, _reject) => void request.post(requestOptions, (_error, _response, _body) => resolve()));
+      } catch (error) {
+        return error; // error as value here
+      }
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
       const packageNames = this.packageNamesFromArgv(options.argv);
 
       if (packageNames.length === 0) {
-        callback("Please specify a package name to uninstall");
-        return;
+        return "Please specify a package name to uninstall"; // error as return value atm
       }
 
       const packagesDirectory = path.join(config.getAtomDirectory(), 'packages');
@@ -109,6 +107,7 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
         }
       }
 
-      return async.eachSeries(uninstallsToRegister, this.registerUninstall.bind(this), () => callback(uninstallError));
+      await async.eachSeries(uninstallsToRegister, (data, errorHandler) =>void this.registerUninstall(data).then(errorHandler));
+      return uninstallError; // both error and lack of error, as return value atm
     }
   }

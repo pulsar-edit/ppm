@@ -14,4 +14,4 @@ global.silenceOutput = (callThrough = false) => {
   }
 };
 
-global.spyOnToken = () => spyOn(auth, 'getToken').andCallFake(callback => callback(null, 'token'));
+global.spyOnToken = () => spyOn(auth, 'getToken').andCallFake(() => Promise.resolve('token'));

@@ -23,23 +23,20 @@ Enables the named package(s).\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    run(options) {
-      let error, settings;
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
       let packageNames = this.packageNamesFromArgv(options.argv);
 
       const configFilePath = CSON.resolve(path.join(config.getAtomDirectory(), 'config'));
       if (!configFilePath) {
-        callback("Could not find config.cson. Run Atom first?");
-        return;
+        return "Could not find config.cson. Run Pulsar first?"; //errors as retval atm
       }
 
+      let settings;
       try {
         settings = CSON.readFileSync(configFilePath);
       } catch (error) {
-        callback(`Failed to load \`${configFilePath}\`: ${error.message}`);
-        return;
+        return `Failed to load \`${configFilePath}\`: ${error.message}`; //errors as retval atm
       }
 
       const keyPath = '*.core.disabledPackages';
@@ -54,8 +51,7 @@ Enables the named package(s).\
       packageNames = _.difference(packageNames, errorPackages);
 
       if (packageNames.length === 0) {
-        callback("Please specify a package to enable");
-        return;
+        return "Please specify a package to enable"; //errors as retval atm
       }
 
       const result = _.difference(disabledPackages, packageNames);
@@ -64,12 +60,10 @@ Enables the named package(s).\
       try {
         CSON.writeFileSync(configFilePath, settings);
       } catch (error) {
-        callback(`Failed to save \`${configFilePath}\`: ${error.message}`);
-        return;
+        return `Failed to save \`${configFilePath}\`: ${error.message}`; //errors as retval atm
       }
 
       console.log(`Enabled:\n  ${packageNames.join('\n  ')}`);
       this.logSuccess();
-      return callback();
     }
   }

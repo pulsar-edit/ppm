@@ -23,34 +23,36 @@ const fsAdditions = {
     return wrench.readdirSyncRecursive(directoryPath);
   },
 
-  cp(sourcePath, destinationPath, callback) {
-    return rm(destinationPath, function(error) {
-      if (error != null) {
-        return callback(error);
-      } else {
-        return ncp(sourcePath, destinationPath, callback);
-      }
+  cp(sourcePath, destinationPath) {
+    return new Promise((resolve, reject) => {
+      rm(destinationPath, error => {
+        if (error != null) {
+          return reject(error);
+        }
+        ncp(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
+      });
     });
   },
 
-  mv(sourcePath, destinationPath, callback) {
-    return rm(destinationPath, function(error) {
-      if (error != null) {
-        return callback(error);
-      } else {
+  mv(sourcePath, destinationPath) {
+    return new Promise((resolve, reject) => {
+      rm(destinationPath, error => {
+        if (error != null) {
+          return reject(error);
+        }
         wrench.mkdirSyncRecursive(path.dirname(destinationPath), 0o755);
-        return fs.rename(sourcePath, destinationPath, callback);
-      }
+        fs.rename(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
+      });
     });
   }
 };
 
 module.exports = new Proxy({}, {
-  get(target, key) {
+  get(_target, key) {
     return fsAdditions[key] || fs[key];
   },
 
-  set(target, key, value) {
+  set(_target, key, value) {
     return fsAdditions[key] = value;
   }
 });

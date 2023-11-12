@@ -24,7 +24,7 @@ Disables the named package(s).\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    getInstalledPackages(callback) {
+    async getInstalledPackages() {
       const options = {
         argv: {
           theme: false,
@@ -33,63 +33,59 @@ Disables the named package(s).\
       };
 
       const lister = new List();
-      return lister.listBundledPackages(options, (error, core_packages) => lister.listDevPackages(options, (error, dev_packages) => lister.listUserPackages(options, (error, user_packages) => callback(null, core_packages.concat(dev_packages, user_packages)))));
+      const corePackages = await lister.listBundledPackages(options);
+      const devPackages = lister.listDevPackages(options);
+      const userPackages = lister.listUserPackages(options);
+      return corePackages.concat(devPackages, userPackages);
     }
 
-    run(options) {
-      let settings;
-      const {callback} = options;
-      options = this.parseOptions(options.commandArgs);
+    async run(options) {
+        options = this.parseOptions(options.commandArgs);
 
-      let packageNames = this.packageNamesFromArgv(options.argv);
+        let packageNames = this.packageNamesFromArgv(options.argv);
 
-      const configFilePath = CSON.resolve(path.join(config.getAtomDirectory(), 'config'));
-      if (!configFilePath) {
-        callback("Could not find config.cson. Run Atom first?");
-        return;
-      }
-
-      try {
-        settings = CSON.readFileSync(configFilePath);
-      } catch (error) {
-        callback(`Failed to load \`${configFilePath}\`: ${error.message}`);
-        return;
-      }
-
-      return this.getInstalledPackages((error, installedPackages) => {
-        if (error) { return callback(error); }
-
-        const installedPackageNames = (Array.from(installedPackages).map((pkg) => pkg.name));
-
-        // uninstalledPackages = (name for name in packageNames when !installedPackageNames[name])
-        const uninstalledPackageNames = _.difference(packageNames, installedPackageNames);
-        if (uninstalledPackageNames.length > 0) {
-          console.log(`Not Installed:\n  ${uninstalledPackageNames.join('\n  ')}`);
+        const configFilePath = CSON.resolve(path.join(config.getAtomDirectory(), 'config'));
+        if (!configFilePath) {
+          return 'Could not find config.cson. Run Pulsar first?'; //errors as return values atm
         }
 
-        // only installed packages can be disabled
-        packageNames = _.difference(packageNames, uninstalledPackageNames);
-
-        if (packageNames.length === 0) {
-          callback("Please specify a package to disable");
-          return;
+        let settings;
+        try {
+          settings = CSON.readFileSync(configFilePath);
+        } catch (error) {
+          return `Failed to load \`${configFilePath}\`: ${error.message}`; //errors as return values atm
         }
-
-        const keyPath = '*.core.disabledPackages';
-        const disabledPackages = _.valueForKeyPath(settings, keyPath) ?? [];
-        const result = _.union(disabledPackages, packageNames);
-        _.setValueForKeyPath(settings, keyPath, result);
 
         try {
-          CSON.writeFileSync(configFilePath, settings);
-        } catch (error) {
-          callback(`Failed to save \`${configFilePath}\`: ${error.message}`);
-          return;
-        }
+          const installedPackages = await this.getInstalledPackages();
+          const installedPackageNames = Array.from(installedPackages).map((pkg) => pkg.name);
+          const uninstalledPackageNames = _.difference(packageNames, installedPackageNames);
+          if (uninstalledPackageNames.length > 0) {
+            console.log(`Not Installed:\n  ${uninstalledPackageNames.join('\n  ')}`);
+          }
 
-        console.log(`Disabled:\n  ${packageNames.join('\n  ')}`);
-        this.logSuccess();
-        return callback();
-      });
+          // only installed packages can be disabled
+          packageNames = _.difference(packageNames, uninstalledPackageNames);
+
+          if (packageNames.length === 0) {
+            return "Please specify a package to disable"; //errors as return values atm
+          }
+
+          const keyPath = '*.core.disabledPackages';
+          const disabledPackages = _.valueForKeyPath(settings, keyPath) ?? [];
+          const result = _.union(disabledPackages, packageNames);
+          _.setValueForKeyPath(settings, keyPath, result);
+
+          try {
+            CSON.writeFileSync(configFilePath, settings);
+          } catch (error) {
+            return `Failed to save \`${configFilePath}\`: ${error.message}`; //errors as return values atm
+          }
+
+          console.log(`Disabled:\n  ${packageNames.join('\n  ')}`);
+          this.logSuccess();
+        } catch (error) {
+          return error; //errors as return values atm
+        }
     }
   }

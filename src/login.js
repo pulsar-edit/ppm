@@ -1,7 +1,6 @@
 
 const _ = require('underscore-plus');
 const yargs = require('yargs');
-const Q = require('q');
 const read = require('read');
 const open = require('open');
 
@@ -12,21 +11,13 @@ module.exports =
 class Login extends Command {
   static commandNames = [ "login" ];
 
-    constructor(...args) {
-      super(...args);
-      this.welcomeMessage = this.welcomeMessage.bind(this);
-      this.getToken = this.getToken.bind(this);
-      this.saveToken = this.saveToken.bind(this);
-    }
-
-    static getTokenOrLogin(callback) {
-      return auth.getToken(function(error, token) {
-        if (error != null) {
-          return new Login().run({callback, commandArgs: []});
-        } else {
-          return callback(null, token);
-        }
-      });
+    static async getTokenOrLogin() {
+      try {
+        const token = await auth.getToken();
+        return token;
+      } catch (error) {
+        return await new Login().obtainToken();
+      }
     }
 
     parseOptions(argv) {
@@ -43,25 +34,37 @@ be used to identify you when publishing packages.\
       return options.string('token').describe('token', 'Package API token');
     }
 
-    run(options) {
-      const {callback} = options;
+    async obtainToken(offeredToken) {
+      let token = offeredToken;
+      if (token == null) {
+        await this.welcomeMessage();
+        await this.openURL();
+        token = await this.getToken();
+      }
+      await this.saveToken(token);
+      return token;
+    }
+
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
-      return Q({token: options.argv.token})
-        .then(this.welcomeMessage)
-        .then(this.openURL)
-        .then(this.getToken)
-        .then(this.saveToken)
-        .then(token => callback(null, token))
-        .catch(callback);
+      try {
+        await this.obtainToken(options.argv.token);
+      } catch (error) {
+        return error; //errors as return values atm
+      }
     }
 
     prompt(options) {
-      const readPromise = Q.denodeify(read);
-      return readPromise(options);
+      return new Promise((resolve, reject) =>
+        void read(options, (error, answer) =>
+          error != null
+          ? void reject(error)
+          : void resolve(answer)
+        )
+      );
     }
 
-    welcomeMessage(state) {
-      if (state.token) { return Q(state); }
+    async welcomeMessage() {
 
       const welcome = `\
 Welcome to Pulsar!
@@ -74,31 +77,23 @@ copy the token and paste it below when prompted.
 `;
       console.log(welcome);
 
-      return this.prompt({prompt: "Press [Enter] to open your account page."});
+      await this.prompt({prompt: "Press [Enter] to open your account page."});
     }
 
-    openURL(state) {
-      if (state.token) { return Q(state); }
-
-      return open('https://web.pulsar-edit.dev/users');
+    async openURL() {
+      await open('https://web.pulsar-edit.dev/users');
     }
 
-    getToken(state) {
-      if (state.token) { return Q(state); }
-
-      return this.prompt({prompt: 'Token>', edit: true})
-        .spread(function(token) {
-          state.token = token;
-          return Q(state);
-      });
+    async getToken() {
+      const token = await this.prompt({prompt: 'Token>', edit: true});
+      return token;
     }
 
-    saveToken({token}) {
+    async saveToken(token) {
       if (!token) { throw new Error("Token is required"); }
 
       process.stdout.write('Saving token to Keychain ');
-      auth.saveToken(token);
+      await auth.saveToken(token);
       this.logSuccess();
-      return Q(token);
     }
   }

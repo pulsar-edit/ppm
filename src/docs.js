@@ -26,30 +26,30 @@ Open a package's homepage in the default browser.\
       return open(repositoryUrl);
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
       const [packageName] = options.argv._;
 
       if (!packageName) {
-        callback("Missing required package name");
-        return;
+        return "Missing required package name"; //error as return value
       }
 
-      this.getPackage(packageName, options, (error, pack) => {
-        let repository;
-        if (error != null) { return callback(error); }
+      let pack;
+      try {
+        pack = await this.getPackage(packageName, options);
+      } catch (error) {
+        return error; //error as return value
+      }
 
-        if (repository = this.getRepository(pack)) {
-          if (options.argv.print) {
-            console.log(repository);
-          } else {
-            this.openRepositoryUrl(repository);
-          }
-          return callback();
-        } else {
-          return callback(`Package \"${packageName}\" does not contain a repository URL`);
-        }
-      });
+      const repository = this.getRepository(pack);
+      if (!repository) {
+        return `Package \"${packageName}\" does not contain a repository URL`; //error as return value
+      }
+
+      if (options.argv.print) {
+        console.log(repository);
+      } else {
+        this.openRepositoryUrl(repository);
+      }
     }
   }

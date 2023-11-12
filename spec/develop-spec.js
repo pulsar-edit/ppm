@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs-plus');
 const temp = require('temp');
 const apm = require('../src/apm-cli');
+const Develop = require('../src/develop');
 
 describe('apm develop', () => {
   let linkedRepoPath, repoPath;
@@ -19,10 +20,7 @@ describe('apm develop', () => {
 
   describe("when the package doesn't have a published repository url", () => {
     it('logs an error', () => {
-      const Develop = require('../src/develop');
-      spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake((packageName, callback) => {
-        callback('Here is the error');
-      });
+      spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake(_packageName => Promise.reject('Here is the error'));
       const callback = jasmine.createSpy('callback');
       apm.run(['develop', 'fake-package'], callback);
       waitsFor('waiting for develop to complete', () => callback.callCount === 1);
@@ -36,13 +34,12 @@ describe('apm develop', () => {
 
   describe("when the repository hasn't been cloned", () => {
     it('clones the repository to ATOM_REPOS_HOME and links it to ATOM_HOME/dev/packages', () => {
-      const Develop = require('../src/develop');
-      spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake((packageName, callback) => {
+      spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake(_packageName => {
         const repoUrl = path.join(__dirname, 'fixtures', 'repo.git');
-        callback(null, repoUrl);
+        return Promise.resolve(repoUrl);
       });
       spyOn(Develop.prototype, 'installDependencies').andCallFake(function (packageDirectory, options) {
-        this.linkPackage(packageDirectory, options);
+        return this.linkPackage(packageDirectory, options);
       });
       const callback = jasmine.createSpy('callback');
       apm.run(['develop', 'fake-package'], callback);

@@ -5,16 +5,21 @@ const {ScopeSelector, ready} = require('second-mate');
 
 module.exports =
 class TextMateTheme {
+  static async createInstance(contents) {
+    const newInstance = new TextMateTheme(contents);
+    await newInstance.buildRulesets();
+    return newInstance;
+  }
+
   constructor(contents) {
     this.contents = contents;
     this.rulesets = [];
-    this.buildRulesets();
   }
 
-  buildRulesets() {
+  async buildRulesets() {
     let variableSettings;
     let { settings } = plist.parseStringSync(this.contents) ?? {};
-    if (settings == null) { settings = []; }
+    settings ??= [];
 
     for (let setting of settings) {
       const {scope, name} = setting.settings;
@@ -46,7 +51,7 @@ The theme being converted must contain a settings array with all of the followin
 
     this.buildSyntaxVariables(variableSettings);
     this.buildGlobalSettingsRulesets(variableSettings);
-    this.buildScopeSelectorRulesets(settings);
+    await this.buildScopeSelectorRulesets(settings);
   }
 
   getStylesheet() {
@@ -152,25 +157,21 @@ atom-text-editor.is-focused .line.cursor-line`,
     });
   }
 
-  buildScopeSelectorRulesets(scopeSelectorSettings) {
-    return (() => {
-      const result = [];
-      for (let {name, scope, settings} of Array.from(scopeSelectorSettings)) {
-        if (!scope) { continue; }
-        result.push(this.rulesets.push({
-          comment: name,
-          selector: this.translateScopeSelector(scope),
-          properties: this.translateScopeSelectorSettings(settings)
-        }));
-      }
-      return result;
-    })();
+  async buildScopeSelectorRulesets(scopeSelectorSettings) {
+    const result = [];
+    for (let {name, scope, settings} of Array.from(scopeSelectorSettings)) {
+      if (!scope) { continue; }
+      result.push(this.rulesets.push({
+        comment: name,
+        selector: await this.translateScopeSelector(scope),
+        properties: this.translateScopeSelectorSettings(settings)
+      }));
+    }
+    return result;
   }
 
-  translateScopeSelector(textmateScopeSelector) {
-    (async () => {
-      await ready;
-    })();
+  async translateScopeSelector(textmateScopeSelector) {
+    await ready;
     return new ScopeSelector(textmateScopeSelector).toCssSyntaxSelector();
   }
 
@@ -193,28 +194,24 @@ atom-text-editor.is-focused .line.cursor-line`,
     textmateColor = `#${textmateColor.replace(/^#+/, '')}`;
     if (textmateColor.length <= 7) {
       return textmateColor;
-    } else {
-      const r = this.parseHexColor(textmateColor.slice(1, 3));
-      const g = this.parseHexColor(textmateColor.slice(3, 5));
-      const b = this.parseHexColor(textmateColor.slice(5, 7));
-      let a = this.parseHexColor(textmateColor.slice(7, 9));
-      a = Math.round((a / 255.0) * 100) / 100;
-
-      return `rgba(${r}, ${g}, ${b}, ${a})`;
     }
+
+    const r = this.parseHexColor(textmateColor.slice(1, 3));
+    const g = this.parseHexColor(textmateColor.slice(3, 5));
+    const b = this.parseHexColor(textmateColor.slice(5, 7));
+    let a = this.parseHexColor(textmateColor.slice(7, 9));
+    a = Math.round((a / 255.0) * 100) / 100;
+
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
   parseHexColor(color) {
     const parsed = Math.min(255, Math.max(0, parseInt(color, 16)));
-    if (isNaN(parsed)) {
-      return 0;
-    } else {
-      return parsed;
-    }
+    return isNaN(parsed) ? 0 : parsed;
   }
 };
 
-var SyntaxVariablesTemplate = `\
+const SyntaxVariablesTemplate = `\
 // This defines all syntax variables that syntax themes must implement when they
 // include a syntax-variables.less file.
 

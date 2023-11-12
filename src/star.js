@@ -32,8 +32,8 @@ Run \`ppm stars\` to see all your starred packages.\
       return options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages');
     }
 
-    starPackage(packageName, param, callback) {
-      if (param == null) { param = {}; }
+    starPackage(packageName, param) {
+      param ??= {};
       const {ignoreUnpublishedPackages, token} = param;
       if (process.platform === 'darwin') { process.stdout.write('\u2B50  '); }
       process.stdout.write(`Starring ${packageName} `);
@@ -44,22 +44,27 @@ Run \`ppm stars\` to see all your starred packages.\
           authorization: token
         }
       };
-      request.post(requestSettings, (error, response, body) => {
-        if (body == null) { body = {}; }
-        if (error != null) {
-          this.logFailure();
-          return callback(error);
-        } else if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
-          process.stdout.write('skipped (not published)\n'.yellow);
-          return callback();
-        } else if (response.statusCode !== 200) {
-          this.logFailure();
-          const message = request.getErrorMessage(body, error);
-          return callback(`Starring package failed: ${message}`);
-        } else {
+
+      return new Promise((resolve, reject) => {
+        request.post(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            this.logFailure();
+            return void reject(error);
+          }
+          if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
+            process.stdout.write('skipped (not published)\n'.yellow);
+            return void reject();
+          }
+          if (response.statusCode !== 200) {
+            this.logFailure();
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Starring package failed: ${message}`);
+          }
+
           this.logSuccess();
-          return callback();
-        }
+          resolve();
+        });
       });
     }
 
@@ -83,37 +88,34 @@ Run \`ppm stars\` to see all your starred packages.\
       return _.uniq(installedPackages);
     }
 
-    run(options) {
+    async run(options) {
       let packageNames;
-      const {callback} = options;
       options = this.parseOptions(options.commandArgs);
 
       if (options.argv.installed) {
         packageNames = this.getInstalledPackageNames();
         if (packageNames.length === 0) {
-          callback();
           return;
         }
       } else {
         packageNames = this.packageNamesFromArgv(options.argv);
         if (packageNames.length === 0) {
-          callback("Please specify a package name to star");
-          return;
+          return "Please specify a package name to star"; // error as return value for now
         }
       }
 
-      Login.getTokenOrLogin((error, token) => {
-        if (error != null) { return callback(error); }
-
+      try {
+        const token = await Login.getTokenOrLogin();
         const starOptions = {
           ignoreUnpublishedPackages: options.argv.installed,
           token
         };
-
         const commands = packageNames.map(packageName => {
-          return callback => this.starPackage(packageName, starOptions, callback);
+          return async () => await this.starPackage(packageName, starOptions);
         });
-        return async.waterfall(commands, callback);
-      });
+        return await async.waterfall(commands);
+      } catch (error) {
+        return error; // error as return value
+      }
     }
   }

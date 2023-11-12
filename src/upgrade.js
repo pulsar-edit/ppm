@@ -75,16 +75,18 @@ available updates.\
       } catch (error) {}
     }
 
-    loadInstalledAtomVersion(options, callback) {
+    async loadInstalledAtomVersion(options) {
       if (options.argv.compatible) {
-        process.nextTick(() => {
-          const version = this.normalizeVersion(options.argv.compatible);
-          if (semver.valid(version)) { this.installedAtomVersion = version; }
-          return callback();
+        return new Promise((resolve, _reject) => {
+          process.nextTick(() => {
+            const version = this.normalizeVersion(options.argv.compatible);
+            if (semver.valid(version)) { this.installedAtomVersion = version; }
+            resolve();
+          });
         });
-      } else {
-        return this.loadInstalledAtomMetadata(callback);
       }
+
+      return await this.loadInstalledAtomMetadata();
     }
 
     folderIsRepo(pack) {
@@ -92,26 +94,29 @@ available updates.\
       return fs.existsSync(repoGitFolderPath);
     }
 
-    getLatestVersion(pack, callback) {
+    getLatestVersion(pack) {
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${pack.name}`,
         json: true
       };
-      return request.get(requestSettings, (error, response, body) => {
-        if (body == null) { body = {}; }
-        if (error != null) {
-          return callback(`Request for package information failed: ${error.message}`);
-        } else if (response.statusCode === 404) {
-          return callback();
-        } else if (response.statusCode !== 200) {
-          const message = body.message ?? body.error ?? body;
-          return callback(`Request for package information failed: ${message}`);
-        } else {
-          let version;
+      return new Promise((resolve, reject) => {
+        request.get(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            return void reject(`Request for package information failed: ${error.message}`);
+          }
+          if (response.statusCode === 404) {
+            return void resolve();
+          }
+          if (response.statusCode !== 200) {
+            const message = body.message ?? body.error ?? body;
+            return void reject(`Request for package information failed: ${message}`);
+          }
+
           const atomVersion = this.installedAtomVersion;
           let latestVersion = pack.version;
-          const object = body.versions != null ? body.versions : {};
-          for (version in object) {
+          const object = body?.versions ?? {};
+          for (let version in object) {
             const metadata = object[version];
             if (!semver.valid(version)) { continue; }
             if (!metadata) { continue; }
@@ -120,35 +125,40 @@ available updates.\
             if (!semver.validRange(engine)) { continue; }
             if (!semver.satisfies(atomVersion, engine)) { continue; }
 
-            if (semver.gt(version, latestVersion)) { latestVersion = version; }
+            if (!semver.gt(version, latestVersion)) { continue; }
+
+            latestVersion = version;
           }
 
-          if ((latestVersion !== pack.version) && this.hasRepo(pack)) {
-            return callback(null, latestVersion);
-          } else {
-            return callback();
+          if ((latestVersion === pack.version) || !this.hasRepo(pack)) {
+            return void resolve();
           }
-        }
+
+          resolve(latestVersion);
+        });
       });
     }
 
-    getLatestSha(pack, callback) {
+    async getLatestSha(pack) {
       const repoPath = path.join(this.atomPackagesDirectory, pack.name);
       const repo = Git.open(repoPath);
-      return config.getSetting('git', command => {
-        if (command == null) { command = 'git'; }
-        const args = ['fetch', 'origin', repo.getShortHead()];
-        git.addGitToEnv(process.env);
-        return this.spawn(command, args, {cwd: repoPath}, function(code, stderr, stdout) {
-          if (stderr == null) { stderr = ''; }
-          if (stdout == null) { stdout = ''; }
-          if (code !== 0) { return callback(new Error('Exit code: ' + code + ' - ' + stderr)); }
+
+      const command = await config.getSetting('git') ?? 'git';
+      const args = ['fetch', 'origin', repo.getShortHead()];
+      git.addGitToEnv(process.env);
+      return new Promise((resolve, reject) => {
+        this.spawn(command, args, {cwd: repoPath}, (code, stderr, stdout) => {
+          stderr ??= ''; 
+          stdout ??= '';
+          if (code !== 0) {
+            return void reject(new Error('Exit code: ' + code + ' - ' + stderr));
+          }
+
           const sha = repo.getReferenceTarget(repo.getUpstreamBranch(repo.getHead()));
           if (sha !== pack.apmInstallSource.sha) {
-            return callback(null, sha);
-          } else {
-            return callback();
+            return void resolve(sha);
           }
+          resolve();
         });
       });
     }
@@ -157,55 +167,50 @@ available updates.\
       return (Packages.getRepository(pack) != null);
     }
 
-    getAvailableUpdates(packages, callback) {
-      const getLatestVersionOrSha = (pack, done) => {
+    async getAvailableUpdates(packages) {
+      const getLatestVersionOrSha = async pack => {
         if (this.folderIsRepo(pack) && (pack.apmInstallSource?.type === 'git')) {
-          return this.getLatestSha(pack, (err, sha) => done(err, {pack, sha}));
-        } else {
-          return this.getLatestVersion(pack, (err, latestVersion) => done(err, {pack, latestVersion}));
+          return await this.getLatestSha(pack).then(sha => ({pack, sha}));
         }
+
+        return await this.getLatestVersion(pack).then(latestVersion => ({pack, latestVersion}));
       };
 
-      async.mapLimit(packages, 10, getLatestVersionOrSha, function(error, updates) {
-        if (error != null) { return callback(error); }
-
-        updates = _.filter(updates, update => (update.latestVersion != null) || (update.sha != null));
-        updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name));
-
-        return callback(null, updates);
-      });
+      let updates = await async.mapLimit(packages, 10, getLatestVersionOrSha);
+      updates = _.filter(updates, update => (update.latestVersion != null) || (update.sha != null));
+      updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name));
+      return updates;
     }
 
-    promptForConfirmation(callback) {
-      read({prompt: 'Would you like to install these updates? (yes)', edit: true}, function(error, answer) {
-        answer = answer ? answer.trim().toLowerCase() : 'yes';
-        return callback(error, (answer === 'y') || (answer === 'yes'));
-      });
-    }
-
-    installUpdates(updates, callback) {
-      const installCommands = [];
-      const {
-        verbose
-      } = this;
-      for (let {pack, latestVersion} of Array.from(updates)) {
-        (((pack, latestVersion) => installCommands.push(function(callback) {
-          let commandArgs;
-          if (pack.apmInstallSource?.type === 'git') {
-            commandArgs = [pack.apmInstallSource.source];
-          } else {
-            commandArgs = [`${pack.name}@${latestVersion}`];
+    promptForConfirmation() {
+      return new Promise((resolve, reject) => {
+        read({prompt: 'Would you like to install these updates? (yes)', edit: true}, (error, answer) => {
+          if (error != null) {
+            return void reject(error);
           }
-          if (verbose) { commandArgs.unshift('--verbose'); }
-          return new Install().run({callback, commandArgs});
-        })))(pack, latestVersion);
+          answer = answer ? answer.trim().toLowerCase() : 'yes';
+          resolve((answer === 'y') || (answer === 'yes'));
+        });
+      });
+    }
+
+    async installUpdates(updates) {
+      const installCommands = [];
+      for (let {pack, latestVersion} of Array.from(updates)) {
+        installCommands.push(async () => {
+          const commandArgs = pack.apmInstallSource?.type === 'git'
+            ? [pack.apmInstallSource.source]
+            : [`${pack.name}@${latestVersion}`];
+          if (this.verbose) { commandArgs.unshift('--verbose'); }
+          await new Install().run({commandArgs});
+        });
       }
 
-      return async.waterfall(installCommands, callback);
+      await async.waterfall(installCommands);
     }
 
-    run(options) {
-      const {callback, command} = options;
+    async run(options) {
+      const {command} = options;
       options = this.parseOptions(options.commandArgs);
       options.command = command;
 
@@ -214,63 +219,60 @@ available updates.\
         process.env.NODE_DEBUG = 'request';
       }
 
-      return this.loadInstalledAtomVersion(options, () => {
-        if (this.installedAtomVersion) {
-          return this.upgradePackages(options, callback);
-        } else {
-          return callback('Could not determine current Atom version installed');
+      try {
+        await this.loadInstalledAtomVersion(options);
+        if (!this.installedAtomVersion) {
+          return 'Could not determine current Atom version installed'; //errors as return values atm
         }
-      });
+
+        await this.upgradePackages(options);
+      } catch (error) {
+        return error; //rewiring error as return value
+      }
     }
 
-    upgradePackages(options, callback) {
+    async upgradePackages(options) {
       const packages = this.getInstalledPackages(options);
-      return this.getAvailableUpdates(packages, (error, updates) => {
-        if (error != null) { return callback(error); }
+      const updates = await this.getAvailableUpdates(packages);
 
-        if (options.argv.json) {
-          const packagesWithLatestVersionOrSha = updates.map(function({pack, latestVersion, sha}) {
-            if (latestVersion) { pack.latestVersion = latestVersion; }
-            if (sha) { pack.latestSha = sha; }
-            return pack;
-          });
-          console.log(JSON.stringify(packagesWithLatestVersionOrSha));
-        } else {
-          console.log("Package Updates Available".cyan + ` (${updates.length})`);
-          tree(updates, function({pack, latestVersion, sha}) {
-            let {name, apmInstallSource, version} = pack;
-            name = name.yellow;
-            if (sha != null) {
-              version = apmInstallSource.sha.substr(0, 8).red;
-              latestVersion = sha.substr(0, 8).green;
-            } else {
-              version = version.red;
-              latestVersion = latestVersion.green;
-            }
-            latestVersion = latestVersion?.green || apmInstallSource?.sha?.green;
-            return `${name} ${version} -> ${latestVersion}`;
-          });
+      if (options.argv.json) {
+        const packagesWithLatestVersionOrSha = updates.map(({pack, latestVersion, sha}) => {
+          if (latestVersion) { pack.latestVersion = latestVersion; }
+          if (sha) { pack.latestSha = sha; }
+          return pack;
+        });
+        console.log(JSON.stringify(packagesWithLatestVersionOrSha));
+      } else {
+        console.log("Package Updates Available".cyan + ` (${updates.length})`);
+        tree(updates, ({pack, latestVersion, sha}) => {
+          let {name, apmInstallSource, version} = pack;
+          name = name.yellow;
+          if (sha != null) {
+            version = apmInstallSource.sha.substr(0, 8).red;
+            latestVersion = sha.substr(0, 8).green;
+          } else {
+            version = version.red;
+            latestVersion = latestVersion.green;
+          }
+          latestVersion = latestVersion?.green || apmInstallSource?.sha?.green;
+          return `${name} ${version} -> ${latestVersion}`;
+        });
+      }
+
+      if (options.command === 'outdated') { return; }
+      if (options.argv.list) { return; }
+      if (updates.length === 0) { return; }
+
+      console.log();
+      if (options.argv.confirm) {
+        const confirmed = await this.promptForConfirmation();
+        if (confirmed) {
+          console.log();
+          await this.installUpdates(updates);
         }
+        return;
+      }
 
-        if (options.command === 'outdated') { return callback(); }
-        if (options.argv.list) { return callback(); }
-        if (updates.length === 0) { return callback(); }
-
-        console.log();
-        if (options.argv.confirm) {
-          return this.promptForConfirmation((error, confirmed) => {
-            if (error != null) { return callback(error); }
-
-            if (confirmed) {
-              console.log();
-              return this.installUpdates(updates, callback);
-            } else {
-              return callback();
-            }
-          });
-        } else {
-          return this.installUpdates(updates, callback);
-        }
-      });
+      await this.installUpdates(updates);
     }
   }

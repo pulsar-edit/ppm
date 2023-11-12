@@ -44,74 +44,59 @@ Run \`ppm links\` to view all the currently linked packages.\
       try {
         process.stdout.write(`Unlinking ${pathToUnlink} `);
         fs.unlinkSync(pathToUnlink);
-        return this.logSuccess();
+        this.logSuccess();
       } catch (error) {
         this.logFailure();
         throw error;
       }
     }
 
-    unlinkAll(options, callback) {
-      try {
-        let child, packagePath;
-        for (child of fs.list(this.devPackagesPath)) {
-          packagePath = path.join(this.devPackagesPath, child);
+    unlinkAll(options) {
+      let child, packagePath;
+      for (child of fs.list(this.devPackagesPath)) {
+        packagePath = path.join(this.devPackagesPath, child);
+        if (fs.isSymbolicLinkSync(packagePath)) { this.unlinkPath(packagePath); }
+      }
+      if (!options.argv.dev) {
+        for (child of fs.list(this.packagesPath)) {
+          packagePath = path.join(this.packagesPath, child);
           if (fs.isSymbolicLinkSync(packagePath)) { this.unlinkPath(packagePath); }
         }
-        if (!options.argv.dev) {
-          for (child of fs.list(this.packagesPath)) {
-            packagePath = path.join(this.packagesPath, child);
-            if (fs.isSymbolicLinkSync(packagePath)) { this.unlinkPath(packagePath); }
-          }
-        }
-        return callback();
-      } catch (error) {
-        return callback(error);
       }
     }
 
-    unlinkPackage(options, callback) {
-      let packageName;
+    unlinkPackage(options) {
       const packagePath = options.argv._[0]?.toString() ?? ".";
       const linkPath = path.resolve(process.cwd(), packagePath);
 
+      let packageName;
       try {
         packageName = CSON.readFileSync(CSON.resolve(path.join(linkPath, 'package'))).name;
       } catch (error) {}
-      if (!packageName) { packageName = path.basename(linkPath); }
+      packageName ||= path.basename(linkPath);
 
       if (options.argv.hard) {
-        try {
           this.unlinkPath(this.getDevPackagePath(packageName));
           this.unlinkPath(this.getPackagePath(packageName));
-          return callback();
-        } catch (error) {
-          return callback(error);
-        }
       } else {
-        let targetPath;
-        if (options.argv.dev) {
-          targetPath = this.getDevPackagePath(packageName);
-        } else {
-          targetPath = this.getPackagePath(packageName);
-        }
-        try {
-          this.unlinkPath(targetPath);
-          return callback();
-        } catch (error) {
-          return callback(error);
-        }
+        const targetPath = options.argv.dev
+          ? this.getDevPackagePath(packageName)
+          : this.getPackagePath(packageName);
+        this.unlinkPath(targetPath);
       }
     }
 
-    run(options) {
-      const {callback} = options;
+    async run(options) {
       options = this.parseOptions(options.commandArgs);
 
-      if (options.argv.all) {
-        return this.unlinkAll(options, callback);
-      } else {
-        return this.unlinkPackage(options, callback);
+      try {
+        if (options.argv.all) {
+          this.unlinkAll(options);
+        } else {
+          this.unlinkPackage(options);
+        }
+      } catch (error) {
+        return error; //error as return value for the time being
       }
     }
   }

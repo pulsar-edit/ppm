@@ -33,49 +33,48 @@ This command skips all linked packages.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    getResourcePath(callback) {
-      if (this.resourcePath) {
-        return process.nextTick(() => callback(this.resourcePath));
-      } else {
-        return config.getResourcePath(resourcePath => { this.resourcePath = resourcePath; return callback(this.resourcePath); });
+    async getResourcePath() {
+      if (!this.resourcePath) {
+        const resourcePath = await config.getResourcePath();
+        this.resourcePath = resourcePath;
+        return this.resourcePath;
       }
+
+      return new Promise((resolve, _reject) =>
+        void process.nextTick(() => resolve(this.resourcePath))
+      );
     }
 
-    rebuild(packageDirectory, callback) {
-      return this.getResourcePath(resourcePath => {
-        try {
-          if (this.moduleCache == null) { this.moduleCache = require(path.join(resourcePath, 'src', 'module-cache')); }
-          this.moduleCache.create(packageDirectory);
-        } catch (error) {
-          return callback(error);
-        }
-
-        return callback();
-      });
+    async rebuild(packageDirectory) {
+      const resourcePath = await this.getResourcePath();
+      this.moduleCache ??= require(path.join(resourcePath, 'src', 'module-cache'));
+      this.moduleCache.create(packageDirectory);
     }
 
-    run(options) {
-      const {callback} = options;
-
+    async run(_options) {
       const commands = [];
       fs.list(this.atomPackagesDirectory).forEach(packageName => {
         const packageDirectory = path.join(this.atomPackagesDirectory, packageName);
         if (fs.isSymbolicLinkSync(packageDirectory)) { return; }
         if (!fs.isFileSync(path.join(packageDirectory, 'package.json'))) { return; }
 
-        return commands.push(callback => {
+        commands.push(async () => {
           process.stdout.write(`Rebuilding ${packageName} module cache `);
-          return this.rebuild(packageDirectory, error => {
-            if (error != null) {
-              this.logFailure();
-            } else {
-              this.logSuccess();
-            }
-            return callback(error);
-          });
+          try {
+            await this.rebuild(packageDirectory);
+            this.logSuccess();
+          } catch (error) {
+            this.logFailure();
+            console.error(error);
+            throw error;
+          }
         });
       });
 
-      return async.waterfall(commands, callback);
+      try {
+        await async.waterfall(commands);
+      } catch (error) {
+        return error; //errors as return values atm
+      }
     }
   }

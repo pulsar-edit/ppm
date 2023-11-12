@@ -13,46 +13,39 @@ class ThemeConverter {
     this.destinationPath = path.resolve(destinationPath);
   }
 
-  readTheme(callback) {
+  async readTheme() {
     const {protocol} = url.parse(this.sourcePath);
     if ((protocol === 'http:') || (protocol === 'https:')) {
       const requestOptions = {url: this.sourcePath};
-      request.get(requestOptions, (error, response, body) => {
-        if (error != null) {
-          if (error?.code === 'ENOTFOUND') {
-            error = `Could not resolve URL: ${this.sourcePath}`;
+      return new Promise((resolve, reject) => {
+        request.get(requestOptions, (error, response, body) => {
+          if (error != null) {
+            if (error?.code === 'ENOTFOUND') {
+              error = `Could not resolve URL: ${this.sourcePath}`;
+            }
+            return void reject(error);
           }
-          return callback(error);
-        } else  if (response.statusCode !== 200) {
-          return callback(`Request to ${this.sourcePath} failed (${response.headers.status})`);
-        } else {
-          return callback(null, body);
-        }
+          if (response.statusCode !== 200) {
+            return void reject(`Request to ${this.sourcePath} failed (${response.headers.status})`);
+          }
+          
+          resolve(body);
+        });
       });
-    } else {
-      const sourcePath = path.resolve(this.sourcePath);
-      if (fs.isFileSync(sourcePath)) {
-        return callback(null, fs.readFileSync(sourcePath, 'utf8'));
-      } else {
-        return callback(`TextMate theme file not found: ${sourcePath}`);
-      }
     }
+
+    const sourcePath = path.resolve(this.sourcePath);
+    if (!fs.isFileSync(sourcePath)) {
+      throw `TextMate theme file not found: ${sourcePath}`;
+    }
+
+    return fs.readFileSync(sourcePath, 'utf8');
   }
 
-  convert(callback) {
-    this.readTheme((error, themeContents) => {
-      let theme;
-      if (error != null) { return callback(error); }
-
-      try {
-        theme = new TextMateTheme(themeContents);
-      } catch (error) {
-        return callback(error);
-      }
-
+  async convert() {
+      const themeContents = await this.readTheme();
+      const theme = await TextMateTheme.createInstance(themeContents);
       fs.writeFileSync(path.join(this.destinationPath, 'styles', 'base.less'), theme.getStylesheet());
       fs.writeFileSync(path.join(this.destinationPath, 'styles', 'syntax-variables.less'), theme.getSyntaxVariables());
-      return callback();
-    });
   }
 };

@@ -18,34 +18,32 @@ const tokenName = 'pulsar-edit.dev Package API Token';
 
 module.exports = {
   // Get the package API token from the keychain.
-  //
-  // callback - A function to call with an error as the first argument and a
-  //            string token as the second argument.
-  getToken(callback) {
-    keytar.findPassword(tokenName)
-      .then(function(token) {
-        if (token) {
-          return callback(null, token);
-        } else {
-          return Promise.reject();
-        }}).catch(function() {
-        let token;
-        if ((token = process.env.ATOM_ACCESS_TOKEN)) {
-          return callback(null, token);
-        } else {
-          return callback(`\
+  // returns the token as string or throws an exception
+  async getToken() {
+    try {
+      const token = await keytar.findPassword(tokenName);
+      if (!token) {
+        throw 'Missing token in keytar.';
+      }
+      
+      return token;
+    } catch {
+      const token = process.env.ATOM_ACCESS_TOKEN;
+      if (token) {
+        return token;
+      }
+
+      throw `\
 No package API token in keychain
 Run \`ppm login\` or set the \`ATOM_ACCESS_TOKEN\` environment variable.\
-`
-          );
-        }
-    });
+`;
+    }
   },
 
   // Save the given token to the keychain.
   //
   // token - A string token to save.
-  saveToken(token) {
-    return keytar.setPassword(tokenName, 'pulsar-edit.dev', token);
+  async saveToken(token) {
+    await keytar.setPassword(tokenName, 'pulsar-edit.dev', token);
   }
 };

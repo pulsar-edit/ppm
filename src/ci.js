@@ -37,7 +37,7 @@ but cannot be used to install new packages or dependencies.\
     return options.boolean('verbose').default('verbose', false).describe('verbose', 'Show verbose debug information');
   }
 
-  installModules(options, callback) {
+  installModules(options) {
     process.stdout.write('Installing locked modules');
     if (options.argv.verbose) {
       process.stdout.write('\n');
@@ -60,23 +60,27 @@ but cannot be used to install new packages or dependencies.\
 
     const installOptions = {env, streaming: options.argv.verbose};
 
-    return this.fork(this.atomNpmPath, installArgs, installOptions, (...args) => {
-      return this.logCommandResults(callback, ...args);
-    });
+    return new Promise((resolve, reject) =>
+      void this.fork(this.atomNpmPath, installArgs, installOptions, (...args) =>
+        void this.logCommandResults(...args).then(resolve, reject)
+      )
+    )
   }
 
-  run(options) {
-    const {callback} = options;
+  async run(options) {
     const opts = this.parseOptions(options.commandArgs);
 
     const commands = [];
-    commands.push(callback => { return config.loadNpm((error, npm) => { this.npm = npm; return callback(error); }); });
-    commands.push(cb => this.loadInstalledAtomMetadata(cb));
-    commands.push(cb => this.installModules(opts, cb));
-    const iteratee = (item, next) => item(next);
-    return async.mapSeries(commands, iteratee, function(err) {
-      if (err) { return callback(err); }
-      return callback(null);
+    commands.push(async () => {
+      const npm = await config.loadNpm();
+      this.npm = npm;
     });
+    commands.push(async () => await this.loadInstalledAtomMetadata());
+    commands.push(async () => this.installModules(opts));
+    try {
+      await async.waterfall(commands);
+    } catch (error) {
+      return error; // errors as return values atm
+    }
   }
 };
