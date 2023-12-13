@@ -5,11 +5,9 @@ const async = require('async');
 const CSON = require('season');
 const yargs = require('yargs');
 
-const auth = require('./auth');
 const Command = require('./command');
 const config = require('./apm');
 const fs = require('./fs');
-const request = require('./request');
 
 module.exports =
 class Uninstall extends Command {
