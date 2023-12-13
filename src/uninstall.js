@@ -37,24 +37,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       }
     }
 
-    async registerUninstall({packageName, packageVersion}) {
-      if (!packageVersion) { return; }
-
-      try {
-        const token = await auth.getToken();
-        const requestOptions = {
-          url: `${config.getAtomPackagesUrl()}/${packageName}/versions/${packageVersion}/events/uninstall`,
-          json: true,
-          headers: {
-            authorization: token
-          }
-        };
-        return new Promise((resolve, _reject) => void request.post(requestOptions, (_error, _response, _body) => resolve()));
-      } catch (error) {
-        return error; // error as value here
-      }
-    }
-
     async run(options) {
       options = this.parseOptions(options.commandArgs);
       const packageNames = this.packageNamesFromArgv(options.argv);
@@ -66,7 +48,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       const packagesDirectory = path.join(config.getAtomDirectory(), 'packages');
       const devPackagesDirectory = path.join(config.getAtomDirectory(), 'dev', 'packages');
 
-      const uninstallsToRegister = [];
       let uninstallError = null;
 
       for (let packageName of Array.from(packageNames)) {
@@ -82,9 +63,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
             if (fs.existsSync(packageManifestPath)) {
               const packageVersion = this.getPackageVersion(packageDirectory);
               fs.removeSync(packageDirectory);
-              if (packageVersion) {
-                uninstallsToRegister.push({packageName, packageVersion});
-              }
             } else if (!options.argv.hard) {
               throw new Error(`No package.json found at ${packageManifestPath}`);
             }
@@ -107,7 +85,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
         }
       }
 
-      await async.eachSeries(uninstallsToRegister, (data, errorHandler) =>void this.registerUninstall(data).then(errorHandler));
       return uninstallError; // both error and lack of error, as return value atm
     }
   }
