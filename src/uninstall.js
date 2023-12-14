@@ -27,14 +27,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       return options.boolean('hard').describe('hard', 'Uninstall from ~/.pulsar/packages and ~/.pulsar/dev/packages');
     }
 
-    getPackageVersion(packageDirectory) {
-      try {
-        return CSON.readFileSync(path.join(packageDirectory, 'package.json'))?.version;
-      } catch (error) {
-        return null;
-      }
-    }
-
     async run(options) {
       options = this.parseOptions(options.commandArgs);
       const packageNames = this.packageNamesFromArgv(options.argv);
