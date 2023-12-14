@@ -33,6 +33,28 @@ jobs:
           architecture: ${{ matrix.node_arch }}
           check-latest: true
 
+      - name: Setup Python
+        # NodeJS v14 can use the python included by the CI
+        if: ${{ matrix.node_version != 14 }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Setup Python (NodeJS v14)
+        # While initially tests would pass with no Python setup, additional testing
+        # is showing issues with CI included Python versions, so we will install our own
+        if: ${{ matrix.node_version == 14 }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python Dependencies
+        # NodeJS v14 doesn't have a newer copy of python, so we don't need to install deps
+        if: ${{ matrix.node_version != 14 }}
+        # This is needed for Python 3.12+, since node-gyp requires
+        # 'distutils', which has been removed
+        run: python3 -m pip install setuptools
+
       - name: Install dependencies
         run: |
           # Yarn v1.x needs global node-gyp available if npm 9.7.2+ is the global npm version,
