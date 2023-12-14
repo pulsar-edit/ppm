@@ -39,8 +39,8 @@ class Install extends Command {
 
 Usage: ppm install [<package_name>...]
        ppm install <package_name>@<package_version>
-       ppm install <git_remote> [-b <branch_or_tag_or_commit>]
-       ppm install <github_username>/<github_project> [-b <branch_or_tag_or_commit>]
+       ppm install <git_remote> [-b <branch_or_tag>]
+       ppm install <github_username>/<github_project> [-b <branch_or_tag>]
        ppm install --packages-file my-packages.txt
        ppm i (with any of the previous argument usage)
 
@@ -565,7 +565,7 @@ Run ppm -v after installing Git to see what version has been detected.\
         const repo = Git.open(cloneDir);
         data.sha = version;
         const checked = repo.checkoutRef(`refs/tags/${version}`, false) || repo.checkoutReference(version, false);
-        if (!checked) { throw `Can't find the branch, tag, or commit referenced by ${version}`; }
+        if (!checked) { throw `Can't find the branch or tag referenced by ${version}`; }
       } else {
         const sha = this.getRepositoryHeadSha(cloneDir);
         data.sha = sha;
