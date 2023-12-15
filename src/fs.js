@@ -1,7 +1,7 @@
 
 const _ = require('underscore-plus');
 const fs = require('fs-plus');
-const fsPromise = require("node:fs/promises");
+const fsPromise = require("fs/promises");
 const ncp = require('ncp');
 const wrench = require('wrench');
 const path = require('path');
