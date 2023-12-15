@@ -33,6 +33,7 @@ module.exports = {
     "silenceOutput": "readonly",
     "spyOn": "readonly",
     "spyOnToken": "readonly",
-    "waitsFor": "readonly"
+    "waitsFor": "readonly",
+    "jasmine": "readonly"
   }
 };
