@@ -2,7 +2,6 @@
 const path = require('path');
 
 const async = require('async');
-const CSON = require('season');
 const yargs = require('yargs');
 
 const Command = require('./command');
