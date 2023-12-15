@@ -2,7 +2,6 @@
 const yargs = require('yargs');
 
 const Command = require('./command');
-const config = require('./apm');
 
 module.exports =
 class Clean extends Command {
