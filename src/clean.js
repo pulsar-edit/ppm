@@ -1,15 +1,8 @@
 
-let Clean;
-const path = require('path');
-
-const async = require('async');
-const CSON = require('season');
 const yargs = require('yargs');
-const _ = require('underscore-plus');
 
 const Command = require('./command');
 const config = require('./apm');
-const fs = require('./fs');
 
 module.exports =
 class Clean extends Command {
@@ -35,7 +28,7 @@ as a dependency in the package.json file.\
 
   run(_options) {
     process.stdout.write("Removing extraneous modules ");
-    return new Promise((resolve, reject) => 
+    return new Promise((resolve, reject) =>
       void this.fork(this.atomNpmPath, ['prune'], (...args) =>
         void this.logCommandResults(...args).then(resolve, reject)
       )
