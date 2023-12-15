@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const temp = require('temp');
 const CSON = require('season');
