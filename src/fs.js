@@ -1,7 +1,7 @@
 
 const _ = require('underscore-plus');
 const fs = require('fs-plus');
-const fsPromise = require("fs/promises");
+const fsPromises = require("fs/promises");
 const ncp = require('ncp');
 const wrench = require('wrench');
 const path = require('path');
@@ -25,7 +25,7 @@ const fsAdditions = {
 
   cp(sourcePath, destinationPath) {
     return new Promise((resolve, reject) => {
-      fsPromise.rm(destinationPath, { recursive: true, force: true }).then(() => {
+      fsPromises.rm(destinationPath, { recursive: true, force: true }).then(() => {
         ncp(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
       }).catch((error) => {
         return reject(error);
@@ -35,7 +35,7 @@ const fsAdditions = {
 
   mv(sourcePath, destinationPath) {
     return new Promise((resolve, reject) => {
-      fsPromise.rm(destinationPath, { recursive: true, force: true }).then(() => {
+      fsPromises.rm(destinationPath, { recursive: true, force: true }).then(() => {
         wrench.mkdirSyncRecursive(path.dirname(destinationPath), 0o755);
         fs.rename(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
       }).catch((error) => {
