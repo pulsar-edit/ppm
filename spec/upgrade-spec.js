@@ -3,7 +3,6 @@ const fs = require('fs-plus');
 const temp = require('temp');
 const express = require('express');
 const http = require('http');
-const wrench = require('wrench');
 const apm = require('../src/apm-cli');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 

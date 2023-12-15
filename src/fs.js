@@ -1,5 +1,4 @@
 
-const _ = require('underscore-plus');
 const fs = require('fs-plus');
 const ncp = require('ncp');
 const rm = require('rimraf');
