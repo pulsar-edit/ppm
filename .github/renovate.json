@@ -1,20 +1,27 @@
 {
-  "schedule": ["every weekend"],
-  "labels": ["dependencies"],
+  "extends": [ "config:base", ":dependencyDashboardApproval" ],
+  "constraints": {
+    "node": "< 16"
+  },
+  "labels": [ "dependencies" ],
   "separateMajorMinor": "false",
+  "ignorePaths": [
+    "native-module/",
+    "spec/fixtures/",
+    "templates/"
+  ],
   "packageRules": [
     {
-      "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest", "lockFileMaintenance", "rollback", "bump"],
-      "groupName": "devDependencies",
-      "semanticCommitType": "chore",
-      "automerge": true
+      "matchDepTypes": [ "devDependencies" ],
+      "description": "Dev Dependencies",
+      "groupName": "DevDependencies",
+      "matchPaths": [ "package.json" ]
     },
     {
-      "matchDepTypes": ["dependencies"],
-      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest", "lockFileMaintenance", "rollback", "bump"],
-      "groupName": "dependencies",
-      "semanticCommitType": "fix"
+      "matchDepTypes": [ "dependencies" ],
+      "description": "Dependencies",
+      "groupName": "Dependencies",
+      "matchPaths": [ "package.json" ]
     }
   ]
 }
