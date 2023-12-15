@@ -1,7 +1,6 @@
 
 const {spawn} = require('child_process');
 const path = require('path');
-const _ = require('underscore-plus');
 const npm = require('npm');
 const config = require('./apm');
 const fs = require('./fs');
