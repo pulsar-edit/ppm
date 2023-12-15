@@ -25,7 +25,7 @@ const downloadFileToLocation = function(url, filename, callback) {
   stream.on('error', callback);
   const requestStream = request.get(url)
   requestStream.on('response', function(response) {
-    if (response.statusCode == 404) {
+    if (response.statusCode === 404) {
       console.error('download not found:', url);
       process.exit(1);
     }
@@ -44,7 +44,7 @@ const downloadTarballAndExtract = function(url, location, callback) {
   stream.on('error', callback);
   const requestStream = request.get(url)
   requestStream.on('response', function(response) {
-    if (response.statusCode == 404) {
+    if (response.statusCode === 404) {
       console.error('download not found:', url);
       process.exit(1);
     }
