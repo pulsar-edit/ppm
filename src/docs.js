@@ -3,7 +3,6 @@ const yargs = require('yargs');
 const open = require('open');
 
 const View = require('./view');
-const config = require('./apm');
 
 module.exports =
 class Docs extends View {
