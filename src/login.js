@@ -1,5 +1,4 @@
 
-const _ = require('underscore-plus');
 const yargs = require('yargs');
 const read = require('read');
 const open = require('open');

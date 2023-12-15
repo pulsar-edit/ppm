@@ -1,7 +1,5 @@
 
 const path = require('path');
-
-const async = require('async');
 const yargs = require('yargs');
 
 const Command = require('./command');
