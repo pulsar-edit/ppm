@@ -2,7 +2,6 @@
 const path = require('path');
 
 const async = require('async');
-const CSON = require('season');
 const yargs = require('yargs');
 
 const Command = require('./command');
@@ -25,14 +24,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('d', 'dev').boolean('dev').describe('dev', 'Uninstall from ~/.pulsar/dev/packages');
       return options.boolean('hard').describe('hard', 'Uninstall from ~/.pulsar/packages and ~/.pulsar/dev/packages');
-    }
-
-    getPackageVersion(packageDirectory) {
-      try {
-        return CSON.readFileSync(path.join(packageDirectory, 'package.json'))?.version;
-      } catch (error) {
-        return null;
-      }
     }
 
     async run(options) {
@@ -59,7 +50,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
             packageDirectory = path.join(packagesDirectory, packageName);
             const packageManifestPath = path.join(packageDirectory, 'package.json');
             if (fs.existsSync(packageManifestPath)) {
-              const packageVersion = this.getPackageVersion(packageDirectory);
               fs.removeSync(packageDirectory);
             } else if (!options.argv.hard) {
               throw new Error(`No package.json found at ${packageManifestPath}`);
