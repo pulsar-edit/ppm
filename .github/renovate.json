@@ -1,7 +1,7 @@
 {
   "extends": [ "config:base", ":dependencyDashboardApproval" ],
   "constraints": {
-    "node": "< 16"
+    "node": "< 15"
   },
   "labels": [ "dependencies" ],
   "ignorePaths": [
