@@ -9,19 +9,5 @@
     "native-module/",
     "spec/fixtures/",
     "templates/"
-  ],
-  "packageRules": [
-    {
-      "matchDepTypes": [ "devDependencies" ],
-      "description": "Dev Dependencies",
-      "groupName": "DevDependencies",
-      "matchPaths": [ "package.json" ]
-    },
-    {
-      "matchDepTypes": [ "dependencies" ],
-      "description": "Dependencies",
-      "groupName": "Dependencies",
-      "matchPaths": [ "package.json" ]
-    }
   ]
 }
