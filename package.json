@@ -36,7 +36,6 @@
     "open": "7.3.0",
     "read": "~1.0.7",
     "request": "^2.88.2",
-    "rimraf": "^3.0.2",
     "season": "^6.0.2",
     "second-mate": "https://github.com/pulsar-edit/second-mate.git#9686771",
     "semver": "^7.3.4",

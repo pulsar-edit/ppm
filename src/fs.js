@@ -1,7 +1,7 @@
 
 const fs = require('fs-plus');
+const fsPromises = require("fs/promises");
 const ncp = require('ncp');
-const rm = require('rimraf');
 const wrench = require('wrench');
 const path = require('path');
 
@@ -24,23 +24,21 @@ const fsAdditions = {
 
   cp(sourcePath, destinationPath) {
     return new Promise((resolve, reject) => {
-      rm(destinationPath, error => {
-        if (error != null) {
-          return reject(error);
-        }
+      fsPromises.rm(destinationPath, { recursive: true, force: true }).then(() => {
         ncp(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
+      }).catch((error) => {
+        return reject(error);
       });
     });
   },
 
   mv(sourcePath, destinationPath) {
     return new Promise((resolve, reject) => {
-      rm(destinationPath, error => {
-        if (error != null) {
-          return reject(error);
-        }
+      fsPromises.rm(destinationPath, { recursive: true, force: true }).then(() => {
         wrench.mkdirSyncRecursive(path.dirname(destinationPath), 0o755);
         fs.rename(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
+      }).catch((error) => {
+        return reject(error);
       });
     });
   }
