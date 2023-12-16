@@ -4,7 +4,6 @@
     "node": "< 16"
   },
   "labels": [ "dependencies" ],
-  "separateMajorMinor": "false",
   "ignorePaths": [
     "native-module/",
     "spec/fixtures/",
