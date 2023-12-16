@@ -114,20 +114,25 @@ have published it.\
       };
 
       return new Promise((resolve, _reject) => {
-        const requestTags = () => void request.get(requestSettings, (_error, response, tags) => {
-          tags ??= [];
-          if (response?.statusCode === 200) {
-            if (tags.find(elem => elem.name === tag) != null) {
-              resolve();
-              return;
+        const requestTags = () => {
+          request.get(
+            requestSettings,
+            (_error, response, tags) => {
+              tags ??= [];
+              if (response?.statusCode === 200) {
+                if (tags.some(t => t.name === tag)) {
+                  resolve();
+                  return;
+                }
+              }
+              if (--retryCount <= 0) {
+                return void resolve();
+              }
             }
-          }
-          if (--retryCount <= 0) {
-            return void resolve();
-          }
-
+          )
           setTimeout(requestTags, interval);
-        });
+        };
+        requestTags();
       });
     }
 
@@ -169,7 +174,7 @@ have published it.\
       }
 
       const exists = await this.packageExists(pack.name);
-      if (exists) { return Promise.reject(); }
+      if (exists) { return Promise.resolve(false); }
 
       const repository = Packages.getRepository(pack);
 
@@ -324,7 +329,7 @@ have published it.\
 
     // Rename package if necessary
     async renamePackage(pack, name) {
-      if (name?.length <= 0) {
+      if ((name ?? '').length <= 0) {
         // Just fall through if the name is empty
         return; // error or return value?
       }
@@ -440,10 +445,11 @@ have published it.\
         if (rename?.length > 0) { originalName = pack.name; }
 
         let firstTimePublishing;
+        let tag;
         try {
           firstTimePublishing = await this.registerPackage(pack);
           await this.renamePackage(pack, rename);
-          const tag = await this.versionPackage(version);
+          tag = await this.versionPackage(version);
           await this.pushVersion(tag, pack);
         } catch (error) {
           return error;
