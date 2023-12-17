@@ -66,7 +66,7 @@ have published it.\
       return new Promise((resolve, reject) => {
         this.fork(this.atomNpmPath, versionArgs, (code, stderr, stdout) => {
           stderr ??= '';
-          stdout ??= ''; 
+          stdout ??= '';
           if (code === 0) {
             this.logSuccess();
             resolve(stdout.trim());
@@ -140,7 +140,7 @@ have published it.\
     //
     // packageName - The string package name to check.
     //
-    // return value - A Promise that can reject with an error or resolve to 
+    // return value - A Promise that can reject with an error or resolve to
     //                a boolean value.
     async packageExists(packageName) {
       const token = await Login.getTokenOrLogin();
@@ -186,7 +186,7 @@ have published it.\
 
       try {
         const token = await Login.getTokenOrLogin();
-        
+
         const requestSettings = {
           url: config.getAtomPackagesUrl(),
           json: true,
@@ -226,7 +226,7 @@ have published it.\
     //
     // return value - A Promise that rejects with an error or resolves without a value.
     async createPackageVersion(packageName, tag, options) {
-      const token = await Login.getTokenOrLogin();        
+      const token = await Login.getTokenOrLogin();
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${packageName}/versions`,
         json: true,
@@ -381,7 +381,7 @@ have published it.\
       let packageName, semverRange;
       if (!pack) { return; }
 
-      const isValidRange = function(semverRange) {
+      const isValidRange = function (semverRange) {
         if (semver.validRange(semverRange)) { return true; }
 
         try {
@@ -462,7 +462,7 @@ have published it.\
           rename = pack.name;
           pack.name = originalName;
         }
-        
+
         try {
           await this.publishPackage(pack, tag, {rename});
         } catch (error) {
@@ -478,7 +478,7 @@ have published it.\
         } catch (error) {
           return error;
         }
-        
+
         try {
           await this.publishPackage(pack, tag);
         } catch (error) {
