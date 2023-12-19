@@ -128,9 +128,9 @@ have published it.\
               if (--retryCount <= 0) {
                 return void resolve();
               }
+              setTimeout(requestTags, interval);
             }
-          )
-          setTimeout(requestTags, interval);
+          );
         };
         requestTags();
       });
