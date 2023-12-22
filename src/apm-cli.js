@@ -255,8 +255,8 @@ module.exports = {
           showHelp(options);
         }
         return errorHandler();
-      } else if (commands[command]) {
-        Command = commands[command];
+      } else if ((Command = commands[command])) {
+        //Command = commands[command];
         const command = new Command();
         return command.run(options).then(errorHandler);
       } else {
