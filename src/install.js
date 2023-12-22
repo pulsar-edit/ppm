@@ -243,8 +243,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     //  * packageVersion: The string version of the package.
     isPackageInstalled(packageName, packageVersion) {
       try {
-        let left;
-        const {version} = (left = CSON.readFileSync(CSON.resolve(path.join('node_modules', packageName, 'package')))) != null ? left : {};
+        const { version } = CSON.readFileSync(CSON.resolve(path.join('node_modules', packageName, 'package'))) ?? {};
         return packageVersion === version;
       } catch (error) {
         return false;
@@ -399,10 +398,9 @@ Run ppm -v after installing Git to see what version has been detected.\
     // Get all package dependency names and versions from the package.json file.
     getPackageDependencies(cloneDir) {
       try {
-        let left;
         const fileName = path.join((cloneDir || '.'), 'package.json');
         const metadata = fs.readFileSync(fileName, 'utf8');
-        const {packageDependencies, dependencies} = (left = JSON.parse(metadata)) != null ? left : {};
+        const { packageDependencies, dependencies } = JSON.parse(metadata) ?? {};
 
         if (!packageDependencies) { return {}; }
         if (!dependencies) { return packageDependencies; }
@@ -462,7 +460,7 @@ Run ppm -v after installing Git to see what version has been detected.\
 
       fs.removeSync(path.resolve(__dirname, '..', 'native-module', 'build'));
 
-      return new Promise((resolve, reject) => 
+      return new Promise((resolve, reject) =>
         void this.fork(this.atomNpmPath, buildArgs, buildOptions, (...args) =>
           void this.logCommandResults(...args).then(resolve, reject)
         )
@@ -679,7 +677,7 @@ Run ppm -v after installing Git to see what version has been detected.\
           await this.installDependencies(options);
           return;
         }
-        
+
         // is registered package
         let version;
         const atIndex = name.indexOf('@');
