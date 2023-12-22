@@ -52,8 +52,8 @@ available updates.\
     getInstalledPackages(options) {
       let packages = [];
       for (let name of fs.list(this.atomPackagesDirectory)) {
-        var pack;
-        if (pack = this.getIntalledPackage(name)) {
+        let pack = this.getInstalledPackage(name);
+        if (pack) {
           packages.push(pack);
         }
       }
@@ -148,7 +148,7 @@ available updates.\
       git.addGitToEnv(process.env);
       return new Promise((resolve, reject) => {
         this.spawn(command, args, {cwd: repoPath}, (code, stderr, stdout) => {
-          stderr ??= ''; 
+          stderr ??= '';
           stdout ??= '';
           if (code !== 0) {
             return void reject(new Error('Exit code: ' + code + ' - ' + stderr));
