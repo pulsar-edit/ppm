@@ -112,6 +112,7 @@ List all the installed packages and also the packages bundled with Atom.\
           if (fs.isSymbolicLinkSync(path.join(directoryPath, child))) { continue; }
         }
 
+        let manifest = null;
         let manifestPath = CSON.resolve(path.join(directoryPath, child, 'package'));
         if (manifestPath) {
           try {
