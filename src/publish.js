@@ -314,7 +314,8 @@ have published it.\
       }
 
 
-      if (currentBranch == repo.getShortHead()) {
+      currentBranch = repo.getShortHead();
+      if (currentBranch) {
         remoteName = repo.getConfigValue(`branch.${currentBranch}.remote`);
       }
       if (remoteName == null) { remoteName = repo.getConfigValue('branch.master.remote'); }
