@@ -52,7 +52,7 @@ available updates.\
     getInstalledPackages(options) {
       let packages = [];
       for (let name of fs.list(this.atomPackagesDirectory)) {
-        let pack = this.getInstalledPackage(name);
+        let pack = this.getIntalledPackage(name);
         if (pack) {
           packages.push(pack);
         }
