@@ -20,7 +20,10 @@ module.exports = {
     }],
     "prettier/prettier": "off",
     "ember-suave/lines-between-object-propertiess": "off",
-    "no-empty": "off"
+    "no-empty": "off",
+    "no-unused-vars": [ "error", {
+      argsIgnorePattern: "^_"
+    }]
   },
   plugins: [],
   globals: {

@@ -106,7 +106,6 @@ List all the installed packages and also the packages bundled with Atom.\
     listPackages(directoryPath, options) {
       const packages = [];
       for (let child of Array.from(fs.list(directoryPath))) {
-        var manifestPath;
         if (!fs.isDirectorySync(path.join(directoryPath, child))) { continue; }
         if (child.match(/^\./)) { continue; }
         if (!options.argv.links) {
@@ -114,7 +113,8 @@ List all the installed packages and also the packages bundled with Atom.\
         }
 
         let manifest = null;
-        if (manifestPath = CSON.resolve(path.join(directoryPath, child, 'package'))) {
+        let manifestPath = CSON.resolve(path.join(directoryPath, child, 'package'));
+        if (manifestPath) {
           try {
             manifest = CSON.readFileSync(manifestPath);
           } catch (error) {}

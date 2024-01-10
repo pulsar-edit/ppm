@@ -180,9 +180,9 @@ function getPythonVersion() {
         const pythonExe = path.resolve(rootDir, 'Python27', 'python.exe');
         if (fs.isFileSync(pythonExe)) { python = pythonExe; }
       }
-  
+
       python ??= 'python';
-  
+
       const spawned = spawn(python, ['--version']);
       const outputChunks = [];
       spawned.stderr.on('data', chunk => outputChunks.push(chunk));
@@ -239,7 +239,8 @@ module.exports = {
     if (args.version) {
       return printVersions(args).then(errorHandler);
     } else if (args.help) {
-      if ((Command = commands[options.command])) {
+      if (commands[options.command]) {
+        Command = commands[options.command];
         showHelp(new Command().parseOptions?.(options.command));
       } else {
         showHelp(options);
@@ -247,13 +248,15 @@ module.exports = {
       return errorHandler();
     } else if (command) {
       if (command === 'help') {
-        if ((Command = commands[options.commandArgs])) {
+        if (commands[options.commandArgs]) {
+          Command = commands[options.commandArgs];
           showHelp(new Command().parseOptions?.(options.commandArgs));
         } else {
           showHelp(options);
         }
         return errorHandler();
       } else if ((Command = commands[command])) {
+        //Command = commands[command];
         const command = new Command();
         return command.run(options).then(errorHandler);
       } else {
