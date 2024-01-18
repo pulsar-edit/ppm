@@ -25,6 +25,7 @@ Run \`ppm links\` to view all the currently linked packages.\
 `
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.alias('f', 'force').boolean('force').describe('force', 'Remove the target path before linking');
       return options.alias('d', 'dev').boolean('dev').describe('dev', 'Link to ~/.pulsar/dev/packages');
     }
 
@@ -50,6 +51,9 @@ Run \`ppm links\` to view all the currently linked packages.\
 
       try {
         if (fs.isSymbolicLinkSync(targetPath)) { fs.unlinkSync(targetPath); }
+        else if (options.argv.force && fs.existsSync(targetPath)) {
+            fs.rmSync(targetPath, { recursive: true, force: true });
+        }
         fs.makeTreeSync(path.dirname(targetPath));
         fs.symlinkSync(linkPath, targetPath, 'junction');
         console.log(`${targetPath} -> ${linkPath}`);
