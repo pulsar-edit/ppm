@@ -33,7 +33,7 @@ to the current working directory).\
 
       if (options.argv.path) { atomCommand = options.argv.path; }
       if (!fs.existsSync(atomCommand)) {
-        atomCommand = 'atom';
+        atomCommand = 'pulsar';
         if (process.platform === 'win32') { atomCommand += '.cmd'; }
       }
 
