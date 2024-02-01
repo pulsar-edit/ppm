@@ -30,8 +30,8 @@ describe('apm test', () => {
     waitsFor('waiting for test to complete', () => atomSpawn.callCount === 1);
 
     runs(() => {
-      // On Windows, there's a suffix (atom.cmd), so we only check that atom is _included_ in the path
-      expect(atomSpawn.mostRecentCall.args[0].indexOf('atom')).not.toBe(-1);
+      // On Windows, there's a suffix (pulsar.cmd), so we only check that pulsar is _included_ in the path
+      expect(atomSpawn.mostRecentCall.args[0].indexOf('pulsar')).not.toBe(-1);
       expect(atomSpawn.mostRecentCall.args[1][0]).toEqual('--dev');
       expect(atomSpawn.mostRecentCall.args[1][1]).toEqual('--test');
       expect(atomSpawn.mostRecentCall.args[1][2]).toEqual(specPath);
