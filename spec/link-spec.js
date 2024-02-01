@@ -69,6 +69,57 @@ describe('apm link/unlink', () => {
     });
   });
 
+  describe('when linking a path that already exists', () => {
+    it('logs an error and exits', () => {
+      const atomHome = temp.mkdirSync('apm-home-dir-');
+      process.env.ATOM_HOME = atomHome;
+      const packageToLink = temp.mkdirSync('a-package-');
+
+      const existingPackageDir = path.join(atomHome, 'packages', path.basename(packageToLink));
+      fs.mkdirSync(existingPackageDir, {recursive: true});
+      fs.writeFileSync(path.join(existingPackageDir, 'foo.txt'), '');
+
+      fs.writeFileSync(path.join(packageToLink, 'bar.txt'), '');
+      process.chdir(packageToLink);
+      const callback = jasmine.createSpy('callback');
+
+      apm.run(['link'], callback);
+      waitsFor('command to complete', () => callback.callCount > 0);
+
+      runs(() => {
+        expect(console.error.mostRecentCall.args[0].length).toBeGreaterThan(0);
+        expect(callback.mostRecentCall.args[0]).not.toBeUndefined();
+
+        expect(fs.existsSync(path.join(existingPackageDir, 'foo.txt'))).toBeTruthy();
+        expect(fs.existsSync(path.join(existingPackageDir, 'bar.txt'))).toBeFalsy();
+      });
+    });
+
+    it('overwrites the path if the --force flag is passed', () => {
+      const atomHome = temp.mkdirSync('apm-home-dir-');
+      process.env.ATOM_HOME = atomHome;
+      const packageToLink = temp.mkdirSync('a-package-');
+
+      const existingPackageDir = path.join(atomHome, 'packages', path.basename(packageToLink));
+      fs.mkdirSync(existingPackageDir, {recursive: true});
+      fs.writeFileSync(path.join(existingPackageDir, 'foo.txt'), '');
+
+      fs.writeFileSync(path.join(packageToLink, 'bar.txt'), '');
+      process.chdir(packageToLink);
+      const callback = jasmine.createSpy('callback');
+
+      apm.run(['link', '--force'], callback);
+      waitsFor('command to complete', () => callback.callCount > 0);
+
+      runs(() => {
+        expect(fs.existsSync(existingPackageDir)).toBeTruthy();
+        expect(fs.realpathSync(existingPackageDir)).toBe(fs.realpathSync(packageToLink));
+        expect(fs.existsSync(path.join(existingPackageDir, 'foo.txt'))).toBeFalsy();
+        expect(fs.existsSync(path.join(existingPackageDir, 'bar.txt'))).toBeTruthy();
+      });
+    });
+  });
+
   describe('when the hard flag is true', () => {
     it('unlinks the package from both $ATOM_HOME/packages and $ATOM_HOME/dev/packages', () => {
       const atomHome = temp.mkdirSync('apm-home-dir-');
