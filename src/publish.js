@@ -254,6 +254,24 @@ have published it.\
       });
     }
 
+    async doesPackageExist(pack) {
+      const packageName = pack.name;
+      const requestSettings = {
+        url: `${config.getAtomPackagesUrl()}/${packageName}`,
+        json: true
+      };
+      request.get(requestSettings, (error, response, body) => {
+        if (error != null) {
+          throw error;
+        }
+        if (response.statusCode === 200) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+
     // Publish the version of the package associated with the given tag.
     //
     // pack - The package metadata.
@@ -417,7 +435,7 @@ have published it.\
 
     // Run the publish command with the given options
     async run(options) {
-      let pack;
+      let pack, originalName;
       options = this.parseOptions(options.commandArgs);
       let {tag, rename} = options.argv;
       let [version] = options.argv._;
@@ -440,56 +458,72 @@ have published it.\
         return error;
       }
 
-      if ((version?.length > 0) || (rename?.length > 0)) {
-        let originalName;
-        if (version?.length <= 0) { version = 'patch'; }
-        if (rename?.length > 0) { originalName = pack.name; }
-
-        let firstTimePublishing;
-        let tag;
-        try {
-          firstTimePublishing = await this.registerPackage(pack);
-          await this.renamePackage(pack, rename);
-          tag = await this.versionPackage(version);
-          await this.pushVersion(tag, pack);
-        } catch (error) {
-          return error;
-        }
-
-        await this.waitForTagToBeAvailable(pack, tag);
-        if (originalName != null) {
-          // If we're renaming a package, we have to hit the API with the
-          // current name, not the new one, or it will 404.
-          rename = pack.name;
-          pack.name = originalName;
-        }
-
-        try {
-          await this.publishPackage(pack, tag, {rename});
-        } catch (error) {
-          if (firstTimePublishing) {
-            this.logFirstTimePublishMessage(pack);
-          }
-          return error;
-        }
-      } else if (tag?.length > 0) {
-        let firstTimePublishing;
-        try {
-          firstTimePublishing = await this.registerPackage(pack);
-        } catch (error) {
-          return error;
-        }
-
-        try {
-          await this.publishPackage(pack, tag);
-        } catch (error) {
-          if (firstTimePublishing) {
-            this.logFirstTimePublishMessage(pack);
-          }
-          return error;
-        }
-      } else {
-        return 'A version, tag, or new package name is required';
+      if (!version?.length > 0) {
+        return "A version, tag, or new package name is required";
       }
+
+      if (rename?.length > 0) {
+        // A version isn't required when renaming a package (apparently)
+        if (version?.length <= 0) { version = "path"; }
+        originalName = pack.name;
+
+        try {
+          await this.renamePackage(pack, rename);
+        } catch(error) {
+          return error;
+        }
+      }
+
+      // Now we know a version has been specified, and that we have settled any
+      // rename concerns. Lets get to publication
+
+      let tag;
+
+      try {
+        tag = await this.versionPackage(version);
+        await this.pushVersion(tag, pack);
+      } catch(error) {
+        return error;
+      }
+
+      await this.waitForTagToBeAvailable(pack, tag);
+      if (originalName != null) {
+        // If we're renaming a package, we have to hit the API with the
+        // current name, not the new one, or it will 404.
+        rename = pack.name;
+        pack.name = originalName;
+      }
+
+      let doesPackageExist;
+
+      try {
+        doesPackageExist = this.doesPackageExist(pack);
+      } catch(error) {
+        return error;
+      }
+
+      if (doesPackageExist) {
+        // This is an existing package we just want to publish a new version of
+        try {
+          if (originalName != null) {
+            await this.publishPackage(pack, tag, {rename});
+          } else {
+            await this.publishPackage(pack, tag);
+          }
+        } catch(error) {
+          return error;
+        }
+
+      } else {
+        // This is a brand new package we want to publish for the first time
+        try {
+          await this.registerPackage(pack);
+        } catch(error) {
+          return error;
+        }
+
+        this.logFirstTimePublishMessage(pack);
+      }
+
     }
   }
