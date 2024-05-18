@@ -487,15 +487,8 @@ have published it.\
       }
 
       await this.waitForTagToBeAvailable(pack, tag);
-      if (originalName != null) {
-        // If we're renaming a package, we have to hit the API with the
-        // current name, not the new one, or it will 404.
-        rename = pack.name;
-        pack.name = originalName;
-      }
 
       let doesPackageExist;
-
       try {
         doesPackageExist = this.doesPackageExist(pack);
       } catch(error) {
@@ -506,6 +499,10 @@ have published it.\
         // This is an existing package we just want to publish a new version of
         try {
           if (originalName != null) {
+            // If we're renaming a package, we have to hit the API with the
+            // current name, not the new one, or it will 404.
+            rename = pack.name;
+            pack.name = originalName;
             await this.publishPackage(pack, tag, {rename});
           } else {
             await this.publishPackage(pack, tag);
