@@ -477,8 +477,6 @@ have published it.\
       // Now we know a version has been specified, and that we have settled any
       // rename concerns. Lets get to publication
 
-      let tag;
-
       try {
         tag = await this.versionPackage(version);
         await this.pushVersion(tag, pack);
