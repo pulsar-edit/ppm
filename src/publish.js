@@ -254,24 +254,6 @@ have published it.\
       });
     }
 
-    async doesPackageExist(pack) {
-      const packageName = pack.name;
-      const requestSettings = {
-        url: `${config.getAtomPackagesUrl()}/${packageName}`,
-        json: true
-      };
-      request.get(requestSettings, (error, response, body) => {
-        if (error != null) {
-          throw error;
-        }
-        if (response.statusCode === 200) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-    }
-
     // Publish the version of the package associated with the given tag.
     //
     // pack - The package metadata.
@@ -488,7 +470,7 @@ have published it.\
 
       let doesPackageExist;
       try {
-        doesPackageExist = this.doesPackageExist(pack);
+        doesPackageExist = await this.packageExists(pack.name);
       } catch(error) {
         return error;
       }
