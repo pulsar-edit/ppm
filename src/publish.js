@@ -446,7 +446,7 @@ have published it.\
 
       if (rename?.length > 0) {
         // A version isn't required when renaming a package (apparently)
-        if (version?.length <= 0) { version = "path"; }
+        if (version?.length <= 0) { version = "patch"; }
         originalName = pack.name;
 
         try {
