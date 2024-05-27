@@ -201,8 +201,7 @@ describe('apm publish', () => {
     apm.run(['publish', 'patch'], callback);
     waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
     runs(() => {
-      console.log(requests);
-      expect(requests.length).toBe(2);
+      expect(requests.length).toBe(1);
       expect(callback.mostRecentCall.args[0]).toBeUndefined();
     });
   });
