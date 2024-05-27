@@ -359,7 +359,7 @@ have published it.\
           this.spawn(gitCommand, ['commit', '-m', message], (code, stderr, stdout) => {
             stderr ??= '';
             stdout ??= '';
-            if (code === 0) {
+            if (code !== 0) {
               this.logFailure();
               const commitOutput = `${stdout}\n${stderr}`.trim();
               reject(`Failed to commit package.json: ${commitOutput}`);
@@ -440,7 +440,7 @@ have published it.\
         return error;
       }
 
-      if (!version?.length > 0 && !tag?.length > 0) {
+      if (!version?.length > 0 && !tag?.length > 0 && !rename?.length > 0) {
         return "A version, tag, or new package name is required";
       }
 
