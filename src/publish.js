@@ -459,14 +459,18 @@ have published it.\
       // Now we know a version has been specified, and that we have settled any
       // rename concerns. Lets get to publication
 
-      try {
-        tag = await this.versionPackage(version);
-        await this.pushVersion(tag, pack);
-      } catch(error) {
-        return error;
-      }
+      if (!tag?.length > 0) {
+        // only create and assign a tag if the user didn't specify one.
+        // if they did we assume that tag already exists and only work to publish
+        try {
+          tag = await this.versionPackage(version);
+          await this.pushVersion(tag, pack);
+        } catch(error) {
+          return error;
+        }
 
-      await this.waitForTagToBeAvailable(pack, tag);
+        await this.waitForTagToBeAvailable(pack, tag);
+      }
 
       let doesPackageExist;
       try {
