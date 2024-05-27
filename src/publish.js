@@ -440,7 +440,7 @@ have published it.\
         return error;
       }
 
-      if (!version?.length > 0) {
+      if (!version?.length > 0 && !tag?.length > 0) {
         return "A version, tag, or new package name is required";
       }
 
