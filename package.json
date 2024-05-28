@@ -54,5 +54,8 @@
     "jasmine-focused": ">=1.0.7 <2.0",
     "node-gyp": "https://github.com/nodejs/node-gyp/archive/d3615c66f7e7a65de48ce9860b1fe13710d20988.tar.gz",
     "shx": "^0.3.3"
+  },
+  "resolutions": {
+    "make-fetch-happen/**/ip": "^1.1.9"
   }
 }
