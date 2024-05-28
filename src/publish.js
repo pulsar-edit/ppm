@@ -428,6 +428,10 @@ have published it.\
         // prevent tag from being undefined, and make it a string with 0 length
         tag = "";
       }
+      if (typeof version !== "string") {
+        // prevent tag from being undefined, and make it a string with 0 length
+        version = "";
+      }
 
       if (verbose) {
         process.stdout.write("Attempting to publish package with the following options:");
