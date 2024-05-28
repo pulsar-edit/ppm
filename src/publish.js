@@ -359,7 +359,7 @@ have published it.\
           this.spawn(gitCommand, ['commit', '-m', message], (code, stderr, stdout) => {
             stderr ??= '';
             stdout ??= '';
-            if (code === 0) {
+            if (code !== 0) {
               this.logFailure();
               const commitOutput = `${stdout}\n${stderr}`.trim();
               reject(`Failed to commit package.json: ${commitOutput}`);
@@ -417,10 +417,23 @@ have published it.\
 
     // Run the publish command with the given options
     async run(options) {
-      let pack;
+      let pack, originalName;
       options = this.parseOptions(options.commandArgs);
       let {tag, rename} = options.argv;
       let [version] = options.argv._;
+
+      // Normalize variables to ensure they are strings with zero length
+      // rather than their default `undefined`
+      // This ensures later length checks always behave as expected
+      if (typeof tag !== "string") {
+        tag = "";
+      }
+      if (typeof version !== "string") {
+        version = "";
+      }
+      if (typeof rename !== "string") {
+        rename = "";
+      }
 
       try {
         pack = this.loadMetadata();
@@ -440,56 +453,71 @@ have published it.\
         return error;
       }
 
-      if ((version?.length > 0) || (rename?.length > 0)) {
-        let originalName;
-        if (version?.length <= 0) { version = 'patch'; }
-        if (rename?.length > 0) { originalName = pack.name; }
+      if (version.length === 0 && tag.length === 0 && rename.length === 0) {
+        return "A version, tag, or new package name is required";
+      }
 
-        let firstTimePublishing;
-        let tag;
+      if (rename.length > 0) {
+        // A version isn't required when renaming a package (apparently)
+        if (version.length === 0) { version = "patch"; }
+        originalName = pack.name;
+
         try {
-          firstTimePublishing = await this.registerPackage(pack);
           await this.renamePackage(pack, rename);
+        } catch(error) {
+          return error;
+        }
+      }
+
+      // Now we know a version has been specified, and that we have settled any
+      // rename concerns. Lets get to publication
+
+      if (tag.length === 0) {
+        // only create and assign a tag if the user didn't specify one.
+        // if they did we assume that tag already exists and only work to publish
+        try {
           tag = await this.versionPackage(version);
           await this.pushVersion(tag, pack);
-        } catch (error) {
+        } catch(error) {
           return error;
         }
 
         await this.waitForTagToBeAvailable(pack, tag);
-        if (originalName != null) {
-          // If we're renaming a package, we have to hit the API with the
-          // current name, not the new one, or it will 404.
-          rename = pack.name;
-          pack.name = originalName;
-        }
-
-        try {
-          await this.publishPackage(pack, tag, {rename});
-        } catch (error) {
-          if (firstTimePublishing) {
-            this.logFirstTimePublishMessage(pack);
-          }
-          return error;
-        }
-      } else if (tag?.length > 0) {
-        let firstTimePublishing;
-        try {
-          firstTimePublishing = await this.registerPackage(pack);
-        } catch (error) {
-          return error;
-        }
-
-        try {
-          await this.publishPackage(pack, tag);
-        } catch (error) {
-          if (firstTimePublishing) {
-            this.logFirstTimePublishMessage(pack);
-          }
-          return error;
-        }
-      } else {
-        return 'A version, tag, or new package name is required';
       }
+
+      let doesPackageExist;
+      try {
+        doesPackageExist = await this.packageExists(pack.name);
+      } catch(error) {
+        return error;
+      }
+
+      if (doesPackageExist) {
+        // This is an existing package we just want to publish a new version of
+        try {
+          if (originalName != null) {
+            // If we're renaming a package, we have to hit the API with the
+            // current name, not the new one, or it will 404.
+            rename = pack.name;
+            pack.name = originalName;
+            await this.publishPackage(pack, tag, {rename});
+          } else {
+            await this.publishPackage(pack, tag);
+          }
+        } catch(error) {
+          return error;
+        }
+
+      } else {
+        // This is a brand new package we want to publish for the first time
+        try {
+          await this.registerPackage(pack);
+        } catch(error) {
+          return error;
+        }
+
+        this.logFirstTimePublishMessage(pack);
+      }
+
     }
   }
