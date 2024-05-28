@@ -424,6 +424,11 @@ have published it.\
       let {tag, rename, verbose} = options.argv;
       let [version] = options.argv._;
 
+      if (typeof tag !== "string") {
+        // prevent tag from being undefined, and make it a string with 0 length
+        tag = "";
+      }
+
       if (verbose) {
         process.stdout.write("Attempting to publish package with the following options:");
         process.stdout.write(JSON.stringify(options, null, 2));
@@ -447,7 +452,7 @@ have published it.\
         return error;
       }
 
-      if (!version?.length > 0 && !tag?.length > 0 && !rename?.length > 0) {
+      if (version?.length <= 0 && tag?.length <= 0 && rename?.length <= 0) {
         return "A version, tag, or new package name is required";
       }
 
@@ -466,7 +471,7 @@ have published it.\
       // Now we know a version has been specified, and that we have settled any
       // rename concerns. Lets get to publication
 
-      if (!tag?.length > 0) {
+      if (tag?.length <= 0) {
         // only create and assign a tag if the user didn't specify one.
         // if they did we assume that tag already exists and only work to publish
         try {
