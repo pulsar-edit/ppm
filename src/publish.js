@@ -453,13 +453,13 @@ have published it.\
         return error;
       }
 
-      if (version?.length === 0 && tag?.length === 0 && rename?.length === 0) {
+      if (version.length === 0 && tag.length === 0 && rename.length === 0) {
         return "A version, tag, or new package name is required";
       }
 
-      if (rename?.length > 0) {
+      if (rename.length > 0) {
         // A version isn't required when renaming a package (apparently)
-        if (version?.length === 0) { version = "patch"; }
+        if (version.length === 0) { version = "patch"; }
         originalName = pack.name;
 
         try {
@@ -472,7 +472,7 @@ have published it.\
       // Now we know a version has been specified, and that we have settled any
       // rename concerns. Lets get to publication
 
-      if (tag?.length === 0) {
+      if (tag.length === 0) {
         // only create and assign a tag if the user didn't specify one.
         // if they did we assume that tag already exists and only work to publish
         try {
