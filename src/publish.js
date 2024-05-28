@@ -424,13 +424,17 @@ have published it.\
       let {tag, rename, verbose} = options.argv;
       let [version] = options.argv._;
 
+      // Normalize variables to ensure they are strings with zero length
+      // rather than their default `undefined`
+      // This ensures later length checks always behave as expected
       if (typeof tag !== "string") {
-        // prevent tag from being undefined, and make it a string with 0 length
         tag = "";
       }
       if (typeof version !== "string") {
-        // prevent tag from being undefined, and make it a string with 0 length
         version = "";
+      }
+      if (typeof rename !== "string") {
+        rename = "";
       }
 
       if (verbose) {
