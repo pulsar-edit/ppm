@@ -52,7 +52,7 @@ have published it.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('t', 'tag').string('tag').describe('tag', 'Specify a tag to publish. Must be of the form vx.y.z');
-      options.alias('v', 'verbose').string('verbose').describe('verbose', 'Log extras details during publication');
+      options.boolean('v').alias('v', 'verbose').describe('verbose', 'Log extra details during publication');
       return options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
     }
 
