@@ -30,7 +30,6 @@ class Publish extends Command {
 Usage: ppm publish [<newversion> | major | minor | patch | build]
        ppm publish --tag <tagname>
        ppm publish --rename <new-name>
-       ppm publish --verbose
 
 Publish a new version of the package in the current working directory.
 
@@ -52,7 +51,6 @@ have published it.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('t', 'tag').string('tag').describe('tag', 'Specify a tag to publish. Must be of the form vx.y.z');
-      options.boolean('v').alias('v', 'verbose').describe('verbose', 'Log extra details during publication');
       return options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
     }
 
@@ -421,7 +419,7 @@ have published it.\
     async run(options) {
       let pack, originalName;
       options = this.parseOptions(options.commandArgs);
-      let {tag, rename, verbose} = options.argv;
+      let {tag, rename} = options.argv;
       let [version] = options.argv._;
 
       // Normalize variables to ensure they are strings with zero length
@@ -435,11 +433,6 @@ have published it.\
       }
       if (typeof rename !== "string") {
         rename = "";
-      }
-
-      if (verbose) {
-        process.stdout.write("Attempting to publish package with the following options:");
-        process.stdout.write(JSON.stringify(options, null, 2));
       }
 
       try {
