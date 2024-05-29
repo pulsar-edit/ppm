@@ -113,7 +113,6 @@ class PackageConverter {
 
   readFileSync(filePath) {
     if (_.contains(this.plistExtensions, path.extname(filePath))) {
-      console.log(plist.parse(fs.readFileSync(filePath, 'utf8')));
       return plist.parse(fs.readFileSync(filePath, 'utf8'));
     } else if (_.contains(['.json', '.cson'], path.extname(filePath))) {
       return CSON.readFileSync(filePath);
@@ -137,7 +136,6 @@ class PackageConverter {
     let contents;
     if (_.contains(this.plistExtensions, path.extname(sourcePath))) {
       contents = plist.parse(fs.readFileSync(sourcePath, 'utf8'));
-      console.log(contents);
     } else if (_.contains(['.json', '.cson'], path.extname(sourcePath))) {
       contents = CSON.readFileSync(sourcePath);
     }
