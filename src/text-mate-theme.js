@@ -1,6 +1,6 @@
 
 const _ = require('underscore-plus');
-const plist = require('@atom/plist');
+const plist = require('plist');
 const {ScopeSelector, ready} = require('second-mate');
 
 module.exports =
@@ -18,7 +18,7 @@ class TextMateTheme {
 
   async buildRulesets() {
     let variableSettings;
-    let { settings } = plist.parseStringSync(this.contents) ?? {};
+    let { settings } = plist.parse(this.contents) ?? {};
     settings ??= [];
 
     for (let setting of settings) {
