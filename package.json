@@ -57,6 +57,7 @@
   },
   "resolutions": {
     "make-fetch-happen/**/ip": "^1.1.9",
+    "npm/**/got": "^11.8.6",
     "npm/**/http-cache-semantics": "^4.1.1",
     "npm/**/tar": "^6.1.2"
   }
