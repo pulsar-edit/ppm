@@ -72,7 +72,7 @@ but cannot be used to install new packages or dependencies.\
     try {
       this.npm = await config.loadNpm();
       await this.loadInstalledAtomMetadata();
-      this.installModules(opts);
+      await this.installModules(opts);
     } catch(err) {
       return err;
     }
