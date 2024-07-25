@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 
 const _ = require('underscore-plus');
-const async = require('async');
 const yargs = require('yargs');
 
 const config = require('./apm');
@@ -64,7 +63,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
 
             return void reject(`No repository URL found for package: ${packageName}`);
           }
-          
+
           const message = request.getErrorMessage(body, error);
           return void reject(`Request for package information failed: ${message}`);
         });
@@ -90,7 +89,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     installDependencies(packageDirectory, options) {
         process.chdir(packageDirectory);
         const installOptions = _.clone(options);
-  
+
         return new Install().run(installOptions);
     }
 
@@ -117,12 +116,10 @@ cmd-shift-o to run the package out of the newly cloned repository.\
 
       try {
         const repoUrl = await this.getRepositoryUrl(packageName);
-        const tasks = [];
-        tasks.push(async () => await this.cloneRepository(repoUrl, packageDirectory, options));
-        tasks.push(async () => await this.installDependencies(packageDirectory, options));
-        tasks.push(async () => await this.linkPackage(packageDirectory, options));
-
-        await async.waterfall(tasks);
+        
+        await this.cloneRepository(repoUrl, packageDirectory, options);
+        await this.installDependencies(packageDirectory, options);
+        await this.linkPackage(packageDirectory, options);
       } catch (error) {
         return error; //errors as return values atm
       }
