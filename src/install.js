@@ -114,24 +114,25 @@ package names to install with optional versions using the
               return void resolve({name: undefined, installPath: undefined});
           }
 
-          const commands = [];
           const children = fs.readdirSync(nodeModulesDirectory)
             .filter(dir => dir !== ".bin");
           assert.equal(children.length, 1, "Expected there to only be one child in node_modules");
           const child = children[0];
           const source = path.join(nodeModulesDirectory, child);
           const destination = path.join(this.atomPackagesDirectory, child);
-          commands.push(async () => await fs.cp(source, destination));
-          commands.push(async () => await this.buildModuleCache(pack.name));
-          commands.push(async () => await this.warmCompileCache(pack.name));
 
-          async.waterfall(commands).then(() => {
+          try {
+            await fs.cp(source, destination);
+            await this.buildModuleCache(pack.name);
+            await this.warmCompileCache(pack.name);
+
             if (!options.argv.json) { this.logSuccess(); }
-            resolve({name: child, installPath: destination});
-          }, error => {
+            resolve({ name: child, installPath: destination });
+
+          } catch(err) {
             this.logFailure();
-            reject(error);
-          });
+            reject(err);
+          }
         });
       });
     }
@@ -388,11 +389,9 @@ Run ppm -v after installing Git to see what version has been detected.\
 
     async installDependencies(options) {
       options.installGlobally = false;
-      const commands = [];
-      commands.push(async () => void await this.installModules(options));
-      commands.push(async () => void await this.installPackageDependencies(options));
 
-      await async.waterfall(commands);
+      await this.installModule(options);
+      await this.installPackageDependencies(options);
     }
 
     // Get all package dependency names and versions from the package.json file.
