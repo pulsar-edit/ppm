@@ -2,11 +2,11 @@ module.exports = {
   env: {
     browser: false,
     commonjs: true,
-    es2021: true
+    es2021: true,
+    node: true
   },
   extends: [
     "eslint:recommended",
-    "plugin:node/recommended"
   ],
   overrides: [],
   parserOptions: {
@@ -18,8 +18,6 @@ module.exports = {
       asyncArrow: "always",
       named: "never"
     }],
-    "prettier/prettier": "off",
-    "ember-suave/lines-between-object-propertiess": "off",
     "no-empty": "off",
     "no-unused-vars": [ "error", {
       argsIgnorePattern: "^_"

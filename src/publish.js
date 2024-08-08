@@ -487,7 +487,10 @@ have published it.\
 
       let doesPackageExist;
       try {
-        doesPackageExist = await this.packageExists(pack.name);
+        // If `originalName` is defined, it means we're renaming this package.
+        // We must therefore check if the package's _old_ name exists, not its
+        // _new_ name.
+        doesPackageExist = await this.packageExists(originalName ?? pack.name);
       } catch(error) {
         return error;
       }
