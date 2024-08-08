@@ -5,7 +5,7 @@ const zlib = require('zlib');
 
 const _ = require('underscore-plus');
 const CSON = require('season');
-const plist = require('@atom/plist');
+const plist = require('plist');
 const {ScopeSelector, ready} = require('second-mate');
 const tar = require('tar');
 const temp = require('temp');
@@ -113,7 +113,7 @@ class PackageConverter {
 
   readFileSync(filePath) {
     if (_.contains(this.plistExtensions, path.extname(filePath))) {
-      return plist.parseFileSync(filePath);
+      return plist.parse(fs.readFileSync(filePath, 'utf8'));
     } else if (_.contains(['.json', '.cson'], path.extname(filePath))) {
       return CSON.readFileSync(filePath);
     }
@@ -135,7 +135,7 @@ class PackageConverter {
 
     let contents;
     if (_.contains(this.plistExtensions, path.extname(sourcePath))) {
-      contents = plist.parseFileSync(sourcePath);
+      contents = plist.parse(fs.readFileSync(sourcePath, 'utf8'));
     } else if (_.contains(['.json', '.cson'], path.extname(sourcePath))) {
       contents = CSON.readFileSync(sourcePath);
     }
