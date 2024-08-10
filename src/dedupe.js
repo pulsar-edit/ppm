@@ -1,7 +1,6 @@
 
 const path = require('path');
 
-const async = require('async');
 const _ = require('underscore-plus');
 const yargs = require('yargs');
 
@@ -76,13 +75,11 @@ This command is experimental.\
 
       this.createAtomDirectories();
 
-      const commands = [];
-      commands.push(async () => await this.loadInstalledAtomMetadata());
-      commands.push(async () => await this.dedupeModules(options));
       try {
-        await async.waterfall(commands);
-      } catch (error) {
-        return error; //errors as return values atm
+        await this.loadInstalledAtomMetadata();
+        await this.dedupeModules(options);
+      } catch(err) {
+        return err;
       }
     }
 }
