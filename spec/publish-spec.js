@@ -210,6 +210,7 @@ describe('apm publish', () => {
     spyOn(Publish.prototype, 'packageExists').andCallFake(() => {
       return Promise.resolve(true);
     });
+
     const packageToPublish = temp.mkdirSync('apm-test-package-');
     const metadata = {
       name: 'test',
@@ -243,4 +244,55 @@ describe('apm publish', () => {
       expect(callback.mostRecentCall.args[0]).toBeUndefined();
     });
   });
+
+  it('publishes successfully when the package exists and is being renamed', () => {
+    spyOn(Publish.prototype, 'packageExists').andCallFake((name) => {
+      // If we're renaming the package, we need to ask the API if the package's
+      // _old_ name exists. This mock will simulate what the API would say if
+      // we mistakenly ask it if the _new_ name exists.
+      return name === 'test';
+    });
+    let publishPackageSpy = spyOn(Publish.prototype, 'publishPackage').andCallThrough();
+    let registerPackageSpy = spyOn(Publish.prototype, 'registerPackage').andCallThrough();
+
+    const packageToPublish = temp.mkdirSync('apm-test-package-');
+    const metadata = {
+      name: 'test',
+      version: '1.0.0',
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/pulsar-edit/foo"
+      },
+      engines: {
+        atom: '1'
+      },
+      dependencies: {
+        foo: '^5'
+      },
+      devDependencies: {
+        abc: 'git://github.com/user/project.git',
+        abcd: 'latest',
+      }
+    };
+    fs.writeFileSync(path.join(packageToPublish, 'package.json'), JSON.stringify(metadata));
+    process.chdir(packageToPublish);
+
+    childProcess.execSync('git init', { cwd: packageToPublish });
+    childProcess.execSync('git remote add origin https://github.com/pulsar-edit/foo', { cwd: packageToPublish });
+
+    const callback = jasmine.createSpy('callback');
+    apm.run(['publish', 'patch', '--rename', 'test-renamed'], callback);
+    waitsFor('waiting for publish to complete', 600000, () => callback.callCount === 1);
+    runs(() => {
+      expect(registerPackageSpy.calls.length).toBe(0);
+      expect(publishPackageSpy.calls.length).toBe(1);
+      expect(
+        publishPackageSpy.mostRecentCall?.args?.[2]?.rename
+      ).toBe('test-renamed');
+      expect(requests.length).toBe(1);
+      expect(callback.mostRecentCall.args[0]).toBeUndefined();
+    });
+
+  });
+
 });
