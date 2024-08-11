@@ -52,13 +52,14 @@
     "coffee-script": "^1.12.7",
     "express": "^4.17.1",
     "jasmine-focused": ">=1.0.7 <2.0",
-    "node-gyp": "https://github.com/nodejs/node-gyp/archive/d3615c66f7e7a65de48ce9860b1fe13710d20988.tar.gz",
+    "node-gyp": "^10.2.0",
     "shx": "^0.3.3"
   },
   "resolutions": {
     "make-fetch-happen/**/ip": "^1.1.9",
     "npm/**/got": "^11.8.6",
     "npm/**/http-cache-semantics": "^4.1.1",
+    "npm/**/node-gyp": "^10.2.0",
     "npm/**/tar": "^6.1.2"
   }
 }
