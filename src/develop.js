@@ -51,21 +51,16 @@ cmd-shift-o to run the package out of the newly cloned repository.\
         };
         return request.get(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null) {
-            return void reject(`Request for package information failed: ${error.message}`);
+          if (error != null || response.statusCode !== 200) {
+            return void reject(`Request for package information failed: ${request.getErrorMessage(body, error)}`);
           }
 
-          if (response.statusCode === 200) {
-            const repositoryUrl = body.repository.url;
-            if (repositoryUrl) {
-              return void resolve(repositoryUrl);
-            }
-
+          const repositoryUrl = body.repository.url;
+          if (repositoryUrl) {
+            return void resolve(repositoryUrl);
+          } else {
             return void reject(`No repository URL found for package: ${packageName}`);
           }
-
-          const message = request.getErrorMessage(body, error);
-          return void reject(`Request for package information failed: ${message}`);
         });
       });
     }
@@ -116,7 +111,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
 
       try {
         const repoUrl = await this.getRepositoryUrl(packageName);
-        
+
         await this.cloneRepository(repoUrl, packageDirectory, options);
         await this.installDependencies(packageDirectory, options);
         await this.linkPackage(packageDirectory, options);

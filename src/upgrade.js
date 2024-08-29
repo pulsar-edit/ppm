@@ -102,15 +102,12 @@ available updates.\
       return new Promise((resolve, reject) => {
         request.get(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null) {
-            return void reject(`Request for package information failed: ${error.message}`);
-          }
-          if (response.statusCode === 404) {
+          if (response.statusCode === 404 && error == null) {
             return void resolve();
           }
-          if (response.statusCode !== 200) {
-            const message = body.message ?? body.error ?? body;
-            return void reject(`Request for package information failed: ${message}`);
+          if (error != null || response.statusCode !== 200) {
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Request for package information failed: '${message}'`);
           }
 
           const atomVersion = this.installedAtomVersion;

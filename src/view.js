@@ -76,12 +76,9 @@ View information about a package/theme.\
       return new Promise((resolve, reject) => {
         request.get(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null) {
-            return void reject(error);
-          }
-          if (response.statusCode !== 200) {
-            const message = body.message ?? body.error ?? body;
-            return void reject(`Requesting package failed: ${message}`);
+          if (error != null || response.statusCode !== 200) {
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Requesting package failed: '${message}'`);
           }
 
           this.getLatestCompatibleVersion(body, options).then(version => {

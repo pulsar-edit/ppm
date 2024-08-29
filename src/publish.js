@@ -154,10 +154,10 @@ have published it.\
       return new Promise((resolve, reject) => {
         request.get(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null) {
-            return void reject(error);
+          if (error != null || response.statusCode !== 200) {
+            return void reject(request.getErrorMessage(body, error));
           }
-          resolve(response.statusCode === 200);
+          resolve(true);
         });
       });
     }
@@ -200,13 +200,10 @@ have published it.\
         return new Promise((resolve, reject) => {
           request.post(requestSettings, (error, response, body) => {
             body ??= {};
-            if (error != null) {
-              return void reject(error);
-            }
-            if (response.statusCode !== 201) {
+            if (error != null || response.statusCode !== 201) {
               const message = request.getErrorMessage(body, error);
               this.logFailure();
-              return void reject(`Registering package in ${repository} repository failed: ${message}`);
+              return void reject(`Registering package in ${repository} repository failed: '${message}'`);
             }
 
             this.logSuccess();
@@ -241,12 +238,9 @@ have published it.\
       return new Promise((resolve, reject) => {
         request.post(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null) {
-            return void reject(error);
-          }
-          if (response.statusCode !== 201) {
+          if (error != null || response.statusCode !== 201) {
             const message = request.getErrorMessage(body, error);
-            return void reject(`Creating new version failed: ${message}`);
+            return void reject(`Creating new version failed: '${message}'`);
           }
 
           resolve();

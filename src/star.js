@@ -48,18 +48,14 @@ Run \`ppm stars\` to see all your starred packages.\
       return new Promise((resolve, reject) => {
         request.post(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null) {
-            this.logFailure();
-            return void reject(error);
-          }
           if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
             process.stdout.write('skipped (not published)\n'.yellow);
             return void reject();
           }
-          if (response.statusCode !== 200) {
+          if (error != null || response.statusCode !== 200) {
             this.logFailure();
             const message = request.getErrorMessage(body, error);
-            return void reject(`Starring package failed: ${message}`);
+            return void reject(`Starring package failed: '${message}'`);
           }
 
           this.logSuccess();
