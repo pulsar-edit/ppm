@@ -47,24 +47,18 @@ List or install starred Atom packages and themes.\
       return this.requestStarredPackages(requestSettings);
     }
 
-    requestStarredPackages(requestSettings) {
-      return new Promise((resolve, reject) => {
-        request.get(requestSettings, (error, response, body) => {
-          body ??= [];
-          if (error != null) {
-            return void reject(error);
-          }
-          if (response.statusCode === 200) {
-            let packages = body.filter(pack => pack?.releases?.latest != null);
-            packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-            packages = _.sortBy(packages, 'name');
-            return void resolve(packages);
-          }
+    async requestStarredPackages(requestSettings) {
+        const response = await request.get(requestSettings);
+        const body = response.body ?? [];
+        if (response.statusCode === 200) {
+          let packages = body.filter(pack => pack?.releases?.latest != null);
+          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
+          packages = _.sortBy(packages, 'name');
+          return packages;
+        }
 
-          const message = request.getErrorMessage(body, error);
-          reject(`Requesting packages failed: ${message}`);
-        });
-      });
+        const message = request.getErrorMessage(body, null);
+        throw `Requesting packages failed: ${message}`;
     }
 
     async installPackages(packages) {
