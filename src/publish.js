@@ -154,10 +154,10 @@ have published it.\
       return new Promise((resolve, reject) => {
         request.get(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null || response.statusCode !== 200) {
+          if (error != null) {
             return void reject(request.getErrorMessage(body, error));
           }
-          resolve(true);
+          resolve(response.statusCode === 200);
         });
       });
     }
