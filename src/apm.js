@@ -95,12 +95,7 @@ module.exports = {
   },
 
   getElectronArch() {
-    switch (process.platform) {
-      case 'darwin':
-        return 'x64';
-      default:
-        return process.env.ATOM_ARCH ?? process.arch;
-    }
+    return process.env.ATOM_ARCH ?? process.arch;
   },
 
   getUserConfigPath() {
