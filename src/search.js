@@ -47,18 +47,15 @@ Search for packages/themes.\
       return new Promise((resolve, reject) => {
         request.get(requestSettings, function(error, response, body) {
           body ??= {};
-          if (error != null) {
-            return void reject(error);
+          if (error != null || response.statusCode !== 200) {
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Searching packages failed: '${message}'`);
           }
-          if (response.statusCode === 200) {
-            let packages = body.filter(pack => (pack.releases != null ? pack.releases.latest : undefined) != null);
-            packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-            packages = packages.filter(({name, version}) => !isDeprecatedPackage(name, version));
-            return void resolve(packages);
-          }
-
-          const message = request.getErrorMessage(body, error);
-          reject(`Searching packages failed: ${message}`);
+          
+          let packages = body.filter(pack => (pack.releases != null ? pack.releases.latest : undefined) != null);
+          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
+          packages = packages.filter(({name, version}) => !isDeprecatedPackage(name, version));
+          return void resolve(packages);
         });
       });
     }

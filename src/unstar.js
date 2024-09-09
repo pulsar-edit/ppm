@@ -38,14 +38,10 @@ Run \`ppm stars\` to see all your starred packages.\
       return new Promise((resolve, reject) => {
         request.del(requestSettings, (error, response, body) => {
           body ??= {};
-          if (error != null) {
-            this.logFailure();
-            return void reject(error);
-          }
-          if (response.statusCode !== 204) {
+          if (error != null || response.statusCode !== 204) {
             this.logFailure();
             const message = request.getErrorMessage(body, error);
-            return void reject(`Unstarring package failed: ${message}`);
+            return void reject(`Unstarring package failed: '${message}'`);
           }
 
           this.logSuccess();

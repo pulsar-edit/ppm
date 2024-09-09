@@ -217,16 +217,10 @@ Run ppm -v after installing Git to see what version has been detected.\
       };
       return new Promise((resolve, reject) => {
         request.get(requestSettings, (error, response, body) => {
-          let message;
           body ??= {};
-          if (error != null) {
-            message = `Request for package information failed: ${error.message}`;
-            if (error.status) { message += ` (${error.status})`; }
-            return void reject(message);
-          }
-          if (response.statusCode !== 200) {
-            message = request.getErrorMessage(body, error);
-            return void reject(`Request for package information failed: ${message}`);
+          if (error != null || response.statusCode !== 200) {
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Request for package information failed: '${message}'`);
           }
           if (!body.releases.latest) {
             return void reject(`No releases available for ${packageName}`);

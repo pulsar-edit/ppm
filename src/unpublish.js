@@ -52,14 +52,10 @@ name is specified.\
         return new Promise((resolve, reject) =>{
           request.del(options, (error, response, body) => {
             body ??= {};
-            if (error != null) {
+            if (error != null || response.statusCode !== 204) {
               this.logFailure();
-              return void reject(error);
-            }
-            if (response.statusCode !== 204) {
-              this.logFailure();
-              const message = body.message ?? body.error ?? body;
-              return void reject(`Unpublishing failed: ${message}`);
+              const message = request.getErrorMessage(body, error);
+              return void reject(`Unpublishing failed: '${message}'`);
             }
 
             this.logSuccess();
