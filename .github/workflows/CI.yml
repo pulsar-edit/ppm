@@ -56,7 +56,13 @@ jobs:
         run: python3 -m pip install setuptools
 
       - name: Install dependencies
+        if: ${{ matrix.node_version != 14 }}
         run: yarn install
+
+      - name: Install dependencies (NodeJS v14)
+        # node-gyp v10+'s `engines` field dropped support for Node 14... Ignore and install anyway.
+        if: ${{ matrix.node_version == 14 }}
+        run: yarn install --ignore-engines
 
       - if: "!contains(matrix.os, 'windows')"
         name: Run tests 👩🏾‍💻
