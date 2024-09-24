@@ -5,12 +5,16 @@ const npm = require('npm');
 let asarPath = null;
 
 module.exports = {
+  getBaseName() {
+    return process.env.ATOM_BASE_NAME ?? 'pulsar';
+  },
+
   getHomeDirectory() {
     if (process.platform === 'win32') { return process.env.USERPROFILE; } else { return process.env.HOME; }
   },
 
   getAtomDirectory() {
-    return process.env.ATOM_HOME ?? path.join(this.getHomeDirectory(), ".pulsar");
+    return process.env.ATOM_HOME ?? path.join(this.getHomeDirectory(), `.${this.getBaseName()}`);
   },
 
   getRustupHomeDirPath() {

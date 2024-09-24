@@ -6,10 +6,29 @@ initialCwd=`pwd -P`
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 apmPath=$0
+# Get the name of the script that was just called.
+apmName=$(basename "$0")
 builtin cd "`dirname "$apmPath"`"
 binDir=`basename "$apmPath"`
 
-# Detect node binary name
+# Infer the channel name from the name of this script.
+case apmName in
+  ppm-next)
+    CHANNEL=next
+    ;;
+  *)
+    CHANNEL=stable
+    ;;
+esac
+
+# Infer the base name (for ATOM_HOME and other purposes) from the channel name.
+ATOM_BASE_NAME="pulsar"
+if [ "$CHANNEL" == 'next' ]; then
+  ATOM_BASE_NAME="pulsar-next"
+fi
+export ATOM_BASE_NAME
+
+# Detect the Node binary name.
 osName=`uname -s`
 if [ "${osName:0:10}" == 'MINGW32_NT' ]; then
   nodeBin="node.exe"
@@ -28,7 +47,7 @@ done
 
 binDir=`pwd -P`
 
-# Force npm to use its builtin node-gyp
+# Force NPM to use its builtin node-gyp.
 unset npm_config_node_gyp
 
 cliPath="$binDir/../src/cli.js"

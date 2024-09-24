@@ -1,6 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
 
+set script_name=%~f0
+if %script_name% == 'ppm-next.cmd' (
+  set ATOM_BASE_NAME=pulsar-next
+) else (
+  set ATOM_BASE_NAME=pulsar
+)
+
 :: Try to find git.exe in path
 for /f "tokens=*" %%G in ('where git 2^>nul') do set "apm_git_path=%%~dpG"
 if not defined apm_git_path (
