@@ -12,7 +12,7 @@ builtin cd "`dirname "$apmPath"`"
 binDir=`basename "$apmPath"`
 
 # Infer the channel name from the name of this script.
-case apmName in
+case $apmName in
   ppm-next)
     CHANNEL=next
     ;;
