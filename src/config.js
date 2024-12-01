@@ -1,6 +1,5 @@
 
 const path = require('path');
-const _ = require('underscore-plus');
 const yargs = require('yargs');
 const apm = require('./apm');
 const Command = require('./command');
@@ -37,7 +36,11 @@ Usage: ppm config set <key> <value>
     let configArgs = ['--globalconfig', apm.getGlobalConfigPath(), '--userconfig', apm.getUserConfigPath(), 'config'];
     configArgs = configArgs.concat(options.argv._);
 
-    const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: apm.getRustupHomeDirPath()});
+    const env = {
+      ...process.env,
+      HOME: this.atomNodeDirectory,
+      RUSTUP_HOME: apm.getRustupHomeDirPath()
+    };
     const configOptions = {env};
 
     return new Promise((resolve, _reject) => 

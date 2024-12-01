@@ -2,7 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const _ = require('underscore-plus');
 const yargs = require('yargs');
 
 const config = require('./apm');
@@ -81,16 +80,17 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     }
 
     installDependencies(packageDirectory, options) {
-        process.chdir(packageDirectory);
-        const installOptions = _.clone(options);
+      process.chdir(packageDirectory);
 
-        return new Install().run(installOptions);
+      return new Install().run({...options});
     }
 
     linkPackage(packageDirectory, options) {
-      const linkOptions = _.clone(options);
+      const linkOptions = {
+        ...options,
+        commandArgs: [packageDirectory, '--dev']
+      };
 
-      linkOptions.commandArgs = [packageDirectory, '--dev'];
       return new Link().run(linkOptions);
     }
 

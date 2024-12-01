@@ -2,7 +2,6 @@
 const assert = require('assert');
 const path = require('path');
 
-const _ = require('underscore-plus');
 const async = require('async');
 const CSON = require('season');
 const yargs = require('yargs');
@@ -82,7 +81,11 @@ package names to install with optional versions using the
 
       fs.makeTreeSync(this.atomDirectory);
 
-      const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath()});
+      const env = {
+        ...process.env,
+        HOME: this.atomNodeDirectory,
+        RUSTUP_HOME: config.getRustupHomeDirPath()
+      };
       this.addBuildEnvVars(env);
 
       const installOptions = {env};
@@ -194,7 +197,11 @@ Run ppm -v after installing Git to see what version has been detected.\
 
       fs.makeTreeSync(this.atomDirectory);
 
-      const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath()});
+      const env = {
+        ...process.env,
+        HOME: this.atomNodeDirectory,
+        RUSTUP_HOME: config.getRustupHomeDirPath()
+      };
       this.addBuildEnvVars(env);
 
       const installOptions = {env};
@@ -363,7 +370,10 @@ Run ppm -v after installing Git to see what version has been detected.\
     //
     // return value - A Promise that rejects with an error or resolves without a value
     async installPackageDependencies(options) {
-      options = _.extend({}, options, {installGlobally: false});
+      options = {
+        ...options,
+        installGlobally: false
+      };
       const commands = [];
       const object = this.getPackageDependencies(options.cwd);
       for (let name in object) {
@@ -446,7 +456,11 @@ Run ppm -v after installing Git to see what version has been detected.\
 
       fs.makeTreeSync(this.atomDirectory);
 
-      const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath()});
+      const env = {
+        ...process.env,
+        HOME: this.atomNodeDirectory,
+        RUSTUP_HOME: config.getRustupHomeDirPath()
+      };
       this.addBuildEnvVars(env);
 
       const buildOptions = {env};
@@ -717,7 +731,7 @@ with Pulsar will be used.\
       const iteratee = async fn => await fn();
       try {
         let installedPackagesInfo = await async.mapSeries(commands, iteratee);
-        installedPackagesInfo = _.compact(installedPackagesInfo);
+        installedPackagesInfo = installedPackagesInfo.filter(Boolean);
         installedPackagesInfo = installedPackagesInfo.filter((item, idx) => packageNames[idx] !== ".");
         if (options.argv.json) { console.log(JSON.stringify(installedPackagesInfo, null, "  ")); }
       } catch (error) {

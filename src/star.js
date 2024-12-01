@@ -1,7 +1,6 @@
 
 const path = require('path');
 
-const _ = require('underscore-plus');
 const async = require('async');
 const CSON = require('season');
 const yargs = require('yargs');
@@ -77,7 +76,7 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       }
 
-      return _.uniq(installedPackages);
+      return Array.from(new Set(installedPackages));
     }
 
     async run(options) {

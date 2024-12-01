@@ -1,9 +1,7 @@
 
-const _ = require('underscore-plus');
-
-module.exports = (items, options, callback) => {
+module.exports = (items, options, callback) => { //TODO clean up signature and usage
   options ??= {};
-  if (_.isFunction(options)) {
+  if (options instanceof Function) {
     callback = options;
     options = {};
   }

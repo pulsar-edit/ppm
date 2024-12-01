@@ -1,7 +1,6 @@
 
 const child_process = require('child_process');
 const path = require('path');
-const _ = require('underscore-plus');
 const semver = require('semver');
 const config = require('./apm');
 const git = require('./git');
@@ -58,7 +57,7 @@ class Command {
   sanitizePackageNames(packageNames) {
     packageNames ??= [];
     packageNames = packageNames.map(packageName => packageName.trim());
-    return _.compact(_.uniq(packageNames));
+    return Array.from(new Set(packageNames)).filter(Boolean);
   }
 
   logSuccess() {

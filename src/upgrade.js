@@ -1,7 +1,6 @@
 
 const path = require('path');
 
-const _ = require('underscore-plus');
 const async = require('async');
 const yargs = require('yargs');
 const read = require('read');
@@ -171,7 +170,7 @@ available updates.\
       };
 
       let updates = await async.mapLimit(packages, 10, getLatestVersionOrSha);
-      updates = _.filter(updates, update => (update.latestVersion != null) || (update.sha != null));
+      updates = updates.filter(update => (update.latestVersion != null) || (update.sha != null));
       updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name));
       return updates;
     }

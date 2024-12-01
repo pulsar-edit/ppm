@@ -40,8 +40,14 @@ List the Pulsar packages and themes that are currently featured.\
       const body = response.body ?? [];
       if (response.statusCode === 200) {
           let packages = body.filter(pack => pack?.releases != null);
-          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-          packages = _.sortBy(packages, 'name');
+          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => ({
+            ...metadata,
+            readme,
+            downloads,
+            stargazers_count 
+          }));
+
+          packages.sort((left, right) => left.name.localeCompare(right.name));
           return packages;
       }
       

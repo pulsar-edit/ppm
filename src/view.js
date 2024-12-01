@@ -84,7 +84,12 @@ View information about a package/theme.\
       const version = await this.getLatestCompatibleVersion(body, options);
       const {name, readme, downloads, stargazers_count} = body;
       const metadata = body.versions?.[version] ?? {name};
-      const pack = _.extend({}, metadata, {readme, downloads, stargazers_count});
+      const pack = {
+        ...metadata,
+        readme,
+        downloads,
+        stargazers_count
+      };
       return pack;
     }
 

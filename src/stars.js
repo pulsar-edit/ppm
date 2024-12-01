@@ -52,8 +52,13 @@ List or install starred Atom packages and themes.\
         const body = response.body ?? [];
         if (response.statusCode === 200) {
           let packages = body.filter(pack => pack?.releases?.latest != null);
-          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-          packages = _.sortBy(packages, 'name');
+          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => ({
+            ...metadata,
+            readme,
+            downloads,
+            stargazers_count
+          }));
+          packages.sort((left, right) => left.name.localeCompare(right.name));
           return packages;
         }
 
