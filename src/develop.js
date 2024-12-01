@@ -43,25 +43,31 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    async getRepositoryUrl(packageName) {
-      const requestSettings = {
-        url: `${config.getAtomPackagesUrl()}/${packageName}`,
-        json: true
-      };
-      const response = await request.get(requestSettings).catch(error => Promise.reject(`Request for package information failed: ${error.message}`));
-      const body = response.body ?? {};
+    getRepositoryUrl(packageName) {
+      return new Promise((resolve, reject) => {
+        const requestSettings = {
+          url: `${config.getAtomPackagesUrl()}/${packageName}`,
+          json: true
+        };
+        return request.get(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            return void reject(`Request for package information failed: ${error.message}`);
+          }
 
-      if (response.statusCode === 200) {
-        const repositoryUrl = body.repository.url;
-        if (repositoryUrl) {
-          return repositoryUrl;
-        }
+          if (response.statusCode === 200) {
+            const repositoryUrl = body.repository.url;
+            if (repositoryUrl) {
+              return void resolve(repositoryUrl);
+            }
 
-        throw `No repository URL found for package: ${packageName}`;
-      }
+            return void reject(`No repository URL found for package: ${packageName}`);
+          }
 
-      const message = request.getErrorMessage(body, error);
-      throw `Request for package information failed: ${message}`;
+          const message = request.getErrorMessage(body, error);
+          return void reject(`Request for package information failed: ${message}`);
+        });
+      });
     }
 
     async cloneRepository(repoUrl, packageDirectory, options) {

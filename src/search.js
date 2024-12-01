@@ -28,7 +28,7 @@ Search for packages/themes.\
       return options.boolean('themes').describe('themes', 'Search only themes').alias('t', 'themes');
     }
 
-    async searchPackages(query, opts) {
+    searchPackages(query, opts) {
       const qs =
         {q: query};
 
@@ -44,18 +44,23 @@ Search for packages/themes.\
         json: true
       };
 
-      const response = await request.get(requestSettings);
-      const body = response.body ?? {};
+      return new Promise((resolve, reject) => {
+        request.get(requestSettings, function(error, response, body) {
+          body ??= {};
+          if (error != null) {
+            return void reject(error);
+          }
+          if (response.statusCode === 200) {
+            let packages = body.filter(pack => (pack.releases != null ? pack.releases.latest : undefined) != null);
+            packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
+            packages = packages.filter(({name, version}) => !isDeprecatedPackage(name, version));
+            return void resolve(packages);
+          }
 
-      if (response.statusCode === 200) {
-        let packages = body.filter(pack => pack?.releases?.latest != null);
-        packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-        packages = packages.filter(({name, version}) => !isDeprecatedPackage(name, version));
-        return packages;
-      }
-
-      const message = request.getErrorMessage(body, error);
-      throw `Searching packages failed: ${message}`;
+          const message = request.getErrorMessage(body, error);
+          reject(`Searching packages failed: ${message}`);
+        });
+      });
     }
 
     async run(options) {

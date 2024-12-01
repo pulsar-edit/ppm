@@ -25,7 +25,7 @@ Run \`ppm stars\` to see all your starred packages.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    async starPackage(packageName, token) {
+    starPackage(packageName, token) {
       if (process.platform === 'darwin') { process.stdout.write('\uD83D\uDC5F \u2B50  '); }
       process.stdout.write(`Unstarring ${packageName} `);
       const requestSettings = {
@@ -35,15 +35,23 @@ Run \`ppm stars\` to see all your starred packages.\
           authorization: token
         }
       };
-      const response = await request.del(requestSettings).catch(error => { this.logFailure(); throw error; });
-      const body = response.body ?? {};
-      if (response.statusCode !== 204) {
-        this.logFailure();
-        const message = request.getErrorMessage(body, error);
-        throw `Unstarring package failed: ${message}`;
-      }
+      return new Promise((resolve, reject) => {
+        request.del(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            this.logFailure();
+            return void reject(error);
+          }
+          if (response.statusCode !== 204) {
+            this.logFailure();
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Unstarring package failed: ${message}`);
+          }
 
-      this.logSuccess();
+          this.logSuccess();
+          resolve();
+        });
+      });
     }
 
     async run(options) {

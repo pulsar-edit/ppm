@@ -17,13 +17,21 @@ class ThemeConverter {
     const {protocol} = url.parse(this.sourcePath);
     if ((protocol === 'http:') || (protocol === 'https:')) {
       const requestOptions = {url: this.sourcePath};
-      const response = await request.get(requestOptions).catch(error => Promise.reject(error?.code === 'ENOTFOUND' ? `Could not resolve URL: ${this.sourcePath}` : error));
-      const body = response.body;
-      if (response.statusCode !== 200) {
-        throw `Request to ${this.sourcePath} failed (${response.headers.status})`;
-      }
-        
-      return body;
+      return new Promise((resolve, reject) => {
+        request.get(requestOptions, (error, response, body) => {
+          if (error != null) {
+            if (error?.code === 'ENOTFOUND') {
+              error = `Could not resolve URL: ${this.sourcePath}`;
+            }
+            return void reject(error);
+          }
+          if (response.statusCode !== 200) {
+            return void reject(`Request to ${this.sourcePath} failed (${response.headers.status})`);
+          }
+          
+          resolve(body);
+        });
+      });
     }
 
     const sourcePath = path.resolve(this.sourcePath);

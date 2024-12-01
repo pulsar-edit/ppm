@@ -32,7 +32,7 @@ Run \`ppm stars\` to see all your starred packages.\
       return options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages');
     }
 
-    async starPackage(packageName, param) {
+    starPackage(packageName, param) {
       param ??= {};
       const {ignoreUnpublishedPackages, token} = param;
       if (process.platform === 'darwin') { process.stdout.write('\u2B50  '); }
@@ -45,19 +45,27 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       };
 
-      const response = await request.post(requestSettings).catch(error => { this.logFailure(); throw error; });
-      const body = response.body ?? {};
-      if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
-        process.stdout.write('skipped (not published)\n'.yellow);
-        return Promise.reject();
-      }
-      if (response.statusCode !== 200) {
-        this.logFailure();
-        const message = request.getErrorMessage(body, error);
-        throw `Starring package failed: ${message}`;
-      }
+      return new Promise((resolve, reject) => {
+        request.post(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            this.logFailure();
+            return void reject(error);
+          }
+          if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
+            process.stdout.write('skipped (not published)\n'.yellow);
+            return void reject();
+          }
+          if (response.statusCode !== 200) {
+            this.logFailure();
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Starring package failed: ${message}`);
+          }
 
-      this.logSuccess();
+          this.logSuccess();
+          resolve();
+        });
+      });
     }
 
     getInstalledPackageNames() {

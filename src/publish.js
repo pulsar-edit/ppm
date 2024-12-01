@@ -105,24 +105,35 @@ have published it.\
     // return value - A Promise that resolves (without a value) when either the
     //                number of max retries have been reached or the tag could
     //                actually be retrieved.
-    async waitForTagToBeAvailable(pack, tag) {
-      const retryCount = 5;
+    waitForTagToBeAvailable(pack, tag) {
+      let retryCount = 5;
       const interval = 1000;
       const requestSettings = {
         url: `https://api.github.com/repos/${Packages.getRepository(pack)}/tags`,
         json: true
       };
 
-      for (let i = 0; i < retryCount; i++) {
-        const response = await request.get(requestSettings).catch();
-        const tags = response.body ?? [];
-        if (response?.statusCode === 200) {
-          if (tags.some(t => t.name === tag)) {
-            return;
-          }
-        }
-        await new Promise(resolve => setTimeout(resolve, interval)); //not strictly necessary on the last iteration
-      }
+      return new Promise((resolve, _reject) => {
+        const requestTags = () => {
+          request.get(
+            requestSettings,
+            (_error, response, tags) => {
+              tags ??= [];
+              if (response?.statusCode === 200) {
+                if (tags.some(t => t.name === tag)) {
+                  resolve();
+                  return;
+                }
+              }
+              if (--retryCount <= 0) {
+                return void resolve();
+              }
+              setTimeout(requestTags, interval);
+            }
+          );
+        };
+        requestTags();
+      });
     }
 
     // Does the given package already exist in the registry?
@@ -140,9 +151,15 @@ have published it.\
           authorization: token
         }
       };
-      const response = await request.get(requestSettings);
-      const body = response.body ?? {};
-      return response.statusCode === 200;
+      return new Promise((resolve, reject) => {
+        request.get(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            return void reject(error);
+          }
+          resolve(response.statusCode === 200);
+        });
+      });
     }
 
     // Register the current repository with the package registry.
@@ -180,16 +197,22 @@ have published it.\
             authorization: token
           }
         };
-        const response = await request.post(requestSettings);
-        const body = response.body ?? {};
-        if (response.statusCode !== 201) {
-          const message = request.getErrorMessage(body, null);
-          this.logFailure();
-          throw `Registering package in ${repository} repository failed: ${message}`; //again, why the double logging?
-        }
+        return new Promise((resolve, reject) => {
+          request.post(requestSettings, (error, response, body) => {
+            body ??= {};
+            if (error != null) {
+              return void reject(error);
+            }
+            if (response.statusCode !== 201) {
+              const message = request.getErrorMessage(body, error);
+              this.logFailure();
+              return void reject(`Registering package in ${repository} repository failed: ${message}`);
+            }
 
-        this.logSuccess();
-        return true;
+            this.logSuccess();
+            return resolve(true);
+          });
+        });
       } catch (error) {
         this.logFailure();
         throw error;
@@ -215,12 +238,20 @@ have published it.\
           authorization: token
         }
       };
-      const response = await request.post(requestSettings);
-      const body = response.body ?? {};
-      if (response.statusCode !== 201) {
-        const message = request.getErrorMessage(body, null);
-        throw `Creating new version failed: ${message}`;
-      }
+      return new Promise((resolve, reject) => {
+        request.post(requestSettings, (error, response, body) => {
+          body ??= {};
+          if (error != null) {
+            return void reject(error);
+          }
+          if (response.statusCode !== 201) {
+            const message = request.getErrorMessage(body, error);
+            return void reject(`Creating new version failed: ${message}`);
+          }
+
+          resolve();
+        });
+      });
     }
 
     // Publish the version of the package associated with the given tag.

@@ -36,69 +36,96 @@ async function configureRequest(requestOptions){
 }
 
 module.exports = {
-  async get(opts) {
-    await configureRequest(opts);
-    const retryCount = opts.retries ?? 0;
+  get(opts, callback) {
+    configureRequest(opts).then(async () => {
+      const retryCount = opts.retries ?? 0;
 
-    if (typeof opts.strictSSL === "boolean") {
-      const res = await superagent
-        .get(opts.url)
-        .proxy(opts.proxy)
-        .set(opts.headers)
-        .query(opts.qs)
-        .retry(retryCount)
-        .disableTLSCerts()
-        .ok((res) => OK_STATUS_CODES.includes(res.status));
-      return res;
-    }
+      if (typeof opts.strictSSL === "boolean") {
+        try {
+          const res = await superagent
+            .get(opts.url)
+            .proxy(opts.proxy)
+            .set(opts.headers)
+            .query(opts.qs)
+            .retry(retryCount)
+            .disableTLSCerts()
+            .ok((res) => OK_STATUS_CODES.includes(res.status));
+          return void callback(null, res, res.body);
+        } catch (error) {
+          return void callback(error, null, null);
+        }
+      }
 
-    const res = await superagent
-      .get(opts.url)
-      .proxy(opts.proxy)
-      .set(opts.headers)
-      .query(opts.qs)
-      .retry(retryCount)
-      .ok((res) => OK_STATUS_CODES.includes(res.status));
-    return res;
+      try {
+        const res = await superagent
+          .get(opts.url)
+          .proxy(opts.proxy)
+          .set(opts.headers)
+          .query(opts.qs)
+          .retry(retryCount)
+          .ok((res) => OK_STATUS_CODES.includes(res.status));
+        return void callback(null, res, res.body);
+      } catch (error) {
+        return void callback(error, null, null); 
+      }
+    });
   },
 
-  async del(opts) {
-    await configureRequest(opts);
-    if (typeof opts.strictSSL === "boolean") {
-      const res = await superagent
-        .delete(opts.url)
-        .proxy(opts.proxy)
-        .set(opts.headers)
-        .query(opts.qs)
-        .disableTLSCerts()
-        .ok((res) => OK_STATUS_CODES.includes(res.status));
-      return res;
-    }
+  del(opts, callback) {
+    configureRequest(opts).then(async () => {
+      if (typeof opts.strictSSL === "boolean") {
+        try {
+          const res = await superagent
+            .delete(opts.url)
+            .proxy(opts.proxy)
+            .set(opts.headers)
+            .query(opts.qs)
+            .disableTLSCerts()
+            .ok((res) => OK_STATUS_CODES.includes(res.status));
+          return void callback(null, res, res.body);
+        } catch (error) {
+          return void callback(error, null, null);
+        }
+      }
 
-    const res = await superagent
-      .delete(opts.url)
-      .proxy(opts.proxy)
-      .set(opts.headers)
-      .query(opts.qs)
-      .ok((res) => OK_STATUS_CODES.includes(res.status));
-    return res;
+      try {
+        const res = await superagent
+          .delete(opts.url)
+          .proxy(opts.proxy)
+          .set(opts.headers)
+          .query(opts.qs)
+          .ok((res) => OK_STATUS_CODES.includes(res.status));
+        return void callback(null, res, res.body);
+      } catch (error) {
+        return void callback(error, null, null);
+      }
+    });
   },
 
-  async post(opts) {
-    await configureRequest(opts);
-    if (typeof opts.strictSSL === "boolean") {
-      const res = await superagent
-        .post(opts.url)
-        .proxy(opts.proxy)
-        .set(opts.headers)
-        .query(opts.qs)
-        .disableTLSCerts()
-        .ok((res) => OK_STATUS_CODES.includes(res.status));
-      return res;
-    }
+  post(opts, callback) {
+    configureRequest(opts).then(async () => {
+      if (typeof opts.strictSSL === "boolean") {
+        try {
+          const res = await superagent
+            .post(opts.url)
+            .proxy(opts.proxy)
+            .set(opts.headers)
+            .query(opts.qs)
+            .disableTLSCerts()
+            .ok((res) => OK_STATUS_CODES.includes(res.status));
+          return void callback(null, res, res.body);
+        } catch (error) {
+          return void callback(error, null, null);
+        }
+      }
 
-    const res = await superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
-    return res;
+      try {
+        const res = await superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
+        return void callback(null, res, res.body);
+      } catch (error) {
+        return void callback(error, null, null);
+      }
+    });
   },
 
   async createReadStream(opts) {

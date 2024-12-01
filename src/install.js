@@ -209,26 +209,32 @@ Run ppm -v after installing Git to see what version has been detected.\
     // packageName - The string name of the package to request.
     //
     // return value - A Promise that rejects with an appropriate error or resolves to the response body
-    async requestPackage(packageName) {
+    requestPackage(packageName) {
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${packageName}`,
         json: true,
         retries: 4
       };
-      const response = await request.get(requestSettings).catch(error => {
-        const message = request.getErrorMessage(body, error);
-        throw `Request for package information failed: ${message}`;
-      });
-      const body = response.body ?? {};
-      if (response.statusCode !== 200) {
-        const message = request.getErrorMessage(body, null);
-        throw `Request for package information failed: ${message}`;
-      }
-      if (!body.releases.latest) {
-        throw `No releases available for ${packageName}`;
-      }
+      return new Promise((resolve, reject) => {
+        request.get(requestSettings, (error, response, body) => {
+          let message;
+          body ??= {};
+          if (error != null) {
+            message = `Request for package information failed: ${error.message}`;
+            if (error.status) { message += ` (${error.status})`; }
+            return void reject(message);
+          }
+          if (response.statusCode !== 200) {
+            message = request.getErrorMessage(body, error);
+            return void reject(`Request for package information failed: ${message}`);
+          }
+          if (!body.releases.latest) {
+            return void reject(`No releases available for ${packageName}`);
+          }
 
-      return body;
+          resolve(body);
+        });
+      });
     }
 
     // Is the package at the specified version already installed?
