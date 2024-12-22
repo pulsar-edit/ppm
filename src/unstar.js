@@ -39,7 +39,7 @@ Run \`ppm stars\` to see all your starred packages.\
       const body = response.body ?? {};
       if (response.statusCode !== 204) {
         this.logFailure();
-        const message = request.getErrorMessage(body, error);
+        const message = request.getErrorMessage(body, null);
         throw `Unstarring package failed: ${message}`;
       }
 

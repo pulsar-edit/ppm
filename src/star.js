@@ -76,7 +76,7 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       }
 
-      return Array.from(new Set(installedPackages));
+      return Array.from(new Set(installedPackages)); // Unique only array
     }
 
     async run(options) {

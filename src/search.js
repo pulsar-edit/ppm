@@ -59,7 +59,7 @@ Search for packages/themes.\
         return packages;
       }
 
-      const message = request.getErrorMessage(body, error);
+      const message = request.getErrorMessage(body, null);
       throw `Searching packages failed: ${message}`;
     }
 

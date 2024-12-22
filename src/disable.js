@@ -73,7 +73,7 @@ Disables the named package(s).\
 
           const keyPath = '*.core.disabledPackages';
           const disabledPackages = _.valueForKeyPath(settings, keyPath) ?? [];
-          const result = Array.from(new Set([...disabledPackages, ...packageNames]));
+          const result = Array.from(new Set([...disabledPackages, ...packageNames])); // create a union of the two arrays (no duplicates) //TODO use proper set operations when the runtime allows them
           _.setValueForKeyPath(settings, keyPath, result);
 
           try {

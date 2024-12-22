@@ -223,8 +223,9 @@ Run ppm -v after installing Git to see what version has been detected.\
         retries: 4
       };
       const response = await request.get(requestSettings).catch(error => {
-        const message = request.getErrorMessage(body, error);
-        throw `Request for package information failed: ${message}`;
+        let message = `Request for package information failed: ${error.message}`;
+        if (error.status) { message += ` (${error.status})`; }
+        throw message;
       });
       const body = response.body ?? {};
       if (response.statusCode !== 200) {

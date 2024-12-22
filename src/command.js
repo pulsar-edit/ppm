@@ -57,7 +57,7 @@ class Command {
   sanitizePackageNames(packageNames) {
     packageNames ??= [];
     packageNames = packageNames.map(packageName => packageName.trim());
-    return Array.from(new Set(packageNames)).filter(Boolean);
+    return Array.from(new Set(packageNames)).filter(Boolean); // Array of only unique truthy values
   }
 
   logSuccess() {

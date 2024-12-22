@@ -82,7 +82,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     installDependencies(packageDirectory, options) {
       process.chdir(packageDirectory);
 
-      return new Install().run({...options});
+      return new Install().run({...options}); // pass options shallow-copied - protects somewhat from mutations
     }
 
     linkPackage(packageDirectory, options) {
