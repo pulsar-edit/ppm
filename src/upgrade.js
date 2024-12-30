@@ -1,7 +1,6 @@
 
 const path = require('path');
 
-const _ = require('underscore-plus');
 const async = require('async');
 const yargs = require('yargs');
 const read = require('read');
@@ -94,49 +93,43 @@ available updates.\
       return fs.existsSync(repoGitFolderPath);
     }
 
-    getLatestVersion(pack) {
+    async getLatestVersion(pack) {
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${pack.name}`,
         json: true
       };
-      return new Promise((resolve, reject) => {
-        request.get(requestSettings, (error, response, body) => {
-          body ??= {};
-          if (error != null) {
-            return void reject(`Request for package information failed: ${error.message}`);
-          }
-          if (response.statusCode === 404) {
-            return void resolve();
-          }
-          if (response.statusCode !== 200) {
-            const message = body.message ?? body.error ?? body;
-            return void reject(`Request for package information failed: ${message}`);
-          }
+      const response = await request.get(requestSettings).catch(error => Promise.reject(`Request for package information failed: ${error.message}`));
+      const body = response.body ?? {};
+      if (response.statusCode === 404) {
+        return;
+      }
+      if (response.statusCode !== 200) {
+        const message = body.message ?? body.error ?? body;
+        throw `Request for package information failed: ${message}`;
+      }
 
-          const atomVersion = this.installedAtomVersion;
-          let latestVersion = pack.version;
-          const object = body?.versions ?? {};
-          for (let version in object) {
-            const metadata = object[version];
-            if (!semver.valid(version)) { continue; }
-            if (!metadata) { continue; }
+      const atomVersion = this.installedAtomVersion;
+      let latestVersion = pack.version;
+      const object = body?.versions ?? {};
+      for (let version in object) {
+        const metadata = object[version];
+        if (!semver.valid(version)) { continue; }
+        if (!metadata) { continue; }
 
-            const engine = metadata.engines?.pulsar || metadata.engines?.atom || '*';
-            if (!semver.validRange(engine)) { continue; }
-            if (!semver.satisfies(atomVersion, engine)) { continue; }
+        const engine = metadata.engines?.pulsar || metadata.engines?.atom || '*';
+        if (!semver.validRange(engine)) { continue; }
+        if (!semver.satisfies(atomVersion, engine)) { continue; }
 
-            if (!semver.gt(version, latestVersion)) { continue; }
+        if (!semver.gt(version, latestVersion)) { continue; }
 
-            latestVersion = version;
-          }
+        latestVersion = version;
+      }
 
-          if ((latestVersion === pack.version) || !this.hasRepo(pack)) {
-            return void resolve();
-          }
+      if ((latestVersion === pack.version) || !this.hasRepo(pack)) {
+        return;
+      }
 
-          resolve(latestVersion);
-        });
-      });
+      return latestVersion;
     }
 
     async getLatestSha(pack) {
@@ -177,7 +170,7 @@ available updates.\
       };
 
       let updates = await async.mapLimit(packages, 10, getLatestVersionOrSha);
-      updates = _.filter(updates, update => (update.latestVersion != null) || (update.sha != null));
+      updates = updates.filter(update => (update.latestVersion != null) || (update.sha != null));
       updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name));
       return updates;
     }

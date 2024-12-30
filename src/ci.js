@@ -2,7 +2,6 @@
 const path = require('path');
 const fs = require('./fs');
 const yargs = require('yargs');
-const _ = require('underscore-plus');
 
 const config = require('./apm');
 const Command = require('./command');
@@ -54,7 +53,11 @@ but cannot be used to install new packages or dependencies.\
 
     fs.makeTreeSync(this.atomDirectory);
 
-    const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath()});
+    const env = {
+      ...process.env, 
+      HOME: this.atomNodeDirectory,
+      RUSTUP_HOME: config.getRustupHomeDirPath()
+    };
     this.addBuildEnvVars(env);
 
     const installOptions = {env, streaming: options.argv.verbose};

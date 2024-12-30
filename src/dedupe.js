@@ -1,7 +1,6 @@
 
 const path = require('path');
 
-const _ = require('underscore-plus');
 const yargs = require('yargs');
 
 const config = require('./apm');
@@ -54,7 +53,11 @@ This command is experimental.\
 
       fs.makeTreeSync(this.atomDirectory);
 
-      const env = _.extend({}, process.env, {HOME: this.atomNodeDirectory, RUSTUP_HOME: config.getRustupHomeDirPath()});
+      const env = {
+        ...process.env,
+        HOME: this.atomNodeDirectory,
+        RUSTUP_HOME: config.getRustupHomeDirPath()
+      };
       this.addBuildEnvVars(env);
 
       const dedupeOptions = {env};

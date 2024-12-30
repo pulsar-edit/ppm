@@ -2,7 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const _ = require('underscore-plus');
 const yargs = require('yargs');
 
 const config = require('./apm');
@@ -43,31 +42,25 @@ cmd-shift-o to run the package out of the newly cloned repository.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    getRepositoryUrl(packageName) {
-      return new Promise((resolve, reject) => {
-        const requestSettings = {
-          url: `${config.getAtomPackagesUrl()}/${packageName}`,
-          json: true
-        };
-        return request.get(requestSettings, (error, response, body) => {
-          body ??= {};
-          if (error != null) {
-            return void reject(`Request for package information failed: ${error.message}`);
-          }
+    async getRepositoryUrl(packageName) {
+      const requestSettings = {
+        url: `${config.getAtomPackagesUrl()}/${packageName}`,
+        json: true
+      };
+      const response = await request.get(requestSettings).catch(error => Promise.reject(`Request for package information failed: ${error.message}`));
+      const body = response.body ?? {};
 
-          if (response.statusCode === 200) {
-            const repositoryUrl = body.repository.url;
-            if (repositoryUrl) {
-              return void resolve(repositoryUrl);
-            }
+      if (response.statusCode === 200) {
+        const repositoryUrl = body.repository.url;
+        if (repositoryUrl) {
+          return repositoryUrl;
+        }
 
-            return void reject(`No repository URL found for package: ${packageName}`);
-          }
+        throw `No repository URL found for package: ${packageName}`;
+      }
 
-          const message = request.getErrorMessage(body, error);
-          return void reject(`Request for package information failed: ${message}`);
-        });
-      });
+      const message = request.getErrorMessage(body, error);
+      throw `Request for package information failed: ${message}`;
     }
 
     async cloneRepository(repoUrl, packageDirectory, options) {
@@ -87,16 +80,17 @@ cmd-shift-o to run the package out of the newly cloned repository.\
     }
 
     installDependencies(packageDirectory, options) {
-        process.chdir(packageDirectory);
-        const installOptions = _.clone(options);
+      process.chdir(packageDirectory);
 
-        return new Install().run(installOptions);
+      return new Install().run({...options}); // pass options shallow-copied - protects somewhat from mutations
     }
 
     linkPackage(packageDirectory, options) {
-      const linkOptions = _.clone(options);
+      const linkOptions = {
+        ...options,
+        commandArgs: [packageDirectory, '--dev']
+      };
 
-      linkOptions.commandArgs = [packageDirectory, '--dev'];
       return new Link().run(linkOptions);
     }
 
