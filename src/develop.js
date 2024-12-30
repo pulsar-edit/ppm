@@ -59,7 +59,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
         throw `No repository URL found for package: ${packageName}`;
       }
 
-      const message = request.getErrorMessage(body, error);
+      const message = request.getErrorMessage(body, null);
       throw `Request for package information failed: ${message}`;
     }
 
