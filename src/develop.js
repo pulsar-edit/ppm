@@ -47,7 +47,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
         url: `${config.getAtomPackagesUrl()}/${packageName}`,
         json: true
       };
-      const response = await request.get(requestSettings).catch(error => Promise.reject(`Request for package information failed: ${error.message}`));
+      const response = await request.get(requestSettings).catch(error => Promise.reject(`Request for package information failed: ${request.getErrorMessage(null, error)}`));
       const body = response.body ?? {};
 
       if (response.statusCode === 200) {
@@ -110,7 +110,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
 
       try {
         const repoUrl = await this.getRepositoryUrl(packageName);
-        
+
         await this.cloneRepository(repoUrl, packageDirectory, options);
         await this.installDependencies(packageDirectory, options);
         await this.linkPackage(packageDirectory, options);
