@@ -73,11 +73,11 @@ View information about a package/theme.\
         url: `${config.getAtomPackagesUrl()}/${packageName}`,
         json: true
       };
-        
+
       const response = await request.get(requestSettings);
       const body = response.body ?? {};
       if (response.statusCode !== 200) {
-        const message = body.message ?? body.error ?? body;
+        const message = request.getErrorMessage(body, null);
         throw `Requesting package failed: ${message}`;
       }
 
