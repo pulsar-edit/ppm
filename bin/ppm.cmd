@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 set script_name=%~f0
-if %script_name% == 'ppm-next.cmd' (
+if "%script_name%" == 'ppm-next.cmd' (
   set ATOM_BASE_NAME=pulsar-next
 ) else (
   set ATOM_BASE_NAME=pulsar
