@@ -27,8 +27,8 @@ const downloadFileToLocation = function(url, filename, callback) {
     .get(url)
     .on('response', response => {
       if (response.statusCode === 404) {
-      console.error('download not found:', url);
-      process.exit(1);
+        console.error('download not found:', url);
+        process.exit(1);
       }
     })
     .pipe(stream);
