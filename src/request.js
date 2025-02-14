@@ -15,7 +15,7 @@ function loadNpm() {
     userconfig: config.getUserConfigPath(),
     globalconfig: config.getGlobalConfigPath()
   };
-  return new Promise((resolve, reject) => 
+  return new Promise((resolve, reject) =>
     void npm.load(npmOptions, (error, value) => void(error != null ? reject(error) : resolve(value)))
   );
 };
@@ -114,7 +114,13 @@ module.exports = {
     if (err?.status === 503) {
       return `${err.response.req.host} is temporarily unavailable, please try again later.`;
     } else {
-      return err?.response?.body ?? err?.response?.error ?? err ?? body.message ?? body.error ?? body;
+      let msg = err?.response?.body?.message ?? err?.response?.body ?? err?.response?.error ?? err ?? body.message ?? body.error ?? body;
+      if (typeof msg === "object") {
+        // If we found a message that's still an object lets make sure it'll
+        // still be readable for users
+        msg = JSON.stringify(msg);
+      }
+      return msg;
     }
   },
 
