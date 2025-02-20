@@ -3,7 +3,7 @@ const path = require('path');
 
 const async = require('async');
 const yargs = require('yargs');
-const read = require('read');
+const { read } = require('read');
 const semver = require('semver');
 const Git = require('git-utils');
 
@@ -175,16 +175,10 @@ available updates.\
       return updates;
     }
 
-    promptForConfirmation() {
-      return new Promise((resolve, reject) => {
-        read({prompt: 'Would you like to install these updates? (yes)', edit: true}, (error, answer) => {
-          if (error != null) {
-            return void reject(error);
-          }
-          answer = answer ? answer.trim().toLowerCase() : 'yes';
-          resolve((answer === 'y') || (answer === 'yes'));
-        });
-      });
+    async promptForConfirmation() {
+      let answer = await read({prompt: 'Would you like to install these updates? (yes)', edit: true});
+      answer = answer ? answer.trim().toLowerCase() : 'yes';
+      return ['y', 'yes'].includes(answer);
     }
 
     async installUpdates(updates) {
