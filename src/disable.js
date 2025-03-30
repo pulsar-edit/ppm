@@ -59,13 +59,13 @@ Disables the named package(s).\
         try {
           const installedPackages = await this.getInstalledPackages();
           const installedPackageNames = Array.from(installedPackages).map((pkg) => pkg.name);
-          const uninstalledPackageNames = _.difference(packageNames, installedPackageNames);
-          if (uninstalledPackageNames.length > 0) {
-            console.log(`Not Installed:\n  ${uninstalledPackageNames.join('\n  ')}`);
+          const notInstalledPackageNames = packageNames.filter(elem => !installedPackageNames.includes(elem));
+          if (notInstalledPackageNames.length > 0) {
+            console.log(`Not Installed:\n  ${notInstalledPackageNames.join('\n  ')}`);
           }
 
           // only installed packages can be disabled
-          packageNames = _.difference(packageNames, uninstalledPackageNames);
+          packageNames = packageNames.filter(elem => installedPackageNames.includes(elem));
 
           if (packageNames.length === 0) {
             return "Please specify a package to disable"; //errors as return values atm
@@ -73,7 +73,7 @@ Disables the named package(s).\
 
           const keyPath = '*.core.disabledPackages';
           const disabledPackages = _.valueForKeyPath(settings, keyPath) ?? [];
-          const result = _.union(disabledPackages, packageNames);
+          const result = Array.from(new Set([...disabledPackages, ...packageNames])); // create a union of the two arrays (no duplicates) //TODO use proper set operations when the runtime allows them
           _.setValueForKeyPath(settings, keyPath, result);
 
           try {

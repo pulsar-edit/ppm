@@ -68,30 +68,29 @@ View information about a package/theme.\
       }
     }
 
-    getPackage(packageName, options) {
+    async getPackage(packageName, options) {
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${packageName}`,
         json: true
       };
-      return new Promise((resolve, reject) => {
-        request.get(requestSettings, (error, response, body) => {
-          body ??= {};
-          if (error != null) {
-            return void reject(error);
-          }
-          if (response.statusCode !== 200) {
-            const message = body.message ?? body.error ?? body;
-            return void reject(`Requesting package failed: ${message}`);
-          }
+        
+      const response = await request.get(requestSettings);
+      const body = response.body ?? {};
+      if (response.statusCode !== 200) {
+        const message = body.message ?? body.error ?? body;
+        throw `Requesting package failed: ${message}`;
+      }
 
-          this.getLatestCompatibleVersion(body, options).then(version => {
-            const {name, readme, downloads, stargazers_count} = body;
-            const metadata = body.versions?.[version] ?? {name};
-            const pack = _.extend({}, metadata, {readme, downloads, stargazers_count});
-            resolve(pack);
-          });
-        });
-      });
+      const version = await this.getLatestCompatibleVersion(body, options);
+      const {name, readme, downloads, stargazers_count} = body;
+      const metadata = body.versions?.[version] ?? {name};
+      const pack = {
+        ...metadata,
+        readme,
+        downloads,
+        stargazers_count
+      };
+      return pack;
     }
 
     async run(options) {

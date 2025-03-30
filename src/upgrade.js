@@ -1,10 +1,9 @@
 
 const path = require('path');
 
-const _ = require('underscore-plus');
 const async = require('async');
 const yargs = require('yargs');
-const read = require('read');
+const { read } = require('read');
 const semver = require('semver');
 const Git = require('git-utils');
 
@@ -94,49 +93,43 @@ available updates.\
       return fs.existsSync(repoGitFolderPath);
     }
 
-    getLatestVersion(pack) {
+    async getLatestVersion(pack) {
       const requestSettings = {
         url: `${config.getAtomPackagesUrl()}/${pack.name}`,
         json: true
       };
-      return new Promise((resolve, reject) => {
-        request.get(requestSettings, (error, response, body) => {
-          body ??= {};
-          if (error != null) {
-            return void reject(`Request for package information failed: ${error.message}`);
-          }
-          if (response.statusCode === 404) {
-            return void resolve();
-          }
-          if (response.statusCode !== 200) {
-            const message = body.message ?? body.error ?? body;
-            return void reject(`Request for package information failed: ${message}`);
-          }
+      const response = await request.get(requestSettings).catch(error => Promise.reject(`Request for package information failed: ${error.message}`));
+      const body = response.body ?? {};
+      if (response.statusCode === 404) {
+        return;
+      }
+      if (response.statusCode !== 200) {
+        const message = body.message ?? body.error ?? body;
+        throw `Request for package information failed: ${message}`;
+      }
 
-          const atomVersion = this.installedAtomVersion;
-          let latestVersion = pack.version;
-          const object = body?.versions ?? {};
-          for (let version in object) {
-            const metadata = object[version];
-            if (!semver.valid(version)) { continue; }
-            if (!metadata) { continue; }
+      const atomVersion = this.installedAtomVersion;
+      let latestVersion = pack.version;
+      const object = body?.versions ?? {};
+      for (let version in object) {
+        const metadata = object[version];
+        if (!semver.valid(version)) { continue; }
+        if (!metadata) { continue; }
 
-            const engine = metadata.engines?.pulsar || metadata.engines?.atom || '*';
-            if (!semver.validRange(engine)) { continue; }
-            if (!semver.satisfies(atomVersion, engine)) { continue; }
+        const engine = metadata.engines?.pulsar || metadata.engines?.atom || '*';
+        if (!semver.validRange(engine)) { continue; }
+        if (!semver.satisfies(atomVersion, engine)) { continue; }
 
-            if (!semver.gt(version, latestVersion)) { continue; }
+        if (!semver.gt(version, latestVersion)) { continue; }
 
-            latestVersion = version;
-          }
+        latestVersion = version;
+      }
 
-          if ((latestVersion === pack.version) || !this.hasRepo(pack)) {
-            return void resolve();
-          }
+      if ((latestVersion === pack.version) || !this.hasRepo(pack)) {
+        return;
+      }
 
-          resolve(latestVersion);
-        });
-      });
+      return latestVersion;
     }
 
     async getLatestSha(pack) {
@@ -177,21 +170,15 @@ available updates.\
       };
 
       let updates = await async.mapLimit(packages, 10, getLatestVersionOrSha);
-      updates = _.filter(updates, update => (update.latestVersion != null) || (update.sha != null));
+      updates = updates.filter(update => (update.latestVersion != null) || (update.sha != null));
       updates.sort((updateA, updateB) => updateA.pack.name.localeCompare(updateB.pack.name));
       return updates;
     }
 
-    promptForConfirmation() {
-      return new Promise((resolve, reject) => {
-        read({prompt: 'Would you like to install these updates? (yes)', edit: true}, (error, answer) => {
-          if (error != null) {
-            return void reject(error);
-          }
-          answer = answer ? answer.trim().toLowerCase() : 'yes';
-          resolve((answer === 'y') || (answer === 'yes'));
-        });
-      });
+    async promptForConfirmation() {
+      let answer = await read({prompt: 'Would you like to install these updates? (yes)', edit: true});
+      answer = answer ? answer.trim().toLowerCase() : 'yes';
+      return ['y', 'yes'].includes(answer);
     }
 
     async installUpdates(updates) {

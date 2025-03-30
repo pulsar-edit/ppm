@@ -1,5 +1,4 @@
 
-const _ = require('underscore-plus');
 const plist = require('plist');
 const {ScopeSelector, ready} = require('second-mate');
 
@@ -180,9 +179,9 @@ atom-text-editor.is-focused .line.cursor-line`,
 
     if (fontStyle) {
       const fontStyles = fontStyle.split(/\s+/);
-      if (_.contains(fontStyles, 'bold')) { properties['font-weight'] = 'bold'; }
-      if (_.contains(fontStyles, 'italic')) { properties['font-style'] = 'italic'; }
-      if (_.contains(fontStyles, 'underline')) { properties['text-decoration'] = 'underline'; }
+      if (fontStyles.includes('bold')) { properties['font-weight'] = 'bold'; }
+      if (fontStyles.includes('italic')) { properties['font-style'] = 'italic'; }
+      if (fontStyles.includes('underline')) { properties['text-decoration'] = 'underline'; }
     }
 
     if (foreground) { properties['color'] = this.translateColor(foreground); }

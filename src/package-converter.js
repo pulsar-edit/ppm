@@ -100,21 +100,21 @@ class PackageConverter {
       settings.shellVariables = shellVariables;
     }
 
-    const editorProperties = _.compactObject({
+    const editorPropertyEntries = Object.entries({
       commentStart: _.valueForKeyPath(settings, 'shellVariables.TM_COMMENT_START'),
       commentEnd: _.valueForKeyPath(settings, 'shellVariables.TM_COMMENT_END'),
       increaseIndentPattern: settings.increaseIndentPattern,
       decreaseIndentPattern: settings.decreaseIndentPattern,
       foldEndPattern: settings.foldingStopMarker,
       completions: settings.completions
-    });
-    if (!_.isEmpty(editorProperties)) { return {editor: editorProperties}; }
+    }).filter(([_, value]) => value != null);
+    if (editorPropertyEntries.length > 0) { return {editor: Object.fromEntries(editorPropertyEntries)}; }
   }
 
   readFileSync(filePath) {
-    if (_.contains(this.plistExtensions, path.extname(filePath))) {
+    if (this.plistExtensions.includes(path.extname(filePath))) {
       return plist.parse(fs.readFileSync(filePath, 'utf8'));
-    } else if (_.contains(['.json', '.cson'], path.extname(filePath))) {
+    } else if (['.json', '.cson'].includes(path.extname(filePath))) {
       return CSON.readFileSync(filePath);
     }
   }
@@ -134,9 +134,9 @@ class PackageConverter {
     const destinationPath = path.join(destinationDir, destinationName);
 
     let contents;
-    if (_.contains(this.plistExtensions, path.extname(sourcePath))) {
+    if (this.plistExtensions.includes(path.extname(sourcePath))) {
       contents = plist.parse(fs.readFileSync(sourcePath, 'utf8'));
-    } else if (_.contains(['.json', '.cson'], path.extname(sourcePath))) {
+    } else if (['.json', '.cson'].includes(path.extname(sourcePath))) {
       contents = CSON.readFileSync(sourcePath);
     }
 
@@ -244,7 +244,7 @@ class PackageConverter {
         const value = properties[key];
         preferencesBySelector[selector] ??= {};
         preferencesBySelector[selector][key] = preferencesBySelector[selector][key] != null 
-          ? _.extend(value, preferencesBySelector[selector][key])
+          ? { ...value, ...preferencesBySelector[selector][key] }
           : value;
       }
     }

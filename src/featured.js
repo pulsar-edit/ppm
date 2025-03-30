@@ -28,7 +28,7 @@ List the Pulsar packages and themes that are currently featured.\
       return options.boolean('json').describe('json', 'Output featured packages as JSON array');
     }
 
-    getFeaturedPackagesByType(atomVersion, packageType) {
+    async getFeaturedPackagesByType(atomVersion, packageType) {
 
       const requestSettings = {
         url: `${config.getAtomApiUrl()}/${packageType}/featured`,
@@ -36,21 +36,23 @@ List the Pulsar packages and themes that are currently featured.\
       };
       if (atomVersion) { requestSettings.qs = {engine: atomVersion}; }
 
-      return new Promise((resolve, reject) => void request.get(requestSettings, function(error, response, body) {
-        body ??= [];
-        if (error != null) {
-          return void reject(error);
-        }
-        if (response.statusCode === 200) {
-          let packages = body.filter(pack => (pack != null ? pack.releases : undefined) != null);
-          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => _.extend({}, metadata, {readme, downloads, stargazers_count}));
-          packages = _.sortBy(packages, 'name');
-          return void resolve(packages);
-        }
-        
-        const message = request.getErrorMessage(body, error);
-        reject(`Requesting packages failed: ${message}`);
-      }));
+      const response = await request.get(requestSettings);
+      const body = response.body ?? [];
+      if (response.statusCode === 200) {
+          let packages = body.filter(pack => pack?.releases != null);
+          packages = packages.map(({readme, metadata, downloads, stargazers_count}) => ({
+            ...metadata,
+            readme,
+            downloads,
+            stargazers_count 
+          }));
+
+          packages.sort((left, right) => left.name.localeCompare(right.name));
+          return packages;
+      }
+      
+      const message = request.getErrorMessage(body, error);
+      throw `Requesting packages failed: ${message}`;
     }
 
     async getAllFeaturedPackages(atomVersion) {

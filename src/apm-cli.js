@@ -1,7 +1,6 @@
 const {spawn} = require('child_process');
 const path = require('path');
 
-const _ = require('underscore-plus');
 const colors = require('colors');
 const npm = require('npm');
 const yargs = require('yargs');
@@ -215,12 +214,7 @@ module.exports = {
       if (callbackCalled) { return; }
       callbackCalled = true;
       if (error != null) {
-        let message;
-        if (_.isString(error)) {
-          message = error;
-        } else {
-          message = error.message != null ? error.message : error;
-        }
+        const message = typeof error === 'string' ? error : error.message ?? error;
 
         if (message === 'canceled') {
           // A prompt was canceled so just log an empty line

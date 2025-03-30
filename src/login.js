@@ -1,6 +1,6 @@
 
 const yargs = require('yargs');
-const read = require('read');
+const { read } = require('read');
 const open = require('open');
 
 const auth = require('./auth');
@@ -54,13 +54,7 @@ be used to identify you when publishing packages.\
     }
 
     prompt(options) {
-      return new Promise((resolve, reject) =>
-        void read(options, (error, answer) =>
-          error != null
-          ? void reject(error)
-          : void resolve(answer)
-        )
-      );
+      return read(options);
     }
 
     async welcomeMessage() {

@@ -1,7 +1,6 @@
 
 const path = require('path');
 
-const _ = require('underscore-plus');
 const async = require('async');
 const CSON = require('season');
 const yargs = require('yargs');
@@ -32,7 +31,7 @@ Run \`ppm stars\` to see all your starred packages.\
       return options.boolean('installed').describe('installed', 'Star all packages in ~/.pulsar/packages');
     }
 
-    starPackage(packageName, param) {
+    async starPackage(packageName, param) {
       param ??= {};
       const {ignoreUnpublishedPackages, token} = param;
       if (process.platform === 'darwin') { process.stdout.write('\u2B50  '); }
@@ -45,27 +44,19 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       };
 
-      return new Promise((resolve, reject) => {
-        request.post(requestSettings, (error, response, body) => {
-          body ??= {};
-          if (error != null) {
-            this.logFailure();
-            return void reject(error);
-          }
-          if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
-            process.stdout.write('skipped (not published)\n'.yellow);
-            return void reject();
-          }
-          if (response.statusCode !== 200) {
-            this.logFailure();
-            const message = request.getErrorMessage(body, error);
-            return void reject(`Starring package failed: ${message}`);
-          }
+      const response = await request.post(requestSettings).catch(error => { this.logFailure(); throw error; });
+      const body = response.body ?? {};
+      if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
+        process.stdout.write('skipped (not published)\n'.yellow);
+        return Promise.reject();
+      }
+      if (response.statusCode !== 200) {
+        this.logFailure();
+        const message = request.getErrorMessage(body, error);
+        throw `Starring package failed: ${message}`;
+      }
 
-          this.logSuccess();
-          resolve();
-        });
-      });
+      this.logSuccess();
     }
 
     getInstalledPackageNames() {
@@ -85,7 +76,7 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       }
 
-      return _.uniq(installedPackages);
+      return Array.from(new Set(installedPackages)); // Unique only array
     }
 
     async run(options) {

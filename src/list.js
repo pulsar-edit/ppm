@@ -1,7 +1,6 @@
 
 const path = require('path');
 
-const _ = require('underscore-plus');
 const CSON = require('season');
 const yargs = require('yargs');
 

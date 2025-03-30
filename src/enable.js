@@ -42,19 +42,19 @@ Enables the named package(s).\
       const keyPath = '*.core.disabledPackages';
       const disabledPackages = _.valueForKeyPath(settings, keyPath) ?? [];
 
-      const errorPackages = _.difference(packageNames, disabledPackages);
+      const errorPackages = packageNames.filter(elem => !disabledPackages.includes(elem));
       if (errorPackages.length > 0) {
         console.log(`Not Disabled:\n  ${errorPackages.join('\n  ')}`);
       }
 
-      // can't enable a package that isn't disabled
-      packageNames = _.difference(packageNames, errorPackages);
+      // can only enable a package that is disabled
+      packageNames = packageNames.filter(elem => disabledPackages.includes(elem));
 
       if (packageNames.length === 0) {
         return "Please specify a package to enable"; //errors as retval atm
       }
 
-      const result = _.difference(disabledPackages, packageNames);
+      const result = disabledPackages.filter(elem => !packageNames.includes(elem));
       _.setValueForKeyPath(settings, keyPath, result);
 
       try {
