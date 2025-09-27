@@ -53,6 +53,11 @@ jobs:
         # 'distutils', which has been removed
         run: python3 -m pip install setuptools
 
+      - name: Update node-gyp (NodeJS v14, Windows)
+        # Need newer node-gyp to support newer Visual Studio versions
+        if: ${{ matrix.node_version == 14 && runner.os == 'Windows' }}
+        run: yarn global add node-gyp@11
+
       - name: Install dependencies
         if: ${{ matrix.node_version != 14 }}
         run: yarn install
