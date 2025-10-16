@@ -56,7 +56,7 @@ jobs:
       - name: Update node-gyp (NodeJS v14, Windows)
         # Need newer node-gyp to support newer Visual Studio versions
         if: ${{ matrix.node_version == 14 && runner.os == 'Windows' }}
-        run: yarn global add --ignore-engines node-gyp@11
+        run: yarn global add --ignore-engines node-gyp@10
 
       - name: Install dependencies
         if: ${{ matrix.node_version != 14 }}
