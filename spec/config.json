@@ -1,4 +1,4 @@
 {
-  "nodeVersion": "v12.2.3",
+  "nodeVersion": "v20.11.1",
   "node-version-comment": "Note: This 'nodeVersion' string is used by various spec files. Update it to match, if/when the related (Node dist) fixture files (node[...]headers.tar.gz, node[_x64].lib, and SHASUMS256.txt) are updated for a new Node or Electron version."
 }
