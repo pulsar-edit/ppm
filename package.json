@@ -36,7 +36,7 @@
     "plist": "3",
     "read": "^3",
     "season": "^6.0.2",
-    "second-mate": "https://github.com/pulsar-edit/second-mate.git#9686771",
+    "second-mate": "git+https://github.com/pulsar-edit/second-mate.git#9686771",
     "semver": "^7.3.4",
     "superagent": "^8.0.9",
     "superagent-proxy": "^3.0.0",
