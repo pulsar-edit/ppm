@@ -3,6 +3,9 @@ const temp = require('temp');
 const fs = require('fs');
 const apm = require('../src/apm-cli');
 
+// Since we're meant to test the APM CLI directly in this spec, all usages of
+// `apm.run` are tested directly instead of being wrapped in the `apmRun` async
+// helper.
 describe('apm command line interface', () => {
   beforeEach(() => {
     silenceOutput();

@@ -94,8 +94,7 @@ describe('apm clean', () => {
     );
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['clean'], callback);
-    await waitsFor('waiting for command to complete', () => callback.calls.count() > 0);
+    await apmRun(['clean'], callback);
     expect(callback.calls.mostRecent().args[0]).toBeUndefined();
     expect(fs.existsSync(removedPath)).toBeFalsy();
   });
@@ -110,8 +109,7 @@ describe('apm clean', () => {
     );
 
     const callback = jasmine.createSpy('callback');
-    apm.run(['clean'], callback);
-    await waitsFor('waiting for command to complete', () => callback.calls.count() > 0);
+    await apmRun(['clean'], callback);
     expect(callback.calls.mostRecent().args[0]).toBeUndefined();
     expect(fs.existsSync(removedPath)).toBeFalsy();
   });

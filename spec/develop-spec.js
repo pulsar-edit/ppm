@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs-plus');
 const temp = require('temp');
-const apm = require('../src/apm-cli');
 const Develop = require('../src/develop');
 
 describe('apm develop', () => {
@@ -24,8 +23,7 @@ describe('apm develop', () => {
         _packageName => Promise.reject('Here is the error')
       );
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
-      await waitsFor('waiting for develop to complete', () => callback.calls.count() === 1);
+      await apmRun(['develop', 'fake-package'], callback);
       expect(callback.calls.mostRecent().args[0]).toBe('Here is the error');
       expect(fs.existsSync(repoPath)).toBeFalsy();
       expect(fs.existsSync(linkedRepoPath)).toBeFalsy();
@@ -44,8 +42,7 @@ describe('apm develop', () => {
         }
       );
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
-      await waitsFor('waiting for develop to complete', () => callback.calls.count() === 1);
+      await apmRun(['develop', 'fake-package'], callback);
       expect(callback.calls.mostRecent().args[0]).toBeFalsy();
       expect(fs.existsSync(repoPath)).toBeTruthy();
       expect(fs.existsSync(path.join(repoPath, 'Syntaxes', 'Makefile.plist'))).toBeTruthy();
@@ -59,8 +56,7 @@ describe('apm develop', () => {
       fs.makeTreeSync(repoPath);
       fs.writeFileSync(path.join(repoPath, 'package.json'), '');
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
-      await waitsFor('waiting for develop to complete', () => callback.calls.count() === 1);
+      await apmRun(['develop', 'fake-package'], callback);
       expect(callback.calls.mostRecent().args[0]).toBeFalsy();
       expect(fs.existsSync(repoPath)).toBeTruthy();
       expect(fs.existsSync(linkedRepoPath)).toBeTruthy();
