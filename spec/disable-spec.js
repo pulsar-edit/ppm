@@ -3,7 +3,6 @@ const wrench = require('wrench');
 const path = require('path');
 const temp = require('temp');
 const CSON = require('season');
-const apm = require('../src/apm-cli');
 
 describe('apm disable', () => {
   beforeEach(() => {
@@ -11,10 +10,9 @@ describe('apm disable', () => {
     spyOnToken();
   });
 
-  it('disables an enabled package', () => {
+  it('disables an enabled package', async () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
-    const callback = jasmine.createSpy('callback');
     const configFilePath = path.join(atomHome, 'config.cson');
 
     CSON.writeFileSync(configFilePath, {
@@ -28,33 +26,37 @@ describe('apm disable', () => {
     const packagesPath = path.join(atomHome, 'packages');
     const packageSrcPath = path.join(__dirname, 'fixtures');
     fs.makeTreeSync(packagesPath);
-    wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module'), path.join(packagesPath, 'test-module'));
-    wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module-two'), path.join(packagesPath, 'test-module-two'));
-    wrench.copyDirSyncRecursive(path.join(packageSrcPath, 'test-module-three'), path.join(packagesPath, 'test-module-three'));
+    wrench.copyDirSyncRecursive(
+      path.join(packageSrcPath, 'test-module'),
+      path.join(packagesPath, 'test-module')
+    );
+    wrench.copyDirSyncRecursive(
+      path.join(packageSrcPath, 'test-module-two'),
+      path.join(packagesPath, 'test-module-two')
+    );
+    wrench.copyDirSyncRecursive(
+      path.join(packageSrcPath, 'test-module-three'),
+      path.join(packagesPath, 'test-module-three')
+    );
 
-    runs(() => {
-      apm.run(['disable', 'test-module-two', 'not-installed', 'test-module-three'], callback);
-    });
-    waitsFor('waiting for disable to complete', () => callback.callCount > 0);
-    runs(() => {
-      expect(console.log).toHaveBeenCalled();
-      expect(console.log.argsForCall[0][0]).toMatch(/Not Installed:\s*not-installed/);
-      expect(console.log.argsForCall[1][0]).toMatch(/Disabled:\s*test-module-two/);
-      const config = CSON.readFileSync(configFilePath);
-      expect(config).toEqual({
-        '*': {
-          core: {
-            disabledPackages: ['test-module', 'test-module-two', 'test-module-three']
-          }
+    await apmRun(['disable', 'test-module-two', 'not-installed', 'test-module-three']);
+
+    expect(console.log).toHaveBeenCalled();
+    expect(console.log.calls.argsFor(0)[0]).toMatch(/Not Installed:\s*not-installed/);
+    expect(console.log.calls.argsFor(1)[0]).toMatch(/Disabled:\s*test-module-two/);
+    const config = CSON.readFileSync(configFilePath);
+    expect(config).toEqual({
+      '*': {
+        core: {
+          disabledPackages: ['test-module', 'test-module-two', 'test-module-three']
         }
-      });
+      }
     });
   });
 
-  it('does nothing if a package is already disabled', () => {
+  it('does nothing if a package is already disabled', async () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
-    const callback = jasmine.createSpy('callback');
     const configFilePath = path.join(atomHome, 'config.cson');
 
     CSON.writeFileSync(configFilePath, {
@@ -65,49 +67,31 @@ describe('apm disable', () => {
       }
     });
 
-    runs(() => {
-      apm.run(['disable', 'vim-mode', 'metrics'], callback);
-    });
-    waitsFor('waiting for disable to complete', () => callback.callCount > 0);
-    runs(() => {
-      const config = CSON.readFileSync(configFilePath);
-      expect(config).toEqual({
-        '*': {
-          core: {
-            disabledPackages: ['vim-mode', 'file-icons', 'metrics', 'exception-reporting']
-          }
+    await apmRun(['disable', 'vim-mode', 'metrics']);
+    const config = CSON.readFileSync(configFilePath);
+    expect(config).toEqual({
+      '*': {
+        core: {
+          disabledPackages: ['vim-mode', 'file-icons', 'metrics', 'exception-reporting']
         }
-      });
+      }
     });
   });
 
-  it('produces an error if config.cson doesn\'t exist', () => {
+  it('produces an error if config.cson doesn\'t exist', async () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
-    const callback = jasmine.createSpy('callback');
-
-    runs(() => {
-      apm.run(['disable', 'vim-mode'], callback);
-    });
-    waitsFor('waiting for disable to complete', () => callback.callCount > 0);
-    runs(() => {
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
-    });
+    await apmRun(['disable', 'vim-mode']);
+    expect(console.error).toHaveBeenCalled();
+    expect(console.error.calls.argsFor(0)[0].length).toBeGreaterThan(0);
   });
 
-  it('complains if user supplies no packages', () => {
+  it('complains if user supplies no packages', async () => {
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
-    const callback = jasmine.createSpy('callback');
 
-    runs(() => {
-      apm.run(['disable'], callback);
-    });
-    waitsFor('waiting for disable to complete', () => callback.callCount > 0);
-    runs(() => {
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.argsForCall[0][0].length).toBeGreaterThan(0);
-    });
+    await apmRun(['disable']);
+    expect(console.error).toHaveBeenCalled();
+    expect(console.error.calls.argsFor(0)[0].length).toBeGreaterThan(0);
   });
 });

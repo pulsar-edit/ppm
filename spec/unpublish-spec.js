@@ -1,13 +1,12 @@
 const express = require('express');
 const http = require('http');
 const temp = require('temp');
-const apm = require('../src/apm-cli');
 const Unpublish = require('../src/unpublish');
 
 describe('apm unpublish', () => {
   let server, unpublishPackageCallback, unpublishVersionCallback;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     silenceOutput();
     spyOnToken();
 
@@ -16,140 +15,115 @@ describe('apm unpublish', () => {
 
     const app = express();
 
-    app.delete('/packages/test-package', (request, response) => {
+    app.delete('/packages/test-package', (_request, response) => {
       unpublishPackageCallback();
       response.status(204).send(204);
     });
-    app.delete('/packages/test-package/versions/1.0.0', (request, response) => {
+    app.delete('/packages/test-package/versions/1.0.0', (_request, response) => {
       unpublishVersionCallback();
       response.status(204).send(204);
     });
 
     server = http.createServer(app);
 
-    let live = false;
-    server.listen(3000, '127.0.0.1', () => {
-      process.env.ATOM_HOME = temp.mkdirSync('apm-home-dir-');
-      process.env.ATOM_API_URL = 'http://localhost:3000';
-      live = true;
+    await new Promise((resolve) => {
+      server.listen(3000, '127.0.0.1', () => {
+        process.env.ATOM_HOME = temp.mkdirSync('apm-home-dir-');
+        process.env.ATOM_API_URL = 'http://localhost:3000';
+        resolve();
+      });
     });
-    waitsFor(() => live);
   });
 
-  afterEach(() => {
-    let done = false;
-    server.close(() => {
-      done = true;
-    });
-    waitsFor(() => done);
+  afterEach(async () => {
+    await new Promise((resolve) => server.close(resolve));
   });
 
   describe('when no version is specified', () => {
-    it('unpublishes the package', () => {
+    it('unpublishes the package', async () => {
       const callback = jasmine.createSpy('callback');
-      apm.run(['unpublish', '--force', 'test-package'], callback);
+      await apmRun(['unpublish', '--force', 'test-package'], callback);
 
-      waitsFor('waiting for unpublish command to complete', () => callback.callCount > 0);
-      runs(() => {
-        expect(callback.argsForCall[0][0]).toBeUndefined();
-        expect(unpublishPackageCallback.callCount).toBe(1);
-        expect(unpublishVersionCallback.callCount).toBe(0);
-      });
+      expect(callback.calls.argsFor(0)[0]).toBeUndefined();
+      expect(unpublishPackageCallback.calls.count()).toBe(1);
+      expect(unpublishVersionCallback.calls.count()).toBe(0);
     });
 
     describe('when --force is not specified', () => {
-      it('prompts to unpublish ALL versions', () => {
+      it('prompts to unpublish ALL versions', async () => {
         const callback = jasmine.createSpy('callback');
         spyOn(Unpublish.prototype, 'prompt');
-        apm.run(['unpublish', 'test-package'], callback);
+        await apmRun(['unpublish', 'test-package'], callback);
         waitsFor('waiting for prompt to be called', () => {
-          return Unpublish.prototype.prompt.argsForCall[0][0].match(/unpublish ALL VERSIONS of 'test-package'.*irreversible/);
+          return Unpublish.prototype.prompt.calls.argsFor(0)[0].match(/unpublish ALL VERSIONS of 'test-package'.*irreversible/);
         });
       });
 
       describe('when the user accepts the default answer', () => {
-        it('does not unpublish the package', () => {
+        it('does not unpublish the package', async () => {
           const callback = jasmine.createSpy('callback');
-          spyOn(Unpublish.prototype, 'prompt').andCallFake(_question => Promise.resolve(''));
+          spyOn(Unpublish.prototype, 'prompt').and.callFake(_question => Promise.resolve(''));
           spyOn(Unpublish.prototype, 'unpublishPackage');
-          apm.run(['unpublish', 'test-package'], callback);
+          await apmRun(['unpublish', 'test-package'], callback);
 
-          waitsFor('waiting for unpublish command to complete', () => callback.callCount > 0);
-
-          runs(() => {
-            expect(Unpublish.prototype.unpublishPackage).not.toHaveBeenCalled();
-            expect(callback.argsForCall[0][0]).toMatch(/Cancelled/);
-          });
+          expect(Unpublish.prototype.unpublishPackage).not.toHaveBeenCalled();
+          expect(callback.calls.argsFor(0)[0]).toMatch(/Cancelled/);
         });
       });
     });
 
     describe('when the package does not exist', () => {
-      it('calls back with an error', () => {
+      it('calls back with an error', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['unpublish', '--force', 'not-a-package'], callback);
+        await apmRun(['unpublish', '--force', 'not-a-package'], callback);
 
-        waitsFor('waiting for unpublish command to complete', () => callback.callCount > 0);
-
-        runs(() => {
-          expect(callback.argsForCall[0][0]).not.toBeUndefined();
-          expect(unpublishPackageCallback.callCount).toBe(0);
-          expect(unpublishVersionCallback.callCount).toBe(0);
-        });
+        expect(callback.calls.argsFor(0)[0]).not.toBeUndefined();
+        expect(unpublishPackageCallback.calls.count()).toBe(0);
+        expect(unpublishVersionCallback.calls.count()).toBe(0);
       });
     });
   });
 
   describe('when a version is specified', () => {
-    it('unpublishes the version', () => {
+    it('unpublishes the version', async () => {
       const callback = jasmine.createSpy('callback');
-      apm.run(['unpublish', '--force', 'test-package@1.0.0'], callback);
+      await apmRun(['unpublish', '--force', 'test-package@1.0.0'], callback);
 
-      waitsFor('waiting for unpublish command to complete', () => callback.callCount > 0);
-      runs(() => {
-        expect(callback.argsForCall[0][0]).toBeUndefined();
-        expect(unpublishPackageCallback.callCount).toBe(0);
-        expect(unpublishVersionCallback.callCount).toBe(1);
-      });
+      expect(callback.calls.argsFor(0)[0]).toBeUndefined();
+      expect(unpublishPackageCallback.calls.count()).toBe(0);
+      expect(unpublishVersionCallback.calls.count()).toBe(1);
     });
 
     describe('when --force is not specified', () => {
-      it('prompts to unpublish that version', () => {
-        const callback = jasmine.createSpy('callback');
+      it('prompts to unpublish that version', async () => {
         spyOn(Unpublish.prototype, 'prompt');
-        apm.run(['unpublish', 'test-package@1.0.0'], callback);
+        await apmRun(['unpublish', 'test-package@1.0.0']);
         waitsFor('waiting for prompt to be called', () => {
-          return Unpublish.prototype.prompt.argsForCall[0][0].match(/unpublish 'test-package@1.0.0'/);
+          return Unpublish.prototype.prompt.calls.argsFor(0)[0].match(/unpublish 'test-package@1.0.0'/);
         });
       });
 
       describe('when the user accepts the default answer', () => {
-        it('does not unpublish the package', () => {
+        it('does not unpublish the package', async () => {
           const callback = jasmine.createSpy('callback');
-          spyOn(Unpublish.prototype, 'prompt').andCallFake(_question => Promise.resolve(''));
+          spyOn(Unpublish.prototype, 'prompt').and.callFake(_question => Promise.resolve(''));
           spyOn(Unpublish.prototype, 'unpublishPackage');
-          apm.run(['unpublish', 'test-package'], callback);
+          await apmRun(['unpublish', 'test-package'], callback);
 
-          waitsFor('waiting for unpublish command to complete', () => callback.callCount > 0);
-          runs(() => {
-            expect(Unpublish.prototype.unpublishPackage).not.toHaveBeenCalled();
-            expect(callback.argsForCall[0][0]).toMatch(/Cancelled/);
-          });
+          expect(Unpublish.prototype.unpublishPackage).not.toHaveBeenCalled();
+          expect(callback.calls.argsFor(0)[0]).toMatch(/Cancelled/);
         });
       });
     });
 
     describe('when the version does not exist', () => {
-      it('calls back with an error', () => {
+      it('calls back with an error', async () => {
         const callback = jasmine.createSpy('callback');
-        apm.run(['unpublish', '--force', 'test-package@2.0.0'], callback);
+        await apmRun(['unpublish', '--force', 'test-package@2.0.0'], callback);
 
-        waitsFor('waiting for unpublish command to complete', () => callback.callCount > 0);
-        runs(() => {
-          expect(callback.argsForCall[0][0]).not.toBeUndefined();
-          expect(unpublishPackageCallback.callCount).toBe(0);
-          expect(unpublishVersionCallback.callCount).toBe(0);
-        });
+        expect(callback.calls.argsFor(0)[0]).not.toBeUndefined();
+        expect(unpublishPackageCallback.calls.count()).toBe(0);
+        expect(unpublishVersionCallback.calls.count()).toBe(0);
       });
     });
   });

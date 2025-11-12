@@ -1,65 +1,51 @@
 const path = require('path');
 const express = require('express');
 const http = require('http');
-const apm = require('../src/apm-cli');
 
 describe('apm featured', () => {
   let server = null;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     silenceOutput();
     spyOnToken();
     const app = express();
 
-    app.get('/packages/featured', (request, response) => {
+    app.get('/packages/featured', (_request, response) => {
       response.sendFile(path.join(__dirname, 'fixtures', 'packages.json'));
     });
 
-    app.get('/themes/featured', (request, response) => {
+    app.get('/themes/featured', (_request, response) => {
       response.sendFile(path.join(__dirname, 'fixtures', 'themes.json'));
     });
 
     server = http.createServer(app);
-    let live = false;
 
-    server.listen(3000, '127.0.0.1', () => {
-      process.env.ATOM_API_URL = 'http://localhost:3000';
-      live = true;
+    await new Promise((resolve) => {
+      server.listen(3000, '127.0.0.1', () => {
+        process.env.ATOM_API_URL = 'http://localhost:3000';
+        resolve();
+      });
     });
-
-    waitsFor(() => live);
   });
 
-  afterEach(() => {
-    let done = false;
-    server.close(() => {
-      done = true;
-    });
-    waitsFor(() => done);
+  afterEach(async () => {
+    await new Promise((resolve) => server.close(resolve));
   });
 
-  it('lists the featured packages and themes', () => {
-    const callback = jasmine.createSpy('callback');
-    apm.run(['featured'], callback);
-    waitsFor('waiting for command to complete', () => callback.callCount > 0);
-    runs(() => {
-      expect(console.log).toHaveBeenCalled();
-      expect(console.log.argsForCall[1][0]).toContain('beverly-hills');
-      expect(console.log.argsForCall[2][0]).toContain('multi-version');
-      expect(console.log.argsForCall[3][0]).toContain('duckblur');
-    });
+  it('lists the featured packages and themes', async () => {
+    await apmRun(['featured']);
+    expect(console.log).toHaveBeenCalled();
+    expect(console.log.calls.argsFor(1)[0]).toContain('beverly-hills');
+    expect(console.log.calls.argsFor(2)[0]).toContain('multi-version');
+    expect(console.log.calls.argsFor(3)[0]).toContain('duckblur');
   });
 
   describe('when the theme flag is specified', () => {
-    it('lists the featured themes', () => {
-      const callback = jasmine.createSpy('callback');
-      apm.run(['featured', '--themes'], callback);
-      waitsFor('waiting for command to complete', () => callback.callCount > 0);
-      runs(() => {
-        expect(console.log).toHaveBeenCalled();
-        expect(console.log.argsForCall[1][0]).toContain('duckblur');
-        expect(console.log.argsForCall[2][0]).toBeUndefined();
-      });
+    it('lists the featured themes', async () => {
+      await apmRun(['featured', '--themes']);
+      expect(console.log).toHaveBeenCalled();
+      expect(console.log.calls.argsFor(1)[0]).toContain('duckblur');
+      expect(console.log.calls.argsFor(2)[0]).toBeUndefined();
     });
   });
 });

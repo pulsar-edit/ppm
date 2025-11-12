@@ -19,7 +19,7 @@
     "clean:bin": "shx rm -rf bin/node_darwin_x64 bin/node.exe bin/node",
     "clean": "npm run clean:bin",
     "postinstall": "node script/postinstall.js",
-    "test": "npm run check-version && node ./script/local-jasmine.js --captureExceptions spec"
+    "test": "npm run check-version && jasmine --config=./spec/jasmine.json"
   },
   "dependencies": {
     "asar-require": "0.3.0",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "coffee-script": "^1.12.7",
     "express": "^4.17.1",
-    "jasmine-focused": ">=1.0.7 <2.0",
+    "jasmine": "^5.12.0",
     "node-gyp": "^10.2.0",
     "shx": "^0.3.3"
   },
