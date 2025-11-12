@@ -22,7 +22,7 @@ function createPackage (packageName, includeDev) {
 
 describe('apm uninstall', () => {
   beforeEach(() => {
-    silenceOutput(true);
+    silenceOutput();
     spyOnToken();
     process.env.ATOM_API_URL = 'http://localhost:5432';
   });

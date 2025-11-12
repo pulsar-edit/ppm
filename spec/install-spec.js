@@ -402,8 +402,7 @@ describe('apm install', () => {
     });
 
     describe('when --check is specified', () => {
-      // TODO: Fix.
-      xit('compiles a sample native module', async () => {
+      it('compiles a sample native module', async () => {
         const callback = jasmine.createSpy('callback');
         await apmRun(['install', '--check'], callback);
         expect(callback.calls.mostRecent().args[0]).toBeUndefined();
@@ -613,8 +612,7 @@ describe('apm install', () => {
         fs.removeSync(path.join(nodeModules, 'with a space'));
       });
 
-      // TODO: Fix.
-      xit('builds native code successfully', async () => {
+      it('builds native code successfully', async () => {
         const callback = jasmine.createSpy('callback');
         await apmRun(['install', 'native-package'], callback);
 
