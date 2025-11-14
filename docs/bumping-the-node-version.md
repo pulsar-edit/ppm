@@ -14,7 +14,7 @@ Here’s how it works:
 
 ## Change `BUNDLED_NODE_VERSION`
 
-The contents of this file govern which version of Node is downloaded when `ppm` is installed. Make sure this corrsponds to the new **Node** version that `ppm` will use, since this will be downloaded directly from the Node servers when `ppm` is built.
+The contents of this file govern which version of Node is downloaded when `ppm` is installed. Make sure this corresponds to the new **Node** version that `ppm` will use, since this will be downloaded directly from the Node servers when `ppm` is built.
 
 
 ## Change the fixture files
@@ -31,7 +31,7 @@ node ./scripts/update-spec-fixtures.js 30.5.1
 
 This will construct the correct URLs, download these files to `spec/fixtures/node-dist` under the names that the specs expect, and finally update `spec/config.json` once the downloads are finished.
 
-As the script reminds you, you should also download the `.tar.gz` file inside `spec/fixtures/node-dist` corresponding to the previous Electron version.
+As the script reminds you, you should also delete the `.tar.gz` file inside `spec/fixtures/node-dist` corresponding to the previous Electron version.
 
 ## Run the specs
 
