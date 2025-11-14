@@ -1,4 +1,4 @@
 {
-  "nodeVersion": "v20.11.1",
-  "node-version-comment": "Note: This 'nodeVersion' string is used by various spec files. Update it to match, if/when the related (Node dist) fixture files (node[...]headers.tar.gz, node[_x64].lib, and SHASUMS256.txt) are updated for a new Node or Electron version."
+  "nodeVersion": "v30.0.9",
+  "node-version-comment": "Note: This 'nodeVersion' string is used by various spec files. Update it to match, if/when the related (Node dist) fixture files (node[...]headers.tar.gz, node[_x64].lib, and SHASUMS256.txt) are updated for a new Node or Electron version. IMPORTANT: We are using the Electron version numbers here; see docs/bumping-the-node-version.md."
 }
