@@ -68,7 +68,7 @@ on the option selected.\
           // Expose the error value as a value for now.
           return `You must specify one of ${this.supportedSyntaxes.join(', ')} after the --syntax argument`;
         }
-        templatePath = this.getTemplatePath(options.argv, syntax);
+        templatePath = this.getTemplatePath(options.argv, `package-${syntax}`);
         this.generateFromTemplate(packagePath, templatePath);
         return;
       }
@@ -192,15 +192,14 @@ on the option selected.\
       return string.replace('__current_year__', new Date().getFullYear());
     }
 
-    getTemplatePath(argv, syntax) {
+    getTemplatePath(argv, templateType) {
       if (argv.template != null) {
         return path.resolve(argv.template);
       }
-      let templateName = `package-${syntax}`;
-      if (syntax === 'javascript' && argv.transpiled) {
-        templateName = 'package-javascript-transpiled';
+      if (templateType === 'package-javascript' && argv.transpiled) {
+        templateType = 'package-javascript-transpiled';
       }
-      return path.resolve(__dirname, '..', 'templates', templateName);
+      return path.resolve(__dirname, '..', 'templates', templateType);
     }
 
     dasherize(string) {
