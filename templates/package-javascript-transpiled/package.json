@@ -26,6 +26,6 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "rollup": "^4.40.0",
-    "@types/atom": "github:pulsar-edit/types"
+    "@types/atom": "npm:@pulsar-edit/types"
   }
 }
