@@ -25,7 +25,7 @@ class Init extends Command {
       options.usage(`\
 Usage:
   ppm init -p <package-name>
-  ppm init -p <package-name> --syntax <javascript-or-typescript>
+  ppm init -p <package-name> --syntax <javascript-or-typescript> [--transpiled]
   ppm init -p <package-name> -c ~/Downloads/r.tmbundle
   ppm init -p <package-name> -c https://github.com/textmate/r.tmbundle
   ppm init -p <package-name> --template /path/to/your/package/template
@@ -47,6 +47,7 @@ on the option selected.\
       options.alias('l', 'language').string('language').describe('language', 'Generates a basic language package');
       options.alias('c', 'convert').string('convert').describe('convert', 'Path or URL to TextMate bundle/theme to convert');
       options.alias('h', 'help').describe('help', 'Print this usage message');
+      options.describe('transpiled', 'Choose the "transpiled" flavor of JavaScript project (valid only when --syntax is javascript)');
       return options.string('template').describe('template', 'Path to the package or theme template');
     }
 
@@ -67,7 +68,7 @@ on the option selected.\
           // Expose the error value as a value for now.
           return `You must specify one of ${this.supportedSyntaxes.join(', ')} after the --syntax argument`;
         }
-        templatePath = this.getTemplatePath(options.argv, `package-${syntax}`);
+        templatePath = this.getTemplatePath(options.argv, syntax);
         this.generateFromTemplate(packagePath, templatePath);
         return;
       }
@@ -191,8 +192,15 @@ on the option selected.\
       return string.replace('__current_year__', new Date().getFullYear());
     }
 
-    getTemplatePath(argv, templateType) {
-      return argv.template != null ? path.resolve(argv.template) : path.resolve(__dirname, '..', 'templates', templateType);
+    getTemplatePath(argv, syntax) {
+      if (argv.template != null) {
+        return path.resolve(argv.template);
+      }
+      let templateName = `package-${syntax}`;
+      if (syntax === 'javascript' && argv.transpiled) {
+        templateName = 'package-javascript-transpiled';
+      }
+      return path.resolve(__dirname, '..', 'templates', templateName);
     }
 
     dasherize(string) {
