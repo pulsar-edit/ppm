@@ -26,7 +26,7 @@ We use _Electron’s_ artifacts here because they’re smaller than Node’s. So
 Luckily, there’s a script to automate all of this. From the project root, and assuming you want to grab the artifacts for Electron 30.5.1, run:
 
 ```sh
-node ./scripts/update-spec-fixtures.js 30.5.1
+node ./script/update-spec-fixtures.js 30.5.1
 ```
 
 This will construct the correct URLs, download these files to `spec/fixtures/node-dist` under the names that the specs expect, and finally update `spec/config.json` once the downloads are finished.
