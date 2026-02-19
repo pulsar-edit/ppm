@@ -59,6 +59,7 @@
     "npm/**/got": "^11.8.6",
     "npm/**/http-cache-semantics": "^4.1.1",
     "npm/**/node-gyp": "^10.2.0",
-    "npm/**/tar": "^6.1.2"
+    "npm/**/tar": "^6.1.2",
+    "nan": "2.25.0"
   }
 }
