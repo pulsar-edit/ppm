@@ -4,6 +4,8 @@ Ideally, the version of Node used by `ppm` should be kept in sync with the versi
 
 For example: at time of writing, Pulsar uses Electron 30.0.9, which corresponds to Node 20.11.1. So `ppm` should also point to Node 20.11.1.
 
+(Note: this website is highly recommended for matching Electron versions to their corresponding Node versions: https://releases.electronjs.org/release)
+
 You should know **both** the Node version **and** the Electron version you’re targeting before you begin; you’ll use both values.
 
 Here’s how it works:
