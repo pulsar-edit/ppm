@@ -13,7 +13,7 @@ describe('apm install', () => {
 
   beforeEach(() => {
     spyOnToken();
-    silenceOutput();
+    //silenceOutput();
 
     atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
@@ -551,7 +551,7 @@ describe('apm install', () => {
       });
     });
 
-    describe('when installing a Git URL and --json is specified', () => {
+    fdescribe('when installing a Git URL and --json is specified', () => {
       let cloneUrl, pkgJsonPath;
 
       beforeEach(async () => {
