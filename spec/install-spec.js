@@ -563,6 +563,10 @@ describe('apm install', () => {
       });
 
       it('logs the installation path and the package metadata for a package installed via git url', () => {
+        const files = fs.readdirSync(path.join(process.env.ATOM_HOME, '.apm', '_logs'));
+        for (const file of files) {
+          console.log(fs.readFileSync(path.join(process.env.ATOM_HOME, '.apm', '_logs', file), { encoding: "utf8"}));
+        }
         const sha = '8ae432341ac6708aff9bb619eb015da14e9d0c0f';
         expect(process.stdout.write.calls.count()).toBe(0);
         const json = JSON.parse(console.log.calls.argsFor(0)[0]);
