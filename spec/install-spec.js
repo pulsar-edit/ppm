@@ -13,7 +13,7 @@ describe('apm install', () => {
 
   beforeEach(() => {
     spyOnToken();
-    //silenceOutput();
+    silenceOutput();
 
     atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
