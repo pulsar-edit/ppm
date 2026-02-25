@@ -1,7 +1,7 @@
 {
   "spec_dir": "spec",
   "spec_files": [
-    "**/install-spec.js"
+    "**/*-spec.js"
   ],
   "helpers": [
     "spec-helper.js"
