@@ -595,7 +595,21 @@ Run ppm -v after installing Git to see what version has been detected.\
       const {name} = data.metadata;
       const targetDir = path.join(this.atomPackagesDirectory, name);
       if (!options.argv.json) { process.stdout.write(`Moving ${name} to ${targetDir} `); }
-      await fs.cp(cloneDir, targetDir);
+      try {
+        await fs.cp(cloneDir, targetDir);
+      } catch(err) {
+        if (err.toString().startsWith("Error: EBUSY: resource busy or locked")) {
+          console.error("Directory is busy or locked, attempting to forcefully copy...");
+          try {
+            fs.cpSync(cloneDir, targetDir, { force: true, recursive: true });
+          } catch(err) {
+            console.error("Unable to forcefully copy!");
+            throw err;
+          }
+        } else {
+          throw err;
+        }
+      }
       if (!options.argv.json) { this.logSuccess(); }
       const json = {installPath: targetDir, metadata: data.metadata};
       return json;
