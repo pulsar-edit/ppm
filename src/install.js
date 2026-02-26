@@ -573,6 +573,7 @@ Run ppm -v after installing Git to see what version has been detected.\
         data.sha = version;
         const checked = repo.checkoutRef(`refs/tags/${version}`, false) || repo.checkoutReference(version, false);
         if (!checked) { throw `Can't find the branch or tag referenced by ${version}`; }
+        repo.release();
       } else {
         const sha = this.getRepositoryHeadSha(cloneDir);
         data.sha = sha;
@@ -663,6 +664,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     getRepositoryHeadSha(repoDir) {
       const repo = Git.open(repoDir);
       const sha = repo.getReferenceTarget("HEAD");
+      repo.release();
       return sha;
     }
 
