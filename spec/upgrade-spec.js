@@ -55,8 +55,8 @@ describe('apm upgrade', () => {
   });
 
   afterEach(async () => {
-    await new Promise((resolve) => server.close(resolve));
     temp.cleanupSync();
+    await new Promise((resolve) => server.close(resolve));
   });
 
   it('does not display updates for unpublished packages', async () => {
