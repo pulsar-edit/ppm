@@ -40,7 +40,6 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
       for (let packageName of Array.from(packageNames)) {
         if (packageName === '.') {
           packageName = path.basename(process.cwd());
-          console.log(`Package Name: ${packageName}`)
         }
         process.stdout.write(`Uninstalling ${packageName} `);
         try {
