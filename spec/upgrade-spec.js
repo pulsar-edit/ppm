@@ -10,7 +10,7 @@ describe('apm upgrade', () => {
 
   beforeEach(async () => {
     spyOnToken();
-    silenceOutput();
+    //silenceOutput();
 
     atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
