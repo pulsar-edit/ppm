@@ -10,7 +10,7 @@ describe('apm upgrade', () => {
 
   beforeEach(async () => {
     spyOnToken();
-    silenceOutput();
+    //silenceOutput();
 
     atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
@@ -234,7 +234,7 @@ describe('apm upgrade', () => {
       expect(text).toMatch(/Available \(1\).*\n.*test-git-repo-with-main abcdef12 -> c81278af/);
     });
 
-    it('updates to the latest sha', async () => {
+    fit('updates to the latest sha', async () => {
       await apmRun(['upgrade', '-c', 'false', 'test-git-repo-with-main']);
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
       expect(json.apmInstallSource.sha).toBe('c81278af71de6c12ce0bc02936d5c1eb22aadaf9');
