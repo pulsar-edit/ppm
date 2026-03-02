@@ -588,6 +588,7 @@ Run ppm -v after installing Git to see what version has been detected.\
 
       const metadataFilePath = CSON.resolve(path.join(cloneDir, 'package'));
       console.log(`metadataFilePath: ${metadataFilePath}`);
+      console.log(fs.readdirSync(cloneDir));
       const metadata = CSON.readFileSync(metadataFilePath);
       data.metadataFilePath = metadataFilePath;
       data.metadata = metadata;
