@@ -190,7 +190,12 @@ available updates.\
             ? [pack.apmInstallSource.source]
             : [`${pack.name}@${latestVersion}`];
           if (this.verbose) { commandArgs.unshift('--verbose'); }
-          await new Install().run({commandArgs});
+          try {
+            await new Install().run({commandArgs});
+          } catch(err) {
+            console.error(err);
+          }
+          //await new Install().run({commandArgs});
         });
       }
 
