@@ -69,12 +69,12 @@ jobs:
         if: ${{ matrix.node_version == 14 }}
         run: yarn install --ignore-engines
 
-      - if: "!contains(matrix.os, 'windows')"
+      - if: "contains(matrix.os, 'windows')"
         name: Modify default GHA Windows TEMP Env Vars
         run: |
           set TMP=%USERPROFILE%\AppData\Local\Temp
           set TEMP=%USERPROFILE%\AppData\Local\Temp
-          
+
       #- if: "!contains(matrix.os, 'windows')"
       - name: Run tests 👩🏾‍💻
         run: ./bin/npm test
