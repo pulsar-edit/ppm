@@ -1,7 +1,7 @@
 [core]
 	repositoryformatversion = 0
-	filemode = true
-	bare = true
+	filemode = false
+	bare = false
 	ignorecase = true
 	precomposeunicode = true
 	logallrefupdates = true
