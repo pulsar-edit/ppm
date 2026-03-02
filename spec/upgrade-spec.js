@@ -197,7 +197,7 @@ describe('apm upgrade', () => {
       fs.writeFileSync(pkgJsonPath, JSON.stringify(json));
 
       console.log("Within beforeEach()");
-      console.log(fs.readirSync(path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo')));
+      console.log(fs.readdirSync(path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo')));
     });
 
     it('shows an upgrade plan', async () => {
