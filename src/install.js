@@ -594,7 +594,14 @@ Run ppm -v after installing Git to see what version has been detected.\
       CSON.writeFileSync(data.metadataFilePath, data.metadata);
 
       const {name} = data.metadata;
-      const targetDir = path.join(this.atomPackagesDirectory, name);
+      console.log("Is this before the CI only error?");
+      let targetDir;
+      try {
+        targetDir = path.join(this.atomPackagesDirectory, name);
+      } catch(err) {
+        console.error(err);
+        throw err;
+      }
       if (!options.argv.json) { process.stdout.write(`Moving ${name} to ${targetDir} `); }
       try {
         await fs.cp(cloneDir, targetDir);
