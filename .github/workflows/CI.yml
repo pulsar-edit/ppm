@@ -74,6 +74,7 @@ jobs:
         run: |
           set TMP=%USERPROFILE%\AppData\Local\Temp
           set TEMP=%USERPROFILE%\AppData\Local\Temp
+        shell: cmd
 
       #- if: "!contains(matrix.os, 'windows')"
       - name: Run tests 👩🏾‍💻
