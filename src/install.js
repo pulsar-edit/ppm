@@ -583,6 +583,7 @@ Run ppm -v after installing Git to see what version has been detected.\
       }
 
       await this.installGitPackageDependencies(cloneDir, options);
+      console.log("Finished 'installGitPackageDependencies'");
 
       const metadataFilePath = CSON.resolve(path.join(cloneDir, 'package'));
       const metadata = CSON.readFileSync(metadataFilePath);
