@@ -191,9 +191,13 @@ available updates.\
             : [`${pack.name}@${latestVersion}`];
           if (this.verbose) { commandArgs.unshift('--verbose'); }
           try {
+            console.log("Pre install trigger");
             await new Install().run({commandArgs});
+            console.log("Post install trigger");
           } catch(err) {
+            console.error("Install command Failed!!!");
             console.error(err);
+            console.error(err.stack);
           }
           //await new Install().run({commandArgs});
         });
