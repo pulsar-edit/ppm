@@ -193,7 +193,9 @@ describe('apm upgrade', () => {
       console.log("Finished running 'install' in 'beforeEach'");
       pkgJsonPath = path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo', 'package.json');
       console.log("Finished creating 'pkgJsonPath'");
+      console.log(pkgJsonPath);
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
+      console.log("Finished writing 'json'");
       json.apmInstallSource.sha = 'abcdef1234567890';
       fs.writeFileSync(pkgJsonPath, JSON.stringify(json));
 
