@@ -371,7 +371,6 @@ Run ppm -v after installing Git to see what version has been detected.\
     //
     // return value - A Promise that rejects with an error or resolves without a value
     async installPackageDependencies(options) {
-      console.log("Enter 'installPackageDependencies'");
       options = {
         ...options,
         installGlobally: false
@@ -390,7 +389,6 @@ Run ppm -v after installing Git to see what version has been detected.\
       }
 
       await async.series(commands);
-      console.log("Exit 'installPackageDependencies'");
     }
 
     async installDependencies(options) {
@@ -562,7 +560,6 @@ Run ppm -v after installing Git to see what version has been detected.\
     }
 
     async installGitPackage(packageUrl, options, version) {
-      console.log("Entry into 'installGitPackage'");
       const tasks = [];
 
       const cloneDir = temp.mkdirSync("atom-git-package-clone-");
@@ -583,12 +580,8 @@ Run ppm -v after installing Git to see what version has been detected.\
       }
 
       await this.installGitPackageDependencies(cloneDir, options);
-      console.log("Finished 'installGitPackageDependencies'");
-      console.log(`cloneDir: '${cloneDir}'`);
 
       const metadataFilePath = CSON.resolve(path.join(cloneDir, 'package'));
-      console.log(`metadataFilePath: ${metadataFilePath}`);
-      console.log(fs.readdirSync(cloneDir));
       const metadata = CSON.readFileSync(metadataFilePath);
       data.metadataFilePath = metadataFilePath;
       data.metadata = metadata;
@@ -598,18 +591,10 @@ Run ppm -v after installing Git to see what version has been detected.\
         source: packageUrl,
         sha: data.sha
       };
-      console.log(`data.metadataFilePath: ${data.metadataFilePath}`);
       CSON.writeFileSync(data.metadataFilePath, data.metadata);
 
       const {name} = data.metadata;
-      console.log("Is this before the CI only error?");
-      let targetDir;
-      try {
-        targetDir = path.join(this.atomPackagesDirectory, name);
-      } catch(err) {
-        console.error(err);
-        throw err;
-      }
+      const targetDir = path.join(this.atomPackagesDirectory, name);
       if (!options.argv.json) { process.stdout.write(`Moving ${name} to ${targetDir} `); }
       try {
         await fs.cp(cloneDir, targetDir);
@@ -684,7 +669,6 @@ Run ppm -v after installing Git to see what version has been detected.\
     }
 
     async run(options) {
-      console.log("Entry into 'install.js.run()'");
       let packageNames;
       options = this.parseOptions(options.commandArgs);
       const packagesFilePath = options.argv['packages-file'];
@@ -709,7 +693,6 @@ Run ppm -v after installing Git to see what version has been detected.\
       }
 
       const installPackage = async name => {
-        console.log("Entry into 'installPackage'");
         const gitPackageInfo = this.getHostedGitInfo(name);
 
         if (gitPackageInfo || (name.indexOf('file://') === 0)) {
