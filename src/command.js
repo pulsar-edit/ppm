@@ -19,7 +19,7 @@ class Command {
     const outputChunks = [];
 
     spawned.stdout.on('data', chunk => {
-      console.log(chunk);
+      console.log(chunk.toString("utf8"));
       if (options?.streaming) {
         process.stdout.write(chunk);
       } else {
@@ -28,7 +28,7 @@ class Command {
     });
 
     spawned.stderr.on('data', chunk => {
-      console.error(chunk);
+      console.error(chunk.toString("utf8"));
       if (options?.streaming) {
         process.stderr.write(chunk);
       } else {
