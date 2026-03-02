@@ -189,8 +189,9 @@ describe('apm upgrade', () => {
       const gitRepo = path.join(__dirname, 'fixtures', 'test-git-repo.git');
       const cloneUrl = `file://${gitRepo}`;
 
+      try {
       await apmRun(['install', cloneUrl]);
-
+      } catch(err) { console.error(err); console.error(err.stack); }
       pkgJsonPath = path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo', 'package.json');
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
       json.apmInstallSource.sha = 'abcdef1234567890';
