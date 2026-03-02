@@ -190,7 +190,9 @@ describe('apm upgrade', () => {
       const cloneUrl = `file://${gitRepo}`;
 
       await apmRun(['install', cloneUrl]);
+      console.log("Finished running 'install' in 'beforeEach'");
       pkgJsonPath = path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo', 'package.json');
+      console.log("Finished creating 'pkgJsonPath'");
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
       json.apmInstallSource.sha = 'abcdef1234567890';
       fs.writeFileSync(pkgJsonPath, JSON.stringify(json));
