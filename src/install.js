@@ -560,6 +560,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     }
 
     async installGitPackage(packageUrl, options, version) {
+      console.log("Entry into 'installGitPackage'");
       const tasks = [];
 
       const cloneDir = temp.mkdirSync("atom-git-package-clone-");
@@ -676,6 +677,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     }
 
     async run(options) {
+      console.log("Entry into 'install.js.run()'");
       let packageNames;
       options = this.parseOptions(options.commandArgs);
       const packagesFilePath = options.argv['packages-file'];
@@ -700,6 +702,7 @@ Run ppm -v after installing Git to see what version has been detected.\
       }
 
       const installPackage = async name => {
+        console.log("Entry into 'installPackage'");
         const gitPackageInfo = this.getHostedGitInfo(name);
 
         if (gitPackageInfo || (name.indexOf('file://') === 0)) {
