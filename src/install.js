@@ -371,6 +371,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     //
     // return value - A Promise that rejects with an error or resolves without a value
     async installPackageDependencies(options) {
+      console.log("Enter 'installPackageDependencies'");
       options = {
         ...options,
         installGlobally: false
@@ -389,6 +390,7 @@ Run ppm -v after installing Git to see what version has been detected.\
       }
 
       await async.series(commands);
+      console.log("Exit 'installPackageDependencies'");
     }
 
     async installDependencies(options) {
