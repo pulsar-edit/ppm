@@ -10,7 +10,7 @@ describe('apm upgrade', () => {
 
   beforeEach(async () => {
     spyOnToken();
-    silenceOutput();
+    //silenceOutput();
 
     atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
@@ -178,7 +178,7 @@ describe('apm upgrade', () => {
     expect(console.log.calls.argsFor(1)[0]).toContain('multi-module 0.1.0 -> 0.3.0');
   });
 
-  describe('for outdated git packages', () => {
+  fdescribe('for outdated git packages', () => {
     let pkgJsonPath;
 
     beforeEach(async () => {
@@ -195,6 +195,9 @@ describe('apm upgrade', () => {
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
       json.apmInstallSource.sha = 'abcdef1234567890';
       fs.writeFileSync(pkgJsonPath, JSON.stringify(json));
+
+      console.log("Within beforeEach()");
+      console.log(fs.readirSync(path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo')));
     });
 
     it('shows an upgrade plan', async () => {
@@ -203,7 +206,9 @@ describe('apm upgrade', () => {
       expect(text).toMatch(/Available \(1\).*\n.*test-git-repo abcdef12 -> 8ae43234/);
     });
 
-    it('updates to the latest sha', async () => {
+    fit('updates to the latest sha', async () => {
+      console.log("Within 'it'");
+      console.log(fs.readdirSync(path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo')));
       await apmRun(['upgrade', '-c', 'false', 'test-git-repo']);
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
       expect(json.apmInstallSource.sha).toBe('8ae432341ac6708aff9bb619eb015da14e9d0c0f');
