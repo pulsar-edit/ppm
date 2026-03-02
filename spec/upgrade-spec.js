@@ -200,13 +200,13 @@ describe('apm upgrade', () => {
     it('shows an upgrade plan', async () => {
       await apmRun(['upgrade', '--list', '--no-color']);
       const text = console.log.calls.allArgs().map(arr => arr.join(' ')).join('\n');
-      expect(text).toMatch(/Available \(1\).*\n.*test-git-repo abcdef12 -> 8ae43234/);
+      expect(text).toMatch(/Available \(1\).*\n.*test-git-repo abcdef12 -> 4dc24384/);
     });
 
     it('updates to the latest sha', async () => {
       await apmRun(['upgrade', '-c', 'false', 'test-git-repo']);
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
-      expect(json.apmInstallSource.sha).toBe('8ae432341ac6708aff9bb619eb015da14e9d0c0f');
+      expect(json.apmInstallSource.sha).toBe('4dc24384ad9a6840a94059ceda177552cd17acb3');
     });
   });
 
