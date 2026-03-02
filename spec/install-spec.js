@@ -529,7 +529,7 @@ describe('apm install', () => {
       });
 
       it('adds apmInstallSource to the package.json with the source and sha', () => {
-        const sha = '8ae432341ac6708aff9bb619eb015da14e9d0c0f';
+        const sha = '4dc24384ad9a6840a94059ceda177552cd17acb3';
         const json = require(pkgJsonPath);
         expect(json.apmInstallSource).toEqual({
           type: 'git',
@@ -563,7 +563,7 @@ describe('apm install', () => {
       });
 
       it('logs the installation path and the package metadata for a package installed via git url', () => {
-        const sha = '8ae432341ac6708aff9bb619eb015da14e9d0c0f';
+        const sha = '4dc24384ad9a6840a94059ceda177552cd17acb3';
         expect(process.stdout.write.calls.count()).toBe(0);
         const json = JSON.parse(console.log.calls.argsFor(0)[0]);
         expect(json.length).toBe(1);
