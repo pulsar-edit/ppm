@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs-plus');
-const temp = require('temp').track();
+const temp = require('temp');
 const express = require('express');
 const http = require('http');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
@@ -55,7 +55,6 @@ describe('apm upgrade', () => {
   });
 
   afterEach(async () => {
-    temp.cleanupSync();
     await new Promise((resolve) => server.close(resolve));
   });
 
