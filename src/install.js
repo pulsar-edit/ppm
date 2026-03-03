@@ -573,6 +573,7 @@ Run ppm -v after installing Git to see what version has been detected.\
         data.sha = version;
         const checked = repo.checkoutRef(`refs/tags/${version}`, false) || repo.checkoutReference(version, false);
         if (!checked) { throw `Can't find the branch or tag referenced by ${version}`; }
+        repo.release();
       } else {
         const sha = this.getRepositoryHeadSha(cloneDir);
         data.sha = sha;
@@ -595,6 +596,21 @@ Run ppm -v after installing Git to see what version has been detected.\
       const {name} = data.metadata;
       const targetDir = path.join(this.atomPackagesDirectory, name);
       if (!options.argv.json) { process.stdout.write(`Moving ${name} to ${targetDir} `); }
+      try {
+        await fs.cp(cloneDir, targetDir);
+      } catch(err) {
+        if (err.toString().startsWith("Error: EBUSY: resource busy or locked")) {
+          console.error("Directory is busy or locked, attempting to forcefully copy...");
+          try {
+            fs.cpSync(cloneDir, targetDir, { force: true, recursive: true });
+          } catch(err) {
+            console.error("Unable to forcefully copy!");
+            throw err;
+          }
+        } else {
+          throw err;
+        }
+      }
       await fs.cp(cloneDir, targetDir);
       if (!options.argv.json) { this.logSuccess(); }
       const json = {installPath: targetDir, metadata: data.metadata};
@@ -649,6 +665,7 @@ Run ppm -v after installing Git to see what version has been detected.\
     getRepositoryHeadSha(repoDir) {
       const repo = Git.open(repoDir);
       const sha = repo.getReferenceTarget("HEAD");
+      repo.release();
       return sha;
     }
 
