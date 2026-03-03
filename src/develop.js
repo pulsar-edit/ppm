@@ -110,7 +110,7 @@ cmd-shift-o to run the package out of the newly cloned repository.\
 
       try {
         const repoUrl = await this.getRepositoryUrl(packageName);
-
+        
         await this.cloneRepository(repoUrl, packageDirectory, options);
         await this.installDependencies(packageDirectory, options);
         await this.linkPackage(packageDirectory, options);
