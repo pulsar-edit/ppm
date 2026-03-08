@@ -148,6 +148,7 @@ available updates.\
           }
 
           const sha = repo.getReferenceTarget(repo.getUpstreamBranch(repo.getHead()));
+          repo.release();
           if (sha !== pack.apmInstallSource.sha) {
             return void resolve(sha);
           }

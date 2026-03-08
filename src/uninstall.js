@@ -48,6 +48,13 @@ Delete the installed package(s) from the ~/.pulsar/packages directory.\
             packageDirectory = path.join(packagesDirectory, packageName);
             const packageManifestPath = path.join(packageDirectory, 'package.json');
             if (fs.existsSync(packageManifestPath)) {
+              if (process.platform === "win32" && process.cwd() === packageDirectory) {
+                // If the user provided '.' as the package name, while we are
+                // currently within that directory, we must move out of the
+                // to-be-deleted directory since otherwise Windows won't let it
+                // be deleted as it's busy, with us in it.
+                process.chdir(path.join(process.cwd(), ".."));
+              }
               fs.removeSync(packageDirectory);
             } else if (!options.argv.hard) {
               throw new Error(`No package.json found at ${packageManifestPath}`);
