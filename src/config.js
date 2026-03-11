@@ -1,6 +1,8 @@
 
 const path = require('path');
 const yargs = require('yargs');
+const npmConfig = require('@npmcli/config');
+const defs = require("@npmcli/config/lib/definitions");
 const apm = require('./apm');
 const Command = require('./command');
 
@@ -33,27 +35,61 @@ Usage: ppm config set <key> <value>
   run(options) {
     options = this.parseOptions(options.commandArgs);
 
-    let configArgs = ['--globalconfig', apm.getGlobalConfigPath(), '--userconfig', apm.getUserConfigPath(), 'config'];
-    configArgs = configArgs.concat(options.argv._);
+    let configArgs = ['--globalconfig', apm.getGlobalConfigPath(), '--userconfig', apm.getUserConfigPath() ];
 
-    const env = {
-      ...process.env,
-      HOME: this.atomNodeDirectory,
-      RUSTUP_HOME: apm.getRustupHomeDirPath()
-    };
-    const configOptions = {env};
+    const conf = new npmConfig({
+      npmPath: "",
+      definitions: {
+        ...defs.definitions,
+        // Define any default overrides
+        cache: { ...defs.definitions.cache, default: path.join(process.env.ATOM_HOME, ".apm") }
+      },
+      shorthands: defs.shorthands,
+      flatten: defs.flatten,
+      argv: configArgs,
+      env: {
+        // TODO: Do we need to include anything else from the env?
+        // previously used `...process.env` but it lead to lots of useless warnings
+        HOME: this.atomNodeDirectory,
+        RUSTUP_HOME: apm.getRustupHomeDirPath()
+      }
+    });
 
-    return new Promise((resolve, _reject) => 
-      void this.fork(this.atomNpmPath, configArgs, configOptions, (code, stderr, stdout) => {
-        stderr ??= '';
-        stdout ??= '';
-        if (code === 0) {
-          if (stdout) { process.stdout.write(stdout); }
-          return void resolve();
-        } 
-        if (stderr) { process.stdout.write(stderr); }
-        return void resolve(new Error(`npm config failed: ${code}`));
-      })
-    );
+    // re-route process object log events to console
+    process.on("log", (level, ...args) => {
+      console.log(level, ...args);
+    });
+
+    return new Promise((resolve, reject) => {
+      try {
+      conf.load().then(() => {
+        conf.validate();
+
+        const action = options.argv._[0];
+        const key = options.argv._[1];
+        const value = options.argv._[2];
+
+        if (action === "get") {
+          console.log(conf.get(key));
+          resolve();
+        } else if (action === "set") {
+          conf.set(key, value, "user");
+          conf.save("user");
+          resolve();
+        } else if (action === "delete") {
+          resolve(conf.delete(key));
+        } else if (action === "list") {
+          reject("TODO: 501");
+        } else if (action === "edit") {
+          reject("TODO: 501");
+        }
+
+      }).catch((err) => {
+        console.error(err);
+        reject(err);
+      });
+      } catch(err) { console.error(err); reject(err); }
+    });
+
   }
 }

@@ -10,7 +10,7 @@ describe('apm config', () => {
     silenceOutput();
     const atomHome = temp.mkdirSync('apm-home-dir-');
     process.env.ATOM_HOME = atomHome;
-    userConfigPath = path.join(atomHome, '.apmrc');
+    userConfigPath = path.join(atomHome, '.apm', '.apmrc');
     // Make sure the cache used is the one for the test env
     delete process.env.npm_config_cache;
   });
@@ -19,7 +19,7 @@ describe('apm config', () => {
     it('reads the value from the global config when there is no user config', async () => {
       await apmRun(['config', 'get', 'cache']);
       expect(
-        process.stdout.write.calls.argsFor(0)[0].trim()
+        console.log.calls.mostRecent().args[0]
       ).toBe(path.join(process.env.ATOM_HOME, '.apm'));
     });
   });
@@ -31,8 +31,8 @@ describe('apm config', () => {
       expect(fs.isFileSync(userConfigPath)).toBe(true);
       await apmRun(['config', 'get', 'foo']);
       expect(
-        process.stdout.write.calls.argsFor(0)[0].trim()
-      ).toBe('bar');
+        console.log.calls.mostRecent().args[0]
+      ).toBe("bar");
     });
   });
 });
