@@ -1,6 +1,5 @@
 
 const path = require('path');
-const url = require('url');
 const fs = require('./fs');
 const request = require('./request');
 const TextMateTheme = require('./text-mate-theme');
@@ -14,7 +13,7 @@ class ThemeConverter {
   }
 
   async readTheme() {
-    const {protocol} = url.parse(this.sourcePath);
+    const {protocol} = new URL(this.sourcePath);
     if ((protocol === 'http:') || (protocol === 'https:')) {
       const requestOptions = {url: this.sourcePath};
       const response = await request.get(requestOptions).catch(error => Promise.reject(error?.code === 'ENOTFOUND' ? `Could not resolve URL: ${this.sourcePath}` : error));

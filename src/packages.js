@@ -1,6 +1,3 @@
-
-const url = require('url');
-
 // Package helpers
 module.exports = {
   // Parse the repository in `name/owner` format from the package metadata.
@@ -12,7 +9,7 @@ module.exports = {
     pack ??= {};
     let repository = pack.repository?.url ?? pack.repository;
     if (repository) {
-      const repoPath = url.parse(repository.replace(/\.git$/, '')).pathname;
+      const repoPath = new URL(repository.replace(/\.git$/, '')).pathname;
       const [name, owner] = repoPath.split('/').slice(-2);
       if (name && owner) { return `${name}/${owner}`; }
     }

@@ -1,6 +1,5 @@
 
 const path = require('path');
-const url = require('url');
 const zlib = require('zlib');
 
 const _ = require('underscore-plus');
@@ -37,7 +36,7 @@ class PackageConverter {
   }
 
   async convert() {
-    const {protocol} = url.parse(this.sourcePath);
+    const {protocol} = new URL(this.sourcePath);
     if ((protocol === 'http:') || (protocol === 'https:')) {
       await this.downloadBundle();
       return;
