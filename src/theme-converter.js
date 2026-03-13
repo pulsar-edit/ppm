@@ -13,16 +13,18 @@ class ThemeConverter {
   }
 
   async readTheme() {
-    const {protocol} = new URL(this.sourcePath);
-    if ((protocol === 'http:') || (protocol === 'https:')) {
-      const requestOptions = {url: this.sourcePath};
-      const response = await request.get(requestOptions).catch(error => Promise.reject(error?.code === 'ENOTFOUND' ? `Could not resolve URL: ${this.sourcePath}` : error));
-      const body = response.body;
-      if (response.statusCode !== 200) {
-        throw `Request to ${this.sourcePath} failed (${response.headers.status})`;
+    if (URL.canParse(this.sourcePath)) {
+      const {protocol} = new URL(this.sourcePath);
+      if ((protocol === 'http:') || (protocol === 'https:')) {
+        const requestOptions = {url: this.sourcePath};
+        const response = await request.get(requestOptions).catch(error => Promise.reject(error?.code === 'ENOTFOUND' ? `Could not resolve URL: ${this.sourcePath}` : error));
+        const body = response.body;
+        if (response.statusCode !== 200) {
+          throw `Request to ${this.sourcePath} failed (${response.headers.status})`;
+        }
+
+        return body;
       }
-        
-      return body;
     }
 
     const sourcePath = path.resolve(this.sourcePath);

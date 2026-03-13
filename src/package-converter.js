@@ -36,10 +36,12 @@ class PackageConverter {
   }
 
   async convert() {
-    const {protocol} = new URL(this.sourcePath);
-    if ((protocol === 'http:') || (protocol === 'https:')) {
-      await this.downloadBundle();
-      return;
+    if (URL.canParse(this.sourcePath)) {
+      const { protocol } = new URL(this.sourcePath);
+      if ((protocol === "http:") | (protocol === "https:")) {
+        await this.downloadBundle();
+        return;
+      }
     }
 
     await this.copyDirectories(this.sourcePath);
@@ -61,7 +63,7 @@ class PackageConverter {
           reject(`Download failed (${headers.status})`);
         }
       });
-    
+
       readStream.pipe(zlib.createGunzip()).pipe(tar.extract({cwd: tempPath}))
         .on('error', error => reject(error))
         .on('end', async () => {
@@ -242,7 +244,7 @@ class PackageConverter {
       for (let key in properties) {
         const value = properties[key];
         preferencesBySelector[selector] ??= {};
-        preferencesBySelector[selector][key] = preferencesBySelector[selector][key] != null 
+        preferencesBySelector[selector][key] = preferencesBySelector[selector][key] != null
           ? { ...value, ...preferencesBySelector[selector][key] }
           : value;
       }

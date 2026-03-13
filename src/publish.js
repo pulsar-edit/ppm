@@ -354,7 +354,9 @@ have published it.\
         if (semver.validRange(semverRange)) { return true; }
 
         try {
-          if (new URL(semverRange).protocol.length > 0) { return true; }
+          if (URL.canParse(semverRange)) {
+            if (new URL(semverRange).protocol.length > 0) { return true; }
+          }
         } catch (error) {}
 
         return semverRange === 'latest';
