@@ -7,7 +7,7 @@ describe('apm init', () => {
   let languagePath, packagePath, themePath;
 
   beforeEach(() => {
-    silenceOutput();
+    //silenceOutput();
     spyOnToken();
     const currentDir = temp.mkdirSync('apm-init-');
     spyOn(process, 'cwd').and.returnValue(currentDir);
