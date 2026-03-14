@@ -163,8 +163,8 @@ module.exports = {
   },
 
   async getSetting(key) {
-    await this.loadNpm();
-    return npm.config.get(key);
+    const conf = await this.getNpmConfig();
+    return conf.get(key);
   },
 
   async getNpmConfig() {
