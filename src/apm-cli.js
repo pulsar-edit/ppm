@@ -166,38 +166,39 @@ async function getAtomVersion() {
 }
 
 function getPythonVersion() {
-  return new Promise((resolve, _reject) => {
-    const npmOptions = {
-      userconfig: config.getUserConfigPath(),
-      globalconfig: config.getGlobalConfigPath()
-    };
-    npm.load(npmOptions, () => {
-      let python = npm.config.get("python") ?? process.env.PYTHON;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const npmConf = await config.getNpmConfig();
+
+      let python = npmConf.get("python") ?? process.env.PYTHON;
       if (config.isWin32() && !python) {
-        let rootDir = process.env.SystemDrive ??= 'C:\\';
-        if (rootDir[rootDir.length - 1] !== '\\') { rootDir += '\\'; }
-        const pythonExe = path.resolve(rootDir, 'Python27', 'python.exe');
+        let rootDir = process.env.SystemDrive ??= "C:\\";
+        if (rootDir[rootDir.length -1] !== "\\") { rootDir += "\\"; }
+        const pythonExe = path.resolve(rootDir, "Python27", "python.exe");
         if (fs.isFileSync(pythonExe)) { python = pythonExe; }
       }
 
-      python ??= 'python';
+      python ??= "python";
 
-      const spawned = spawn(python, ['--version']);
+      const spawned = spawn(python, ["--version"]);
       const outputChunks = [];
-      spawned.stderr.on('data', chunk => outputChunks.push(chunk));
-      spawned.stdout.on('data', chunk => outputChunks.push(chunk));
-      spawned.on('error', () => {});
-      return spawned.on('close', code => {
+      spawned.stderr.on("data", chunk => outputChunks.push(chunk));
+      spawned.stdout.on("data", chunk => outputChunks.push(chunk));
+      spawned.on("error", () => {});
+      return spawned.on("close", code => {
         let version, name;
         if (code === 0) {
-          [name, version] = Buffer.concat(outputChunks).toString().split(' ');
+          [name, version] = Buffer.concat(outputChunks).toString().split(" ");
           version = version?.trim();
         }
         return resolve(version);
-      });
-    });
+      })
+    } catch(err) {
+      console.error(err);
+      reject(err);
+    }
   });
-};
+}
 
 module.exports = {
   run(args, callback) {
