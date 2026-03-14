@@ -63,9 +63,9 @@ exports.addGitToEnv = env => {
 exports.getGitVersion = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const npmConf = await config.getNpmConfig();
+      const gitNpmConf = await config.getSetting("git");
 
-      const git = npmConf.get("git") ?? "git";
+      const git = gitNpmConf ?? "git";
       exports.addGitToEnv(process.env);
       const spawned = spawn(git, ['--version']);
       const outputChunks = [];
