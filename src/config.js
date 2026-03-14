@@ -1,4 +1,4 @@
-
+const path = require('path');
 const yargs = require('yargs');
 const apm = require('./apm');
 const Command = require('./command');
