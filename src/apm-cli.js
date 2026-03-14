@@ -168,9 +168,8 @@ async function getAtomVersion() {
 function getPythonVersion() {
   return new Promise(async (resolve, reject) => {
     try {
-      const npmConf = await config.getNpmConfig();
-
-      let python = npmConf.get("python") ?? process.env.PYTHON;
+      let pythonNpmConf = await config.getSetting("python");
+      let python = pythonNpmConf ?? process.env.PYTHON;
       if (config.isWin32() && !python) {
         let rootDir = process.env.SystemDrive ??= "C:\\";
         if (rootDir[rootDir.length -1] !== "\\") { rootDir += "\\"; }
