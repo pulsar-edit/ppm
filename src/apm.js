@@ -194,7 +194,9 @@ module.exports = {
 
     // re-route process object log events to console
     process.on("log", (level, ...args) => {
-      console.log(level, ...args);
+      if (level !== "silly") {
+        console.log(level, ...args);
+      }
     });
 
     return new Promise((resolve, reject) => {
