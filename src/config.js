@@ -48,7 +48,9 @@ Usage: ppm config set <key> <value>
           npmConf.save("user");
           resolve();
         } else if (action === "delete") {
-          resolve(npmConf.delete(key));
+          npmConf.delete(key);
+          npmConf.save("user");
+          resolve();
         } else if (action === "list") {
           reject("TODO: 501");
         } else if (action === "edit") {
