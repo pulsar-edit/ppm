@@ -1,8 +1,6 @@
 
 const path = require('path');
 const yargs = require('yargs');
-const npmConfig = require('@npmcli/config');
-const defs = require("@npmcli/config/lib/definitions");
 const apm = require('./apm');
 const Command = require('./command');
 
@@ -35,60 +33,32 @@ Usage: ppm config set <key> <value>
   run(options) {
     options = this.parseOptions(options.commandArgs);
 
-    let configArgs = ['--globalconfig', apm.getGlobalConfigPath(), '--userconfig', apm.getUserConfigPath() ];
-
-    const conf = new npmConfig({
-      npmPath: "",
-      definitions: {
-        ...defs.definitions,
-        // Define any default overrides
-        cache: { ...defs.definitions.cache, default: path.join(process.env.ATOM_HOME, ".apm") }
-      },
-      shorthands: defs.shorthands,
-      flatten: defs.flatten,
-      argv: configArgs,
-      env: {
-        // TODO: Do we need to include anything else from the env?
-        // previously used `...process.env` but it lead to lots of useless warnings
-        HOME: this.atomNodeDirectory,
-        RUSTUP_HOME: apm.getRustupHomeDirPath()
-      }
-    });
-
-    // re-route process object log events to console
-    process.on("log", (level, ...args) => {
-      console.log(level, ...args);
-    });
-
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
-      conf.load().then(() => {
-        conf.validate();
+        const npmConf = await apm.getNpmConfig();
 
         const action = options.argv._[0];
         const key = options.argv._[1];
         const value = options.argv._[2];
 
         if (action === "get") {
-          console.log(conf.get(key));
+          console.log(npmConf.get(key));
           resolve();
         } else if (action === "set") {
-          conf.set(key, value, "user");
-          conf.save("user");
+          npmConf.set(key, value, "user");
+          npmConf.save("user");
           resolve();
         } else if (action === "delete") {
-          resolve(conf.delete(key));
+          resolve(npmConf.delete(key));
         } else if (action === "list") {
           reject("TODO: 501");
         } else if (action === "edit") {
           reject("TODO: 501");
         }
-
-      }).catch((err) => {
+      } catch(err) {
         console.error(err);
-        reject(err);
-      });
-      } catch(err) { console.error(err); reject(err); }
+        return err;
+      }
     });
 
   }
