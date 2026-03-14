@@ -36,7 +36,7 @@ class PackageConverter {
   }
 
   async convert() {
-    const {protocol} = new URL(this.sourcePath);
+    const {protocol} = URL.canParse(this.sourcePath) ? new URL(this.sourcePath) : {};
     if ((protocol === 'http:') || (protocol === 'https:')) {
       await this.downloadBundle();
       return;

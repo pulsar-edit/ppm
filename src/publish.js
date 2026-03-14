@@ -353,9 +353,9 @@ have published it.\
       const isValidRange = function (semverRange) {
         if (semver.validRange(semverRange)) { return true; }
 
-        try {
+        if (URL.canParse(semverRange)) {
           if (new URL(semverRange).protocol.length > 0) { return true; }
-        } catch (error) {}
+        }
 
         return semverRange === 'latest';
       };

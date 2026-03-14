@@ -13,7 +13,7 @@ class ThemeConverter {
   }
 
   async readTheme() {
-    const {protocol} = new URL(this.sourcePath);
+    const {protocol} = URL.canParse(this.sourcePath) ? new URL(this.sourcePath) : {};
     if ((protocol === 'http:') || (protocol === 'https:')) {
       const requestOptions = {url: this.sourcePath};
       const response = await request.get(requestOptions).catch(error => Promise.reject(error?.code === 'ENOTFOUND' ? `Could not resolve URL: ${this.sourcePath}` : error));
