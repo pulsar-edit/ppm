@@ -32,6 +32,7 @@
     "hosted-git-info": "^3.0.7",
     "keytar": "^7.7.0",
     "npm": "https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar2/npm-6.14.19-pulsar2.tgz",
+    "npm-package-arg": "^13.0.2",
     "open": "7.3.0",
     "plist": "3",
     "read": "^3",
