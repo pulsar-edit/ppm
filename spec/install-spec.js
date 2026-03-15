@@ -1,10 +1,10 @@
 const path = require('path');
 const CSON = require('season');
 const fs = require('../src/fs');
+const fsPromises = require('fs/promises');
 const temp = require('temp');
 const express = require('express');
 const http = require('http');
-const wrench = require('wrench');
 const Install = require('../src/install');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
@@ -279,7 +279,7 @@ describe('apm install', () => {
     describe('when no path is specified', () => {
       it('installs all dependent modules', async () => {
         const moduleDirectory = path.join(temp.mkdirSync('apm-test-module-'), 'test-module-with-dependencies');
-        wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-dependencies'), moduleDirectory);
+        await fsPromises.cp(path.join(__dirname, 'fixtures', 'test-module-with-dependencies'), moduleDirectory, { recursive: true });
         process.chdir(moduleDirectory);
         const callback = jasmine.createSpy('callback');
         await apmRun(['install'], callback);
@@ -367,9 +367,10 @@ describe('apm install', () => {
         });
         const packageDirectory = path.join(atomRepoPath, 'packages', 'test-module-with-dependencies');
         fs.makeTreeSync(path.join(atomRepoPath, 'packages'));
-        wrench.copyDirSyncRecursive(
+        await fsPromises.cp(
           path.join(__dirname, 'fixtures', 'test-module-with-dependencies'),
-          packageDirectory
+          packageDirectory,
+          { recursive: true }
         );
         const originalPath = process.cwd();
         process.chdir(atomRepoPath);

@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs-plus');
+const fsPromises = require('fs/promises');
 const temp = require('temp');
-const wrench = require('wrench');
 const CSON = require('season');
 
 async function listPackages (...args) {
@@ -116,12 +116,13 @@ describe('apm list', () => {
   }); // ensure invalid packages aren't listed
 
   describe('enabling and disabling packages', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       const packagesPath = path.join(atomHome, 'packages');
       fs.makeTreeSync(packagesPath);
-      wrench.copyDirSyncRecursive(
+      await fsPromises.cp(
         path.join(__dirname, 'fixtures', 'test-module'),
-        path.join(packagesPath, 'test-module')
+        path.join(packagesPath, 'test-module'),
+        { recursive: true }
       );
       const configPath = path.join(atomHome, 'config.cson');
       CSON.writeFileSync(configPath, {

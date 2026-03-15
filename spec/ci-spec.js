@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
+const fsPromises = require('fs/promises');
 const http = require('http');
 const temp = require('temp');
 const express = require('express');
-const wrench = require('wrench');
 const CSON = require('season');
 const apm = require('../src/apm-cli');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
@@ -123,7 +123,7 @@ describe('apm ci', () => {
 
   it('installs dependency versions as specified by the lockfile', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module-with-lockfile');
-    wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
+    await fsPromises.cp(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory, { recursive: true });
     process.chdir(moduleDirectory);
     const callback = jasmine.createSpy('callback');
     await apmRun(['ci'], callback);
@@ -136,7 +136,7 @@ describe('apm ci', () => {
 
   it('builds a native dependency correctly', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module-with-native');
-    wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
+    await fsPromises.cp(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory, { recursive: true });
     process.chdir(moduleDirectory);
     const pjsonPath = path.join(moduleDirectory, 'package.json');
     const pjson = CSON.readFileSync(pjsonPath);
@@ -160,7 +160,7 @@ describe('apm ci', () => {
 
   it('fails if the lockfile is not present', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module');
-    wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module'), moduleDirectory);
+    await fsPromises.cp(path.join(__dirname, 'fixtures', 'test-module'), moduleDirectory, { recursive: true });
     process.chdir(moduleDirectory);
 
     const callback = jasmine.createSpy('callback');
@@ -171,7 +171,7 @@ describe('apm ci', () => {
 
   it('fails if the lockfile is out of date', async () => {
     const moduleDirectory = path.join(temp.mkdirSync('apm-test-'), 'test-module-with-lockfile');
-    wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory);
+    await fsPromises.cp(path.join(__dirname, 'fixtures', 'test-module-with-lockfile'), moduleDirectory, { recursive: true });
     process.chdir(moduleDirectory);
     const pjsonPath = path.join(moduleDirectory, 'package.json');
     const pjson = CSON.readFileSync(pjsonPath);

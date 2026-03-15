@@ -1,6 +1,5 @@
 
 const path = require('path');
-const url = require('url');
 
 const yargs = require('yargs');
 const Git = require('git-utils');
@@ -354,9 +353,9 @@ have published it.\
       const isValidRange = function (semverRange) {
         if (semver.validRange(semverRange)) { return true; }
 
-        try {
-          if (url.parse(semverRange).protocol.length > 0) { return true; }
-        } catch (error) {}
+        if (URL.canParse(semverRange)) {
+          if (new URL(semverRange).protocol.length > 0) { return true; }
+        }
 
         return semverRange === 'latest';
       };

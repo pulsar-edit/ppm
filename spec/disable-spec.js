@@ -1,5 +1,5 @@
 const fs = require('fs-plus');
-const wrench = require('wrench');
+const fsPromises = require('fs/promises');
 const path = require('path');
 const temp = require('temp');
 const CSON = require('season');
@@ -26,17 +26,20 @@ describe('apm disable', () => {
     const packagesPath = path.join(atomHome, 'packages');
     const packageSrcPath = path.join(__dirname, 'fixtures');
     fs.makeTreeSync(packagesPath);
-    wrench.copyDirSyncRecursive(
+    await fsPromises.cp(
       path.join(packageSrcPath, 'test-module'),
-      path.join(packagesPath, 'test-module')
+      path.join(packagesPath, 'test-module'),
+      { recursive: true }
     );
-    wrench.copyDirSyncRecursive(
+    await fsPromises.cp(
       path.join(packageSrcPath, 'test-module-two'),
-      path.join(packagesPath, 'test-module-two')
+      path.join(packagesPath, 'test-module-two'),
+      { recursive: true }
     );
-    wrench.copyDirSyncRecursive(
+    await fsPromises.cp(
       path.join(packageSrcPath, 'test-module-three'),
-      path.join(packagesPath, 'test-module-three')
+      path.join(packagesPath, 'test-module-three'),
+      { recursive: true }
     );
 
     await apmRun(['disable', 'test-module-two', 'not-installed', 'test-module-three']);

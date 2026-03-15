@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs-plus');
+const fsPromises = require('fs/promises');
 const temp = require('temp');
 const express = require('express');
 const http = require('http');
-const wrench = require('wrench');
 const apm = require('../src/apm-cli');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
 
@@ -66,14 +66,14 @@ describe('apm clean', () => {
     );
     server = http.createServer(app);
     await new Promise((resolve) => {
-      server.listen(3000, '127.0.0.1', () => {
+      server.listen(3000, '127.0.0.1', async () => {
         console.log('Server started');
         process.env.ATOM_HOME = temp.mkdirSync('apm-home-dir-');
         process.env.ATOM_ELECTRON_URL = 'http://localhost:3000/node';
         process.env.ATOM_ELECTRON_VERSION = nodeVersion;
         process.env.npm_config_registry = 'http://localhost:3000/';
         moduleDirectory = path.join(temp.mkdirSync('apm-test-module-'), 'test-module-with-dependencies');
-        wrench.copyDirSyncRecursive(path.join(__dirname, 'fixtures', 'test-module-with-dependencies'), moduleDirectory);
+        await fsPromises.cp(path.join(__dirname, 'fixtures', 'test-module-with-dependencies'), moduleDirectory, { recursive: true });
         process.chdir(moduleDirectory);
         resolve();
       });

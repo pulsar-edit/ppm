@@ -68,7 +68,7 @@ on the option selected.\
           return `You must specify one of ${this.supportedSyntaxes.join(', ')} after the --syntax argument`;
         }
         templatePath = this.getTemplatePath(options.argv, `package-${syntax}`);
-        this.generateFromTemplate(packagePath, templatePath);
+        await this.generateFromTemplate(packagePath, templatePath);
         return;
       }
       if (options.argv.theme?.length > 0) {
@@ -78,7 +78,7 @@ on the option selected.\
         }
         const themePath = path.resolve(options.argv.theme);
         templatePath = this.getTemplatePath(options.argv, 'theme');
-        this.generateFromTemplate(themePath, templatePath);
+        await this.generateFromTemplate(themePath, templatePath);
         return;
       }
       if (options.argv.language?.length > 0) {
@@ -86,7 +86,7 @@ on the option selected.\
         const languageName = path.basename(languagePath).replace(/^language-/, '');
         languagePath = path.join(path.dirname(languagePath), `language-${languageName}`);
         templatePath = this.getTemplatePath(options.argv, 'language');
-        this.generateFromTemplate(languagePath, templatePath, languageName);
+        await this.generateFromTemplate(languagePath, templatePath, languageName);
         return;
       }
       // If we get this far, something about this command was invalid.
@@ -112,7 +112,7 @@ on the option selected.\
       await converter.convert();
       destinationPath = path.resolve(destinationPath);
       const templatePath = path.resolve(__dirname, '..', 'templates', 'bundle');
-      this.generateFromTemplate(destinationPath, templatePath);
+      await this.generateFromTemplate(destinationPath, templatePath);
     }
 
     async convertTheme(sourcePath, destinationPath) {
@@ -125,18 +125,18 @@ on the option selected.\
       await converter.convert();
       destinationPath = path.resolve(destinationPath);
       const templatePath = path.resolve(__dirname, '..', 'templates', 'theme');
-      this.generateFromTemplate(destinationPath, templatePath);
+      await this.generateFromTemplate(destinationPath, templatePath);
       fs.removeSync(path.join(destinationPath, 'styles', 'colors.less'));
       fs.removeSync(path.join(destinationPath, 'LICENSE.md'));
     }
 
-    generateFromTemplate(packagePath, templatePath, packageName) {
+    async generateFromTemplate(packagePath, templatePath, packageName) {
       packageName ??= path.basename(packagePath);
       const packageAuthor = process.env.GITHUB_USER || 'atom';
 
       fs.makeTreeSync(packagePath);
 
-      for (let childPath of Array.from(fs.listRecursive(templatePath))) {
+      for (let childPath of Array.from(await fs.listRecursive(templatePath))) {
         const templateChildPath = path.resolve(templatePath, childPath);
         let relativePath = templateChildPath.replace(templatePath, "");
         relativePath = relativePath.replace(/^\//, '');
