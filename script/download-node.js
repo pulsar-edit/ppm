@@ -1,5 +1,5 @@
 const fs = require('fs');
-const mv = require('mv');
+const fsPromises = require('fs/promises');
 const zlib = require('zlib');
 const path = require('path');
 
@@ -54,19 +54,19 @@ const downloadTarballAndExtract = function(url, location, callback) {
     .pipe(zlib.createGunzip()).pipe(stream);
 };
 
+//TODO: verbatim copied from fs.js, deduplicate it
+async function mv(sourcePath, destinationPath) {
+  await fsPromises.rm(destinationPath, { recursive: true, force: true });
+  await fsPromises.mkdir(path.dirname(destinationPath), { mode: 0o755, recursive: true });
+  await fsPromises.rename(sourcePath, destinationPath);
+}
+
 const copyNodeBinToLocation = function(callback, version, targetFilename, fromDirectory) {
   const arch = identifyArch();
   const subDir = `node-${version}-${process.platform}-${arch}`;
   const downloadedNodePath = path.join(fromDirectory, subDir, 'bin', 'node');
-  return mv(downloadedNodePath, targetFilename, {mkdirp: true}, function(err) {
-    if (err) {
-      callback(err);
-      return;
-    }
 
-    fs.chmodSync(targetFilename, "755");
-    callback()
-  });
+  mv(downloadedNodePath, targetFilename).then(() => void callback(), err => void callback(err));
 };
 
 const downloadNode = function(version, done) {

@@ -1,8 +1,6 @@
 
 const fs = require('fs-plus');
 const fsPromises = require("fs/promises");
-const ncp = require('ncp');
-const wrench = require('wrench');
 const path = require('path');
 
 const fsAdditions = {
@@ -19,28 +17,18 @@ const fsAdditions = {
   },
 
   listRecursive(directoryPath) {
-    return wrench.readdirSyncRecursive(directoryPath);
+    return fsPromises.readdir(directoryPath, { recursive: true });
   },
 
-  cp(sourcePath, destinationPath) {
-    return new Promise((resolve, reject) => {
-      fsPromises.rm(destinationPath, { recursive: true, force: true }).then(() => {
-        ncp(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
-      }).catch((error) => {
-        return reject(error);
-      });
-    });
+  async cp(sourcePath, destinationPath) {
+    await fsPromises.rm(destinationPath, { recursive: true, force: true });
+    await fsPromises.cp(sourcePath, destinationPath, { recursive: true, verbatimSymlinks: true });
   },
 
-  mv(sourcePath, destinationPath) {
-    return new Promise((resolve, reject) => {
-      fsPromises.rm(destinationPath, { recursive: true, force: true }).then(() => {
-        wrench.mkdirSyncRecursive(path.dirname(destinationPath), 0o755);
-        fs.rename(sourcePath, destinationPath, (error, value) => void (error != null ? reject(error) : resolve(value)));
-      }).catch((error) => {
-        return reject(error);
-      });
-    });
+  async mv(sourcePath, destinationPath) {
+    await fsPromises.rm(destinationPath, { recursive: true, force: true });
+    await fsPromises.mkdir(path.dirname(destinationPath), { mode: 0o755, recursive: true });
+    await fsPromises.rename(sourcePath, destinationPath);
   }
 };
 
