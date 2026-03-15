@@ -213,6 +213,31 @@ module.exports = {
     });
   },
 
+  getArboristConfig() {
+    // Provides the options that should be passed to arborist on creation.
+    // Provided the defaults, with our default overrides from `getNpmConfig()`
+    // As well as some special options for arborist in our environment
+    return new Promise(async (resolve, reject) => {
+      try {
+        const npmConf = await this.getNpmConfig();
+        const { flat } = npmConf;
+
+        // Values set in NPM: https://github.com/npm/cli/blob/v11.11.1/lib/npm.js
+        flat.nodeVersion = process.version;
+
+        // Values for arborist
+        flat.registry = process.env.npm_config_registry ?? "https://registry.npmjs.org";
+        flat.cpu = this.getElectronArch();
+        flat.nodeGyp = path.join(this.getAtomDirectory(), ".node-gyp");
+
+        resolve(flat);
+      } catch(err) {
+        console.error(err);
+        reject(err);
+      }
+    });
+  },
+
   setupApmRcFile() {
     try {
       return fs.writeFileSync(this.getGlobalConfigPath(), `\
