@@ -1,7 +1,9 @@
 
 const child_process = require('child_process');
+const { performance } = require("node:perf_hooks");
 const path = require('path');
 const semver = require('semver');
+const { depth } = require("treeverse");
 const config = require('./apm');
 const git = require('./git');
 
@@ -86,6 +88,97 @@ class Command {
       this.logFailure();
       throw `${stdout}\n${stderr}`.trim();
     }
+  }
+
+  logArboristResults(arb, startTime) {
+    // Logging of Arborist data modeled after NPM v11.11.1
+    // https://github.com/npm/cli/blob/v11.11.1/lib/utils/reify-output.js
+    const { diff, actualTree } = arb;
+
+    const summary = {
+      add: [],
+      added: 0,
+      change: [],
+      changed: 0,
+      remove: [],
+      removed: 0
+    };
+
+    if (diff) {
+      depth({
+        tree: diff,
+        visit: d => {
+          switch(d.action) {
+            case "REMOVE":
+              summary.removed++;
+              summary.remove.push({
+                name: d.actual.name,
+                version: d.actual.package.version,
+                path: d.actual.path
+              });
+              break;
+            case "ADD":
+              if (actualTree.inventory.has(d.ideal)) {
+                summary.added++;
+                summary.add.push({
+                  name: d.ideal.name,
+                  version: d.ideal.package.version,
+                  path: d.ideal.path
+                });
+              }
+              break;
+            case "CHANGE":
+              summary.changed++;
+              summary.change.push({
+                from: {
+                  name: d.actual.name,
+                  version: d.actual.package.version,
+                  path: d.actual.path
+                },
+                to: {
+                  name: d.ideal.name,
+                  version: d.ideal.package.version,
+                  path: d.ideal.path
+                }
+              });
+              break;
+            default:
+              return;
+          }
+        },
+        getChildren: d => d.children
+      })
+    }
+
+    // Print out the message
+    const msg = ["\n"];
+    if (summary.added === 0 && summary.removed === 0 && summary.changed === 0) {
+      msg.push("up to date");
+    } else {
+      if (summary.added) {
+        msg.push(`added ${summary.added} package${summary.added === 1 ? "" : "s"}`);
+      }
+
+      if (summary.removed) {
+        if (summary.added) {
+          msg.push(", ");
+        }
+        msg.push(`removed ${summary.removed} package${summary.removed === 1 ? "" : "s"}`);
+      }
+
+      if (summary.changed) {
+        if (summary.added || summary.removed) {
+          msg.push(", ");
+        }
+        msg.push(`changed ${summary.changed} package${summary.changed === 1 ? "" : "s"}`);
+      }
+    }
+
+    if (startTime) {
+      msg.push(` in ${(performance.now() - startTime).toFixed(2)}ms`);
+    }
+
+    console.log(msg.join(""));
   }
 
   normalizeVersion(version) {
