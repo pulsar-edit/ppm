@@ -36,7 +36,7 @@ All the modules will be rebuilt if no module names are specified.\
 
       // Process here is modeled after the NPM CLI v11.11.1
       // https://github.com/npm/cli/blob/v11.11.1/lib/commands/rebuild.js
-      fs.makeTreeSync(this.atomDirectory);
+      fs.makeTreeSync(config.getAtomDirectory());
 
       const started = performance.now();
       const arb = new Arborist({
