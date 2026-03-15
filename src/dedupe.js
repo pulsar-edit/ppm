@@ -1,8 +1,7 @@
-
+const { performance } = require("node:perf_hooks");
 const path = require('path');
-
+const Arborist = require("@npmcli/arborist");
 const yargs = require('yargs');
-
 const config = require('./apm');
 const Command = require('./command');
 const fs = require('./fs');
@@ -14,16 +13,14 @@ class Dedupe extends Command {
     constructor() {
       super();
       this.atomDirectory = config.getAtomDirectory();
-      this.atomPackagesDirectory = path.join(this.atomDirectory, 'packages');
       this.atomNodeDirectory = path.join(this.atomDirectory, '.node-gyp');
-      this.atomNpmPath = require.resolve('npm/bin/npm-cli');
     }
 
     parseOptions(argv) {
       const options = yargs(argv).wrap(Math.min(100, yargs.terminalWidth()));
       options.usage(`\
 
-Usage: ppm dedupe [<package_name>...]
+Usage: ppm dedupe
 
 Reduce duplication in the node_modules folder in the current directory.
 
@@ -33,42 +30,32 @@ This command is experimental.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    dedupeModules(options) {
+    async dedupeModules(options) {
       process.stdout.write('Deduping modules ');
 
-      return new Promise((resolve, reject) => {
-        this.forkDedupeCommand(options, (...args) => {
-          this.logCommandResults(...args).then(resolve, reject);
-        });
+      // Process here is modeled after the NPM CLI v11.11.1
+      // https://github.com/npm/cli/blob/v11.11.1/lib/commands/dedupe.js
+      const started = performance.now();
+      const arb = new Arborist({
+        registry: process.env.npm_config_registry ?? "https://registry.npmjs.org",
+        save: false
       });
-    }
 
-    forkDedupeCommand(options, callback) {
-      const dedupeArgs = ['--globalconfig', config.getGlobalConfigPath(), '--userconfig', config.getUserConfigPath(), 'dedupe'];
-      dedupeArgs.push(...this.getNpmBuildFlags());
-      if (options.argv.silent) { dedupeArgs.push('--silent'); }
-      if (options.argv.quiet) { dedupeArgs.push('--quiet'); }
-
-      for (let packageName of Array.from(options.argv._)) { dedupeArgs.push(packageName); }
-
-      fs.makeTreeSync(this.atomDirectory);
-
-      const env = {
-        ...process.env,
-        HOME: this.atomNodeDirectory,
-        RUSTUP_HOME: config.getRustupHomeDirPath()
-      };
-      this.addBuildEnvVars(env);
-
-      const dedupeOptions = {env};
-      if (options.cwd) { dedupeOptions.cwd = options.cwd; }
-
-      return this.fork(this.atomNpmPath, dedupeArgs, dedupeOptions, callback);
+      try {
+        await arb.dedupe();
+        this.logArboristResults(arb, started);
+        this.logSuccess();
+        return;
+      } catch(err) {
+        console.error(err);
+        this.logFailure();
+        throw err;
+      }
     }
 
     createAtomDirectories() {
       fs.makeTreeSync(this.atomDirectory);
-      return fs.makeTreeSync(this.atomNodeDirectory);
+      fs.makeTreeSync(this.atomNodeDirectory);
     }
 
     async run(options) {
