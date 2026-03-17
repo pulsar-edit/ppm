@@ -48,7 +48,7 @@ class PackageConverter {
   getDownloadUrl() {
     let downloadUrl = this.sourcePath;
     downloadUrl = downloadUrl.replace(/(\.git)?\/*$/, '');
-    return downloadUrl += '/archive/master.tar.gz';
+    return downloadUrl += '/archive/HEAD.tar.gz';
   }
 
   async downloadBundle() {
