@@ -248,6 +248,41 @@ describe('apm publish', () => {
     expect(callback.calls.mostRecent().args[0]).toBeUndefined();
   });
 
+  it('publishes successfully with --branch flag', async () => {
+    const packageToPublish = temp.mkdirSync('apm-test-package-');
+    const metadata = {
+      name: 'test',
+      version: '1.0.0',
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/pulsar-edit/foo"
+      },
+      engines: {
+        atom: '1'
+      },
+      dependencies: {
+        foo: '^5'
+      },
+      devDependencies: {
+        abc: 'git://github.com/user/project.git',
+        abcd: 'latest',
+      }
+    };
+    fs.writeFileSync(
+      path.join(packageToPublish, 'package.json'),
+      JSON.stringify(metadata)
+    );
+    process.chdir(packageToPublish);
+
+    childProcess.execSync('git init', { cwd: packageToPublish });
+    childProcess.execSync('git remote add origin https://github.com/pulsar-edit/foo', { cwd: packageToPublish });
+
+    const callback = jasmine.createSpy('callback');
+    await apmRun(['publish', 'patch', '--branch', 'main'], callback);
+    expect(requests.length).toBe(1);
+    expect(callback.calls.mostRecent().args[0]).toBeUndefined();
+  });
+
   it('publishes successfully when the package exists and is being renamed', async () => {
     spyOn(Publish.prototype, 'packageExists').and.callFake((name) => {
       // If we're renaming the package, we need to ask the API if the package's
@@ -292,5 +327,55 @@ describe('apm publish', () => {
     ).toBe('test-renamed');
     expect(requests.length).toBe(1);
     expect(callback.calls.mostRecent().args[0]).toBeUndefined();
+  });
+});
+
+
+
+describe('Publish.getDefaultBranch', () => {
+  let publish;
+
+  beforeEach(() => {
+    publish = new Publish();
+  });
+
+  it('falls back to main when symbolic-ref is unavailable', () => {
+    // execSync is bound at import time, so we call getDefaultBranch
+    // outside a real git repo where symbolic-ref will naturally fail
+    const repo = {
+      getConfigValue: jasmine.createSpy('getConfigValue').and.callFake((key) => {
+        if (key === 'branch.main.remote') return 'origin';
+        return null;
+      })
+    };
+    expect(publish.getDefaultBranch(repo)).toBe('main');
+  });
+
+  it('falls back to master when main is not configured', () => {
+    const repo = {
+      getConfigValue: jasmine.createSpy('getConfigValue').and.callFake((key) => {
+        if (key === 'branch.master.remote') return 'origin';
+        return null;
+      })
+    };
+    expect(publish.getDefaultBranch(repo)).toBe('master');
+  });
+
+  it('returns null when no default branch can be determined', () => {
+    const repo = {
+      getConfigValue: jasmine.createSpy('getConfigValue').and.returnValue(null)
+    };
+    expect(publish.getDefaultBranch(repo)).toBeNull();
+  });
+
+  it('prefers main over master', () => {
+    const repo = {
+      getConfigValue: jasmine.createSpy('getConfigValue').and.callFake((key) => {
+        if (key === 'branch.main.remote') return 'origin';
+        if (key === 'branch.master.remote') return 'origin';
+        return null;
+      })
+    };
+    expect(publish.getDefaultBranch(repo)).toBe('main');
   });
 });
