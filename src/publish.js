@@ -1,5 +1,6 @@
 
 const path = require('path');
+const { execSync } = require('child_process');
 
 const yargs = require('yargs');
 const Git = require('git-utils');
@@ -29,6 +30,7 @@ class Publish extends Command {
 Usage: ppm publish [<newversion> | major | minor | patch | build]
        ppm publish --tag <tagname>
        ppm publish --rename <new-name>
+       ppm publish --branch <branch-name>
 
 Publish a new version of the package in the current working directory.
 
@@ -50,7 +52,8 @@ have published it.\
       );
       options.alias('h', 'help').describe('help', 'Print this usage message');
       options.alias('t', 'tag').string('tag').describe('tag', 'Specify a tag to publish. Must be of the form vx.y.z');
-      return options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
+      options.alias('r', 'rename').string('rename').describe('rename', 'Specify a new name for the package');
+      return options.alias('b', 'branch').string('branch').describe('branch', 'Specify the default branch of the package repository');
     }
 
     // Create a new version and tag use the `npm version` command.
@@ -272,7 +275,25 @@ have published it.\
       fs.writeFileSync(metadataPath, `${metadataJson}\n`);
     }
 
-    loadRepository() {
+    getDefaultBranch(repo) {
+      try {
+        const ref = execSync('git symbolic-ref refs/remotes/origin/HEAD', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore']
+        }).trim();
+        const match = ref.match(/refs\/remotes\/origin\/(.+)/);
+        if (match) { return match[1]; }
+      } catch { /* symbolic-ref may not exist; fall through to heuristic */ }
+
+      for (const branch of ['main', 'master']) {
+        if (repo.getConfigValue(`branch.${branch}.remote`)) {
+          return branch;
+        }
+      }
+      return null;
+    }
+
+    loadRepository(branch) {
       let currentBranch, remoteName, upstreamUrl;
       const currentDirectory = process.cwd();
 
@@ -281,12 +302,16 @@ have published it.\
         throw new Error('Package must be in a Git repository before publishing: https://help.github.com/articles/create-a-repo');
       }
 
-
       currentBranch = repo.getShortHead();
       if (currentBranch) {
         remoteName = repo.getConfigValue(`branch.${currentBranch}.remote`);
       }
-      if (remoteName == null) { remoteName = repo.getConfigValue('branch.master.remote'); }
+      if (remoteName == null) {
+        const defaultBranch = branch || this.getDefaultBranch(repo);
+        if (defaultBranch && defaultBranch !== currentBranch) {
+          remoteName = repo.getConfigValue(`branch.${defaultBranch}.remote`);
+        }
+      }
 
       if (remoteName) { upstreamUrl = repo.getConfigValue(`remote.${remoteName}.url`); }
       if (upstreamUrl == null) { upstreamUrl = repo.getConfigValue('remote.origin.url'); }
@@ -387,7 +412,7 @@ have published it.\
     async run(options) {
       let pack, originalName;
       options = this.parseOptions(options.commandArgs);
-      let {tag, rename} = options.argv;
+      let {tag, rename, branch} = options.argv;
       let [version] = options.argv._;
 
       // Normalize variables to ensure they are strings with zero length
@@ -416,7 +441,7 @@ have published it.\
       }
 
       try {
-        this.loadRepository();
+        this.loadRepository(branch);
       } catch (error) {
         return error;
       }

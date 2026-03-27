@@ -2,6 +2,7 @@ const path = require('path');
 const temp = require('temp');
 const CSON = require('season');
 const fs = require('../src/fs');
+const PackageConverter = require('../src/package-converter');
 
 describe('apm init', () => {
   let languagePath, packagePath, themePath;
@@ -208,5 +209,27 @@ describe('apm init', () => {
       await apmRun(['init', '--language', 'language-fake']);
       expect(fs.existsSync(languagePath)).toBeTruthy();
     });
+  });
+});
+
+describe('PackageConverter.getDownloadUrl', () => {
+  it('uses HEAD instead of a hardcoded branch name', () => {
+    const converter = new PackageConverter(
+      'https://github.com/textmate/r.tmbundle',
+      '/tmp/fake-dest'
+    );
+    expect(converter.getDownloadUrl()).toBe(
+      'https://github.com/textmate/r.tmbundle/archive/HEAD.tar.gz'
+    );
+  });
+
+  it('strips trailing .git and slashes before appending archive path', () => {
+    const converter = new PackageConverter(
+      'https://github.com/textmate/r.tmbundle.git/',
+      '/tmp/fake-dest'
+    );
+    expect(converter.getDownloadUrl()).toBe(
+      'https://github.com/textmate/r.tmbundle/archive/HEAD.tar.gz'
+    );
   });
 });
