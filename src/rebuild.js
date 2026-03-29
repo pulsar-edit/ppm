@@ -1,8 +1,9 @@
-
+const { performance } = require("node:perf_hooks");
 const path = require('path');
-
+const Arborist = require("@npmcli/arborist");
 const yargs = require('yargs');
-
+const semver = require("semver");
+const npa = require("npm-package-arg");
 const config = require('./apm');
 const Command = require('./command');
 const fs = require('./fs');
@@ -13,9 +14,6 @@ class Rebuild extends Command {
 
     constructor() {
       super();
-      this.atomDirectory = config.getAtomDirectory();
-      this.atomNodeDirectory = path.join(this.atomDirectory, '.node-gyp');
-      this.atomNpmPath = require.resolve('npm/bin/npm-cli');
     }
 
     parseOptions(argv) {
@@ -33,39 +31,68 @@ All the modules will be rebuilt if no module names are specified.\
       return options.alias('h', 'help').describe('help', 'Print this usage message');
     }
 
-    forkNpmRebuild(options) {
-      process.stdout.write('Rebuilding modules ');
+    async forkNpmRebuild(options) {
+      process.stdout.write('Rebuilding modules\n');
 
-      const rebuildArgs = ['--globalconfig', config.getGlobalConfigPath(), '--userconfig', config.getUserConfigPath(), 'rebuild'];
-      rebuildArgs.push(...this.getNpmBuildFlags());
-      rebuildArgs.push(...options.argv._);
+      // Process here is modeled after the NPM CLI v11.11.1
+      // https://github.com/npm/cli/blob/v11.11.1/lib/commands/rebuild.js
+      fs.makeTreeSync(config.getAtomDirectory());
 
-      fs.makeTreeSync(this.atomDirectory);
+      const started = performance.now();
+      const arb = new Arborist({
+        ...config.getArboristConfig(),
+        legacyPeerDeps: true
+      });
 
-      const env = {
-        ...process.env,
-        HOME: this.atomNodeDirectory,
-        RUSTUP_HOME: config.getRustupHomeDirPath()
-      };
-      this.addBuildEnvVars(env);
+      if (options.argv._.length > 0) {
+        // get the set of nodes matching the name that we want rebuilt
+        const tree = await arb.loadActual();
+        const specs = options.argv._.map(arg => {
+          const spec = npa(arg);
 
-      return new Promise((resolve, reject) =>
-        void this.fork(this.atomNpmPath, rebuildArgs, {env}, (code, stderr) => {
-          if (code !== 0) {
-            reject(stderr ?? `Unknown error while invoking npm: code ${code}`);
-            return;
+          if (spec.rawSpec === "*") {
+            return spec;
           }
 
-          resolve();
-        })
-      );
+          if (spec.type !== "range" && spec.type !== "version" && spec.type !== "directory") {
+            throw new Error("`ppm rebuild` only supports SemVer version/range specifiers");
+          }
+
+          return spec;
+        });
+
+        const nodes = tree.inventory.filter(node => this.isNode(specs, node));
+
+        await arb.rebuild({ nodes });
+      } else {
+        await arb.rebuild();
+      }
+
+      this.logArboristResults(arb, started);
+    }
+
+    isNode(specs, node) {
+      return specs.some(spec => {
+        if (spec.type === "directory") {
+          return node.path === spec.fetchSpec;
+        }
+
+        if (spec.name !== node.name) {
+          return false;
+        }
+
+        if (spec.rawSpec === "" || spec.rawSpec === "*") {
+          return true;
+        }
+
+        const { version } = node.package;
+        return semver.satisfies(version, spec.fetchSpec);
+      });
     }
 
     async run(options) {
       options = this.parseOptions(options.commandArgs);
 
-      const npm = await config.loadNpm();
-      this.npm = npm;
       try {
         await this.loadInstalledAtomMetadata();
         await this.forkNpmRebuild(options);

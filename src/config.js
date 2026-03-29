@@ -1,4 +1,3 @@
-
 const path = require('path');
 const yargs = require('yargs');
 const apm = require('./apm');
@@ -33,27 +32,35 @@ Usage: ppm config set <key> <value>
   run(options) {
     options = this.parseOptions(options.commandArgs);
 
-    let configArgs = ['--globalconfig', apm.getGlobalConfigPath(), '--userconfig', apm.getUserConfigPath(), 'config'];
-    configArgs = configArgs.concat(options.argv._);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const npmConf = await apm.getNpmConfig();
 
-    const env = {
-      ...process.env,
-      HOME: this.atomNodeDirectory,
-      RUSTUP_HOME: apm.getRustupHomeDirPath()
-    };
-    const configOptions = {env};
+        const action = options.argv._[0];
+        const key = options.argv._[1];
+        const value = options.argv._[2];
 
-    return new Promise((resolve, _reject) => 
-      void this.fork(this.atomNpmPath, configArgs, configOptions, (code, stderr, stdout) => {
-        stderr ??= '';
-        stdout ??= '';
-        if (code === 0) {
-          if (stdout) { process.stdout.write(stdout); }
-          return void resolve();
-        } 
-        if (stderr) { process.stdout.write(stderr); }
-        return void resolve(new Error(`npm config failed: ${code}`));
-      })
-    );
+        if (action === "get") {
+          console.log(npmConf.get(key));
+          resolve();
+        } else if (action === "set") {
+          npmConf.set(key, value, "user");
+          npmConf.save("user");
+          resolve();
+        } else if (action === "delete") {
+          npmConf.delete(key);
+          npmConf.save("user");
+          resolve();
+        } else if (action === "list") {
+          reject("TODO: 501");
+        } else if (action === "edit") {
+          reject("TODO: 501");
+        }
+      } catch(err) {
+        console.error(err);
+        return err;
+      }
+    });
+
   }
 }

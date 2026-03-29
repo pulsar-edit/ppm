@@ -2,6 +2,8 @@ const child_process = require('child_process');
 const fs = require('./fs');
 const path = require('path');
 const npm = require('npm');
+const npmConfig = require("@npmcli/config");
+const npmDefs = require("@npmcli/config/lib/definitions");
 let asarPath = null;
 
 module.exports = {
@@ -161,8 +163,79 @@ module.exports = {
   },
 
   async getSetting(key) {
-    await this.loadNpm();
-    return npm.config.get(key);
+    const conf = await this.getNpmConfig();
+    return conf.get(key);
+  },
+
+  async getNpmConfig() {
+    const configArgs =
+      [
+        "--globalconfig", this.getGlobalConfigPath(),
+        "--userconfig", this.getUserConfigPath()
+      ];
+
+    const conf = new npmConfig({
+      npmPath: "",
+      definitions: {
+        ...npmDefs.definitions,
+        // Define any default overrides
+        cache: { ...npmDefs.definitions.cache, default: this.getCacheDirectory() }
+      },
+      shorthands: npmDefs.shorthands,
+      flatten: npmDefs.flatten,
+      argv: configArgs,
+      env: {
+        // TODO: Do we need to include anything else from the env?
+        // previously used `...process.env` but it lead to lots of useless warnings.
+        HOME: path.join(this.getAtomDirectory(), ".node-gyp"),
+        RUSTUP_HOME: this.getRustupHomeDirPath()
+      }
+    });
+
+    // re-route process object log events to console
+    process.on("log", (level, ...args) => {
+      if (level !== "silly") {
+        console.log(level, ...args);
+      }
+    });
+
+    return new Promise((resolve, reject) => {
+      try {
+        conf.load().then(() => {
+          conf.validate();
+          resolve(conf);
+        }).catch((err) => {
+          reject(err);
+        });
+      } catch(err) {
+        reject(err);
+      }
+    });
+  },
+
+  getArboristConfig() {
+    // Provides the options that should be passed to arborist on creation.
+    // Provided the defaults, with our default overrides from `getNpmConfig()`
+    // As well as some special options for arborist in our environment
+    return new Promise(async (resolve, reject) => {
+      try {
+        const npmConf = await this.getNpmConfig();
+        const { flat } = npmConf;
+
+        // Values set in NPM: https://github.com/npm/cli/blob/v11.11.1/lib/npm.js
+        flat.nodeVersion = process.version;
+
+        // Values for arborist
+        flat.registry = process.env.npm_config_registry ?? "https://registry.npmjs.org";
+        flat.cpu = this.getElectronArch();
+        flat.nodeGyp = path.join(this.getAtomDirectory(), ".node-gyp");
+
+        resolve(flat);
+      } catch(err) {
+        console.error(err);
+        reject(err);
+      }
+    });
   },
 
   setupApmRcFile() {

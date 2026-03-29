@@ -22,6 +22,8 @@
     "test": "npm run check-version && jasmine --config=./spec/jasmine.json"
   },
   "dependencies": {
+    "@npmcli/arborist": "^9.4.1",
+    "@npmcli/config": "^10.7.1",
     "asar-require": "0.3.0",
     "async": "^3.2.0",
     "colors": "~1.4.0",
@@ -30,6 +32,7 @@
     "hosted-git-info": "^3.0.7",
     "keytar": "^7.7.0",
     "npm": "https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar2/npm-6.14.19-pulsar2.tgz",
+    "npm-package-arg": "^13.0.2",
     "open": "7.3.0",
     "plist": "3",
     "read": "^3",
@@ -40,6 +43,7 @@
     "superagent-proxy": "^3.0.0",
     "tar": "^6.0.5",
     "temp": "^0.9.4",
+    "treeverse": "^3.0.0",
     "underscore-plus": "1.x",
     "wordwrap": "1.0.0",
     "yargs": "^3.32.0"

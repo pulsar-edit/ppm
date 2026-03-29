@@ -61,13 +61,11 @@ exports.addGitToEnv = env => {
 };
 
 exports.getGitVersion = () => {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath()
-  };
-  return new Promise((resolve, _reject) => {
-    npm.load(npmOptions, () => {
-      const git = npm.config.get('git') ?? 'git';
+  return new Promise(async (resolve, reject) => {
+    try {
+      const gitNpmConf = await config.getSetting("git");
+
+      const git = gitNpmConf ?? "git";
       exports.addGitToEnv(process.env);
       const spawned = spawn(git, ['--version']);
       const outputChunks = [];
@@ -83,6 +81,8 @@ exports.getGitVersion = () => {
         }
         resolve(version);
       });
-    });
+    } catch(err) {
+      reject(err);
+    }
   });
 };

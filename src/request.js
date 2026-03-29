@@ -1,5 +1,4 @@
 
-const npm = require("npm");
 const superagent = require("superagent");
 require("superagent-proxy")(superagent);
 
@@ -10,23 +9,13 @@ const config = require("./apm.js");
 // So we have to specifically say these are valid, or otherwise redo a lot of our logic
 const OK_STATUS_CODES = [200, 201, 204, 404];
 
-function loadNpm() {
-  const npmOptions = {
-    userconfig: config.getUserConfigPath(),
-    globalconfig: config.getGlobalConfigPath()
-  };
-  return new Promise((resolve, reject) => 
-    void npm.load(npmOptions, (error, value) => void(error != null ? reject(error) : resolve(value)))
-  );
-};
-
 async function configureRequest(requestOptions){
-  await loadNpm();
-  requestOptions.proxy ??= npm.config.get("https-proxy") ?? npm.config.get("proxy") ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY;
-  requestOptions.strictSSL ??= npm.config.get("strict-ssl") ?? true;
+  const npmConf = await config.getNpmConfig();
+  requestOptions.proxy ??= npmConf.get("https-proxy") ?? npmConf.get("proxy") ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY;
+  requestOptions.strictSSL ??= npmConf.get("strict-ssl") ?? true;
 
   requestOptions.headers ??= {};
-  requestOptions.headers["User-Agent"] ??= npm.config.get("user-agent") ?? `PulsarPpm/${require("../package.json").version}`;
+  requestOptions.headers["User-Agent"] ??= npmConf.get("user-agent") ?? `PulsarPpm/${require("../package.json").version}`;
 
   if (requestOptions.json) {
     requestOptions.headers["Accept"] = "application/json";
