@@ -80,6 +80,30 @@ describe('apm init', () => {
         expect(JSON.parse(fs.readFileSync(path.join(packagePath, 'package.json'))).name).toBe('fake-package');
         expect(JSON.parse(fs.readFileSync(path.join(packagePath, 'package.json'))).repository).toBe('https://github.com/somebody/fake-package');
       });
+
+      it('allows the user to opt into a transpiled JavaScript project with the --transpiled flag', async () => {
+        await apmRun(['init', '--syntax', 'javascript', '--package', 'fake-package', '--transpiled']);
+        expect(fs.existsSync(packagePath)).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'keymaps'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'keymaps', 'fake-package.json'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'lib'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'lib', 'index.cjs'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'src'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'src', 'fake-package-view.js'))).toBeTruthy();
+        // Transpiled JavaScript template uses `src/index.js` instead of naming
+        // the entry point after the package.
+        expect(fs.existsSync(path.join(packagePath, 'src', 'index.js'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'menus'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'menus', 'fake-package.json'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'spec', 'fake-package-view-spec.js'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'spec', 'fake-package-spec.js'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'styles', 'fake-package.less'))).toBeTruthy();
+        expect(fs.existsSync(path.join(packagePath, 'package.json'))).toBeTruthy();
+        // Transpiled JavaScript template includes a Rollup config file.
+        expect(fs.existsSync(path.join(packagePath, 'rollup.config.js'))).toBeTruthy();
+        expect(JSON.parse(fs.readFileSync(path.join(packagePath, 'package.json'))).name).toBe('fake-package');
+        expect(JSON.parse(fs.readFileSync(path.join(packagePath, 'package.json'))).repository).toBe('https://github.com/somebody/fake-package');
+      });
     });
 
     describe('when package syntax is TypeScript', () => {

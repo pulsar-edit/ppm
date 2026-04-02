@@ -1,0 +1,8 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/pulsar-edit/pulsar/blob/master/packages/atom-dark-ui/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+.__package-name__ {
+}
