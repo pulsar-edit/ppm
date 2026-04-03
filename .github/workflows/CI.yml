@@ -61,12 +61,13 @@ jobs:
         run: yarn global add node-gyp@9
 
       - name: Install dependencies
-        if: ${{ matrix.node_version != 14 }}
+        if: ${{ matrix.node_version > 16 }}
         run: yarn install
 
-      - name: Install dependencies (NodeJS v14)
+      - name: Install dependencies (older NodeJS)
         # node-gyp v10+'s `engines` field dropped support for Node 14... Ignore and install anyway.
-        if: ${{ matrix.node_version == 14 }}
+        # Likewise, tar v7+ claims compatibility only with Node 18+. Ignore and intall anyway.
+        if: ${{ matrix.node_version <= 16 }}
         run: yarn install --ignore-engines
 
       - name: Run tests 👩🏾‍💻
