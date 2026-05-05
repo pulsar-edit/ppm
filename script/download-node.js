@@ -58,7 +58,7 @@ const downloadTarballAndExtract = function(url, location, callback) {
 async function mv(sourcePath, destinationPath) {
   await fsPromises.rm(destinationPath, { recursive: true, force: true });
   await fsPromises.mkdir(path.dirname(destinationPath), { mode: 0o755, recursive: true });
-  await fsPromises.rename(sourcePath, destinationPath);
+  await fsPromises.cp(sourcePath, destinationPath);
 }
 
 const copyNodeBinToLocation = function(callback, version, targetFilename, fromDirectory) {
