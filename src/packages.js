@@ -9,7 +9,7 @@ module.exports = {
     pack ??= {};
     let repository = pack.repository?.url ?? pack.repository;
     if (repository) {
-      const repoUrl = repository.replace(/\.git$/, '');
+      const repoUrl = repository.replace(/^git\+/, '').replace(/\.git$/, '');
       if (!URL.canParse(repoUrl)) { return null; }
       const repoPath = new URL(repoUrl).pathname;
       const [name, owner] = repoPath.split('/').slice(-2);
