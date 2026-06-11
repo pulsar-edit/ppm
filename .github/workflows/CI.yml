@@ -18,9 +18,9 @@ jobs:
           - macos-14
           - windows-latest
         node_version:
-          - 14
-          - 16
           - 18
+          - 20
+          - 22
         node_arch:
           - x64
     steps:
@@ -34,40 +34,15 @@ jobs:
           check-latest: true
 
       - name: Setup Python
-        # NodeJS v14 can use the python included by the CI
-        if: ${{ matrix.node_version != 14 }}
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      - name: Setup Python (NodeJS v14)
-        # While initially tests would pass with no Python setup, additional testing
-        # is showing issues with CI included Python versions, so we will install our own
-        if: ${{ matrix.node_version == 14 }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
       - name: Install Python Dependencies
-        # NodeJS v14 doesn't have a newer copy of python, so we don't need to install deps
-        if: ${{ matrix.node_version != 14 }}
-        # This is needed for Python 3.12+, since node-gyp requires
-        # 'distutils', which has been removed
         run: python3 -m pip install setuptools
 
-      - name: Update node-gyp (NodeJS v14, Windows)
-        # Need newer node-gyp to support newer Visual Studio versions
-        if: ${{ matrix.node_version == 14 && runner.os == 'Windows' }}
-        run: yarn global add node-gyp@9
-
       - name: Install dependencies
-        if: ${{ matrix.node_version != 14 }}
         run: yarn install
-
-      - name: Install dependencies (NodeJS v14)
-        # node-gyp v10+'s `engines` field dropped support for Node 14... Ignore and install anyway.
-        if: ${{ matrix.node_version == 14 }}
-        run: yarn install --ignore-engines
 
       - name: Run tests 👩🏾‍💻
         run: ./bin/npm test
