@@ -5,7 +5,7 @@ const async = require('async');
 const yargs = require('yargs');
 const { read } = require('read');
 const semver = require('semver');
-const Git = require('git-utils');
+const Git = require('@pulsar-edit/git-utils');
 
 const Command = require('./command');
 const config = require('./apm');

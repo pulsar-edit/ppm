@@ -45,6 +45,13 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
+"@pulsar-edit/git-utils@^8.1.0":
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/@pulsar-edit/git-utils/-/git-utils-8.1.0.tgz#e8f4469296bb889719aa7a2225893256351ef534"
+  integrity sha512-YaM5VWIw0ciC1JYyKm0BCDJ+FfAKQ/Pc2S7U/3b2UR1/Y146hzlx4HGISIWFTVK+ROFZpdVvfc3ECZ7lzzmBBA==
+  dependencies:
+    fs-plus "^3.0.0"
+
 "@sindresorhus/is@^4.0.0":
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.6.0.tgz#3c7c9c46e678feefe7a2e5bb609d3dbd665ffb3f"
@@ -1814,13 +1821,6 @@ getpass@^0.1.1:
   integrity sha512-0fzj9JxOLfJ+XGLhR8ze3unN0KZCgZwiSSDz168VERjK8Wl8kVSdcu2kspd4s4wtAa1y/qrVRiAA0WclVsu0ng==
   dependencies:
     assert-plus "^1.0.0"
-
-"git-utils@npm:@pulsar-edit/git-utils@0.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@pulsar-edit/git-utils/-/git-utils-8.1.0.tgz#e8f4469296bb889719aa7a2225893256351ef534"
-  integrity sha512-YaM5VWIw0ciC1JYyKm0BCDJ+FfAKQ/Pc2S7U/3b2UR1/Y146hzlx4HGISIWFTVK+ROFZpdVvfc3ECZ7lzzmBBA==
-  dependencies:
-    fs-plus "^3.0.0"
 
 github-from-package@0.0.0:
   version "0.0.0"
@@ -4565,6 +4565,7 @@ strict-uri-encode@^2.0.0:
   integrity sha512-QwiXZgpRcKkhTj2Scnn++4PKtWsH0kpzZ62L2R6c/LUVYv7hVnZqcg2+sMuT6R7Jusu1vviK/MFsu6kNJfWlEQ==
 
 "string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0:
+  name string-width-cjs
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -4651,6 +4652,7 @@ stringify-package@^1.0.0, stringify-package@^1.0.1:
   integrity sha512-sa4DUQsYciMP1xhKWGuFM04fB0LG/9DlluZoSVywUMRNvzid6XucHK0/90xGxRoHrAaROrcHK1aPKaijCtSrhg==
 
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  name strip-ansi-cjs
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
