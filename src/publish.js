@@ -1,5 +1,6 @@
 
 const path = require('path');
+const { execSync } = require('child_process');
 
 const yargs = require('yargs');
 const Git = require('git-utils');
@@ -276,7 +277,10 @@ have published it.\
 
     getDefaultBranch(repo) {
       try {
-        const ref = repo.getSymbolicRefTarget('refs/remotes/origin/HEAD');
+        const ref = execSync('git symbolic-ref refs/remotes/origin/HEAD', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore']
+        }).trim();
         const match = ref.match(/refs\/remotes\/origin\/(.+)/);
         if (match) { return match[1]; }
       } catch { /* symbolic-ref may not exist; fall through to heuristic */ }
