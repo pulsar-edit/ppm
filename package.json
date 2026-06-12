@@ -22,11 +22,11 @@
     "test": "npm run check-version && jasmine --config=./spec/jasmine.json"
   },
   "dependencies": {
-    "@pulsar-edit/git-utils": "^8.1.0",
     "asar-require": "0.3.0",
     "async": "^3.2.0",
     "colors": "~1.4.0",
     "fs-plus": "3.x",
+    "git-utils": "npm:@pulsar-edit/git-utils^@0.1.0",
     "hosted-git-info": "^3.0.7",
     "keytar": "^7.7.0",
     "npm": "https://github.com/pulsar-edit/npm-cli/releases/download/v6.14.19-pulsar2/npm-6.14.19-pulsar2.tgz",
@@ -57,5 +57,6 @@
     "npm/**/http-cache-semantics": "^4.1.1",
     "npm/**/node-gyp": "^10.2.0",
     "npm/**/tar": "^6.1.2"
-  }
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

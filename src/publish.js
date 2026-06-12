@@ -2,7 +2,7 @@
 const path = require('path');
 
 const yargs = require('yargs');
-const Git = require('@pulsar-edit/git-utils');
+const Git = require('git-utils');
 const semver = require('semver');
 
 const fs = require('./fs');
