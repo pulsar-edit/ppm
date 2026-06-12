@@ -277,6 +277,8 @@ have published it.\
 
     getDefaultBranch(repo) {
       try {
+        // TODO replace with repo.getSymbolicRefTarget once the Windows issues in @pulsar-edit/git-utils have been fixed
+        // see https://github.com/pulsar-edit/ppm/pull/175/changes/478aa593a92137dd43b9a95842edd1f3a9cfb586
         const ref = execSync('git symbolic-ref refs/remotes/origin/HEAD', {
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'ignore']
