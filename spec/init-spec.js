@@ -81,8 +81,8 @@ describe('apm init', () => {
         expect(JSON.parse(fs.readFileSync(path.join(packagePath, 'package.json'))).repository).toBe('https://github.com/somebody/fake-package');
       });
 
-      it('allows the user to opt into a transpiled JavaScript project with the --transpiled flag', async () => {
-        await apmRun(['init', '--syntax', 'javascript', '--package', 'fake-package', '--transpiled']);
+      it('allows the user to opt into a transpiled JavaScript project with the javascript-transpiled syntax option', async () => {
+        await apmRun(['init', '--syntax', 'javascript-transpiled', '--package', 'fake-package']);
         expect(fs.existsSync(packagePath)).toBeTruthy();
         expect(fs.existsSync(path.join(packagePath, 'keymaps'))).toBeTruthy();
         expect(fs.existsSync(path.join(packagePath, 'keymaps', 'fake-package.json'))).toBeTruthy();
