@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs-plus');
 const temp = require('temp');
-const apm = require('../src/apm-cli');
 const Develop = require('../src/develop');
 
 describe('apm develop', () => {
@@ -19,54 +18,49 @@ describe('apm develop', () => {
   });
 
   describe("when the package doesn't have a published repository url", () => {
-    it('logs an error', () => {
-      spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake(_packageName => Promise.reject('Here is the error'));
+    it('logs an error', async () => {
+      spyOn(Develop.prototype, 'getRepositoryUrl').and.callFake(
+        _packageName => Promise.reject('Here is the error')
+      );
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
-      waitsFor('waiting for develop to complete', () => callback.callCount === 1);
-      runs(() => {
-        expect(callback.mostRecentCall.args[0]).toBe('Here is the error');
-        expect(fs.existsSync(repoPath)).toBeFalsy();
-        expect(fs.existsSync(linkedRepoPath)).toBeFalsy();
-      });
+      await apmRun(['develop', 'fake-package'], callback);
+      expect(callback.calls.mostRecent().args[0]).toBe('Here is the error');
+      expect(fs.existsSync(repoPath)).toBeFalsy();
+      expect(fs.existsSync(linkedRepoPath)).toBeFalsy();
     });
   });
 
   describe("when the repository hasn't been cloned", () => {
-    it('clones the repository to ATOM_REPOS_HOME and links it to ATOM_HOME/dev/packages', () => {
-      spyOn(Develop.prototype, 'getRepositoryUrl').andCallFake(_packageName => {
+    it('clones the repository to ATOM_REPOS_HOME and links it to ATOM_HOME/dev/packages', async () => {
+      spyOn(Develop.prototype, 'getRepositoryUrl').and.callFake(_packageName => {
         const repoUrl = path.join(__dirname, 'fixtures', 'repo.git');
         return Promise.resolve(repoUrl);
       });
-      spyOn(Develop.prototype, 'installDependencies').andCallFake(function (packageDirectory, options) {
-        return this.linkPackage(packageDirectory, options);
-      });
+      spyOn(Develop.prototype, 'installDependencies').and.callFake(
+        function (packageDirectory, options) {
+          return this.linkPackage(packageDirectory, options);
+        }
+      );
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
-      waitsFor('waiting for develop to complete', () => callback.callCount === 1);
-      runs(() => {
-        expect(callback.mostRecentCall.args[0]).toBeFalsy();
-        expect(fs.existsSync(repoPath)).toBeTruthy();
-        expect(fs.existsSync(path.join(repoPath, 'Syntaxes', 'Makefile.plist'))).toBeTruthy();
-        expect(fs.existsSync(linkedRepoPath)).toBeTruthy();
-        expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath));
-      });
+      await apmRun(['develop', 'fake-package'], callback);
+      expect(callback.calls.mostRecent().args[0]).toBeFalsy();
+      expect(fs.existsSync(repoPath)).toBeTruthy();
+      expect(fs.existsSync(path.join(repoPath, 'Syntaxes', 'Makefile.plist'))).toBeTruthy();
+      expect(fs.existsSync(linkedRepoPath)).toBeTruthy();
+      expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath));
     });
   });
 
   describe('when the repository has already been cloned', () => {
-    it('links it to ATOM_HOME/dev/packages', () => {
+    it('links it to ATOM_HOME/dev/packages', async () => {
       fs.makeTreeSync(repoPath);
       fs.writeFileSync(path.join(repoPath, 'package.json'), '');
       const callback = jasmine.createSpy('callback');
-      apm.run(['develop', 'fake-package'], callback);
-      waitsFor('waiting for develop to complete', () => callback.callCount === 1);
-      runs(() => {
-        expect(callback.mostRecentCall.args[0]).toBeFalsy();
-        expect(fs.existsSync(repoPath)).toBeTruthy();
-        expect(fs.existsSync(linkedRepoPath)).toBeTruthy();
-        expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath));
-      });
+      await apmRun(['develop', 'fake-package'], callback);
+      expect(callback.calls.mostRecent().args[0]).toBeFalsy();
+      expect(fs.existsSync(repoPath)).toBeTruthy();
+      expect(fs.existsSync(linkedRepoPath)).toBeTruthy();
+      expect(fs.realpathSync(linkedRepoPath)).toBe(fs.realpathSync(repoPath));
     });
   });
 });

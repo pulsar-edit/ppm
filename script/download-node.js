@@ -1,12 +1,12 @@
 const fs = require('fs');
-const mv = require('mv');
+const fsPromises = require('fs/promises');
 const zlib = require('zlib');
 const path = require('path');
 
 const tar = require('tar');
 const temp = require('temp');
 
-const request = require('request');
+const superagent = require('superagent');
 const getInstallNodeVersion = require('./bundled-node-version')
 
 temp.track();
@@ -23,14 +23,15 @@ const downloadFileToLocation = function(url, filename, callback) {
   const stream = fs.createWriteStream(filename);
   stream.on('end', callback);
   stream.on('error', callback);
-  const requestStream = request.get(url)
-  requestStream.on('response', function(response) {
-    if (response.statusCode === 404) {
-      console.error('download not found:', url);
-      process.exit(1);
-    }
-    requestStream.pipe(stream);
-  });
+  superagent
+    .get(url)
+    .on('response', response => {
+      if (response.statusCode === 404) {
+        console.error('download not found:', url);
+        process.exit(1);
+      }
+    })
+    .pipe(stream);
 };
 
 const downloadTarballAndExtract = function(url, location, callback) {
@@ -42,29 +43,30 @@ const downloadTarballAndExtract = function(url, location, callback) {
     callback.call(this, tempPath);
   });
   stream.on('error', callback);
-  const requestStream = request.get(url)
-  requestStream.on('response', function(response) {
-    if (response.statusCode === 404) {
-      console.error('download not found:', url);
-      process.exit(1);
-    }
-    requestStream.pipe(zlib.createGunzip()).pipe(stream);
-  });
+  superagent
+    .get(url)
+    .on('response', response => {
+      if (response.statusCode === 404) {
+        console.error('download not found:', url);
+        process.exit(1);
+      }
+    })
+    .pipe(zlib.createGunzip()).pipe(stream);
 };
+
+//TODO: verbatim copied from fs.js, deduplicate it
+async function mv(sourcePath, destinationPath) {
+  await fsPromises.rm(destinationPath, { recursive: true, force: true });
+  await fsPromises.mkdir(path.dirname(destinationPath), { mode: 0o755, recursive: true });
+  await fsPromises.rename(sourcePath, destinationPath);
+}
 
 const copyNodeBinToLocation = function(callback, version, targetFilename, fromDirectory) {
   const arch = identifyArch();
   const subDir = `node-${version}-${process.platform}-${arch}`;
   const downloadedNodePath = path.join(fromDirectory, subDir, 'bin', 'node');
-  return mv(downloadedNodePath, targetFilename, {mkdirp: true}, function(err) {
-    if (err) {
-      callback(err);
-      return;
-    }
 
-    fs.chmodSync(targetFilename, "755");
-    callback()
-  });
+  mv(downloadedNodePath, targetFilename).then(() => void callback(), err => void callback(err));
 };
 
 const downloadNode = function(version, done) {

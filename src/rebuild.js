@@ -52,7 +52,7 @@ All the modules will be rebuilt if no module names are specified.\
       return new Promise((resolve, reject) =>
         void this.fork(this.atomNpmPath, rebuildArgs, {env}, (code, stderr) => {
           if (code !== 0) {
-            reject(stderr ?? '');
+            reject(stderr ?? `Unknown error while invoking npm: code ${code}`);
             return;
           }
 
@@ -72,7 +72,7 @@ All the modules will be rebuilt if no module names are specified.\
         this.logSuccess();
       } catch (error) {
         this.logFailure();
-        return stderr; //errors as return values atm
+        return error; // errors as return values atm
       }
     }
   }

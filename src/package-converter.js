@@ -1,6 +1,5 @@
 
 const path = require('path');
-const url = require('url');
 const zlib = require('zlib');
 
 const _ = require('underscore-plus');
@@ -37,7 +36,7 @@ class PackageConverter {
   }
 
   async convert() {
-    const {protocol} = url.parse(this.sourcePath);
+    const {protocol} = URL.canParse(this.sourcePath) ? new URL(this.sourcePath) : {};
     if ((protocol === 'http:') || (protocol === 'https:')) {
       await this.downloadBundle();
       return;
@@ -49,7 +48,7 @@ class PackageConverter {
   getDownloadUrl() {
     let downloadUrl = this.sourcePath;
     downloadUrl = downloadUrl.replace(/(\.git)?\/*$/, '');
-    return downloadUrl += '/archive/master.tar.gz';
+    return downloadUrl += '/archive/HEAD.tar.gz';
   }
 
   async downloadBundle() {
