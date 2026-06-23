@@ -25,7 +25,7 @@ class Init extends Command {
       options.usage(`\
 Usage:
   ppm init -p <package-name>
-  ppm init -p <package-name> --syntax <javascript,typescript,javascript-transpiled>
+  ppm init -p <package-name> --syntax <javascript|typescript|javascript-transpiled>
   ppm init -p <package-name> -c ~/Downloads/r.tmbundle
   ppm init -p <package-name> -c https://github.com/textmate/r.tmbundle
   ppm init -p <package-name> --template /path/to/your/package/template

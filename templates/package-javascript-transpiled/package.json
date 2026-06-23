@@ -1,7 +1,6 @@
 {
   "name": "__package-name__",
   "type": "module",
-  "source": "./src/index.ts",
   "main": "./lib/index.cjs",
   "version": "0.0.0",
   "description": "A short description of your package",

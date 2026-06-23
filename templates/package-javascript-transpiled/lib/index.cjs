@@ -2,7 +2,7 @@ const description = `After installing your dependencies with \`npm install\`, yo
 
 If you're stuck, follow the directions in your new package's \`README.md\`.
 `;
-s
+
 exports.activate = () => {
   atom.notifications.addWarning(
     '__package-name__ is created but not built',
