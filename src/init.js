@@ -16,7 +16,7 @@ class Init extends Command {
     //
     // The first item in this list will be the default language if one is not
     // opted into via `-s`/`--syntax`.
-    this.supportedSyntaxes = ["javascript", "typescript", "coffeescript"];
+    this.supportedSyntaxes = ["javascript", "typescript", "javascript-transpiled", "coffeescript"];
   }
 
     parseOptions(argv) {
@@ -25,7 +25,7 @@ class Init extends Command {
       options.usage(`\
 Usage:
   ppm init -p <package-name>
-  ppm init -p <package-name> --syntax <javascript-or-typescript>
+  ppm init -p <package-name> --syntax <javascript|typescript|javascript-transpiled>
   ppm init -p <package-name> -c ~/Downloads/r.tmbundle
   ppm init -p <package-name> -c https://github.com/textmate/r.tmbundle
   ppm init -p <package-name> --template /path/to/your/package/template
@@ -42,7 +42,10 @@ on the option selected.\
 `
       );
       options.alias('p', 'package').string('package').describe('package', 'Generates a basic package');
-      options.alias('s', 'syntax').string('syntax').describe('syntax', 'Sets package syntax to JavaScript or TypeScript (applies only to -p/--package option)');
+      options.alias('s', 'syntax')
+        .string('syntax')
+        .choices(this.supportedSyntaxes)
+        .describe('syntax', 'Sets package syntax (applies only to -p/--package option)');
       options.alias('t', 'theme').string('theme').describe('theme', 'Generates a basic theme');
       options.alias('l', 'language').string('language').describe('language', 'Generates a basic language package');
       options.alias('c', 'convert').string('convert').describe('convert', 'Path or URL to TextMate bundle/theme to convert');
@@ -192,7 +195,10 @@ on the option selected.\
     }
 
     getTemplatePath(argv, templateType) {
-      return argv.template != null ? path.resolve(argv.template) : path.resolve(__dirname, '..', 'templates', templateType);
+      if (argv.template != null) {
+        return path.resolve(argv.template);
+      }
+      return path.resolve(__dirname, '..', 'templates', templateType);
     }
 
     dasherize(string) {
