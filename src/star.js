@@ -44,7 +44,7 @@ Run \`ppm stars\` to see all your starred packages.\
         }
       };
 
-      const response = await request.post(requestSettings).catch(error => { this.logFailure(); throw error; });
+      const response = await request.post(requestSettings).catch(error => { this.logFailure(); throw request.getErrorMessage(null, error); });
       const body = response.body ?? {};
       if ((response.statusCode === 404) && ignoreUnpublishedPackages) {
         process.stdout.write('skipped (not published)\n'.yellow);
@@ -52,7 +52,7 @@ Run \`ppm stars\` to see all your starred packages.\
       }
       if (response.statusCode !== 200) {
         this.logFailure();
-        const message = request.getErrorMessage(body, error);
+        const message = request.getErrorMessage(body, null);
         throw `Starring package failed: ${message}`;
       }
 

@@ -49,18 +49,18 @@ name is specified.\
 
         if (packageVersion) { options.url += `/versions/${packageVersion}`; }
 
-        const response = await request.del(options).catch(error => { this.logFailure(); throw error; }); //it's not clear why we are calling logFailure in two layers (here and in the usual try-catch around it)
+        const response = await request.del(options).catch(error => { this.logFailure(); throw request.getErrorMessage(null, error); }); //it's not clear why we are calling logFailure in two layers (here and in the usual try-catch around it)
         const body = response.body ?? {};
         if (response.statusCode !== 204) {
           this.logFailure();
-          const message = body.message ?? body.error ?? body;
+          const message = request.getErrorMessage(body, null);
           throw `Unpublishing failed: ${message}`;
         }
 
         this.logSuccess();
       } catch (error) {
-          this.logFailure();
-          throw error;
+        this.logFailure();
+        throw error;
       }
     }
 
