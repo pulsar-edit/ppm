@@ -28,7 +28,14 @@ const fsAdditions = {
   async mv(sourcePath, destinationPath) {
     await fsPromises.rm(destinationPath, { recursive: true, force: true });
     await fsPromises.mkdir(path.dirname(destinationPath), { mode: 0o755, recursive: true });
-    await fsPromises.rename(sourcePath, destinationPath);
+    try {
+      await fsPromises.rename(sourcePath, destinationPath);
+    } catch (err) {
+      if (err.code !== 'EXDEV') throw err;
+      // `rename` can't cross filesystem boundaries; copy, then remove the original.
+      await fsPromises.cp(sourcePath, destinationPath, { recursive: true, verbatimSymlinks: true, preserveTimestamps: true });
+      await fsPromises.rm(sourcePath, { recursive: true, force: true });
+    }
   }
 };
 
