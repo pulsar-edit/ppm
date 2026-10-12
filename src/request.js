@@ -1,7 +1,7 @@
 
 const npm = require("npm");
 const superagent = require("superagent");
-require("superagent-proxy")(superagent);
+const { ProxyAgent } = require("proxy-agent");
 
 const config = require("./apm.js");
 
@@ -9,6 +9,23 @@ const config = require("./apm.js");
 // with specifics. But superagent will fail on anything 4xx, 5xx, and 3xx.
 // So we have to specifically say these are valid, or otherwise redo a lot of our logic
 const OK_STATUS_CODES = [200, 201, 204, 404];
+
+// Agents are cached per proxy so that connections (and any loaded PAC
+// resolver) are reused across requests.
+const proxyAgents = new Map();
+
+// Returns an agent that sends every request through `proxy` (which may be a
+// `pac+` URL). Without a proxy, the agent consults the standard proxy
+// environment variables (`HTTPS_PROXY`, `NO_PROXY`, etc.) for each request.
+function proxyAgentFor(proxy) {
+  const key = proxy ?? "";
+  let agent = proxyAgents.get(key);
+  if (!agent) {
+    agent = proxy ? new ProxyAgent({ getProxyForUrl: () => proxy }) : new ProxyAgent();
+    proxyAgents.set(key, agent);
+  }
+  return agent;
+}
 
 function loadNpm() {
   const npmOptions = {
@@ -43,7 +60,7 @@ module.exports = {
     if (typeof opts.strictSSL === "boolean") {
       const res = await superagent
         .get(opts.url)
-        .proxy(opts.proxy)
+        .agent(proxyAgentFor(opts.proxy))
         .set(opts.headers)
         .query(opts.qs)
         .retry(retryCount)
@@ -54,7 +71,7 @@ module.exports = {
 
     const res = await superagent
       .get(opts.url)
-      .proxy(opts.proxy)
+      .agent(proxyAgentFor(opts.proxy))
       .set(opts.headers)
       .query(opts.qs)
       .retry(retryCount)
@@ -67,7 +84,7 @@ module.exports = {
     if (typeof opts.strictSSL === "boolean") {
       const res = await superagent
         .delete(opts.url)
-        .proxy(opts.proxy)
+        .agent(proxyAgentFor(opts.proxy))
         .set(opts.headers)
         .query(opts.qs)
         .disableTLSCerts()
@@ -77,7 +94,7 @@ module.exports = {
 
     const res = await superagent
       .delete(opts.url)
-      .proxy(opts.proxy)
+      .agent(proxyAgentFor(opts.proxy))
       .set(opts.headers)
       .query(opts.qs)
       .ok((res) => OK_STATUS_CODES.includes(res.status));
@@ -89,7 +106,7 @@ module.exports = {
     if (typeof opts.strictSSL === "boolean") {
       const res = await superagent
         .post(opts.url)
-        .proxy(opts.proxy)
+        .agent(proxyAgentFor(opts.proxy))
         .set(opts.headers)
         .query(opts.qs)
         .disableTLSCerts()
@@ -97,16 +114,16 @@ module.exports = {
       return res;
     }
 
-    const res = await superagent.post(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
+    const res = await superagent.post(opts.url).agent(proxyAgentFor(opts.proxy)).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
     return res;
   },
 
   async createReadStream(opts) {
     await configureRequest(opts);
     if (typeof opts.strictSSL === "boolean") {
-      return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status));
+      return superagent.get(opts.url).agent(proxyAgentFor(opts.proxy)).set(opts.headers).query(opts.qs).disableTLSCerts().ok((res) => OK_STATUS_CODES.includes(res.status));
     } else {
-      return superagent.get(opts.url).proxy(opts.proxy).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
+      return superagent.get(opts.url).agent(proxyAgentFor(opts.proxy)).set(opts.headers).query(opts.qs).ok((res) => OK_STATUS_CODES.includes(res.status));
     }
   },
 
