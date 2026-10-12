@@ -14,10 +14,13 @@ Here’s how it works:
 
 **Before you change anything**, run `bin/npm test` and ensure the test suite is green. If it isn’t, don’t proceed — unless you have reason to believe that the Node upgrade itself is what will fix the failing specs.
 
-## Change `BUNDLED_NODE_VERSION`
+## Change the contents of `BUNDLED_NODE_VERSION`
 
-The contents of this file govern which version of Node is downloaded when `ppm` is installed. Make sure this corresponds to the new **Node** version that `ppm` will use, since this will be downloaded directly from the Node servers when `ppm` is built.
+The contents of this file (at the project root) govern which version of Node is downloaded when `ppm` is installed. Make sure this corresponds to the new **Node** version that `ppm` will use, since this will be downloaded directly from the Node servers when `ppm` is built.
 
+## Download the new bundled Node
+
+`bin/node` is only downloaded on install, so you must manually update it after changing `BUNDLED_NODE_VERSION`. From the project root, run `node script/postinstall.js`. This will download the new version of Node and rebuild `ppm`’s native dependencies against it. When you’re done, confirm that `bin/node --version` shows the new version.
 
 ## Change the fixture files
 
