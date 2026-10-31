@@ -3,6 +3,7 @@ const fs = require('fs-plus');
 const temp = require('temp');
 const express = require('express');
 const http = require('http');
+const { execSync } = require('child_process');
 const { nodeVersion } = JSON.parse(fs.readFileSync(path.join(__dirname,'config.json')));
 
 describe('apm upgrade', () => {
@@ -238,6 +239,28 @@ describe('apm upgrade', () => {
       await apmRun(['upgrade', '-c', 'false', 'test-git-repo-with-main']);
       const json = JSON.parse(fs.readFileSync(pkgJsonPath), 'utf8');
       expect(json.apmInstallSource.sha).toBe('c81278af71de6c12ce0bc02936d5c1eb22aadaf9');
+    });
+  });
+
+  describe('for git packages whose branch has no upstream', () => {
+    beforeEach(async () => {
+      delete process.env.ATOM_ELECTRON_URL;
+      delete process.env.ATOM_PACKAGES_URL;
+      process.env.ATOM_ELECTRON_VERSION = '0.22.0';
+
+      const gitRepo = path.join(__dirname, 'fixtures', 'test-git-repo.git');
+      const cloneUrl = `file://${gitRepo}`;
+
+      await apmRun(['install', cloneUrl]);
+
+      const pkgDir = path.join(process.env.ATOM_HOME, 'packages', 'test-git-repo');
+      execSync('git branch --unset-upstream', { cwd: pkgDir, stdio: 'ignore' });
+    });
+
+    it('does not show an upgrade', async () => {
+      await apmRun(['upgrade', '--list', '--no-color']);
+      const text = console.log.calls.allArgs().map(arr => arr.join(' ')).join('\n');
+      expect(text).toContain('Package Updates Available (0)');
     });
   });
 });

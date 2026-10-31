@@ -5,7 +5,7 @@ const async = require('async');
 const yargs = require('yargs');
 const { read } = require('read');
 const semver = require('semver');
-const Git = require('git-utils');
+const Git = require('@pulsar-edit/git-utils');
 
 const Command = require('./command');
 const config = require('./apm');
@@ -147,7 +147,8 @@ available updates.\
             return void reject(new Error('Exit code: ' + code + ' - ' + stderr));
           }
 
-          const sha = repo.getReferenceTarget(repo.getUpstreamBranch(repo.getHead()));
+          const upstream = repo.getUpstreamBranch(repo.getHead());
+          const sha = upstream ? repo.getReferenceTarget(upstream) : null;
           repo.release();
           if (sha !== pack.apmInstallSource.sha) {
             return void resolve(sha);
