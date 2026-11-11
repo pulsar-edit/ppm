@@ -18,8 +18,8 @@ jobs:
           - macos-15
           - windows-2022
         node_version:
-          - 18
           - 20
+          - 22
         node_arch:
           - x64
     steps:
